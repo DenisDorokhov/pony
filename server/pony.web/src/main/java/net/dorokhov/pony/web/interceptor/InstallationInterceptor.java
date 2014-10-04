@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.interceptor;
 
+import net.dorokhov.pony.web.controller.ApiController;
 import net.dorokhov.pony.web.controller.InstallationController;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import org.slf4j.Logger;
@@ -29,7 +30,10 @@ public class InstallationInterceptor extends HandlerInterceptorAdapter {
 
 			HandlerMethod handlerMethod = (HandlerMethod)aHandler;
 
-			if (!(handlerMethod.getBean() instanceof InstallationController)) {
+			boolean isInstallationController = (handlerMethod.getBean() instanceof InstallationController);
+			boolean isInstallationRequest = (handlerMethod.getBean() instanceof ApiController && handlerMethod.getMethod().getName().equals("getInstallation"));
+
+			if (!isInstallationController && !isInstallationRequest) {
 				if (installationServiceFacade.getInstallation() == null) {
 
 					log.info("Redirecting to installation...");

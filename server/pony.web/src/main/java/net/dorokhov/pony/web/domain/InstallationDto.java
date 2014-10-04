@@ -1,6 +1,8 @@
 package net.dorokhov.pony.web.domain;
 
-public class InstallationDto {
+import java.io.Serializable;
+
+public class InstallationDto implements Serializable {
 
 	private String version;
 
