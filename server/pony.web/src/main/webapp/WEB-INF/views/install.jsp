@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <%--@elvariable id="error" type="java.lang.String"--%>
 
@@ -8,7 +9,7 @@
 
     <meta charset="utf-8">
 
-    <title>Pony Installation</title>
+    <title><spring:message code="install.title" /></title>
 
     <link href="./css/pony.css" rel="stylesheet">
 
@@ -18,13 +19,13 @@
 <div class="container">
     <div class="jumbotron installationContainer">
 
-        <h1>Pony Installation</h1>
+        <h1><spring:message code="install.header" /></h1>
 
         <c:if test="${error != null}"><div class="alert alert-danger" role="alert">${error}</div></c:if>
 
-        <p>Click "Install" button to start Pony installation!</p>
+        <p><spring:message code="install.description" /></p>
         <form role="form" method="post">
-            <button type="submit" class="btn btn-primary btn-lg">Install</button>
+            <button type="submit" class="btn btn-primary btn-lg"><spring:message code="install.button" /></button>
         </form>
 
     </div>

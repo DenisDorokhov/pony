@@ -3,15 +3,25 @@ package net.dorokhov.pony.web.controller;
 import net.dorokhov.pony.core.exception.AlreadyInstalledException;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.Locale;
+
 @Controller
 public class InstallationController {
 
+	private MessageSource messageSource;
+
 	private InstallationServiceFacade installationServiceFacade;
+
+	@Autowired
+	public void setMessageSource(MessageSource aMessageSource) {
+		messageSource = aMessageSource;
+	}
 
 	@Autowired
 	public void setInstallationServiceFacade(InstallationServiceFacade aInstallationServiceFacade) {
@@ -24,7 +34,7 @@ public class InstallationController {
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.POST)
-	public String doInstallation(Model aModel) {
+	public String doInstallation(Model aModel, Locale aLocale) {
 
 		boolean success = true;
 
@@ -34,7 +44,7 @@ public class InstallationController {
 			success = true;
 		} catch (RuntimeException e) {
 
-			aModel.addAttribute("error", "Could not install Pony!");
+			aModel.addAttribute("error", messageSource.getMessage("install.error", null, aLocale));
 
 			success = false;
 		}
