@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="jquery.js" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/jquery.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/jquery.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

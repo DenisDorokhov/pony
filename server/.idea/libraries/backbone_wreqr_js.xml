@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="backbone.wreqr.js" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/backbone.wreqr.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/backbone.wreqr.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

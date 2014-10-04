@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="backbone.marionette.js" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/backbone.marionette.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/pony.web/src/main/webapp/js/lib/backbone.marionette.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
