@@ -42,7 +42,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	@Override
 	@Transactional
-	public Installation install() throws AlreadyInstalledException {
+	public synchronized Installation install() throws AlreadyInstalledException {
 
 		log.info("Installing...");
 
@@ -66,7 +66,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	@Override
 	@Transactional
-	public void uninstall() throws NotInstalledException {
+	public synchronized void uninstall() throws NotInstalledException {
 
 		log.info("Uninstalling...");
 

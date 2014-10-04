@@ -1,1 +1,6 @@
 @import url("lib/bootstrap.css");
+
+.installationContainer {
+    padding-top: 25px;
+    margin-top: 50px;
+}

@@ -1,3 +1,7 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<%--@elvariable id="error" type="java.lang.String"--%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,7 +15,20 @@
 </head>
 <body>
 
-<script data-main="./js/install" src="./js/lib/require.js"></script>
+<div class="container">
+    <div class="jumbotron installationContainer">
+
+        <h1>Pony Installation</h1>
+
+        <c:if test="${error != null}"><div class="alert alert-danger" role="alert">${error}</div></c:if>
+
+        <p>Click "Install" button to start Pony installation!</p>
+        <form role="form" method="post">
+            <button type="submit" class="btn btn-primary btn-lg">Install</button>
+        </form>
+
+    </div>
+</div>
 
 </body>
 </html>
