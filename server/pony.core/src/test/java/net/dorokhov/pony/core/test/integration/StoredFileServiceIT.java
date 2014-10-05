@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
+import net.dorokhov.pony.core.common.SaveStoredFileCommand;
 import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.service.StoredFileService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
@@ -24,7 +25,7 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 	@Test
 	public void test() throws Exception {
 
-		StoredFileService.SaveCommand command = buildCommand(1);
+		SaveStoredFileCommand command = buildCommand(1);
 
 		StoredFile storedFile = service.save(command);
 
@@ -62,9 +63,9 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(0, service.getCount());
 	}
 
-	private StoredFileService.SaveCommand buildCommand(int aIndex) throws Exception{
+	private SaveStoredFileCommand buildCommand(int aIndex) throws Exception{
 
-		StoredFileService.SaveCommand command = new StoredFileService.SaveCommand(StoredFileService.SaveCommand.Type.COPY, new ClassPathResource(TEST_FILE_PATH).getFile());
+		SaveStoredFileCommand command = new SaveStoredFileCommand(SaveStoredFileCommand.Type.COPY, new ClassPathResource(TEST_FILE_PATH).getFile());
 
 		command.setName("file" + aIndex);
 		command.setMimeType(TEST_FILE_MIME_TYPE);

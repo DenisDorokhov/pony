@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.utils;
+package net.dorokhov.pony.core.common;
 
 import org.springframework.util.StringUtils;
 
