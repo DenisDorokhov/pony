@@ -1,9 +1,9 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.dictionary.ImageExtensions;
+import net.dorokhov.pony.core.common.dictionary.ImageExtensions;
 import net.dorokhov.pony.core.common.ScannedFile;
 import net.dorokhov.pony.core.common.ScannedFolder;
-import net.dorokhov.pony.core.dictionary.SongExtensions;
+import net.dorokhov.pony.core.common.dictionary.SongExtensions;
 import net.dorokhov.pony.core.exception.FileIsDirectoryException;
 import net.dorokhov.pony.core.exception.FileNotDirectoryException;
 import org.apache.commons.io.FilenameUtils;

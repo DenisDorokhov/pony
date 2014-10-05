@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.dictionary;
+package net.dorokhov.pony.core.common.dictionary;
 
 public class SongExtensions {
 
