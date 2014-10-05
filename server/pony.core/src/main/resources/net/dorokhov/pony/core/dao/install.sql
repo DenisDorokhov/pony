@@ -31,10 +31,10 @@ CREATE TABLE stored_file (
 	mime_type VARCHAR(255) NOT NULL,
 	checksum VARCHAR(255) NOT NULL,
 	tag VARCHAR(255),
-	relative_path VARCHAR(255) NOT NULL,
+	path VARCHAR(255) NOT NULL,
 	user_data LONGVARCHAR,
 
-	UNIQUE (relative_path),
+	UNIQUE (path),
 	UNIQUE (tag, checksum)
 );
 

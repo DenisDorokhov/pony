@@ -5,7 +5,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,8 +21,7 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 
 	private List<Album> albums;
 
-	@Column(name = "name", unique = true)
-	@NotBlank
+	@Column(name = "name")
 	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
 	public String getName() {
 		return name;

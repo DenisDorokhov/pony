@@ -5,10 +5,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "song")
@@ -47,8 +45,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 	private StoredFile artwork;
 
-	@Column(name = "path", unique = true)
-	@NotBlank
+	@Column(name = "path", nullable = false, unique = true)
 	public String getPath() {
 		return path;
 	}
@@ -57,8 +54,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		path = aPath;
 	}
 
-	@Column(name = "format")
-	@NotBlank
+	@Column(name = "format", nullable = false)
 	public String getFormat() {
 		return format;
 	}
@@ -67,8 +63,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		format = aType;
 	}
 
-	@Column(name = "mime_type")
-	@NotBlank
+	@Column(name = "mime_type", nullable = false)
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -77,8 +72,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		mimeType = aMimeType;
 	}
 
-	@Column(name = "size")
-	@NotNull
+	@Column(name = "size", nullable = false)
 	public Long getSize() {
 		return size;
 	}
@@ -87,8 +81,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		size = aSize;
 	}
 
-	@Column(name = "duration")
-	@NotNull
+	@Column(name = "duration", nullable = false)
 	public Integer getDuration() {
 		return duration;
 	}
@@ -97,8 +90,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		duration = aDuration;
 	}
 
-	@Column(name = "bit_rate")
-	@NotNull
+	@Column(name = "bit_rate", nullable = false)
 	public Long getBitRate() {
 		return bitRate;
 	}
@@ -202,8 +194,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	private Album album;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "album_id")
-	@NotNull
+	@JoinColumn(name = "album_id", nullable = false)
 	public Album getAlbum() {
 		return album;
 	}

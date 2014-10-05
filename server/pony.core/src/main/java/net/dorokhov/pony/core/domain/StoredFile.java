@@ -1,7 +1,5 @@
 package net.dorokhov.pony.core.domain;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -23,8 +21,7 @@ public class StoredFile extends BaseEntity<Long> {
 
 	private String userData;
 
-	@Column(name = "name")
-	@NotBlank
+	@Column(name = "name", nullable = false)
 	public String getName() {
 		return name;
 	}
@@ -33,8 +30,7 @@ public class StoredFile extends BaseEntity<Long> {
 		name = aName;
 	}
 
-	@Column(name = "mime_type")
-	@NotBlank
+	@Column(name = "mime_type", nullable = false)
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -43,8 +39,7 @@ public class StoredFile extends BaseEntity<Long> {
 		mimeType = aMimeType;
 	}
 
-	@Column(name = "checksum")
-	@NotBlank
+	@Column(name = "checksum", nullable = false)
 	public String getChecksum() {
 		return checksum;
 	}
@@ -62,8 +57,7 @@ public class StoredFile extends BaseEntity<Long> {
 		tag = aTag;
 	}
 
-	@Column(name = "path", unique = true)
-	@NotBlank
+	@Column(name = "path", nullable = false, unique = true)
 	public String getPath() {
 		return path;
 	}

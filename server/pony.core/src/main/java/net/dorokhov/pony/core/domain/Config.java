@@ -1,7 +1,6 @@
 package net.dorokhov.pony.core.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -39,8 +38,7 @@ public class Config implements AbstractEntity<String> {
 
 	@Override
 	@Id
-	@Column(name = "id")
-	@NotNull
+	@Column(name = "id", nullable = false)
 	public String getId() {
 		return id;
 	}

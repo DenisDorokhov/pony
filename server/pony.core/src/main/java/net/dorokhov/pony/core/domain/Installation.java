@@ -10,7 +10,7 @@ public class Installation extends BaseEntity<Long> {
 
 	private String version;
 
-	@Column(name = "version")
+	@Column(name = "version", nullable = false)
 	public String getVersion() {
 		return version;
 	}
