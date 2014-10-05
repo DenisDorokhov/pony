@@ -1,0 +1,18 @@
+Metallica-Battery-with_artwork.mp3
+	format: MPEG-1 Layer 3
+	mimeType: audio/mpeg
+	size: 24925
+	duration: 1
+	bitRate: 128
+	discNumber: 1
+	discCount: 1
+	trackNumber: 1
+	trackCount: 8
+	name: Battery
+	artist: Metallica
+	albumArtist: Metallica
+	album: Master Of Puppets
+	year: 1986
+	genre: Rock
+	artwork.mimeType: image/jpeg
+	artwork.checksum: 0a6632570700e5f595a75999508fc46d
