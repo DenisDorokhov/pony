@@ -25,7 +25,11 @@
         <property name="password" value="" />
     </bean>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <bean id="hsqlShutdownManager" class="net.dorokhov.pony.core.utils.HsqlShutdownManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="hsqlShutdownManager">
         <property name="dataSource" ref="dataSource" />
         <property name="packagesToScan" value="net.dorokhov.pony.core.domain" />
         <property name="jpaVendorAdapter">

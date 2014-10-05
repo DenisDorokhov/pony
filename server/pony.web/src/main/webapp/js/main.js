@@ -6,9 +6,9 @@ require.config({
         underscore: "lib/underscore",
         bootstrap: "lib/bootstrap",
         backbone: "lib/backbone",
-        backboneBabySitter: "lib/backbone.babysitter.js",
-        backboneWreqr: "lib/backbone.wreckr.js",
-        marionette: "lib/marionette.js"
+        backboneBabySitter: "lib/backbone.babysitter",
+        backboneWreqr: "lib/backbone.wreqr",
+        marionette: "lib/backbone.marionette"
     },
     shim: {
         bootstrap: {
@@ -19,7 +19,7 @@ require.config({
             exports: "Backbone"
         },
         marionette: {
-            deps: ["backbone", "backboneBabySitter", "backboneWreckr"],
+            deps: ["backbone", "backboneBabySitter", "backboneWreqr"],
             exports: "Marionette"
         }
     }
