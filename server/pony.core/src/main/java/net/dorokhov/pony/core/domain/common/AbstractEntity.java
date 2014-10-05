@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.domain;
+package net.dorokhov.pony.core.domain.common;
 
 import java.io.Serializable;
 import java.util.Date;

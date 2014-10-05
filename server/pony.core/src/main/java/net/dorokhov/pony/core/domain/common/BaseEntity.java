@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.domain;
+package net.dorokhov.pony.core.domain.common;
 
 import javax.persistence.*;
 import java.io.Serializable;

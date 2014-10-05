@@ -1,5 +1,7 @@
 package net.dorokhov.pony.core.domain;
 
+import net.dorokhov.pony.core.domain.common.AbstractEntity;
+
 import javax.persistence.*;
 import java.util.Date;
 

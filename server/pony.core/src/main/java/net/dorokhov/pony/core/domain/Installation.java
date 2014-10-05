@@ -1,5 +1,7 @@
 package net.dorokhov.pony.core.domain;
 
+import net.dorokhov.pony.core.domain.common.BaseEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
