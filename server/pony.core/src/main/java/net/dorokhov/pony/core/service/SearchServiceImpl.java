@@ -94,16 +94,15 @@ public class SearchServiceImpl implements SearchService {
 	@SuppressWarnings("unchecked")
 	public List<Song> searchSongs(String aQuery, int aMaxResults) {
 
-		FullTextQuery jpaQuery = buildQuery(aQuery, Song.class, "file.name");
+		FullTextQuery jpaQuery = buildQuery(aQuery, Song.class, "name");
 
 		Criteria criteria = getSession().createCriteria(Song.class)
-				.setFetchMode("file", FetchMode.JOIN)
 				.setFetchMode("album", FetchMode.JOIN)
 				.setFetchMode("album.artist", FetchMode.JOIN);
 
 		jpaQuery.setCriteriaQuery(criteria);
 
-		jpaQuery.setSort(new Sort(new SortField("file.name", SortField.STRING)));
+		jpaQuery.setSort(new Sort(new SortField("name", SortField.STRING)));
 		jpaQuery.setFirstResult(0);
 		jpaQuery.setMaxResults(aMaxResults);
 
