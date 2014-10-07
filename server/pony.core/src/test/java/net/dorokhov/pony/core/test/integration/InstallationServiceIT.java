@@ -4,8 +4,6 @@ import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.exception.NotInstalledException;
 import net.dorokhov.pony.core.service.InstallationService;
-
-import net.dorokhov.pony.core.test.AbstractCase;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +11,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class InstallationServiceIT extends AbstractCase {
+public class InstallationServiceIT {
 
 	private InstallationService service;
 

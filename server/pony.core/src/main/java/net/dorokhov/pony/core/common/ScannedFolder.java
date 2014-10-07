@@ -39,29 +39,73 @@ public class ScannedFolder {
 		return new ArrayList<>(childFiles);
 	}
 
-	public List<ScannedFile> getImageFiles() {
+	public ScannedFile getFileByName(String aName) {
+
+		for (ScannedFile file : childFiles) {
+			if (file.getFile().getName().equals(aName)) {
+				return file;
+			}
+		}
+
+		return null;
+	}
+
+	public ScannedFolder getFolderByName(String aName) {
+
+		for (ScannedFolder folder : childFolders) {
+			if (folder.getFile().getName().equals(aName)) {
+				return folder;
+			}
+		}
+
+		return null;
+	}
+
+	public List<ScannedFile> getImageFiles(boolean aRecursive) {
 
 		List<ScannedFile> result = new ArrayList<>();
 
-		for (ScannedFile file : childFiles) {
-			if (file.getType() == ScannedFile.Type.IMAGE) {
-				result.add(file);
-			}
-		}
+		doGetImageFiles(result, aRecursive);
 
 		return result;
 	}
 
-	public List<ScannedFile> getSongFiles() {
+	public List<ScannedFile> getSongFiles(boolean aRecursive) {
 
 		List<ScannedFile> result = new ArrayList<>();
 
+		doGetSongFiles(result, aRecursive);
+
+		return result;
+	}
+
+	private void doGetImageFiles(List<ScannedFile> aResult, boolean aRecursive) {
+
 		for (ScannedFile file : childFiles) {
-			if (file.getType() == ScannedFile.Type.SONG) {
-				result.add(file);
+			if (file.getType() == ScannedFile.Type.IMAGE) {
+				aResult.add(file);
 			}
 		}
 
-		return result;
+		if (aRecursive) {
+			for (ScannedFolder folder : childFolders) {
+				folder.doGetImageFiles(aResult, true);
+			}
+		}
+	}
+
+	private void doGetSongFiles(List<ScannedFile> aResult, boolean aRecursive) {
+
+		for (ScannedFile file : childFiles) {
+			if (file.getType() == ScannedFile.Type.SONG) {
+				aResult.add(file);
+			}
+		}
+
+		if (aRecursive) {
+			for (ScannedFolder folder : childFolders) {
+				folder.doGetSongFiles(aResult, true);
+			}
+		}
 	}
 }

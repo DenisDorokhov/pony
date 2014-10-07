@@ -1,11 +1,9 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.common.dictionary.ImageExtensions;
 import net.dorokhov.pony.core.common.ScannedFile;
 import net.dorokhov.pony.core.common.ScannedFolder;
+import net.dorokhov.pony.core.common.dictionary.ImageExtensions;
 import net.dorokhov.pony.core.common.dictionary.SongExtensions;
-import net.dorokhov.pony.core.exception.FileIsDirectoryException;
-import net.dorokhov.pony.core.exception.FileNotDirectoryException;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -17,8 +15,11 @@ public class FileScannerImpl implements FileScanner {
 	@Override
 	public ScannedFile scanFile(File aFile) {
 
+		if (!aFile.exists()) {
+			throw new IllegalArgumentException("File must exist.");
+		}
 		if (aFile.isDirectory()) {
-			throw new FileIsDirectoryException();
+			throw new IllegalArgumentException("File must not be a directory.");
 		}
 
 		ScannedFile.Type type = null;
@@ -41,8 +42,11 @@ public class FileScannerImpl implements FileScanner {
 	@Override
 	public ScannedFolder scanFolder(File aFolder) {
 
+		if (!aFolder.exists()) {
+			throw new IllegalArgumentException("File must exist.");
+		}
 		if (!aFolder.isDirectory()) {
-			throw new FileNotDirectoryException();
+			throw new IllegalArgumentException("File must be a directory.");
 		}
 
 		List<ScannedFile> files = new ArrayList<>();
