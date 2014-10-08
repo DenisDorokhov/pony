@@ -8,6 +8,21 @@ CREATE TABLE installation (
 	version VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE log_message (
+
+	id BIGINT IDENTITY,
+
+	date TIMESTAMP NOT NULL,
+
+	type VARCHAR(255) NOT NULL,
+
+	message LONGVARCHAR NOT NULL,
+	details LONGVARCHAR
+);
+
+CREATE INDEX index_log_message_creation_date ON log_message(date);
+CREATE INDEX index_log_message_type ON log_message(type);
+
 CREATE TABLE config (
 
 	id VARCHAR(255) NOT NULL,

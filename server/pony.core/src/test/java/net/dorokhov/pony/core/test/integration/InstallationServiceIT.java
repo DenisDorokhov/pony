@@ -63,6 +63,10 @@ public class InstallationServiceIT {
 		}
 
 		Assert.assertTrue(isExceptionThrown);
+
+		service.install(); // check installation after uninstallation
+
+		checkInstallation(service.getInstallation());
 	}
 
 	private void restore() throws Exception {
