@@ -24,6 +24,8 @@ public class StoredFile extends BaseEntity<Long> {
 
 	private String userData;
 
+	private Long referenceCount = 0L;
+
 	@Column(name = "name", nullable = false)
 	@NotNull
 	public String getName() {
@@ -80,6 +82,16 @@ public class StoredFile extends BaseEntity<Long> {
 
 	public void setUserData(String aUserData) {
 		userData = aUserData;
+	}
+
+	@Column(name = "reference_count", nullable = false)
+	@NotNull
+	public Long getReferenceCount() {
+		return referenceCount;
+	}
+
+	public void setReferenceCount(Long aReferenceCount) {
+		referenceCount = aReferenceCount;
 	}
 
 	@Override
