@@ -49,6 +49,8 @@ CREATE TABLE artist (
 	update_date TIMESTAMP NOT NULL,
 
 	name VARCHAR(255) NOT NULL,
+	song_count INT NOT NULL,
+	song_size BIGINT NOT NULL,
 	artwork_stored_file_id BIGINT,
 
 	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE
@@ -65,6 +67,8 @@ CREATE TABLE album (
 
 	name VARCHAR(255) NOT NULL,
 	year INT,
+	song_count INT NOT NULL,
+	song_size BIGINT NOT NULL,
 	artwork_stored_file_id BIGINT,
 
 	artist_id BIGINT NOT NULL,

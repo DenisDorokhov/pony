@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "stored_file", uniqueConstraints = @UniqueConstraint(columnNames = {"tag", "checksum"}))
@@ -24,6 +25,7 @@ public class StoredFile extends BaseEntity<Long> {
 	private String userData;
 
 	@Column(name = "name", nullable = false)
+	@NotNull
 	public String getName() {
 		return name;
 	}
@@ -33,6 +35,7 @@ public class StoredFile extends BaseEntity<Long> {
 	}
 
 	@Column(name = "mime_type", nullable = false)
+	@NotNull
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -42,6 +45,7 @@ public class StoredFile extends BaseEntity<Long> {
 	}
 
 	@Column(name = "checksum", nullable = false)
+	@NotNull
 	public String getChecksum() {
 		return checksum;
 	}
@@ -60,6 +64,7 @@ public class StoredFile extends BaseEntity<Long> {
 	}
 
 	@Column(name = "path", nullable = false, unique = true)
+	@NotNull
 	public String getPath() {
 		return path;
 	}

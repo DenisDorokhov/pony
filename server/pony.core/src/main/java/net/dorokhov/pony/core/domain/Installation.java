@@ -5,6 +5,7 @@ import net.dorokhov.pony.core.domain.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "installation")
@@ -13,6 +14,7 @@ public class Installation extends BaseEntity<Long> {
 	private String version;
 
 	@Column(name = "version", nullable = false)
+	@NotNull
 	public String getVersion() {
 		return version;
 	}

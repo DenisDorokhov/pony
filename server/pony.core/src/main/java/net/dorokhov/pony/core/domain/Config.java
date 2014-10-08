@@ -3,6 +3,7 @@ package net.dorokhov.pony.core.domain;
 import net.dorokhov.pony.core.domain.common.AbstractEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -41,6 +42,7 @@ public class Config implements AbstractEntity<String> {
 	@Override
 	@Id
 	@Column(name = "id", nullable = false)
+	@NotNull
 	public String getId() {
 		return id;
 	}

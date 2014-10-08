@@ -8,6 +8,7 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "song")
@@ -47,6 +48,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	private StoredFile artwork;
 
 	@Column(name = "path", nullable = false, unique = true)
+	@NotNull
 	public String getPath() {
 		return path;
 	}
@@ -56,6 +58,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "format", nullable = false)
+	@NotNull
 	public String getFormat() {
 		return format;
 	}
@@ -65,6 +68,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "mime_type", nullable = false)
+	@NotNull
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -74,6 +78,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "size", nullable = false)
+	@NotNull
 	public Long getSize() {
 		return size;
 	}
@@ -83,6 +88,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "duration", nullable = false)
+	@NotNull
 	public Integer getDuration() {
 		return duration;
 	}
@@ -92,6 +98,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "bit_rate", nullable = false)
+	@NotNull
 	public Long getBitRate() {
 		return bitRate;
 	}
@@ -196,6 +203,7 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id", nullable = false)
+	@NotNull
 	public Album getAlbum() {
 		return album;
 	}
