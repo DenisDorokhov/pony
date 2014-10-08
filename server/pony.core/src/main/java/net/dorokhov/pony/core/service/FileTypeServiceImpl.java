@@ -4,7 +4,6 @@ import net.dorokhov.pony.core.common.FileType;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,8 +41,8 @@ public class FileTypeServiceImpl implements FileTypeService {
 	}
 
 	@Override
-	public String getFileMimeType(File aFile) {
-		return extensionToMimeType.get(FilenameUtils.getExtension(aFile.getName()));
+	public String getFileMimeType(String aFileName) {
+		return extensionToMimeType.get(FilenameUtils.getExtension(aFileName));
 	}
 
 	@Override
@@ -52,13 +51,15 @@ public class FileTypeServiceImpl implements FileTypeService {
 	}
 
 	@Override
-	public FileType getFileType(File aFile) {
+	public FileType getFileType(String aFileName) {
+
+		String extension = FilenameUtils.getExtension(aFileName);
 
 		FileType type = null;
 
-		if (imageExtensions.contains(FilenameUtils.getExtension(aFile.getName()))) {
+		if (imageExtensions.contains(extension)) {
 			type = FileType.IMAGE;
-		} else if (songExtensions.contains(FilenameUtils.getExtension(aFile.getName()))) {
+		} else if (songExtensions.contains(extension)) {
 			type = FileType.SONG;
 		}
 

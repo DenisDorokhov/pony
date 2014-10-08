@@ -30,7 +30,7 @@ public class FileScannerImpl implements FileScanner {
 			throw new IllegalArgumentException("File must not be a directory.");
 		}
 
-		FileType type = fileTypeService.getFileType(aFile);
+		FileType type = fileTypeService.getFileType(aFile.getName());
 
 		return type != null ? new ScannedFile(aFile, type) : null;
 	}
