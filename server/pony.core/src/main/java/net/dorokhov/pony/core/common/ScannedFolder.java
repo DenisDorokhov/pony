@@ -82,7 +82,7 @@ public class ScannedFolder {
 	private void doGetImageFiles(List<ScannedFile> aResult, boolean aRecursive) {
 
 		for (ScannedFile file : childFiles) {
-			if (file.getType() == ScannedFile.Type.IMAGE) {
+			if (file.getType() == FileType.IMAGE) {
 				aResult.add(file);
 			}
 		}
@@ -97,7 +97,7 @@ public class ScannedFolder {
 	private void doGetSongFiles(List<ScannedFile> aResult, boolean aRecursive) {
 
 		for (ScannedFile file : childFiles) {
-			if (file.getType() == ScannedFile.Type.SONG) {
+			if (file.getType() == FileType.SONG) {
 				aResult.add(file);
 			}
 		}

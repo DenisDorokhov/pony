@@ -3,7 +3,7 @@ package net.dorokhov.pony.core.service;
 import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.dao.InstallationDao;
 import net.dorokhov.pony.core.domain.Config;
-import net.dorokhov.pony.core.common.dictionary.ConfigOptions;
+import net.dorokhov.pony.core.common.ConfigOptions;
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.exception.NotInstalledException;

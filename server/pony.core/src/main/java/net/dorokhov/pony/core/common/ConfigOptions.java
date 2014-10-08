@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.common.dictionary;
+package net.dorokhov.pony.core.common;
 
 public class ConfigOptions {
 

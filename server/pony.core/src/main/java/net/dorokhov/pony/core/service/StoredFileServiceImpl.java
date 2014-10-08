@@ -30,7 +30,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	private StoredFileDao storedFileDao;
 
-	private MimeTypeService mimeTypeService;
+	private FileTypeService fileTypeService;
 
 	private String storagePath;
 
@@ -42,8 +42,8 @@ public class StoredFileServiceImpl implements StoredFileService {
 	}
 
 	@Autowired
-	public void setMimeTypeService(MimeTypeService aMimeTypeService) {
-		mimeTypeService = aMimeTypeService;
+	public void setFileTypeService(FileTypeService aFileTypeService) {
+		fileTypeService = aFileTypeService;
 	}
 
 	@Value("${storage.path}")
@@ -271,7 +271,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 			}
 
 			// Append type extension
-			String fileExtension = mimeTypeService.getFileExtension(aCommand.getMimeType());
+			String fileExtension = fileTypeService.getFileExtension(aCommand.getMimeType());
 			if (fileExtension != null) {
 				buf.append(".").append(fileExtension);
 			}

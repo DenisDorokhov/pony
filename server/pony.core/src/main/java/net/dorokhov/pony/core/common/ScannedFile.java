@@ -4,15 +4,11 @@ import java.io.File;
 
 public class ScannedFile {
 
-	public static enum Type {
-		SONG, IMAGE
-	}
-
 	private File file;
 
-	private Type type;
+	private FileType type;
 
-	public ScannedFile(File aFile, Type aType) {
+	public ScannedFile(File aFile, FileType aType) {
 
 		if (aFile == null) {
 			throw new NullPointerException();
@@ -29,7 +25,7 @@ public class ScannedFile {
 		return file;
 	}
 
-	public Type getType() {
+	public FileType getType() {
 		return type;
 	}
 }

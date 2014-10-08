@@ -1,9 +1,10 @@
 package net.dorokhov.pony.core.test.unit;
 
+import net.dorokhov.pony.core.common.FileType;
 import net.dorokhov.pony.core.common.ScannedFile;
 import net.dorokhov.pony.core.common.ScannedFolder;
-import net.dorokhov.pony.core.service.FileScanner;
 import net.dorokhov.pony.core.service.FileScannerImpl;
+import net.dorokhov.pony.core.service.FileTypeServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -24,12 +25,13 @@ public class FileScannerImplTest {
 	private static final String TEST_SONG_PATH = "data/Metallica-Battery-with_artwork.mp3";
 	private static final String TEST_OTHER_PATH = "data/mp3-info.txt";
 
-	private FileScanner service;
+	private FileScannerImpl service;
 
 	@Before
 	public void setUp() throws Exception {
 
 		service = new FileScannerImpl();
+		service.setFileTypeService(new FileTypeServiceImpl());
 
 		FileUtils.deleteDirectory(TEST_FOLDER);
 	}
@@ -49,12 +51,12 @@ public class FileScannerImplTest {
 		ScannedFile scannedImage = service.scanFile(testImage);
 
 		Assert.assertNotNull(scannedImage);
-		Assert.assertEquals(ScannedFile.Type.IMAGE, scannedImage.getType());
+		Assert.assertEquals(FileType.IMAGE, scannedImage.getType());
 
 		ScannedFile scannedSong = service.scanFile(testSong);
 
 		Assert.assertNotNull(scannedSong);
-		Assert.assertEquals(ScannedFile.Type.SONG, scannedSong.getType());
+		Assert.assertEquals(FileType.SONG, scannedSong.getType());
 
 		Assert.assertNull(service.scanFile(testOther));
 
