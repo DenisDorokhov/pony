@@ -3,8 +3,6 @@ package net.dorokhov.pony.core.service;
 import net.dorokhov.pony.core.dao.LogMessageDao;
 import net.dorokhov.pony.core.domain.LogMessage;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +14,6 @@ import java.util.List;
 
 @Service
 public class LogServiceImpl implements LogService {
-
-	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	private LogMessageDao logMessageDao;
 
@@ -236,33 +232,8 @@ public class LogServiceImpl implements LogService {
 
 	private LogMessage doLogMessage(LogMessage.Type aType, String aCode, String aText, List<String> aArguments, String aDetails) {
 
-		String logEntry = (aText != null ? aText : aCode).trim();
-		if (aDetails != null) {
-			logEntry += "\n" + aDetails.trim();
-		}
-
-		switch (aType) {
-
-			case DEBUG:
-				log.debug(logEntry);
-				break;
-
-			case INFO:
-				log.info(logEntry);
-				break;
-
-			case WARN:
-				log.warn(logEntry);
-				break;
-
-			case ERROR:
-				log.error(logEntry);
-				break;
-		}
-
 		LogMessage message = new LogMessage();
 
-		message.setDate(new Date());
 		message.setType(aType);
 		message.setCode(aCode);
 		message.setText(aText);

@@ -8,6 +8,7 @@ import java.io.File;
 public interface FileScanner {
 
 	public ScannedFile scanFile(File aFile);
+
 	public ScannedFolder scanFolder(File aFolder);
 
 }

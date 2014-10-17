@@ -48,6 +48,39 @@ CREATE TABLE config (
 	PRIMARY KEY (id)
 );
 
+CREATE TABLE library_scan_result (
+
+	id BIGINT IDENTITY,
+
+	date TIMESTAMP NOT NULL,
+
+	success BIT(1) NOT NULL,
+
+	duration BIGINT NOT NULL,
+	scanned_song_count BIGINT NOT NULL,
+	scanned_folder_count BIGINT NOT NULL,
+	created_artist_count BIGINT NOT NULL,
+	deleted_artist_count BIGINT NOT NULL,
+	created_album_count BIGINT NOT NULL,
+	deleted_album_count BIGINT NOT NULL,
+	created_song_count BIGINT NOT NULL,
+	updated_song_count BIGINT NOT NULL,
+	deleted_song_count BIGINT NOT NULL,
+	created_artwork_count BIGINT NOT NULL,
+	deleted_artwork_count BIGINT NOT NULL
+);
+
+CREATE INDEX index_library_scan_result_date ON library_scan_result(date);
+
+CREATE TABLE library_scan_result_folder (
+
+	library_scan_result_id BIGINT NOT NULL,
+
+	path VARCHAR(255) NOT NULL,
+
+	PRIMARY KEY (library_scan_result_id, path)
+);
+
 CREATE TABLE stored_file (
 
 	id BIGINT IDENTITY,
