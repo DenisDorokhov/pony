@@ -16,8 +16,8 @@ CREATE TABLE log_message (
 
 	type VARCHAR(255) NOT NULL,
 
-	message_code VARCHAR(255) NOT NULL,
-	message_details LONGVARCHAR
+	code VARCHAR(255) NOT NULL,
+	details LONGVARCHAR
 );
 
 CREATE INDEX index_log_message_date ON log_message(date);

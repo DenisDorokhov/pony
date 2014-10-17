@@ -20,11 +20,11 @@ public class LogMessage {
 
 	private Type type;
 
-	private String messageCode;
+	private String code;
 
-	private String messageDetails;
+	private String details;
 
-	private List<String> messageArguments;
+	private List<String> arguments;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +39,7 @@ public class LogMessage {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "date")
+	@NotNull
 	public Date getDate() {
 		return date;
 	}
@@ -57,38 +58,45 @@ public class LogMessage {
 		type = aType;
 	}
 
-	@Column(name = "message_code")
+	@Column(name = "code")
 	@NotNull
-	public String getMessageCode() {
-		return messageCode;
+	public String getCode() {
+		return code;
 	}
 
-	public void setMessageCode(String aMessage) {
-		messageCode = aMessage;
+	public void setCode(String aMessage) {
+		code = aMessage;
 	}
 
-	@Column(name = "message_details")
-	public String getMessageDetails() {
-		return messageDetails;
+	@Column(name = "details")
+	public String getDetails() {
+		return details;
 	}
 
-	public void setMessageDetails(String aMessageDetails) {
-		messageDetails = aMessageDetails;
+	public void setDetails(String aMessageDetails) {
+		details = aMessageDetails;
 	}
 
 	@Column(name = "value")
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "log_message_arguments", joinColumns = @JoinColumn(name="log_message_id"))
-	public List<String> getMessageArguments() {
+	@CollectionTable(name = "log_message_argument", joinColumns = @JoinColumn(name="log_message_id"))
+	public List<String> getArguments() {
 
-		if (messageArguments == null) {
-			messageArguments = new ArrayList<>();
+		if (arguments == null) {
+			arguments = new ArrayList<>();
 		}
 
-		return messageArguments;
+		return arguments;
 	}
 
-	public void setMessageArguments(List<String> aArguments) {
-		messageArguments = aArguments;
+	public void setArguments(List<String> aArguments) {
+		arguments = aArguments;
+	}
+
+	@PrePersist
+	public void prePersist() {
+		if (getDate() == null) {
+			setDate(new Date());
+		}
 	}
 }

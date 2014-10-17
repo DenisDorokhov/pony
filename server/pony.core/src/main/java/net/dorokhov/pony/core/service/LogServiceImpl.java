@@ -29,13 +29,13 @@ public class LogServiceImpl implements LogService {
 	@Override
 	@Transactional(readOnly = true)
 	public Page<LogMessage> getByType(LogMessage.Type aType, Pageable aPageable) {
-		return logMessageDao.findByTypeGreaterThan(aType, aPageable);
+		return logMessageDao.findByTypeGreaterThanEqual(aType, aPageable);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public Page<LogMessage> getByTypeAndDate(LogMessage.Type aType, Date aMinDate, Date aMaxDate, Pageable aPageable) {
-		return logMessageDao.findByTypeGreaterThanAndDateBetween(aType, aMinDate, aMaxDate, aPageable);
+		return logMessageDao.findByTypeGreaterThanEqualAndDateBetween(aType, aMinDate, aMaxDate, aPageable);
 	}
 
 	@Override
@@ -47,35 +47,35 @@ public class LogServiceImpl implements LogService {
 	@Override
 	@Transactional
 	public LogMessage debug(String aMessageCode, List<String> aMessageArguments) {
-		return debug(aMessageCode, aMessageArguments, (String)null);
+		return debug(aMessageCode, (String)null, aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage debug(String aMessageCode, Throwable aThrowable) {
-		return debug(aMessageCode, null, aThrowable);
+		return debug(aMessageCode, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable) {
+	public LogMessage debug(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return debug(aMessageCode, aMessageArguments, ExceptionUtils.getStackTrace(aThrowable));
+		return debug(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage debug(String aMessageCode, String aMessageDetails) {
-		return debug(aMessageCode, null, aMessageDetails);
+		return debug(aMessageCode, aMessageDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, String aMessageDetails) {
+	public LogMessage debug(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
 
 		if (aMessageCode == null) {
 			throw new NullPointerException("Message must not be null.");
@@ -95,35 +95,35 @@ public class LogServiceImpl implements LogService {
 	@Override
 	@Transactional
 	public LogMessage info(String aMessageCode, List<String> aMessageArguments) {
-		return info(aMessageCode, aMessageArguments, (String)null);
+		return info(aMessageCode, (String)null, aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage info(String aMessageCode, Throwable aThrowable) {
-		return info(aMessageCode, null, aThrowable);
+		return info(aMessageCode, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable) {
+	public LogMessage info(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return info(aMessageCode, aMessageArguments, ExceptionUtils.getStackTrace(aThrowable));
+		return info(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage info(String aMessageCode, String aMessageDetails) {
-		return info(aMessageCode, null, aMessageDetails);
+		return info(aMessageCode, aMessageDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, List<String> aMessageArguments, String aMessageDetails) {
+	public LogMessage info(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
 
 		if (aMessageCode == null) {
 			throw new NullPointerException("Message must not be null.");
@@ -143,35 +143,35 @@ public class LogServiceImpl implements LogService {
 	@Override
 	@Transactional
 	public LogMessage warn(String aMessageCode, List<String> aMessageArguments) {
-		return warn(aMessageCode, aMessageArguments, (String)null);
+		return warn(aMessageCode, (String)null, aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage warn(String aMessageCode, Exception aException) {
-		return warn(aMessageCode, null, aException);
+		return warn(aMessageCode, aException, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable) {
+	public LogMessage warn(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return warn(aMessageCode, aMessageArguments, ExceptionUtils.getStackTrace(aThrowable));
+		return warn(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage warn(String aMessageCode, String aMessageDetails) {
-		return warn(aMessageCode, null, aMessageDetails);
+		return warn(aMessageCode, aMessageDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, String aMessageDetails) {
+	public LogMessage warn(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
 
 		if (aMessageCode == null) {
 			throw new NullPointerException("Message must not be null.");
@@ -191,35 +191,35 @@ public class LogServiceImpl implements LogService {
 	@Override
 	@Transactional
 	public LogMessage error(String aMessageCode, List<String> aArguments) {
-		return error(aMessageCode, aArguments, (String)null);
+		return error(aMessageCode, (String)null, aArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage error(String aMessageCode, Throwable aThrowable) {
-		return error(aMessageCode, null, aThrowable);
+		return error(aMessageCode, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable) {
+	public LogMessage error(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return error(aMessageCode, aMessageArguments, ExceptionUtils.getStackTrace(aThrowable));
+		return error(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
 	}
 
 	@Override
 	@Transactional
 	public LogMessage error(String aMessageCode, String aMessageDetails) {
-		return error(aMessageCode, null, aMessageDetails);
+		return error(aMessageCode, aMessageDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, List<String> aMessageArguments, String aMessageDetails) {
+	public LogMessage error(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
 
 		if (aMessageCode == null) {
 			throw new NullPointerException("Message must not be null.");
@@ -236,9 +236,9 @@ public class LogServiceImpl implements LogService {
 
 		message.setDate(new Date());
 		message.setType(aType);
-		message.setMessageCode(aMessageCode);
-		message.setMessageArguments(aMessageArguments);
-		message.setMessageDetails(aMessageDetails);
+		message.setCode(aMessageCode);
+		message.setArguments(aMessageArguments);
+		message.setDetails(aMessageDetails);
 
 		return logMessageDao.save(message);
 	}

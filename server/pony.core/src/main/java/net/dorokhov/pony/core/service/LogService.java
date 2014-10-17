@@ -16,35 +16,35 @@ public interface LogService {
 	public LogMessage debug(String aMessageCode, List<String> aMessageArguments);
 
 	public LogMessage debug(String aMessageCode, Throwable aThrowable);
-	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+	public LogMessage debug(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments);
 
 	public LogMessage debug(String aMessageCode, String aMessageDetails);
-	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+	public LogMessage debug(String aMessageCode, String aMessageDetails, List<String> aMessageArguments);
 
 	public LogMessage info(String aMessageCode);
 	public LogMessage info(String aMessageCode, List<String> aMessageArguments);
 
 	public LogMessage info(String aMessageCode, Throwable aThrowable);
-	public LogMessage info(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+	public LogMessage info(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments);
 
 	public LogMessage info(String aMessageCode, String aMessageDetails);
-	public LogMessage info(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+	public LogMessage info(String aMessageCode, String aMessageDetails, List<String> aMessageArguments);
 
 	public LogMessage warn(String aMessageCode);
 	public LogMessage warn(String aMessageCode, List<String> aMessageArguments);
 
 	public LogMessage warn(String aMessageCode, Exception aException);
-	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+	public LogMessage warn(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments);
 
 	public LogMessage warn(String aMessageCode, String aMessageDetails);
-	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+	public LogMessage warn(String aMessageCode, String aMessageDetails, List<String> aMessageArguments);
 
 	public LogMessage error(String aMessageCode);
 	public LogMessage error(String aMessageCode, List<String> aArguments);
 
 	public LogMessage error(String aMessageCode, Throwable aThrowable);
-	public LogMessage error(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+	public LogMessage error(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments);
 
 	public LogMessage error(String aMessageCode, String aMessageDetails);
-	public LogMessage error(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+	public LogMessage error(String aMessageCode, String aMessageDetails, List<String> aMessageArguments);
 }
