@@ -17,6 +17,7 @@ CREATE TABLE log_message (
 	type VARCHAR(255) NOT NULL,
 
 	code VARCHAR(255) NOT NULL,
+	text LONGVARCHAR,
 	details LONGVARCHAR
 );
 

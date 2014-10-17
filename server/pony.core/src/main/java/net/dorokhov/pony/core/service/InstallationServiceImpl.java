@@ -24,6 +24,8 @@ public class InstallationServiceImpl implements InstallationService {
 
 	private ConfigDao configDao;
 
+	private LogService logService;
+
 	@Autowired
 	public void setInstallationDao(InstallationDao aInstallationDao) {
 		installationDao = aInstallationDao;
@@ -32,6 +34,11 @@ public class InstallationServiceImpl implements InstallationService {
 	@Autowired
 	public void setConfigDao(ConfigDao aConfigDao) {
 		configDao = aConfigDao;
+	}
+
+	@Autowired
+	public void setLogService(LogService aLogService) {
+		logService = aLogService;
 	}
 
 	@Override
@@ -59,7 +66,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 		configDao.save(config);
 
-		log.info("Successfully installed.");
+		logService.info("installationService.installed", "Successfully installed.");
 
 		return installation;
 	}

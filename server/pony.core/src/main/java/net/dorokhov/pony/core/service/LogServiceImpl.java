@@ -28,6 +28,12 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public long getCount() {
+		return logMessageDao.count();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Page<LogMessage> getByType(LogMessage.Type aType, Pageable aPageable) {
 		return logMessageDao.findByTypeGreaterThanEqual(aType, aPageable);
 	}
@@ -40,205 +46,228 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode) {
-		return debug(aMessageCode, (String)null);
+	public LogMessage debug(String aCode, String aText) {
+		return debug(aCode, aText, (String)null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, List<String> aMessageArguments) {
-		return debug(aMessageCode, (String)null, aMessageArguments);
+	public LogMessage debug(String aCode, String aText, List<String> aArguments) {
+		return debug(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, Throwable aThrowable) {
-		return debug(aMessageCode, aThrowable, null);
+	public LogMessage debug(String aCode, String aText, Throwable aThrowable) {
+		return debug(aCode, aText, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
+	public LogMessage debug(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return debug(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
+		return debug(aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, String aMessageDetails) {
-		return debug(aMessageCode, aMessageDetails, null);
+	public LogMessage debug(String aCode, String aText, String aDetails) {
+		return debug(aCode, aText, aDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage debug(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
+	public LogMessage debug(String aCode, String aText, String aDetails, List<String> aArguments) {
 
-		if (aMessageCode == null) {
+		if (aCode == null) {
 			throw new NullPointerException("Message must not be null.");
 		}
 
-		log.debug(aMessageCode + "\n" + aMessageDetails);
-
-		return saveLogMessage(LogMessage.Type.DEBUG, aMessageCode, aMessageArguments, aMessageDetails);
+		return doLogMessage(LogMessage.Type.DEBUG, aCode, aText, aArguments, aDetails);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode) {
-		return info(aMessageCode, (String)null);
+	public LogMessage info(String aCode, String aText) {
+		return info(aCode, aText, (String)null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, List<String> aMessageArguments) {
-		return info(aMessageCode, (String)null, aMessageArguments);
+	public LogMessage info(String aCode, String aText, List<String> aArguments) {
+		return info(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, Throwable aThrowable) {
-		return info(aMessageCode, aThrowable, null);
+	public LogMessage info(String aCode, String aText, Throwable aThrowable) {
+		return info(aCode, aText, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
+	public LogMessage info(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return info(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
+		return info(aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, String aMessageDetails) {
-		return info(aMessageCode, aMessageDetails, null);
+	public LogMessage info(String aCode, String aText, String aDetails) {
+		return info(aCode, aText, aDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage info(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
+	public LogMessage info(String aCode, String aText, String aDetails, List<String> aArguments) {
 
-		if (aMessageCode == null) {
+		if (aCode == null) {
 			throw new NullPointerException("Message must not be null.");
 		}
 
-		log.info(aMessageCode + "\n" + aMessageDetails);
-
-		return saveLogMessage(LogMessage.Type.INFO, aMessageCode, aMessageArguments, aMessageDetails);
+		return doLogMessage(LogMessage.Type.INFO, aCode, aText, aArguments, aDetails);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode) {
-		return warn(aMessageCode, (String)null);
+	public LogMessage warn(String aCode, String aText) {
+		return warn(aCode, aText, (String)null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, List<String> aMessageArguments) {
-		return warn(aMessageCode, (String)null, aMessageArguments);
+	public LogMessage warn(String aCode, String aText, List<String> aArguments) {
+		return warn(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, Exception aException) {
-		return warn(aMessageCode, aException, null);
+	public LogMessage warn(String aCode, String aText, Exception aException) {
+		return warn(aCode, aText, aException, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
+	public LogMessage warn(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return warn(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
+		return warn(aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, String aMessageDetails) {
-		return warn(aMessageCode, aMessageDetails, null);
+	public LogMessage warn(String aCode, String aText, String aDetails) {
+		return warn(aCode, aText, aDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage warn(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
+	public LogMessage warn(String aCode, String aText, String aDetails, List<String> aArguments) {
 
-		if (aMessageCode == null) {
+		if (aCode == null) {
 			throw new NullPointerException("Message must not be null.");
 		}
 
-		log.warn(aMessageCode + "\n" + aMessageDetails);
-
-		return saveLogMessage(LogMessage.Type.WARN, aMessageCode, aMessageArguments, aMessageDetails);
+		return doLogMessage(LogMessage.Type.WARN, aCode, aText, aArguments, aDetails);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode) {
-		return error(aMessageCode, (String)null);
+	public LogMessage error(String aCode, String aText) {
+		return error(aCode, aText, (String)null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, List<String> aArguments) {
-		return error(aMessageCode, (String)null, aArguments);
+	public LogMessage error(String aCode, String aText, List<String> aArguments) {
+		return error(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, Throwable aThrowable) {
-		return error(aMessageCode, aThrowable, null);
+	public LogMessage error(String aCode, String aText, Throwable aThrowable) {
+		return error(aCode, aText, aThrowable, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, Throwable aThrowable, List<String> aMessageArguments) {
+	public LogMessage error(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
 			throw new NullPointerException("Exception must not be null.");
 		}
 
-		return error(aMessageCode, ExceptionUtils.getStackTrace(aThrowable).trim(), aMessageArguments);
+		return error(aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, String aMessageDetails) {
-		return error(aMessageCode, aMessageDetails, null);
+	public LogMessage error(String aCode, String aText, String aDetails) {
+		return error(aCode, aText, aDetails, null);
 	}
 
 	@Override
 	@Transactional
-	public LogMessage error(String aMessageCode, String aMessageDetails, List<String> aMessageArguments) {
+	public LogMessage error(String aCode, String aText, String aDetails, List<String> aArguments) {
 
-		if (aMessageCode == null) {
+		if (aCode == null) {
 			throw new NullPointerException("Message must not be null.");
 		}
 
-		log.error(aMessageCode + "\n" + aMessageDetails);
-
-		return saveLogMessage(LogMessage.Type.ERROR, aMessageCode, aMessageArguments, aMessageDetails);
+		return doLogMessage(LogMessage.Type.ERROR, aCode, aText, aArguments, aDetails);
 	}
 
-	private LogMessage saveLogMessage(LogMessage.Type aType, String aMessageCode, List<String> aMessageArguments, String aMessageDetails) {
+	@Override
+	@Transactional
+	public void deleteAll() {
+		logMessageDao.deleteAll();
+	}
+
+	private LogMessage doLogMessage(LogMessage.Type aType, String aCode, String aText, List<String> aArguments, String aDetails) {
+
+		String logEntry = (aText != null ? aText : aCode).trim();
+		if (aDetails != null) {
+			logEntry += "\n" + aDetails.trim();
+		}
+
+		switch (aType) {
+
+			case DEBUG:
+				log.debug(logEntry);
+				break;
+
+			case INFO:
+				log.info(logEntry);
+				break;
+
+			case WARN:
+				log.warn(logEntry);
+				break;
+
+			case ERROR:
+				log.error(logEntry);
+				break;
+		}
 
 		LogMessage message = new LogMessage();
 
 		message.setDate(new Date());
 		message.setType(aType);
-		message.setCode(aMessageCode);
-		message.setArguments(aMessageArguments);
-		message.setDetails(aMessageDetails);
+		message.setCode(aCode);
+		message.setText(aText);
+		message.setArguments(aArguments);
+		message.setDetails(aDetails);
 
 		return logMessageDao.save(message);
 	}

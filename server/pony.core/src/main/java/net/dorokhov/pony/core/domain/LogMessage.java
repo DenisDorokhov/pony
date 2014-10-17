@@ -22,6 +22,8 @@ public class LogMessage {
 
 	private String code;
 
+	private String text;
+
 	private String details;
 
 	private List<String> arguments;
@@ -66,6 +68,15 @@ public class LogMessage {
 
 	public void setCode(String aMessage) {
 		code = aMessage;
+	}
+
+	@Column(name = "text")
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String aText) {
+		text = aText;
 	}
 
 	@Column(name = "details")
