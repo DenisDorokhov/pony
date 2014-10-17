@@ -133,6 +133,28 @@ public class Config implements AbstractEntity<String> {
 	}
 
 	@Override
+	public int hashCode() {
+		return getId() != null ? getId().hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object aObj) {
+
+		if (this == aObj) {
+			return true;
+		}
+
+		if (aObj != null && getId() != null && getClass().equals(aObj.getClass())) {
+
+			Config entity = (Config)aObj;
+
+			return getId().equals(entity.getId());
+		}
+
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		return "Configuration{" +
 				"id=" + getId() +

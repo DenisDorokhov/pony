@@ -110,4 +110,26 @@ public class LogMessage {
 			setDate(new Date());
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		return getId() != null ? getId().hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object aObj) {
+
+		if (this == aObj) {
+			return true;
+		}
+
+		if (aObj != null && getId() != null && getClass().equals(aObj.getClass())) {
+
+			LogMessage entity = (LogMessage)aObj;
+
+			return getId().equals(entity.getId());
+		}
+
+		return false;
+	}
 }

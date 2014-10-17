@@ -37,6 +37,8 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 	private String name;
 
+	private String genreName;
+
 	private String artistName;
 
 	private String albumArtistName;
@@ -46,6 +48,10 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	private Integer year;
 
 	private StoredFile artwork;
+
+	private Album album;
+
+	private Genre genre;
 
 	@Column(name = "path", nullable = false, unique = true)
 	@NotNull
@@ -153,6 +159,15 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		name = aName;
 	}
 
+	@Column(name = "genre_name")
+	public String getGenreName() {
+		return genreName;
+	}
+
+	public void setGenreName(String aGenreName) {
+		genreName = aGenreName;
+	}
+
 	@Column(name = "artist_name")
 	public String getArtistName() {
 		return artistName;
@@ -199,8 +214,6 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 		artwork = aArtwork;
 	}
 
-	private Album album;
-
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id", nullable = false)
 	@NotNull
@@ -210,6 +223,17 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 	public void setAlbum(Album aAlbum) {
 		album = aAlbum;
+	}
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "genre_id", nullable = false)
+	@NotNull
+	public Genre getGenre() {
+		return genre;
+	}
+
+	public void setGenre(Genre aGenre) {
+		genre = aGenre;
 	}
 
 	@Override

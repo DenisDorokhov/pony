@@ -16,20 +16,30 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public Song findByPath(String aPath);
 
 	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre " +
 			"INNER JOIN FETCH s.album a " +
 			"INNER JOIN FETCH a.artist " +
 			"WHERE s.id = ?1")
 	public Song findById(Long aId);
 
 	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre " +
 			"INNER JOIN FETCH s.album a " +
 			"INNER JOIN FETCH a.artist " +
 			"WHERE a.id = ?1")
 	public List<Song> findByAlbumId(Long aAlbumId, Sort aSort);
 
 	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre " +
 			"INNER JOIN FETCH s.album a " +
 			"INNER JOIN FETCH a.artist " +
 			"WHERE a.artist.id = ?1")
 	public List<Song> findByAlbumArtistId(Long aArtistId, Sort aSort);
+
+	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre " +
+			"INNER JOIN FETCH s.album a " +
+			"INNER JOIN FETCH a.artist " +
+			"WHERE s.genre.id = ?1")
+	public List<Song> findByGenreId(Long aGenreId);
 }

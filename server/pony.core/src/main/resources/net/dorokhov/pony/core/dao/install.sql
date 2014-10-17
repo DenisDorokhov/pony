@@ -71,6 +71,20 @@ CREATE TABLE stored_file (
 CREATE INDEX index_stored_file_checksum ON stored_file(checksum);
 CREATE INDEX index_stored_file_tag ON stored_file(tag);
 
+CREATE TABLE genre (
+
+	id BIGINT IDENTITY,
+
+	creation_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP NOT NULL,
+
+	name VARCHAR(255) NOT NULL,
+	song_count INT NOT NULL,
+	song_size BIGINT NOT NULL
+);
+
+CREATE INDEX index_genre_name ON genre(name);
+
 CREATE TABLE artist (
 
 	id BIGINT IDENTITY,
@@ -132,6 +146,7 @@ CREATE TABLE song (
 	track_count INT,
 
 	name VARCHAR(255),
+	genre_name VARCHAR(255),
 	artist_name VARCHAR(255),
 	album_artist_name VARCHAR(255),
 	album_name VARCHAR(255),
@@ -141,8 +156,10 @@ CREATE TABLE song (
 	artwork_stored_file_id BIGINT,
 
 	album_id BIGINT NOT NULL,
+	genre_id BIGINT NOT NULL,
 
 	FOREIGN KEY (album_id) REFERENCES album(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE,
 
 	UNIQUE (path)

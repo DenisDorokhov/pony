@@ -2,9 +2,11 @@ package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.dao.AlbumDao;
 import net.dorokhov.pony.core.dao.ArtistDao;
+import net.dorokhov.pony.core.dao.GenreDao;
 import net.dorokhov.pony.core.dao.SongDao;
 import net.dorokhov.pony.core.domain.Album;
 import net.dorokhov.pony.core.domain.Artist;
+import net.dorokhov.pony.core.domain.Genre;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.service.SearchService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
@@ -14,6 +16,7 @@ import org.junit.Test;
 
 public class SearchServiceIT extends AbstractIntegrationCase {
 
+	private GenreDao genreDao;
 	private ArtistDao artistDao;
 	private AlbumDao albumDao;
 	private SongDao songDao;
@@ -22,6 +25,7 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 	@Before
 	public void setUp() throws Exception {
+		genreDao = context.getBean(GenreDao.class);
 		artistDao = context.getBean(ArtistDao.class);
 		albumDao = context.getBean(AlbumDao.class);
 		songDao = context.getBean(SongDao.class);
@@ -37,6 +41,10 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(0, searchService.searchAlbums("alb foo", 10).size());
 		Assert.assertEquals(0, searchService.searchSongs("so foo", 10).size());
 
+		Genre genre = buildGenre();
+
+		genre = genreDao.save(genre);
+
 		Artist artist = buildArtist();
 
 		artist = artistDao.save(artist);
@@ -45,7 +53,7 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 		album = albumDao.save(album);
 
-		songDao.save(buildSong(album));
+		songDao.save(buildSong(album, genre));
 
 		Assert.assertEquals(1, searchService.searchArtists("the art Foo", 10).size());
 		Assert.assertEquals(1, searchService.searchAlbums("Alb of foo", 10).size());
@@ -81,7 +89,16 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 		return album;
 	}
 
-	private Song buildSong(Album aAlbum) {
+	private Genre buildGenre() {
+
+		Genre genre = new Genre();
+
+		genre.setName("someGenre");
+
+		return genre;
+	}
+
+	private Song buildSong(Album aAlbum, Genre aGenre) {
 
 		Song song = new Song();
 
@@ -96,6 +113,7 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 		song.setName("song1 foobar");
 
 		song.setAlbum(aAlbum);
+		song.setGenre(aGenre);
 
 		return song;
 	}
