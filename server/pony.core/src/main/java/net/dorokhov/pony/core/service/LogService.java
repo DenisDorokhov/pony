@@ -5,27 +5,46 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
+import java.util.List;
 
 public interface LogService {
-
-	public LogMessage getById(Long aId);
 
 	public Page<LogMessage> getByType(LogMessage.Type aMinimalType, Pageable aPageable);
 	public Page<LogMessage> getByTypeAndDate(LogMessage.Type aMinimalType, Date aMinDate, Date aMaxDate, Pageable aPageable);
 
-	public LogMessage debug(String aMessage);
-	public LogMessage debug(String aMessage, Exception aException);
-	public LogMessage debug(String aMessage, String aDetails);
+	public LogMessage debug(String aMessageCode);
+	public LogMessage debug(String aMessageCode, List<String> aMessageArguments);
 
-	public LogMessage info(String aMessage);
-	public LogMessage info(String aMessage, Exception aException);
-	public LogMessage info(String aMessage, String aDetails);
+	public LogMessage debug(String aMessageCode, Throwable aThrowable);
+	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
 
-	public LogMessage warn(String aMessage);
-	public LogMessage warn(String aMessage, Exception aException);
-	public LogMessage warn(String aMessage, String aDetails);
+	public LogMessage debug(String aMessageCode, String aMessageDetails);
+	public LogMessage debug(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
 
-	public LogMessage error(String aMessage);
-	public LogMessage error(String aMessage, Exception aException);
-	public LogMessage error(String aMessage, String aDetails);
+	public LogMessage info(String aMessageCode);
+	public LogMessage info(String aMessageCode, List<String> aMessageArguments);
+
+	public LogMessage info(String aMessageCode, Throwable aThrowable);
+	public LogMessage info(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+
+	public LogMessage info(String aMessageCode, String aMessageDetails);
+	public LogMessage info(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+
+	public LogMessage warn(String aMessageCode);
+	public LogMessage warn(String aMessageCode, List<String> aMessageArguments);
+
+	public LogMessage warn(String aMessageCode, Exception aException);
+	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+
+	public LogMessage warn(String aMessageCode, String aMessageDetails);
+	public LogMessage warn(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
+
+	public LogMessage error(String aMessageCode);
+	public LogMessage error(String aMessageCode, List<String> aArguments);
+
+	public LogMessage error(String aMessageCode, Throwable aThrowable);
+	public LogMessage error(String aMessageCode, List<String> aMessageArguments, Throwable aThrowable);
+
+	public LogMessage error(String aMessageCode, String aMessageDetails);
+	public LogMessage error(String aMessageCode, List<String> aMessageArguments, String aMessageDetails);
 }

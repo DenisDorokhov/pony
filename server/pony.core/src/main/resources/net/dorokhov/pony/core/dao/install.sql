@@ -16,12 +16,24 @@ CREATE TABLE log_message (
 
 	type VARCHAR(255) NOT NULL,
 
-	message LONGVARCHAR NOT NULL,
-	details LONGVARCHAR
+	message_code VARCHAR(255) NOT NULL,
+	message_details LONGVARCHAR
 );
 
-CREATE INDEX index_log_message_creation_date ON log_message(date);
+CREATE INDEX index_log_message_date ON log_message(date);
 CREATE INDEX index_log_message_type ON log_message(type);
+CREATE INDEX index_log_message_date_type ON log_message(date, type);
+
+CREATE TABLE log_message_argument (
+
+	log_message_id BIGINT NOT NULL,
+
+	value LONGVARCHAR NOT NULL,
+
+	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+	PRIMARY KEY (log_message_id, value)
+);
 
 CREATE TABLE config (
 

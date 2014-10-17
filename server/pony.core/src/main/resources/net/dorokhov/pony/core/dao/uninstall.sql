@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS installation;
+DROP TABLE IF EXISTS log_message_argument;
 DROP TABLE IF EXISTS log_message;
 DROP TABLE IF EXISTS config;
 DROP TABLE IF EXISTS song;

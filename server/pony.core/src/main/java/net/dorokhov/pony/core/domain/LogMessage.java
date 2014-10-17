@@ -2,7 +2,9 @@ package net.dorokhov.pony.core.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "log_message")
@@ -18,9 +20,11 @@ public class LogMessage {
 
 	private Type type;
 
-	private String message;
+	private String messageCode;
 
-	private String details;
+	private String messageDetails;
+
+	private List<String> messageArguments;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,22 +57,38 @@ public class LogMessage {
 		type = aType;
 	}
 
-	@Column(name = "message")
+	@Column(name = "message_code")
 	@NotNull
-	public String getMessage() {
-		return message;
+	public String getMessageCode() {
+		return messageCode;
 	}
 
-	public void setMessage(String aMessage) {
-		message = aMessage;
+	public void setMessageCode(String aMessage) {
+		messageCode = aMessage;
 	}
 
-	@Column(name = "details")
-	public String getDetails() {
-		return details;
+	@Column(name = "message_details")
+	public String getMessageDetails() {
+		return messageDetails;
 	}
 
-	public void setDetails(String aDetails) {
-		details = aDetails;
+	public void setMessageDetails(String aMessageDetails) {
+		messageDetails = aMessageDetails;
+	}
+
+	@Column(name = "value")
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "log_message_arguments", joinColumns = @JoinColumn(name="log_message_id"))
+	public List<String> getMessageArguments() {
+
+		if (messageArguments == null) {
+			messageArguments = new ArrayList<>();
+		}
+
+		return messageArguments;
+	}
+
+	public void setMessageArguments(List<String> aArguments) {
+		messageArguments = aArguments;
 	}
 }
