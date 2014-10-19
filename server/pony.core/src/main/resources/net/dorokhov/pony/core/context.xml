@@ -25,7 +25,7 @@
         <property name="password" value="" />
     </bean>
 
-    <bean id="hsqlShutdownManager" class="net.dorokhov.pony.core.common.HsqlShutdownManager">
+    <bean id="hsqlShutdownManager" class="net.dorokhov.pony.core.service.HsqlShutdownService">
         <property name="dataSource" ref="dataSource" />
     </bean>
 

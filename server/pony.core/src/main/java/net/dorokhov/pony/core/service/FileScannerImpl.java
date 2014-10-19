@@ -1,14 +1,12 @@
 package net.dorokhov.pony.core.service;
 
 import net.dorokhov.pony.core.common.FileType;
-import net.dorokhov.pony.core.common.ScannedFile;
-import net.dorokhov.pony.core.common.ScannedFolder;
+import net.dorokhov.pony.core.common.LibraryFile;
+import net.dorokhov.pony.core.common.LibraryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class FileScannerImpl implements FileScanner {
@@ -21,7 +19,16 @@ public class FileScannerImpl implements FileScanner {
 	}
 
 	@Override
-	public ScannedFile scanFile(File aFile) {
+	public LibraryFile scanFile(File aFile) {
+		return doScanFile(aFile, null);
+	}
+
+	@Override
+	public LibraryFolder scanFolder(File aFolder) {
+		return doScanFolder(aFolder, null);
+	}
+
+	private LibraryFile doScanFile(File aFile, LibraryFolder aParentFolder) {
 
 		if (!aFile.exists()) {
 			throw new IllegalArgumentException("File must exist.");
@@ -32,11 +39,10 @@ public class FileScannerImpl implements FileScanner {
 
 		FileType type = fileTypeService.getFileType(aFile.getName());
 
-		return type != null ? new ScannedFile(aFile, type) : null;
+		return type != null ? new LibraryFile(aFile, type, aParentFolder) : null;
 	}
 
-	@Override
-	public ScannedFolder scanFolder(File aFolder) {
+	private LibraryFolder doScanFolder(File aFolder, LibraryFolder aParentFolder) {
 
 		if (!aFolder.exists()) {
 			throw new IllegalArgumentException("File must exist.");
@@ -45,26 +51,25 @@ public class FileScannerImpl implements FileScanner {
 			throw new IllegalArgumentException("File must be a directory.");
 		}
 
-		List<ScannedFile> files = new ArrayList<>();
-		List<ScannedFolder> folders = new ArrayList<>();
+		LibraryFolder currentFolder = new LibraryFolder(aFolder, aParentFolder);
 
 		File[] fileList = aFolder.listFiles();
 
 		if (fileList != null) {
 			for (File childFile : fileList) {
 				if (childFile.isDirectory()) {
-					folders.add(scanFolder(childFile));
+					currentFolder.getChildFolders().add(doScanFolder(childFile, currentFolder));
 				} else {
 
-					ScannedFile scannedFile = scanFile(childFile);
+					LibraryFile libraryFile = doScanFile(childFile, currentFolder);
 
-					if (scannedFile != null) {
-						files.add(scannedFile);
+					if (libraryFile != null) {
+						currentFolder.getChildFiles().add(libraryFile);
 					}
 				}
 			}
 		}
 
-		return new ScannedFolder(aFolder, files, folders);
+		return currentFolder;
 	}
 }
