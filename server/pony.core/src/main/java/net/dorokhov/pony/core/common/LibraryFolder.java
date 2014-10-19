@@ -6,11 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class LibraryFolder {
-
-	private final File file;
-
-	private LibraryFolder parentFolder;
+public class LibraryFolder extends LibraryNode {
 
 	private final Set<LibraryImage> childImages;
 	private final Set<LibrarySong> childSongs;
@@ -26,12 +22,7 @@ public class LibraryFolder {
 
 	public LibraryFolder(File aFile, LibraryFolder aParentFolder) {
 
-		if (aFile == null) {
-			throw new NullPointerException("File cannot be null.");
-		}
-
-		file = aFile;
-		parentFolder = aParentFolder;
+		super(aFile, aParentFolder);
 
 		childImages = new HashSet<>();
 		childSongs = new HashSet<>();
@@ -40,18 +31,6 @@ public class LibraryFolder {
 		fileNameToChildImage = new HashMap<>();
 		fileNameToChildSong = new HashMap<>();
 		fileNameToChildFolder = new HashMap<>();
-	}
-
-	public File getFile() {
-		return file;
-	}
-
-	public LibraryFolder getParentFolder() {
-		return parentFolder;
-	}
-
-	public void setParentFolder(LibraryFolder aParentFolder) {
-		parentFolder = aParentFolder;
 	}
 
 	public Set<LibraryImage> getChildImages() {
@@ -208,25 +187,4 @@ public class LibraryFolder {
 		}
 	}
 
-	@Override
-	public int hashCode() {
-		return file.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object aObj) {
-
-		if (this == aObj) {
-			return true;
-		}
-
-		if (aObj != null && getClass().equals(aObj.getClass())) {
-
-			LibraryFolder that = (LibraryFolder) aObj;
-
-			return file.equals(that.file);
-		}
-
-		return false;
-	}
 }
