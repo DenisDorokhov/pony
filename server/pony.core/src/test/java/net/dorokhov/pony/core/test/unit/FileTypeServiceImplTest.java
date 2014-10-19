@@ -22,6 +22,7 @@ public class FileTypeServiceImplTest {
 		Assert.assertEquals("image/jpeg", service.getFileMimeType("foobar.jpg"));
 		Assert.assertEquals("image/jpeg", service.getFileMimeType("foobar.jpeg"));
 		Assert.assertEquals("audio/mpeg3", service.getFileMimeType("foobar.mp3"));
+		Assert.assertEquals("audio/mpeg3", service.getFileMimeType("foobar.MP3"));
 		Assert.assertNull(service.getFileMimeType(".foobar.png"));
 		Assert.assertNull(service.getFileMimeType("foobar.txt"));
 
@@ -33,6 +34,7 @@ public class FileTypeServiceImplTest {
 		Assert.assertEquals(FileTypeService.FileType.IMAGE, service.getFileType("foobar.jpg"));
 		Assert.assertEquals(FileTypeService.FileType.IMAGE, service.getFileType("foobar.jpeg"));
 		Assert.assertEquals(FileTypeService.FileType.IMAGE, service.getFileType("foobar.png"));
+		Assert.assertEquals(FileTypeService.FileType.IMAGE, service.getFileType("foobar.PNG"));
 		Assert.assertEquals(FileTypeService.FileType.SONG, service.getFileType("foobar.mp3"));
 		Assert.assertNull(service.getFileType(".foobar.jpg"));
 		Assert.assertNull(service.getFileType("foobar.txt"));

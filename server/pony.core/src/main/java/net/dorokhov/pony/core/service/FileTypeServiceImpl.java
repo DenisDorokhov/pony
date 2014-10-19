@@ -45,7 +45,7 @@ public class FileTypeServiceImpl implements FileTypeService {
 		String mimeType = null;
 
 		if (!aFileName.trim().startsWith(".")) {
-			mimeType = extensionToMimeType.get(FilenameUtils.getExtension(aFileName));
+			mimeType = extensionToMimeType.get(FilenameUtils.getExtension(aFileName).toLowerCase());
 		}
 
 		return mimeType;
@@ -63,7 +63,7 @@ public class FileTypeServiceImpl implements FileTypeService {
 
 		if (!aFileName.trim().startsWith(".")) {
 
-			String extension = FilenameUtils.getExtension(aFileName);
+			String extension = FilenameUtils.getExtension(aFileName).toLowerCase();
 
 			if (imageExtensions.contains(extension)) {
 				type = FileType.IMAGE;

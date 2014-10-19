@@ -109,27 +109,29 @@ public class ArtworkDiscoveryServiceImpl implements ArtworkDiscoveryService {
 		return artwork;
 	}
 
-	private boolean isImageArtwork(LibraryImage aImage) {
+	private boolean isImageArtworkByName(LibraryImage aImage) {
 
 		String name = FilenameUtils.getBaseName(aImage.getFile().getAbsolutePath()).toLowerCase();
 
-		if (artworkFileNames.contains(name)) {
+		return artworkFileNames.contains(name);
+	}
 
-			SimpleImageInfo info = null;
+	private boolean isImageArtworkBySize(LibraryImage aImage) {
 
-			try {
-				info = new SimpleImageInfo(aImage.getFile());
-			} catch (Exception e) {
-				log.warn("Could not read image data from file [{}]", aImage.getFile().getAbsolutePath(), e);
-			}
+		SimpleImageInfo info = null;
 
-			if (info != null) {
+		try {
+			info = new SimpleImageInfo(aImage.getFile());
+		} catch (Exception e) {
+			log.warn("Could not read image data from file [{}]", aImage.getFile().getAbsolutePath(), e);
+		}
 
-				double sizeRatio = info.getWidth() / info.getHeight();
+		if (info != null) {
 
-				if (sizeRatio <= artworkMaxSizeRatio && sizeRatio >= artworkMinSizeRatio) {
-					return true;
-				}
+			double sizeRatio = info.getWidth() / (double) info.getHeight();
+
+			if (sizeRatio <= artworkMaxSizeRatio && sizeRatio >= artworkMinSizeRatio) {
+				return true;
 			}
 		}
 
@@ -145,22 +147,29 @@ public class ArtworkDiscoveryServiceImpl implements ArtworkDiscoveryService {
 
 	private LibraryImage fetchArtworkFromFolder(LibraryFolder aFolder) {
 
+		List<LibraryImage> candidatesBySize = new ArrayList<>();
+
 		List<LibraryImage> childImages = new ArrayList<>(aFolder.getChildImages());
 		for (LibraryImage image : childImages) {
-			if (isImageArtwork(image)) {
+			if (isImageArtworkBySize(image)) {
+				candidatesBySize.add(image);
+			}
+		}
+
+		Collections.sort(candidatesBySize, new Comparator<LibraryImage>() {
+			@Override
+			public int compare(LibraryImage image1, LibraryImage image2) {
+				return image1.getFile().getName().compareTo(image2.getFile().getName());
+			}
+		});
+
+		for (LibraryImage image : candidatesBySize) {
+			if (isImageArtworkByName(image)) {
 				return image;
 			}
 		}
 
-		if (childImages.size() > 0) {
-
-			Collections.sort(childImages, new Comparator<LibraryImage>() {
-				@Override
-				public int compare(LibraryImage image1, LibraryImage image2) {
-					return image1.getFile().getName().compareTo(image2.getFile().getName());
-				}
-			});
-
+		if (candidatesBySize.size() > 0) {
 			return childImages.get(0);
 		}
 
