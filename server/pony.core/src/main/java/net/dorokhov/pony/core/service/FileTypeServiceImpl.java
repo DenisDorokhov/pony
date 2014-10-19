@@ -41,7 +41,14 @@ public class FileTypeServiceImpl implements FileTypeService {
 
 	@Override
 	public String getFileMimeType(String aFileName) {
-		return extensionToMimeType.get(FilenameUtils.getExtension(aFileName));
+
+		String mimeType = null;
+
+		if (!aFileName.trim().startsWith(".")) {
+			mimeType = extensionToMimeType.get(FilenameUtils.getExtension(aFileName));
+		}
+
+		return mimeType;
 	}
 
 	@Override
@@ -52,14 +59,17 @@ public class FileTypeServiceImpl implements FileTypeService {
 	@Override
 	public FileType getFileType(String aFileName) {
 
-		String extension = FilenameUtils.getExtension(aFileName);
-
 		FileType type = null;
 
-		if (imageExtensions.contains(extension)) {
-			type = FileType.IMAGE;
-		} else if (songExtensions.contains(extension)) {
-			type = FileType.SONG;
+		if (!aFileName.trim().startsWith(".")) {
+
+			String extension = FilenameUtils.getExtension(aFileName);
+
+			if (imageExtensions.contains(extension)) {
+				type = FileType.IMAGE;
+			} else if (songExtensions.contains(extension)) {
+				type = FileType.SONG;
+			}
 		}
 
 		return type;
