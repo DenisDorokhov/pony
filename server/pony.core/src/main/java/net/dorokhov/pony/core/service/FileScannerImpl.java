@@ -1,8 +1,9 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.common.FileType;
 import net.dorokhov.pony.core.common.LibraryFile;
 import net.dorokhov.pony.core.common.LibraryFolder;
+import net.dorokhov.pony.core.common.LibraryImage;
+import net.dorokhov.pony.core.common.LibrarySong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +38,28 @@ public class FileScannerImpl implements FileScanner {
 			throw new IllegalArgumentException("File must not be a directory.");
 		}
 
-		FileType type = fileTypeService.getFileType(aFile.getName());
+		LibraryFile result = null;
 
-		return type != null ? new LibraryFile(aFile, type, aParentFolder) : null;
+		FileTypeService.FileType type = fileTypeService.getFileType(aFile.getName());
+
+		if (type != null) {
+			switch (type) {
+
+				case IMAGE:
+					result = new LibraryImage(aFile, aParentFolder);
+					break;
+
+				case SONG:
+					result = new LibrarySong(aFile, aParentFolder);
+					break;
+			}
+		}
+
+		if (result != null) {
+			result.setMimeType(fileTypeService.getFileMimeType(aFile.getName()));
+		}
+
+		return result;
 	}
 
 	private LibraryFolder doScanFolder(File aFolder, LibraryFolder aParentFolder) {
@@ -58,13 +78,13 @@ public class FileScannerImpl implements FileScanner {
 		if (fileList != null) {
 			for (File childFile : fileList) {
 				if (childFile.isDirectory()) {
-					currentFolder.getChildFolders().add(doScanFolder(childFile, currentFolder));
+					currentFolder.addChildFolder(doScanFolder(childFile, currentFolder));
 				} else {
 
 					LibraryFile libraryFile = doScanFile(childFile, currentFolder);
 
 					if (libraryFile != null) {
-						currentFolder.getChildFiles().add(libraryFile);
+						currentFolder.addChildFile(libraryFile);
 					}
 				}
 			}

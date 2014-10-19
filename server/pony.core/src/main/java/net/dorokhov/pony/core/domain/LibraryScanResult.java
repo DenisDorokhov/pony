@@ -213,7 +213,7 @@ public class LibraryScanResult {
 
 	@Override
 	public int hashCode() {
-		return getId() != null ? getId().hashCode() : super.hashCode();
+		return id != null ? id.hashCode() : super.hashCode();
 	}
 
 	@Override
@@ -223,11 +223,11 @@ public class LibraryScanResult {
 			return true;
 		}
 
-		if (aObj != null && getId() != null && getClass().equals(aObj.getClass())) {
+		if (aObj != null && id != null && getClass().equals(aObj.getClass())) {
 
-			LibraryScanResult entity = (LibraryScanResult)aObj;
+			LibraryScanResult that = (LibraryScanResult) aObj;
 
-			return getId().equals(entity.getId());
+			return id.equals(that.id);
 		}
 
 		return false;

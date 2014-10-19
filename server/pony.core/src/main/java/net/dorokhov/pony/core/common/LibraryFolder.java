@@ -1,8 +1,10 @@
 package net.dorokhov.pony.core.common;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class LibraryFolder {
 
@@ -10,8 +12,17 @@ public class LibraryFolder {
 
 	private LibraryFolder parentFolder;
 
-	private List<LibraryFolder> childFolders;
-	private List<LibraryFile> childFiles;
+	private final Set<LibraryImage> childImages;
+	private final Set<LibrarySong> childSongs;
+	private final Set<LibraryFolder> childFolders;
+
+	private final Map<String, LibraryImage> fileNameToChildImage;
+	private final Map<String, LibrarySong> fileNameToChildSong;
+	private final Map<String, LibraryFolder> fileNameToChildFolder;
+
+	public LibraryFolder(File aFile) {
+		this(aFile, null);
+	}
 
 	public LibraryFolder(File aFile, LibraryFolder aParentFolder) {
 
@@ -20,8 +31,15 @@ public class LibraryFolder {
 		}
 
 		file = aFile;
+		parentFolder = aParentFolder;
 
-		setParentFolder(aParentFolder);
+		childImages = new HashSet<>();
+		childSongs = new HashSet<>();
+		childFolders = new HashSet<>();
+
+		fileNameToChildImage = new HashMap<>();
+		fileNameToChildSong = new HashMap<>();
+		fileNameToChildFolder = new HashMap<>();
 	}
 
 	public File getFile() {
@@ -36,99 +54,179 @@ public class LibraryFolder {
 		parentFolder = aParentFolder;
 	}
 
-	public List<LibraryFolder> getChildFolders() {
+	public Set<LibraryImage> getChildImages() {
+		return new HashSet<>(childImages);
+	}
 
-		if (childFolders == null) {
-			childFolders = new ArrayList<>();
+	public Set<LibraryImage> getChildImages(boolean aRecursive) {
+
+		Set<LibraryImage> result = new HashSet<>();
+
+		doGetChildImages(result, aRecursive);
+
+		return result;
+	}
+
+	public void addChildImage(LibraryImage aImage) {
+		childImages.add(aImage);
+		fileNameToChildImage.put(aImage.getFile().getName(), aImage);
+	}
+
+	public void removeChildImage(LibraryImage aImage) {
+		childImages.remove(aImage);
+		fileNameToChildImage.remove(aImage.getFile().getName());
+	}
+
+	public Set<LibrarySong> getChildSongs() {
+		return new HashSet<>(childSongs);
+	}
+
+	public Set<LibrarySong> getChildSongs(boolean aRecursive) {
+
+		Set<LibrarySong> result = new HashSet<>();
+
+		doGetChildSongs(result, aRecursive);
+
+		return result;
+	}
+
+	public void addChildSong(LibrarySong aSong) {
+		childSongs.add(aSong);
+		fileNameToChildSong.put(aSong.getFile().getName(), aSong);
+	}
+
+	public void removeChildSong(LibrarySong aSong) {
+		childSongs.remove(aSong);
+		fileNameToChildSong.remove(aSong.getFile().getName());
+	}
+
+	public Set<LibraryFolder> getChildFolders() {
+		return new HashSet<>(childFolders);
+	}
+
+	public void addChildFolder(LibraryFolder aFolder) {
+		childFolders.add(aFolder);
+		fileNameToChildFolder.put(aFolder.getFile().getName(), aFolder);
+	}
+
+	public void removeChildFolder(LibraryFolder aFolder) {
+		childFolders.remove(aFolder);
+		fileNameToChildFolder.remove(aFolder.getFile().getName());
+	}
+
+	public Set<LibraryFile> getChildFiles() {
+		return getChildFiles(false);
+	}
+
+	public Set<LibraryFile> getChildFiles(boolean aRecursive) {
+
+		Set<LibraryFile> result = new HashSet<>();
+
+		doGetChildFiles(result, aRecursive);
+
+		return result;
+	}
+
+	public void addChildFile(LibraryFile aFile) {
+		if (aFile instanceof LibraryImage) {
+			addChildImage((LibraryImage)aFile);
+		} else if (aFile instanceof LibrarySong) {
+			addChildSong((LibrarySong)aFile);
+		} else {
+			throw new IllegalArgumentException("Unknown file type.");
 		}
-
-		return childFolders;
 	}
 
-	public void setChildFolders(List<LibraryFolder> aChildFolders) {
-		childFolders = aChildFolders;
-	}
-
-	public List<LibraryFile> getChildFiles() {
-
-		if (childFiles == null) {
-			childFiles = new ArrayList<>();
+	public void removeChildFile(LibraryFile aFile) {
+		if (aFile instanceof LibraryImage) {
+			removeChildImage((LibraryImage)aFile);
+		} else if (aFile instanceof LibrarySong) {
+			removeChildSong((LibrarySong)aFile);
+		} else {
+			throw new IllegalArgumentException("Unknown file type.");
 		}
-
-		return childFiles;
 	}
 
-	public void setChildFiles(List<LibraryFile> aChildFiles) {
-		childFiles = aChildFiles;
+	public LibraryImage getChildImageByName(String aName) {
+		return fileNameToChildImage.get(aName);
+	}
+
+	public LibrarySong getChildSongByName(String aName) {
+		return fileNameToChildSong.get(aName);
 	}
 
 	public LibraryFile getChildFileByName(String aName) {
 
-		for (LibraryFile file : getChildFiles()) {
-			if (file.getFile().getName().equals(aName)) {
-				return file;
-			}
+		LibraryFile result = getChildImageByName(aName);
+
+		if (result == null) {
+			result = getChildSongByName(aName);
 		}
 
-		return null;
+		return result;
 	}
 
 	public LibraryFolder getChildFolderByName(String aName) {
-
-		for (LibraryFolder folder : getChildFolders()) {
-			if (folder.getFile().getName().equals(aName)) {
-				return folder;
-			}
-		}
-
-		return null;
+		return fileNameToChildFolder.get(aName);
 	}
 
-	public List<LibraryFile> getImageFiles(boolean aRecursive) {
+	private void doGetChildImages(Set<LibraryImage> aResult, boolean aRecursive) {
 
-		List<LibraryFile> result = new ArrayList<>();
-
-		doGetImageFiles(result, aRecursive);
-
-		return result;
-	}
-
-	public List<LibraryFile> getSongFiles(boolean aRecursive) {
-
-		List<LibraryFile> result = new ArrayList<>();
-
-		doGetSongFiles(result, aRecursive);
-
-		return result;
-	}
-
-	private void doGetImageFiles(List<LibraryFile> aResult, boolean aRecursive) {
-
-		for (LibraryFile file : getChildFiles()) {
-			if (file.getType() == FileType.IMAGE) {
-				aResult.add(file);
-			}
+		for (LibraryImage image : getChildImages()) {
+			aResult.add(image);
 		}
 
 		if (aRecursive) {
 			for (LibraryFolder folder : getChildFolders()) {
-				folder.doGetImageFiles(aResult, true);
+				folder.doGetChildImages(aResult, true);
 			}
 		}
 	}
 
-	private void doGetSongFiles(List<LibraryFile> aResult, boolean aRecursive) {
+	private void doGetChildSongs(Set<LibrarySong> aResult, boolean aRecursive) {
 
-		for (LibraryFile file : getChildFiles()) {
-			if (file.getType() == FileType.SONG) {
-				aResult.add(file);
-			}
+		for (LibrarySong song : getChildSongs()) {
+			aResult.add(song);
 		}
 
 		if (aRecursive) {
 			for (LibraryFolder folder : getChildFolders()) {
-				folder.doGetSongFiles(aResult, true);
+				folder.doGetChildSongs(aResult, true);
 			}
 		}
+	}
+
+	private void doGetChildFiles(Set<LibraryFile> aResult, boolean aRecursive) {
+
+		aResult.addAll(getChildImages());
+		aResult.addAll(getChildSongs());
+
+		if (aRecursive) {
+			for (LibraryFolder folder : getChildFolders()) {
+				folder.doGetChildFiles(aResult, true);
+			}
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return file.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object aObj) {
+
+		if (this == aObj) {
+			return true;
+		}
+
+		if (aObj != null && getClass().equals(aObj.getClass())) {
+
+			LibraryFolder that = (LibraryFolder) aObj;
+
+			return file.equals(that.file);
+		}
+
+		return false;
 	}
 }

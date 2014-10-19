@@ -1,8 +1,9 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.common.FileType;
 import net.dorokhov.pony.core.common.LibraryFile;
 import net.dorokhov.pony.core.common.LibraryFolder;
+import net.dorokhov.pony.core.common.LibraryImage;
+import net.dorokhov.pony.core.common.LibrarySong;
 import net.dorokhov.pony.core.service.FileScannerImpl;
 import net.dorokhov.pony.core.service.FileTypeServiceImpl;
 import org.apache.commons.io.FileUtils;
@@ -48,19 +49,17 @@ public class FileScannerImplTest {
 		File testSong = new ClassPathResource(TEST_SONG_PATH).getFile();
 		File testOther = new ClassPathResource(TEST_OTHER_PATH).getFile();
 
-		LibraryFile imageFile = service.scanFile(testImage);
+		LibraryImage imageFile = (LibraryImage) service.scanFile(testImage);
 
 		Assert.assertNotNull(imageFile);
 		Assert.assertNotNull(imageFile.getFile());
 		Assert.assertNull(imageFile.getParentFolder());
-		Assert.assertEquals(FileType.IMAGE, imageFile.getType());
 
-		LibraryFile songFile = service.scanFile(testSong);
+		LibrarySong songFile = (LibrarySong) service.scanFile(testSong);
 
 		Assert.assertNotNull(songFile);
 		Assert.assertNotNull(songFile.getFile());
 		Assert.assertNull(songFile.getParentFolder());
-		Assert.assertEquals(FileType.SONG, songFile.getType());
 
 		Assert.assertNull(service.scanFile(testOther));
 
@@ -119,8 +118,8 @@ public class FileScannerImplTest {
 		Assert.assertEquals(0, aFolder.getChildFiles().size());
 		Assert.assertEquals(1, aFolder.getChildFolders().size());
 
-		Assert.assertEquals(0, aFolder.getImageFiles(false).size());
-		Assert.assertEquals(0, aFolder.getSongFiles(false).size());
+		Assert.assertEquals(0, aFolder.getChildImages().size());
+		Assert.assertEquals(0, aFolder.getChildSongs().size());
 
 		doTestChildren(aFolder);
 
@@ -131,14 +130,14 @@ public class FileScannerImplTest {
 		doTestArtist(artist);
 
 		List<String> imageFiles = new ArrayList<>();
-		for (LibraryFile file : aFolder.getImageFiles(true)) {
+		for (LibraryFile file : aFolder.getChildImages(true)) {
 			imageFiles.add(file.getFile().getName());
 		}
 		Assert.assertEquals(2, imageFiles.size());
 		Assert.assertTrue(imageFiles.containsAll(Arrays.asList("cover-01.png", "cover-02.png")));
 
 		List<String> songFiles = new ArrayList<>();
-		for (LibraryFile file : aFolder.getSongFiles(true)) {
+		for (LibraryFile file : aFolder.getChildSongs(true)) {
 			songFiles.add(file.getFile().getName());
 		}
 		Assert.assertEquals(3, songFiles.size());
@@ -152,8 +151,8 @@ public class FileScannerImplTest {
 		Assert.assertEquals(0, aFolder.getChildFiles().size());
 		Assert.assertEquals(2, aFolder.getChildFolders().size());
 
-		Assert.assertEquals(0, aFolder.getImageFiles(false).size());
-		Assert.assertEquals(0, aFolder.getSongFiles(false).size());
+		Assert.assertEquals(0, aFolder.getChildImages().size());
+		Assert.assertEquals(0, aFolder.getChildSongs().size());
 
 		LibraryFolder album01 = aFolder.getChildFolderByName("album-01");
 		LibraryFolder album02 = aFolder.getChildFolderByName("album-02");
@@ -172,8 +171,8 @@ public class FileScannerImplTest {
 		Assert.assertEquals(3, aFolder.getChildFiles().size());
 		Assert.assertEquals(0, aFolder.getChildFolders().size());
 
-		Assert.assertEquals(1, aFolder.getImageFiles(false).size());
-		Assert.assertEquals(2, aFolder.getSongFiles(false).size());
+		Assert.assertEquals(1, aFolder.getChildImages().size());
+		Assert.assertEquals(2, aFolder.getChildSongs().size());
 
 		Assert.assertNotNull(aFolder.getChildFileByName("song-01.mp3"));
 		Assert.assertNotNull(aFolder.getChildFileByName("song-02.mp3"));
@@ -187,8 +186,8 @@ public class FileScannerImplTest {
 		Assert.assertEquals(2, aFolder.getChildFiles().size());
 		Assert.assertEquals(0, aFolder.getChildFolders().size());
 
-		Assert.assertEquals(1, aFolder.getImageFiles(false).size());
-		Assert.assertEquals(1, aFolder.getSongFiles(false).size());
+		Assert.assertEquals(1, aFolder.getChildImages().size());
+		Assert.assertEquals(1, aFolder.getChildSongs().size());
 
 		Assert.assertNotNull(aFolder.getChildFileByName("song-03.mp3"));
 		Assert.assertNotNull(aFolder.getChildFileByName("cover-02.png"));
@@ -197,6 +196,7 @@ public class FileScannerImplTest {
 	private void doTestChildren(LibraryFolder aFolder) {
 		for (LibraryFile item : aFolder.getChildFiles()) {
 			Assert.assertNotNull(item.getFile());
+			Assert.assertNotNull(item.getMimeType());
 			Assert.assertTrue(aFolder == item.getParentFolder());
 		}
 		for (LibraryFolder item : aFolder.getChildFolders()) {
