@@ -23,6 +23,23 @@ public class SongDataWriteCommand {
 
 	private File artwork;
 
+	private boolean writeDiscNumber;
+	private boolean writeDiscCount;
+
+	private boolean writeTrackNumber;
+	private boolean writeTrackCount;
+
+	private boolean writeTitle;
+	private boolean writeArtist;
+	private boolean writeAlbumArtist;
+	private boolean writeAlbum;
+
+	private boolean writeYear;
+
+	private boolean writeGenre;
+
+	private boolean writeArtwork;
+
 	public SongDataWriteCommand(File aFile) {
 
 		if (aFile == null) {
@@ -42,6 +59,7 @@ public class SongDataWriteCommand {
 
 	public void setDiscNumber(Integer aDiscNumber) {
 		discNumber = aDiscNumber;
+		setWriteDiscNumber(true);
 	}
 
 	public Integer getDiscCount() {
@@ -50,6 +68,7 @@ public class SongDataWriteCommand {
 
 	public void setDiscCount(Integer aDiscCount) {
 		discCount = aDiscCount;
+		setWriteDiscCount(true);
 	}
 
 	public Integer getTrackNumber() {
@@ -58,6 +77,7 @@ public class SongDataWriteCommand {
 
 	public void setTrackNumber(Integer aTrackNumber) {
 		trackNumber = aTrackNumber;
+		setWriteTrackNumber(true);
 	}
 
 	public Integer getTrackCount() {
@@ -66,6 +86,7 @@ public class SongDataWriteCommand {
 
 	public void setTrackCount(Integer aTrackCount) {
 		trackCount = aTrackCount;
+		setWriteTrackCount(true);
 	}
 
 	public String getTitle() {
@@ -74,6 +95,7 @@ public class SongDataWriteCommand {
 
 	public void setTitle(String aTitle) {
 		title = aTitle;
+		setWriteTitle(true);
 	}
 
 	public String getArtist() {
@@ -82,6 +104,7 @@ public class SongDataWriteCommand {
 
 	public void setArtist(String aArtist) {
 		artist = aArtist;
+		setWriteArtist(true);
 	}
 
 	public String getAlbumArtist() {
@@ -90,6 +113,7 @@ public class SongDataWriteCommand {
 
 	public void setAlbumArtist(String aAlbumArtist) {
 		albumArtist = aAlbumArtist;
+		setWriteAlbumArtist(true);
 	}
 
 	public String getAlbum() {
@@ -98,6 +122,7 @@ public class SongDataWriteCommand {
 
 	public void setAlbum(String aAlbum) {
 		album = aAlbum;
+		setWriteAlbum(true);
 	}
 
 	public Integer getYear() {
@@ -106,6 +131,7 @@ public class SongDataWriteCommand {
 
 	public void setYear(Integer aYear) {
 		year = aYear;
+		setWriteYear(true);
 	}
 
 	public String getGenre() {
@@ -114,6 +140,7 @@ public class SongDataWriteCommand {
 
 	public void setGenre(String aGenre) {
 		genre = aGenre;
+		setWriteGenre(true);
 	}
 
 	public File getArtwork() {
@@ -122,5 +149,94 @@ public class SongDataWriteCommand {
 
 	public void setArtwork(File aArtwork) {
 		artwork = aArtwork;
+		setWriteArtwork(true);
+	}
+
+	public boolean getWriteDiscNumber() {
+		return writeDiscNumber;
+	}
+
+	public void setWriteDiscNumber(boolean aWriteDiscNumber) {
+		writeDiscNumber = aWriteDiscNumber;
+	}
+
+	public boolean getWriteDiscCount() {
+		return writeDiscCount;
+	}
+
+	public void setWriteDiscCount(boolean aIsWriteDiscCount) {
+		writeDiscCount = aIsWriteDiscCount;
+	}
+
+	public boolean getWriteTrackNumber() {
+		return writeTrackNumber;
+	}
+
+	public void setWriteTrackNumber(boolean aWriteTrackNumber) {
+		writeTrackNumber = aWriteTrackNumber;
+	}
+
+	public boolean getWriteTrackCount() {
+		return writeTrackCount;
+	}
+
+	public void setWriteTrackCount(boolean aIsWriteTrackCount) {
+		writeTrackCount = aIsWriteTrackCount;
+	}
+
+	public boolean getWriteTitle() {
+		return writeTitle;
+	}
+
+	public void setWriteTitle(boolean aWriteTitle) {
+		writeTitle = aWriteTitle;
+	}
+
+	public boolean getWriteArtist() {
+		return writeArtist;
+	}
+
+	public void setWriteArtist(boolean aWriteArtist) {
+		writeArtist = aWriteArtist;
+	}
+
+	public boolean getWriteAlbumArtist() {
+		return writeAlbumArtist;
+	}
+
+	public void setWriteAlbumArtist(boolean aWriteAlbumArtist) {
+		writeAlbumArtist = aWriteAlbumArtist;
+	}
+
+	public boolean getWriteAlbum() {
+		return writeAlbum;
+	}
+
+	public void setWriteAlbum(boolean aWriteAlbum) {
+		writeAlbum = aWriteAlbum;
+	}
+
+	public boolean getWriteYear() {
+		return writeYear;
+	}
+
+	public void setWriteYear(boolean aWriteYear) {
+		writeYear = aWriteYear;
+	}
+
+	public boolean getWriteGenre() {
+		return writeGenre;
+	}
+
+	public void setWriteGenre(boolean aWriteGenre) {
+		writeGenre = aWriteGenre;
+	}
+
+	public boolean getWriteArtwork() {
+		return writeArtwork;
+	}
+
+	public void setWriteArtwork(boolean aWriteArtwork) {
+		writeArtwork = aWriteArtwork;
 	}
 }

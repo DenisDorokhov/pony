@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class ArtworkDiscoveryServiceImplTest {
 
-	private static final String TEST_FILE_PATH = "data/image-red.png"; // red picture 90x100
+	private static final String TEST_FILE_PATH = "data/image.png"; // red picture 90x100
 	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "ArtworkServiceImplTest");
 
 	private FileScannerImpl fileScanner;

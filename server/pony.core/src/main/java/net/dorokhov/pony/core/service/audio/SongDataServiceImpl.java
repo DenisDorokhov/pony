@@ -41,28 +41,58 @@ public class SongDataServiceImpl implements SongDataService {
 	public SongData write(SongDataWriteCommand aCommand) throws Exception {
 
 		AudioFile audioFile = AudioFileIO.read(aCommand.getFile());
+		AudioHeader header = audioFile.getAudioHeader();
+
+		String mimeType = getMimeType(header);
+
+		if (mimeType == null) {
+			throw new Exception("Unsupported file format '" + header.getFormat() + "'.");
+		}
 
 		Tag tag = audioFile.getTag();
 
-		setOrDeleteTagField(tag, FieldKey.DISC_NO, aCommand.getDiscNumber());
-		setOrDeleteTagField(tag, FieldKey.DISC_TOTAL, aCommand.getDiscCount());
+		if (aCommand.getWriteDiscNumber()) {
+			setOrDeleteTagField(tag, FieldKey.DISC_NO, aCommand.getDiscNumber());
+		}
+		if (aCommand.getWriteDiscCount()) {
+			setOrDeleteTagField(tag, FieldKey.DISC_TOTAL, aCommand.getDiscCount());
+		}
 
-		setOrDeleteTagField(tag, FieldKey.TRACK, aCommand.getTrackNumber());
-		setOrDeleteTagField(tag, FieldKey.TRACK_TOTAL, aCommand.getTrackCount());
+		if (aCommand.getWriteTrackNumber()) {
+			setOrDeleteTagField(tag, FieldKey.TRACK, aCommand.getTrackNumber());
+		}
+		if (aCommand.getWriteTrackCount()) {
+			setOrDeleteTagField(tag, FieldKey.TRACK_TOTAL, aCommand.getTrackCount());
+		}
 
-		setOrDeleteTagField(tag, FieldKey.TITLE, aCommand.getTitle());
-		setOrDeleteTagField(tag, FieldKey.ALBUM, aCommand.getAlbum());
-		setOrDeleteTagField(tag, FieldKey.YEAR, aCommand.getYear());
+		if (aCommand.getWriteTitle()) {
+			setOrDeleteTagField(tag, FieldKey.TITLE, aCommand.getTitle());
+		}
+		if (aCommand.getWriteAlbum()) {
+			setOrDeleteTagField(tag, FieldKey.ALBUM, aCommand.getAlbum());
+		}
+		if (aCommand.getWriteYear()) {
+			setOrDeleteTagField(tag, FieldKey.YEAR, aCommand.getYear());
+		}
 
-		setOrDeleteTagField(tag, FieldKey.ARTIST, aCommand.getArtist());
-		setOrDeleteTagField(tag, FieldKey.ALBUM_ARTIST, aCommand.getAlbumArtist());
+		if (aCommand.getWriteArtist()) {
+			setOrDeleteTagField(tag, FieldKey.ARTIST, aCommand.getArtist());
+		}
+		if (aCommand.getWriteAlbumArtist()) {
+			setOrDeleteTagField(tag, FieldKey.ALBUM_ARTIST, aCommand.getAlbumArtist());
+		}
 
-		setOrDeleteTagField(tag, FieldKey.GENRE, aCommand.getGenre());
+		if (aCommand.getWriteGenre()) {
+			setOrDeleteTagField(tag, FieldKey.GENRE, aCommand.getGenre());
+		}
 
-		tag.deleteArtworkField();
+		if (aCommand.getWriteArtwork()) {
 
-		if (aCommand.getArtwork() != null) {
-			tag.setField(Artwork.createArtworkFromFile(aCommand.getArtwork()));
+			tag.deleteArtworkField();
+
+			if (aCommand.getArtwork() != null) {
+				tag.setField(Artwork.createArtworkFromFile(aCommand.getArtwork()));
+			}
 		}
 
 		AudioFileIO.write(audioFile);

@@ -14,7 +14,7 @@ import java.io.File;
 
 public class ThumbnailServiceImplTest {
 
-	private static final String TEST_FILE_PATH = "data/image-red.png"; // red picture 90x100
+	private static final String TEST_FILE_PATH = "data/image.png"; // red picture 90x100
 	private static final File TEST_TARGET_FILE = new File(FileUtils.getTempDirectory(), "ImageScalingServiceImplTest.jpg");
 	private static final int TEST_TARGET_WIDTH = 50;
 	private static final int TEST_TARGET_HEIGHT = 50;
