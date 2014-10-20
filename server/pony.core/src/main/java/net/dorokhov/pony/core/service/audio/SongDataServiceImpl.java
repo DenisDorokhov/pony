@@ -59,10 +59,10 @@ public class SongDataServiceImpl implements SongDataService {
 
 		setOrDeleteTagField(tag, FieldKey.GENRE, aCommand.getGenre());
 
+		tag.deleteArtworkField();
+
 		if (aCommand.getArtwork() != null) {
 			tag.setField(Artwork.createArtworkFromFile(aCommand.getArtwork()));
-		} else {
-			tag.deleteArtworkField();
 		}
 
 		AudioFileIO.write(audioFile);

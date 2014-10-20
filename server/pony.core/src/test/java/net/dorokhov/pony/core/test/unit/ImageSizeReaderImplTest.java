@@ -9,7 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 
 public class ImageSizeReaderImplTest {
 
-	private static final String TEST_FILE_PATH = "data/image.png"; // red picture 90x100
+	private static final String TEST_FILE_PATH = "data/image-red.png"; // red picture 90x100
 
 	private ImageSizeReaderImpl service;
 

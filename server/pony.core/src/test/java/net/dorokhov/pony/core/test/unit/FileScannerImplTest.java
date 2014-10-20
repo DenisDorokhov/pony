@@ -25,7 +25,7 @@ public class FileScannerImplTest {
 
 	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "FileScannerImplTest");
 
-	private static final String TEST_IMAGE_PATH = "data/image.png";
+	private static final String TEST_IMAGE_PATH = "data/image-red.png";
 	private static final String TEST_SONG_PATH = "data/Metallica-Battery-with_artwork.mp3";
 	private static final String TEST_OTHER_PATH = "data/mp3-info.txt";
 

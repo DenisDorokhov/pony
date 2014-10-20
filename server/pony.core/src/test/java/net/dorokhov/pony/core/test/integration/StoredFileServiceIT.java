@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 
 public class StoredFileServiceIT extends AbstractIntegrationCase {
 
-	private static final String TEST_FILE_PATH = "data/image.png";
+	private static final String TEST_FILE_PATH = "data/image-red.png";
 	private static final String TEST_FILE_MIME_TYPE = "image/png";
 
 	private StoredFileService service;
