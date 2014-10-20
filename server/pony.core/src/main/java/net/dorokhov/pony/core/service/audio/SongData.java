@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.common;
+package net.dorokhov.pony.core.service.audio;
 
 public interface SongData {
 

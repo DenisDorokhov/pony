@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.ThumbnailServiceImpl;
+import net.dorokhov.pony.core.service.image.ThumbnailServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;

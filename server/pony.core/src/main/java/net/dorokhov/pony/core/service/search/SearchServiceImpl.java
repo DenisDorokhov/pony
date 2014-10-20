@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.service;
+package net.dorokhov.pony.core.service.search;
 
 import net.dorokhov.pony.core.domain.Album;
 import net.dorokhov.pony.core.domain.Artist;

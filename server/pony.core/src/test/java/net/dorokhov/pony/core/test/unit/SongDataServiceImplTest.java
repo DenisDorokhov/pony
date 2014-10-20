@@ -1,8 +1,8 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.common.SongData;
-import net.dorokhov.pony.core.service.ChecksumServiceImpl;
-import net.dorokhov.pony.core.service.SongDataServiceImpl;
+import net.dorokhov.pony.core.service.audio.SongData;
+import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
+import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;

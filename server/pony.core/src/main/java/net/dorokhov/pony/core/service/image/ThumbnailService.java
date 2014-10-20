@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.service;
+package net.dorokhov.pony.core.service.image;
 
 import java.io.File;
 

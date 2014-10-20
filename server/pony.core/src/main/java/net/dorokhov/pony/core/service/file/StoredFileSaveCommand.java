@@ -1,8 +1,8 @@
-package net.dorokhov.pony.core.common;
+package net.dorokhov.pony.core.service.file;
 
 import java.io.File;
 
-public class StoreFileCommand {
+public class StoredFileSaveCommand {
 
 	public static enum Type {
 		COPY, MOVE
@@ -22,7 +22,7 @@ public class StoreFileCommand {
 
 	private String userData;
 
-	public StoreFileCommand(Type aType, File aFile) {
+	public StoredFileSaveCommand(Type aType, File aFile) {
 
 		if (aType == null) {
 			throw new NullPointerException();

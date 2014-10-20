@@ -1,10 +1,10 @@
 package net.dorokhov.pony.core.service.library;
 
-import net.dorokhov.pony.core.common.ImageSize;
-import net.dorokhov.pony.core.common.SongData;
-import net.dorokhov.pony.core.common.SimpleImageInfo;
-import net.dorokhov.pony.core.service.FileTypeService;
-import net.dorokhov.pony.core.service.SongDataService;
+import net.dorokhov.pony.core.service.audio.SongData;
+import net.dorokhov.pony.core.service.audio.SongDataService;
+import net.dorokhov.pony.core.service.file.FileTypeService;
+import net.dorokhov.pony.core.service.image.ImageSize;
+import net.dorokhov.pony.core.service.image.ImageSizeReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,8 @@ public class FileScannerImpl implements FileScanner {
 
 	private SongDataService songDataService;
 
+	private ImageSizeReader imageSizeReader;
+
 	@Autowired
 	public void setFileTypeService(FileTypeService aFileTypeService) {
 		fileTypeService = aFileTypeService;
@@ -28,6 +30,11 @@ public class FileScannerImpl implements FileScanner {
 	@Autowired
 	public void setSongDataService(SongDataService aSongDataService) {
 		songDataService = aSongDataService;
+	}
+
+	@Autowired
+	public void setImageSizeReader(ImageSizeReader aImageSizeReader) {
+		imageSizeReader = aImageSizeReader;
 	}
 
 	@Override
@@ -324,24 +331,7 @@ public class FileScannerImpl implements FileScanner {
 			if (size == null) {
 				synchronized (sizeLock) {
 					if (size == null) {
-
-						SimpleImageInfo info = new SimpleImageInfo(getFile());
-
-						final double width = info.getWidth();
-						final double height = info.getHeight();
-
-						size = new ImageSize() {
-
-							@Override
-							public double getWidth() {
-								return width;
-							}
-
-							@Override
-							public double getHeight() {
-								return height;
-							}
-						};
+						size = imageSizeReader.read(getFile());
 					}
 				}
 			}

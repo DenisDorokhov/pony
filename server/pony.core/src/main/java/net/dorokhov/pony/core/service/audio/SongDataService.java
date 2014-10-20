@@ -1,6 +1,4 @@
-package net.dorokhov.pony.core.service;
-
-import net.dorokhov.pony.core.common.SongData;
+package net.dorokhov.pony.core.service.audio;
 
 import java.io.File;
 

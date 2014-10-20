@@ -1,6 +1,6 @@
-package net.dorokhov.pony.core.service;
+package net.dorokhov.pony.core.service.audio;
 
-import net.dorokhov.pony.core.common.SongData;
+import net.dorokhov.pony.core.service.file.ChecksumService;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;

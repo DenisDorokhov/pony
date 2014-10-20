@@ -1,7 +1,10 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.ArtworkDiscoveryServiceImpl;
-import net.dorokhov.pony.core.service.FileTypeServiceImpl;
+import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
+import net.dorokhov.pony.core.service.library.ArtworkDiscoveryServiceImpl;
+import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
+import net.dorokhov.pony.core.service.file.FileTypeServiceImpl;
+import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
 import net.dorokhov.pony.core.service.library.FileScannerImpl;
 import net.dorokhov.pony.core.service.library.LibraryFolder;
 import net.dorokhov.pony.core.service.library.LibraryImage;
@@ -20,7 +23,7 @@ import java.util.Set;
 
 public class ArtworkDiscoveryServiceImplTest {
 
-	private static final String TEST_FILE_PATH = "data/image.png";
+	private static final String TEST_FILE_PATH = "data/image.png"; // red picture 90x100
 	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "ArtworkServiceImplTest");
 
 	private FileScannerImpl fileScanner;
@@ -30,8 +33,14 @@ public class ArtworkDiscoveryServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 
+		SongDataServiceImpl songDataService = new SongDataServiceImpl();
+
+		songDataService.setChecksumService(new ChecksumServiceImpl());
+
 		fileScanner = new FileScannerImpl();
 		fileScanner.setFileTypeService(new FileTypeServiceImpl());
+		fileScanner.setImageSizeReader(new ImageSizeReaderImpl());
+		fileScanner.setSongDataService(songDataService);
 
 		artworkDiscoveryService = new ArtworkDiscoveryServiceImpl();
 

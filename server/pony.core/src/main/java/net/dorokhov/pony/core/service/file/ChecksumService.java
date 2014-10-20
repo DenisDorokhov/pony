@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.service;
+package net.dorokhov.pony.core.service.file;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.service.library;
 
-import net.dorokhov.pony.core.common.ImageSize;
+import net.dorokhov.pony.core.service.image.ImageSize;
 
 public interface LibraryImage extends LibraryFile {
 

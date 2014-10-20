@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.service;
+package net.dorokhov.pony.core.service.file;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;

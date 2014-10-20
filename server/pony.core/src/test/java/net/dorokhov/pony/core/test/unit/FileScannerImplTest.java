@@ -1,11 +1,14 @@
 package net.dorokhov.pony.core.test.unit;
 
+import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
+import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
+import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
 import net.dorokhov.pony.core.service.library.LibraryFile;
 import net.dorokhov.pony.core.service.library.LibraryFolder;
 import net.dorokhov.pony.core.service.library.LibraryImage;
 import net.dorokhov.pony.core.service.library.LibrarySong;
 import net.dorokhov.pony.core.service.library.FileScannerImpl;
-import net.dorokhov.pony.core.service.FileTypeServiceImpl;
+import net.dorokhov.pony.core.service.file.FileTypeServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -31,8 +34,14 @@ public class FileScannerImplTest {
 	@Before
 	public void setUp() throws Exception {
 
+		SongDataServiceImpl songDataService = new SongDataServiceImpl();
+
+		songDataService.setChecksumService(new ChecksumServiceImpl());
+
 		service = new FileScannerImpl();
 		service.setFileTypeService(new FileTypeServiceImpl());
+		service.setImageSizeReader(new ImageSizeReaderImpl());
+		service.setSongDataService(songDataService);
 
 		FileUtils.deleteDirectory(TEST_FOLDER);
 	}
@@ -110,7 +119,7 @@ public class FileScannerImplTest {
 		Assert.assertTrue(isExceptionThrown);
 	}
 
-	private void doTestRoot(LibraryFolder aFolder) {
+	private void doTestRoot(LibraryFolder aFolder) throws Exception {
 
 		Assert.assertNotNull(aFolder.getFile());
 		Assert.assertNull(aFolder.getParentFolder());
@@ -144,7 +153,7 @@ public class FileScannerImplTest {
 		Assert.assertTrue(songFiles.containsAll(Arrays.asList("song-01.mp3", "song-02.mp3", "song-03.mp3")));
 	}
 
-	private void doTestArtist(LibraryFolder aFolder) {
+	private void doTestArtist(LibraryFolder aFolder) throws Exception {
 
 		doTestChildren(aFolder);
 
@@ -164,7 +173,7 @@ public class FileScannerImplTest {
 		doTestAlbum02(album02);
 	}
 
-	private void doTestAlbum01(LibraryFolder aFolder) {
+	private void doTestAlbum01(LibraryFolder aFolder) throws Exception {
 
 		doTestChildren(aFolder);
 
@@ -179,7 +188,7 @@ public class FileScannerImplTest {
 		Assert.assertNotNull(getChildImageByName(aFolder, "cover-01.png"));
 	}
 
-	private void doTestAlbum02(LibraryFolder aFolder) {
+	private void doTestAlbum02(LibraryFolder aFolder) throws Exception {
 
 		doTestChildren(aFolder);
 
@@ -193,11 +202,28 @@ public class FileScannerImplTest {
 		Assert.assertNotNull(getChildImageByName(aFolder, "cover-02.png"));
 	}
 
-	private void doTestChildren(LibraryFolder aFolder) {
+	private void doTestChildren(LibraryFolder aFolder) throws Exception {
 		for (LibraryFile item : aFolder.getChildFiles()) {
+
 			Assert.assertNotNull(item.getFile());
 			Assert.assertNotNull(item.getMimeType());
 			Assert.assertTrue(aFolder == item.getParentFolder());
+
+			if (item instanceof LibraryImage) {
+
+				LibraryImage image = (LibraryImage) item;
+
+				Assert.assertNotNull(image.getSize());
+
+			} else if (item instanceof LibrarySong) {
+
+				LibrarySong song = (LibrarySong) item;
+
+				Assert.assertNotNull(song.getData());
+
+			} else {
+				Assert.fail("Unknown file type.");
+			}
 		}
 		for (LibraryFolder item : aFolder.getChildFolders()) {
 			Assert.assertNotNull(item.getFile());

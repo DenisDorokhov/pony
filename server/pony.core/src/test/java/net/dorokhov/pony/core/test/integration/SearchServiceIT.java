@@ -8,7 +8,7 @@ import net.dorokhov.pony.core.domain.Album;
 import net.dorokhov.pony.core.domain.Artist;
 import net.dorokhov.pony.core.domain.Genre;
 import net.dorokhov.pony.core.domain.Song;
-import net.dorokhov.pony.core.service.SearchService;
+import net.dorokhov.pony.core.service.search.SearchService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.Assert;
 import org.junit.Before;
