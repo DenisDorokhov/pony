@@ -141,6 +141,28 @@ public class FileScannerImpl implements FileScanner {
 		public void setParentFolder(LibraryFolder aParentFolder) {
 			parentFolder = aParentFolder;
 		}
+
+		@Override
+		public int hashCode() {
+			return file.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object aObj) {
+
+			if (this == aObj) {
+				return true;
+			}
+
+			if (aObj != null && getClass().equals(aObj.getClass())) {
+
+				AbstractLibraryNode that = (AbstractLibraryNode) aObj;
+
+				return file.equals(that.file);
+			}
+
+			return false;
+		}
 	}
 
 	private class LibraryFolderImpl extends AbstractLibraryNode implements LibraryFolder {

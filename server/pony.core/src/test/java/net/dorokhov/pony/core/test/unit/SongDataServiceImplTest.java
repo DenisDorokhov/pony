@@ -45,7 +45,7 @@ public class SongDataServiceImplTest {
 
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), songData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", songData.getFormat());
-		Assert.assertEquals("audio/mpeg", songData.getMimeType());
+		Assert.assertEquals("audio/mpeg3", songData.getMimeType());
 		Assert.assertEquals(Long.valueOf(24797), songData.getSize());
 		Assert.assertEquals(Integer.valueOf(1), songData.getDuration());
 		Assert.assertEquals(Long.valueOf(128), songData.getBitRate());
@@ -53,7 +53,7 @@ public class SongDataServiceImplTest {
 		Assert.assertEquals(Integer.valueOf(1), songData.getDiscCount());
 		Assert.assertEquals(Integer.valueOf(1), songData.getTrackNumber());
 		Assert.assertEquals(Integer.valueOf(8), songData.getTrackCount());
-		Assert.assertEquals("Battery", songData.getName());
+		Assert.assertEquals("Battery", songData.getTitle());
 		Assert.assertEquals("Metallica", songData.getArtist());
 		Assert.assertEquals("Metallica", songData.getAlbumArtist());
 		Assert.assertEquals("Master Of Puppets", songData.getAlbum());

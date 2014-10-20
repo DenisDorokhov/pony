@@ -30,53 +30,48 @@ public class SongDataServiceImpl implements SongDataService {
 	@Override
 	public SongData read(File aFile) throws Exception {
 
-		AudioFile audioFile = AudioFileIO.read(aFile);
+		SongData songData = readSongData(AudioFileIO.read(aFile));
 
-		AudioHeader header = audioFile.getAudioHeader();
+		log.debug("song data has been read: {}", songData);
+
+		return songData;
+	}
+
+	@Override
+	public SongData write(SongDataWriteCommand aCommand) throws Exception {
+
+		AudioFile audioFile = AudioFileIO.read(aCommand.getFile());
+
 		Tag tag = audioFile.getTag();
 
-		String mimeType = getMimeType(header);
+		setOrDeleteTagField(tag, FieldKey.DISC_NO, aCommand.getDiscNumber());
+		setOrDeleteTagField(tag, FieldKey.DISC_TOTAL, aCommand.getDiscCount());
 
-		if (mimeType == null) {
-			throw new Exception("Unsupported file format '" + header.getFormat() + "'.");
+		setOrDeleteTagField(tag, FieldKey.TRACK, aCommand.getTrackNumber());
+		setOrDeleteTagField(tag, FieldKey.TRACK_TOTAL, aCommand.getTrackCount());
+
+		setOrDeleteTagField(tag, FieldKey.TITLE, aCommand.getTitle());
+		setOrDeleteTagField(tag, FieldKey.ALBUM, aCommand.getAlbum());
+		setOrDeleteTagField(tag, FieldKey.YEAR, aCommand.getYear());
+
+		setOrDeleteTagField(tag, FieldKey.ARTIST, aCommand.getArtist());
+		setOrDeleteTagField(tag, FieldKey.ALBUM_ARTIST, aCommand.getAlbumArtist());
+
+		setOrDeleteTagField(tag, FieldKey.GENRE, aCommand.getGenre());
+
+		if (aCommand.getArtwork() != null) {
+			tag.setField(Artwork.createArtworkFromFile(aCommand.getArtwork()));
+		} else {
+			tag.deleteArtworkField();
 		}
 
-		SongDataImpl metaData = new SongDataImpl();
+		AudioFileIO.write(audioFile);
 
-		metaData.setPath(audioFile.getFile().getAbsolutePath());
-		metaData.setFormat(header.getFormat());
-		metaData.setMimeType(mimeType);
-		metaData.setSize(audioFile.getFile().length());
-		metaData.setDuration(header.getTrackLength());
-		metaData.setBitRate(header.getBitRateAsNumber());
+		SongData songData = readSongData(audioFile);
 
-		if (tag != null) {
+		log.debug("song data has been written: {}", songData);
 
-			metaData.setDiscNumber(parseIntegerTag(tag, FieldKey.DISC_NO));
-			metaData.setDiscCount(parseIntegerTag(tag, FieldKey.DISC_TOTAL));
-
-			metaData.setTrackNumber(parseIntegerTag(tag, FieldKey.TRACK));
-			metaData.setTrackCount(parseIntegerTag(tag, FieldKey.TRACK_TOTAL));
-
-			metaData.setName(StringUtils.trim(parseStringTag(tag, FieldKey.TITLE)));
-			metaData.setAlbum(StringUtils.trim(parseStringTag(tag, FieldKey.ALBUM)));
-			metaData.setYear(parseIntegerTag(tag, FieldKey.YEAR));
-
-			metaData.setArtist(StringUtils.trim(parseStringTag(tag, FieldKey.ARTIST)));
-			metaData.setAlbumArtist(StringUtils.trim(parseStringTag(tag, FieldKey.ALBUM_ARTIST)));
-
-			metaData.setGenre(StringUtils.trim(parseStringTag(tag, FieldKey.GENRE)));
-
-			Artwork artwork = tag.getFirstArtwork();
-
-			if (artwork != null) {
-				metaData.setArtwork(new ArtworkDataImpl(artwork.getBinaryData(), checksumService.calculateChecksum(artwork.getBinaryData()), artwork.getMimeType()));
-			}
-		}
-
-		log.debug("read file data: {}", metaData);
-
-		return metaData;
+		return songData;
 	}
 
 	private String parseStringTag(Tag aTag, FieldKey aKey) {
@@ -100,10 +95,69 @@ public class SongDataServiceImpl implements SongDataService {
 		String mimeType = null;
 
 		if (aHeader.getFormat().equals("MPEG-1 Layer 3")) {
-			mimeType = "audio/mpeg";
+			mimeType = "audio/mpeg3";
 		}
 
 		return mimeType;
+	}
+
+	private void setOrDeleteTagField(Tag aTag, FieldKey aKey, Object aValue) throws Exception {
+		if (aValue != null) {
+			aTag.setField(aKey, aValue.toString());
+		} else {
+			aTag.deleteField(aKey);
+		}
+	}
+
+	private SongData readSongData(AudioFile aAudioFile) throws Exception {
+
+		AudioHeader header = aAudioFile.getAudioHeader();
+		Tag tag = aAudioFile.getTag();
+
+		String mimeType = getMimeType(header);
+
+		if (mimeType == null) {
+			throw new Exception("Unsupported file format '" + header.getFormat() + "'.");
+		}
+
+		SongDataImpl songData = new SongDataImpl();
+
+		songData.setPath(aAudioFile.getFile().getAbsolutePath());
+		songData.setFormat(header.getFormat());
+		songData.setMimeType(mimeType);
+		songData.setSize(aAudioFile.getFile().length());
+		songData.setDuration(header.getTrackLength());
+		songData.setBitRate(header.getBitRateAsNumber());
+
+		if (tag != null) {
+			readTagToSongData(tag, songData);
+		}
+
+		return songData;
+	}
+
+	private void readTagToSongData(Tag aTag, SongDataImpl aSongData) {
+
+		aSongData.setDiscNumber(parseIntegerTag(aTag, FieldKey.DISC_NO));
+		aSongData.setDiscCount(parseIntegerTag(aTag, FieldKey.DISC_TOTAL));
+
+		aSongData.setTrackNumber(parseIntegerTag(aTag, FieldKey.TRACK));
+		aSongData.setTrackCount(parseIntegerTag(aTag, FieldKey.TRACK_TOTAL));
+
+		aSongData.setTitle(StringUtils.trim(parseStringTag(aTag, FieldKey.TITLE)));
+		aSongData.setAlbum(StringUtils.trim(parseStringTag(aTag, FieldKey.ALBUM)));
+		aSongData.setYear(parseIntegerTag(aTag, FieldKey.YEAR));
+
+		aSongData.setArtist(StringUtils.trim(parseStringTag(aTag, FieldKey.ARTIST)));
+		aSongData.setAlbumArtist(StringUtils.trim(parseStringTag(aTag, FieldKey.ALBUM_ARTIST)));
+
+		aSongData.setGenre(StringUtils.trim(parseStringTag(aTag, FieldKey.GENRE)));
+
+		Artwork artwork = aTag.getFirstArtwork();
+
+		if (artwork != null) {
+			aSongData.setArtwork(new ArtworkDataImpl(artwork.getBinaryData(), checksumService.calculateChecksum(artwork.getBinaryData()), artwork.getMimeType()));
+		}
 	}
 
 	private class SongDataImpl implements SongData {
@@ -128,7 +182,7 @@ public class SongDataServiceImpl implements SongDataService {
 
 		private Integer trackCount;
 
-		private String name;
+		private String title;
 
 		private String artist;
 
@@ -222,12 +276,12 @@ public class SongDataServiceImpl implements SongDataService {
 			trackCount = aTrackCount;
 		}
 
-		public String getName() {
-			return name;
+		public String getTitle() {
+			return title;
 		}
 
-		public void setName(String aName) {
-			name = aName;
+		public void setTitle(String aTitle) {
+			title = aTitle;
 		}
 
 		public String getArtist() {
@@ -291,7 +345,7 @@ public class SongDataServiceImpl implements SongDataService {
 					", discCount=" + discCount +
 					", trackNumber=" + trackNumber +
 					", trackCount=" + trackCount +
-					", name='" + name + '\'' +
+					", title='" + title + '\'' +
 					", artist='" + artist + '\'' +
 					", albumArtist='" + albumArtist + '\'' +
 					", album='" + album + '\'' +

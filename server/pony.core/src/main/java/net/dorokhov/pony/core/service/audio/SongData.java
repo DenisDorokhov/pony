@@ -18,7 +18,7 @@ public interface SongData {
 	public Integer getTrackNumber();
 	public Integer getTrackCount();
 
-	public String getName();
+	public String getTitle();
 	public String getArtist();
 	public String getAlbumArtist();
 	public String getAlbum();
