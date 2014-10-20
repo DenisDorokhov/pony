@@ -2,9 +2,7 @@ package net.dorokhov.pony.core.service.audio;
 
 import java.io.File;
 
-public class SongDataWriteCommand {
-
-	private File file;
+public class SongDataWritable {
 
 	private Integer discNumber;
 	private Integer discCount;
@@ -39,19 +37,6 @@ public class SongDataWriteCommand {
 	private boolean writeGenre;
 
 	private boolean writeArtwork;
-
-	public SongDataWriteCommand(File aFile) {
-
-		if (aFile == null) {
-			throw new NullPointerException("File must not be null.");
-		}
-
-		file = aFile;
-	}
-
-	public File getFile() {
-		return file;
-	}
 
 	public Integer getDiscNumber() {
 		return discNumber;
@@ -239,4 +224,5 @@ public class SongDataWriteCommand {
 	public void setWriteArtwork(boolean aWriteArtwork) {
 		writeArtwork = aWriteArtwork;
 	}
+
 }

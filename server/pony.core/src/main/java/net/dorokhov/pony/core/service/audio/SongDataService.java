@@ -4,8 +4,8 @@ import java.io.File;
 
 public interface SongDataService {
 
-	public SongData read(File aFile) throws Exception;
+	public SongDataReadable read(File aFile) throws Exception;
 
-	public SongData write(SongDataWriteCommand aCommand) throws Exception;
+	public SongDataReadable write(File aFile, SongDataWritable aSongData) throws Exception;
 
 }

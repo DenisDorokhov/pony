@@ -31,6 +31,10 @@ public class LibraryScanResult {
 
 	private Long deletedAlbumCount;
 
+	private Long createdGenreCount;
+
+	private Long deletedGenreCount;
+
 	private Long createdSongCount;
 
 	private Long updatedSongCount;
@@ -152,6 +156,26 @@ public class LibraryScanResult {
 
 	public void setDeletedAlbumCount(Long aDeletedAlbumCount) {
 		deletedAlbumCount = aDeletedAlbumCount;
+	}
+
+	@Column(name = "created_genre_count")
+	@NotNull
+	public Long getCreatedGenreCount() {
+		return createdGenreCount;
+	}
+
+	public void setCreatedGenreCount(Long aCreatedGenreCount) {
+		createdGenreCount = aCreatedGenreCount;
+	}
+
+	@Column(name = "deleted_genre_count")
+	@NotNull
+	public Long getDeletedGenreCount() {
+		return deletedGenreCount;
+	}
+
+	public void setDeletedGenreCount(Long aDeletedGenreCount) {
+		deletedGenreCount = aDeletedGenreCount;
 	}
 
 	@Column(name = "created_song_count")

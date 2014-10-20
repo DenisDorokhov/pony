@@ -12,6 +12,7 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByAlbumId(Long aAlbumId);
 	public long countByAlbumArtistId(Long aArtistId);
 	public long countByArtworkId(Long aStoredFileId);
+	public long countByGenreId(Long aGenreId);
 
 	public Song findByPath(String aPath);
 

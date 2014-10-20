@@ -1,7 +1,5 @@
 package net.dorokhov.pony.core.service.library;
 
-import net.dorokhov.pony.core.service.audio.SongData;
-import net.dorokhov.pony.core.service.audio.SongDataService;
 import net.dorokhov.pony.core.service.file.FileTypeService;
 import net.dorokhov.pony.core.service.image.ImageSize;
 import net.dorokhov.pony.core.service.image.ImageSizeReader;
@@ -18,18 +16,11 @@ public class FileScannerImpl implements FileScanner {
 
 	private FileTypeService fileTypeService;
 
-	private SongDataService songDataService;
-
 	private ImageSizeReader imageSizeReader;
 
 	@Autowired
 	public void setFileTypeService(FileTypeService aFileTypeService) {
 		fileTypeService = aFileTypeService;
-	}
-
-	@Autowired
-	public void setSongDataService(SongDataService aSongDataService) {
-		songDataService = aSongDataService;
 	}
 
 	@Autowired
@@ -365,26 +356,9 @@ public class FileScannerImpl implements FileScanner {
 
 	private class LibrarySongImpl extends AbstractLibraryFile implements LibrarySong {
 
-		private final Object songDataLock = new Object();
-
-		private volatile SongData songData;
-
 		private LibrarySongImpl(File aFile, LibraryFolder aParentFolder) {
 			super(aFile, aParentFolder);
 		}
 
-		@Override
-		public SongData getData() throws Exception {
-
-			if (songData == null) {
-				synchronized (songDataLock) {
-					if (songData == null) {
-						songData = songDataService.read(getFile());
-					}
-				}
-			}
-
-			return songData;
-		}
 	}
 }

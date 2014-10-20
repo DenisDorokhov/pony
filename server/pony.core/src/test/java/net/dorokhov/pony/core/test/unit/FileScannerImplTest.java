@@ -2,13 +2,9 @@ package net.dorokhov.pony.core.test.unit;
 
 import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
 import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
-import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
-import net.dorokhov.pony.core.service.library.LibraryFile;
-import net.dorokhov.pony.core.service.library.LibraryFolder;
-import net.dorokhov.pony.core.service.library.LibraryImage;
-import net.dorokhov.pony.core.service.library.LibrarySong;
-import net.dorokhov.pony.core.service.library.FileScannerImpl;
 import net.dorokhov.pony.core.service.file.FileTypeServiceImpl;
+import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
+import net.dorokhov.pony.core.service.library.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -41,7 +37,6 @@ public class FileScannerImplTest {
 		service = new FileScannerImpl();
 		service.setFileTypeService(new FileTypeServiceImpl());
 		service.setImageSizeReader(new ImageSizeReaderImpl());
-		service.setSongDataService(songDataService);
 
 		FileUtils.deleteDirectory(TEST_FOLDER);
 	}
@@ -214,15 +209,6 @@ public class FileScannerImplTest {
 				LibraryImage image = (LibraryImage) item;
 
 				Assert.assertNotNull(image.getSize());
-
-			} else if (item instanceof LibrarySong) {
-
-				LibrarySong song = (LibrarySong) item;
-
-				Assert.assertNotNull(song.getData());
-
-			} else {
-				Assert.fail("Unknown file type.");
 			}
 		}
 		for (LibraryFolder item : aFolder.getChildFolders()) {

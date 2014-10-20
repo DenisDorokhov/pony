@@ -1,14 +1,10 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
-import net.dorokhov.pony.core.service.library.ArtworkDiscoveryServiceImpl;
 import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
+import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
 import net.dorokhov.pony.core.service.file.FileTypeServiceImpl;
 import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
-import net.dorokhov.pony.core.service.library.FileScannerImpl;
-import net.dorokhov.pony.core.service.library.LibraryFolder;
-import net.dorokhov.pony.core.service.library.LibraryImage;
-import net.dorokhov.pony.core.service.library.LibrarySong;
+import net.dorokhov.pony.core.service.library.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -40,7 +36,6 @@ public class ArtworkDiscoveryServiceImplTest {
 		fileScanner = new FileScannerImpl();
 		fileScanner.setFileTypeService(new FileTypeServiceImpl());
 		fileScanner.setImageSizeReader(new ImageSizeReaderImpl());
-		fileScanner.setSongDataService(songDataService);
 
 		artworkDiscoveryService = new ArtworkDiscoveryServiceImpl();
 

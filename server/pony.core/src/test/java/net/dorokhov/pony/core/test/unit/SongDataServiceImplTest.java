@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.audio.SongData;
-import net.dorokhov.pony.core.service.audio.SongDataWriteCommand;
+import net.dorokhov.pony.core.service.audio.SongDataReadable;
+import net.dorokhov.pony.core.service.audio.SongDataWritable;
 import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
 import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
 import org.apache.commons.io.FileUtils;
@@ -48,7 +48,7 @@ public class SongDataServiceImplTest {
 	@Test
 	public void testReading() throws Exception {
 
-		SongData songData = service.read(TEST_MP3_FILE);
+		SongDataReadable songData = service.read(TEST_MP3_FILE);
 
 		doTestReadData(songData);
 
@@ -70,7 +70,7 @@ public class SongDataServiceImplTest {
 
 		FileUtils.copyFile(new ClassPathResource(TEST_IMAGE_PATH).getFile(), TEST_IMAGE_FILE);
 
-		SongDataWriteCommand command = new SongDataWriteCommand(TEST_MP3_FILE);
+		SongDataWritable command = new SongDataWritable();
 
 		command.setDiscNumber(2);
 		command.setDiscCount(3);
@@ -89,17 +89,17 @@ public class SongDataServiceImplTest {
 
 		command.setArtwork(TEST_IMAGE_FILE);
 
-		doTestWrittenData(service.write(command));
+		doTestWrittenData(service.write(TEST_MP3_FILE, command));
 		doTestWrittenData(service.read(TEST_MP3_FILE));
 
 		FileUtils.copyFile(new ClassPathResource(TEST_OGG_PATH).getFile(), TEST_OGG_FILE);
 
-		command = new SongDataWriteCommand(TEST_OGG_FILE);
+		command = new SongDataWritable();
 
 		boolean isExceptionThrown = false;
 
 		try {
-			service.write(command);
+			service.write(TEST_OGG_FILE, command);
 		} catch (Exception e) {
 			isExceptionThrown = true;
 		}
@@ -112,7 +112,7 @@ public class SongDataServiceImplTest {
 
 		FileUtils.copyFile(new ClassPathResource(TEST_IMAGE_PATH).getFile(), TEST_IMAGE_FILE);
 
-		SongDataWriteCommand command = new SongDataWriteCommand(TEST_MP3_FILE);
+		SongDataWritable command = new SongDataWritable();
 
 		command.setDiscNumber(2);
 		command.setDiscCount(3);
@@ -148,11 +148,11 @@ public class SongDataServiceImplTest {
 
 		command.setWriteArtwork(false);
 
-		doTestReadData(service.write(command));
+		doTestReadData(service.write(TEST_MP3_FILE, command));
 		doTestReadData(service.read(TEST_MP3_FILE));
 	}
 
-	private void doTestReadData(SongData aSongData) {
+	private void doTestReadData(SongDataReadable aSongData) {
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), aSongData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", aSongData.getFormat());
 		Assert.assertEquals("audio/mpeg3", aSongData.getMimeType());
@@ -173,7 +173,7 @@ public class SongDataServiceImplTest {
 		Assert.assertEquals("0a6632570700e5f595a75999508fc46d", aSongData.getArtwork().getChecksum());
 	}
 
-	private void doTestWrittenData(SongData aSongData) {
+	private void doTestWrittenData(SongDataReadable aSongData) {
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), aSongData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", aSongData.getFormat());
 		Assert.assertEquals("audio/mpeg3", aSongData.getMimeType());

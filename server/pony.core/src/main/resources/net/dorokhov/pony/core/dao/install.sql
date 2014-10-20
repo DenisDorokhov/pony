@@ -63,6 +63,8 @@ CREATE TABLE library_scan_result (
 	deleted_artist_count BIGINT NOT NULL,
 	created_album_count BIGINT NOT NULL,
 	deleted_album_count BIGINT NOT NULL,
+	created_genre_count BIGINT NOT NULL,
+	deleted_genre_count BIGINT NOT NULL,
 	created_song_count BIGINT NOT NULL,
 	updated_song_count BIGINT NOT NULL,
 	deleted_song_count BIGINT NOT NULL,
