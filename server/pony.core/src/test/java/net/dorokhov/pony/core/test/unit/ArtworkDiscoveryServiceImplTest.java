@@ -1,10 +1,11 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.common.LibraryFolder;
-import net.dorokhov.pony.core.common.LibraryImage;
 import net.dorokhov.pony.core.service.ArtworkDiscoveryServiceImpl;
-import net.dorokhov.pony.core.service.FileScannerImpl;
 import net.dorokhov.pony.core.service.FileTypeServiceImpl;
+import net.dorokhov.pony.core.service.library.FileScannerImpl;
+import net.dorokhov.pony.core.service.library.LibraryFolder;
+import net.dorokhov.pony.core.service.library.LibraryImage;
+import net.dorokhov.pony.core.service.library.LibrarySong;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -57,7 +58,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(testFolder.getChildSongByName("song.mp3"));
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
 		Assert.assertNull(artwork);
 	}
@@ -77,7 +78,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(testFolder.getChildSongByName("song.mp3"));
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
 		Assert.assertEquals("cover.png", artwork.getFile().getName());
 	}
@@ -101,7 +102,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(testFolder.getChildFolderByName("test").getChildSongByName("song.mp3"));
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(getChildFolderByName(testFolder, "test"), "song.mp3"));
 
 		Assert.assertEquals("cover.jpg", artwork.getFile().getName());
 	}
@@ -125,7 +126,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(testFolder.getChildSongByName("song.mp3"));
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
 		Assert.assertEquals("image.jpg", artwork.getFile().getName());
 	}
@@ -140,7 +141,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(testFolder.getChildSongByName("song.mp3"));
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
 		Assert.assertNull(artwork);
 	}
@@ -166,5 +167,27 @@ public class ArtworkDiscoveryServiceImplTest {
 		Assert.assertEquals(2, result.size());
 		Assert.assertTrue(result.contains("artwork"));
 		Assert.assertTrue(result.contains("covers"));
+	}
+
+	private LibraryFolder getChildFolderByName(LibraryFolder aFolder, String aName) {
+
+		for (LibraryFolder folder : aFolder.getChildFolders()) {
+			if (folder.getFile().getName().equals(aName)) {
+				return folder;
+			}
+		}
+
+		return null;
+	}
+
+	private LibrarySong getChildSongByName(LibraryFolder aFolder, String aName) {
+
+		for (LibrarySong song : aFolder.getChildSongs()) {
+			if (song.getFile().getName().equals(aName)) {
+				return song;
+			}
+		}
+
+		return null;
 	}
 }

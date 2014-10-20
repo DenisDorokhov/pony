@@ -1,7 +1,4 @@
-package net.dorokhov.pony.core.service;
-
-import net.dorokhov.pony.core.common.LibraryFile;
-import net.dorokhov.pony.core.common.LibraryFolder;
+package net.dorokhov.pony.core.service.library;
 
 import java.io.File;
 

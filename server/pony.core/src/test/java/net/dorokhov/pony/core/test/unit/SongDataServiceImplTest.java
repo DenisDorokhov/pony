@@ -1,8 +1,8 @@
 package net.dorokhov.pony.core.test.unit;
 
+import net.dorokhov.pony.core.common.SongData;
 import net.dorokhov.pony.core.service.ChecksumServiceImpl;
-import net.dorokhov.pony.core.service.SongDataReader;
-import net.dorokhov.pony.core.service.SongDataReaderImpl;
+import net.dorokhov.pony.core.service.SongDataServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,7 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 
-public class SongDataReaderImplTest {
+public class SongDataServiceImplTest {
 
 	private static final String TEST_MP3_PATH = "data/Metallica-Battery-with_artwork.mp3"; // see tags in data/mp3-info.txt
 	private static final String TEST_OGG_PATH = "data/test.ogg";
@@ -20,12 +20,12 @@ public class SongDataReaderImplTest {
 	private static final File TEST_MP3_FILE = new File(FileUtils.getTempDirectory(), "TestSongDataReaderImpl.mp3");
 	private static final File TEST_OGG_FILE = new File(FileUtils.getTempDirectory(), "TestSongDataReaderImpl.ogg");
 
-	private SongDataReaderImpl service;
+	private SongDataServiceImpl service;
 
 	@Before
 	public void setUp() throws Exception {
 
-		service = new SongDataReaderImpl();
+		service = new SongDataServiceImpl();
 		service.setChecksumService(new ChecksumServiceImpl());
 
 		FileUtils.copyFile(new ClassPathResource(TEST_MP3_PATH).getFile(), TEST_MP3_FILE);
@@ -41,7 +41,7 @@ public class SongDataReaderImplTest {
 	@Test
 	public void test() throws Exception {
 
-		SongDataReader.SongData songData = service.read(TEST_MP3_FILE);
+		SongData songData = service.read(TEST_MP3_FILE);
 
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), songData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", songData.getFormat());

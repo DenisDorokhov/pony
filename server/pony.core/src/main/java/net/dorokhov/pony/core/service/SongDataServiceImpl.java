@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.service;
 
+import net.dorokhov.pony.core.common.SongData;
 import org.apache.commons.lang3.StringUtils;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 
 @Service
-public class SongDataReaderImpl implements SongDataReader {
+public class SongDataServiceImpl implements SongDataService {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -139,7 +140,7 @@ public class SongDataReaderImpl implements SongDataReader {
 
 		private String genre;
 
-		private ArtworkData artwork;
+		private Artwork artwork;
 
 		public String getPath() {
 			return path;
@@ -269,11 +270,11 @@ public class SongDataReaderImpl implements SongDataReader {
 			genre = aGenre;
 		}
 
-		public ArtworkData getArtwork() {
+		public Artwork getArtwork() {
 			return artwork;
 		}
 
-		public void setArtwork(ArtworkData aArtwork) {
+		public void setArtwork(Artwork aArtwork) {
 			artwork = aArtwork;
 		}
 
@@ -301,17 +302,13 @@ public class SongDataReaderImpl implements SongDataReader {
 		}
 	}
 
-	private class ArtworkDataImpl implements ArtworkData {
+	private class ArtworkDataImpl implements SongData.Artwork {
 
 		private byte[] binaryData;
 
 		private String mimeType;
 
 		private String checksum;
-
-		private ArtworkDataImpl() {
-
-		}
 
 		public ArtworkDataImpl(byte[] aBinaryData, String aChecksum, String aMimeType) {
 			setBinaryData(aBinaryData);

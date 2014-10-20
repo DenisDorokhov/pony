@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.common.SaveStoredFileCommand;
+import net.dorokhov.pony.core.common.StoreFileCommand;
 import net.dorokhov.pony.core.dao.StoredFileDao;
 import net.dorokhov.pony.core.domain.StoredFile;
 import org.apache.commons.io.FileUtils;
@@ -113,7 +113,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	@Override
 	@Transactional
-	public StoredFile save(SaveStoredFileCommand aCommand) {
+	public StoredFile save(StoreFileCommand aCommand) {
 
 		if (!aCommand.getFile().exists()) {
 			throw new RuntimeException(new FileNotFoundException("File [" + aCommand.getFile().getAbsolutePath() + "] not found."));
@@ -237,7 +237,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 		}
 	}
 
-	private String commandToPath(SaveStoredFileCommand aCommand) {
+	private String commandToPath(StoreFileCommand aCommand) {
 
 		File file;
 

@@ -1,9 +1,9 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.common.LibraryFolder;
-import net.dorokhov.pony.core.common.LibraryImage;
-import net.dorokhov.pony.core.common.LibrarySong;
-import net.dorokhov.pony.core.common.SimpleImageInfo;
+import net.dorokhov.pony.core.common.ImageSize;
+import net.dorokhov.pony.core.service.library.LibraryFolder;
+import net.dorokhov.pony.core.service.library.LibraryImage;
+import net.dorokhov.pony.core.service.library.LibrarySong;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,17 +118,17 @@ public class ArtworkDiscoveryServiceImpl implements ArtworkDiscoveryService {
 
 	private boolean isImageArtworkBySize(LibraryImage aImage) {
 
-		SimpleImageInfo info = null;
+		ImageSize size = null;
 
 		try {
-			info = new SimpleImageInfo(aImage.getFile());
+			size = aImage.getSize();
 		} catch (Exception e) {
-			log.warn("Could not read image data from file [{}]", aImage.getFile().getAbsolutePath(), e);
+			log.warn("Could not get size of image [{}]", aImage.getFile().getAbsolutePath(), e);
 		}
 
-		if (info != null) {
+		if (size != null) {
 
-			double sizeRatio = info.getWidth() / (double) info.getHeight();
+			double sizeRatio = size.getWidth() / size.getHeight();
 
 			if (sizeRatio <= artworkMaxSizeRatio && sizeRatio >= artworkMinSizeRatio) {
 				return true;

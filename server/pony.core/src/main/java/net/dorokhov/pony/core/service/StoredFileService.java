@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.service;
 
-import net.dorokhov.pony.core.common.SaveStoredFileCommand;
+import net.dorokhov.pony.core.common.StoreFileCommand;
 import net.dorokhov.pony.core.domain.StoredFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public interface StoredFileService {
 	public File getFile(Long aId);
 	public File getFile(StoredFile aStoredFile);
 
-	public StoredFile save(SaveStoredFileCommand aCommand);
+	public StoredFile save(StoreFileCommand aCommand);
 
 	public void deleteById(Long aId);
 	public void deleteAll();
