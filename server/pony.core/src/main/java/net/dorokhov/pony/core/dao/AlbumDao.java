@@ -19,10 +19,11 @@ public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 			"WHERE a.id = ?1")
 	public Album findById(Long aId);
 
-	public List<Album> findByArtworkId(Long aStoredFileId, Sort aSort);
+	public Album findByArtistIdAndName(Long aArtistId, String aName);
+
 	public List<Album> findByArtistId(Long aArtistId, Sort aSort);
 
-	public Album findByArtistIdAndName(Long aArtistId, String aName);
+	public Page<Album> findByArtworkId(Long aStoredFileId, Pageable aPageable);
 
 	@Query(value = "SELECT DISTINCT s.album FROM Song s " +
 			"INNER JOIN FETCH s.album.artist " +

@@ -29,7 +29,7 @@ CREATE TABLE log_message_argument (
 
 	log_message_id BIGINT NOT NULL,
 
-	value LONGVARCHAR NOT NULL,
+	value LONGVARCHAR,
 
 	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
@@ -115,7 +115,10 @@ CREATE TABLE genre (
 
 	name VARCHAR(255) NOT NULL,
 	song_count INT NOT NULL,
-	song_size BIGINT NOT NULL
+	song_size BIGINT NOT NULL,
+	artwork_stored_file_id BIGINT,
+
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE INDEX index_genre_name ON genre(name);

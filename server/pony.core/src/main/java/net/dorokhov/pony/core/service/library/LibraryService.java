@@ -5,15 +5,21 @@ import net.dorokhov.pony.core.service.audio.SongDataWritable;
 
 public interface LibraryService {
 
-	public void cleanSongs();
+	public void cleanSongs(LibraryFolder aLibrary, ProgressDelegate aDelegate);
 
-	public void cleanStoredFiles();
+	public void cleanStoredFiles(ProgressDelegate aDelegate);
 
 	public ImportResult importSong(LibrarySong aSongFile);
 
 	public ImportResult writeAndImportSong(Long aId, SongDataWritable aSongData);
 
-	public void importArtworks();
+	public void importArtworks(ProgressDelegate aDelegate);
+
+	public static interface ProgressDelegate {
+
+		public void onProgress(double aProgress);
+
+	}
 
 	public static interface ImportResult {
 

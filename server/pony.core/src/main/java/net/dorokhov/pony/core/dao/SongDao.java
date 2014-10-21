@@ -1,6 +1,8 @@
 package net.dorokhov.pony.core.dao;
 
 import net.dorokhov.pony.core.domain.Song;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,6 +17,8 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByGenreId(Long aGenreId);
 
 	public Song findByPath(String aPath);
+
+	public Page<Song> findByArtworkId(Long aStoredFileId, Pageable aPageable);
 
 	@Query("SELECT s FROM Song s " +
 			"INNER JOIN FETCH s.genre " +

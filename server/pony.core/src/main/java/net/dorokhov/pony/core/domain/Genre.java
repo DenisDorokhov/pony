@@ -17,6 +17,8 @@ public class Genre extends BaseEntity<Long> {
 
 	private Long songSize = 0L;
 
+	private StoredFile artwork;
+
 	private List<Song> songs;
 
 	@Column(name = "name")
@@ -46,6 +48,16 @@ public class Genre extends BaseEntity<Long> {
 
 	public void setSongSize(Long aSongSize) {
 		songSize = aSongSize;
+	}
+
+	@OneToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "artwork_stored_file_id")
+	public StoredFile getArtwork() {
+		return artwork;
+	}
+
+	public void setArtwork(StoredFile aArtwork) {
+		artwork = aArtwork;
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "genre")
