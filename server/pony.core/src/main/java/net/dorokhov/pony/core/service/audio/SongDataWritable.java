@@ -2,22 +2,7 @@ package net.dorokhov.pony.core.service.audio;
 
 import java.io.File;
 
-public class SongDataWritable {
-
-	private Integer discNumber;
-	private Integer discCount;
-
-	private Integer trackNumber;
-	private Integer trackCount;
-
-	private String title;
-	private String artist;
-	private String albumArtist;
-	private String album;
-
-	private Integer year;
-
-	private String genre;
+public class SongDataWritable extends SongDataAbstract {
 
 	private File artwork;
 
@@ -38,93 +23,53 @@ public class SongDataWritable {
 
 	private boolean writeArtwork;
 
-	public Integer getDiscNumber() {
-		return discNumber;
-	}
-
 	public void setDiscNumber(Integer aDiscNumber) {
-		discNumber = aDiscNumber;
+		super.setDiscNumber(aDiscNumber);
 		setWriteDiscNumber(true);
 	}
 
-	public Integer getDiscCount() {
-		return discCount;
-	}
-
 	public void setDiscCount(Integer aDiscCount) {
-		discCount = aDiscCount;
+		super.setDiscCount(aDiscCount);
 		setWriteDiscCount(true);
 	}
 
-	public Integer getTrackNumber() {
-		return trackNumber;
-	}
-
 	public void setTrackNumber(Integer aTrackNumber) {
-		trackNumber = aTrackNumber;
+		super.setTrackNumber(aTrackNumber);
 		setWriteTrackNumber(true);
 	}
 
-	public Integer getTrackCount() {
-		return trackCount;
-	}
-
 	public void setTrackCount(Integer aTrackCount) {
-		trackCount = aTrackCount;
+		super.setTrackCount(aTrackCount);
 		setWriteTrackCount(true);
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
 	public void setTitle(String aTitle) {
-		title = aTitle;
+		super.setTitle(aTitle);
 		setWriteTitle(true);
 	}
 
-	public String getArtist() {
-		return artist;
-	}
-
 	public void setArtist(String aArtist) {
-		artist = aArtist;
+		super.setArtist(aArtist);
 		setWriteArtist(true);
 	}
 
-	public String getAlbumArtist() {
-		return albumArtist;
-	}
-
 	public void setAlbumArtist(String aAlbumArtist) {
-		albumArtist = aAlbumArtist;
+		super.setAlbumArtist(aAlbumArtist);
 		setWriteAlbumArtist(true);
 	}
 
-	public String getAlbum() {
-		return album;
-	}
-
 	public void setAlbum(String aAlbum) {
-		album = aAlbum;
+		super.setAlbum(aAlbum);
 		setWriteAlbum(true);
 	}
 
-	public Integer getYear() {
-		return year;
-	}
-
 	public void setYear(Integer aYear) {
-		year = aYear;
+		super.setYear(aYear);
 		setWriteYear(true);
 	}
 
-	public String getGenre() {
-		return genre;
-	}
-
 	public void setGenre(String aGenre) {
-		genre = aGenre;
+		super.setGenre(aGenre);
 		setWriteGenre(true);
 	}
 
@@ -225,4 +170,20 @@ public class SongDataWritable {
 		writeArtwork = aWriteArtwork;
 	}
 
+	@Override
+	public String toString() {
+		return "SongDataWritable{" +
+				"discNumber=" + getDiscNumber() +
+				", discCount=" + getDiscCount() +
+				", trackNumber=" + getTrackNumber() +
+				", trackCount=" + getTrackCount() +
+				", title='" + getTitle() + '\'' +
+				", artist='" + getArtist() + '\'' +
+				", albumArtist='" + getAlbumArtist() + '\'' +
+				", album='" + getAlbum() + '\'' +
+				", year=" + getYear() +
+				", genre='" + getGenre() + '\'' +
+				", artwork='" + (artwork != null ? artwork.getAbsolutePath() : null) + "'" +
+				'}';
+	}
 }

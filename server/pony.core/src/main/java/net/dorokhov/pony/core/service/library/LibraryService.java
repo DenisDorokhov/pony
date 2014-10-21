@@ -3,10 +3,17 @@ package net.dorokhov.pony.core.service.library;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.service.audio.SongDataWritable;
 
-public interface LibraryImportService {
+public interface LibraryService {
+
+	public void cleanSongs();
+
+	public void cleanStoredFiles();
 
 	public ImportResult importSong(LibrarySong aSongFile);
-	public ImportResult importSong(Long aId, SongDataWritable aSongData);
+
+	public ImportResult writeAndImportSong(Long aId, SongDataWritable aSongData);
+
+	public void importArtworks();
 
 	public static interface ImportResult {
 

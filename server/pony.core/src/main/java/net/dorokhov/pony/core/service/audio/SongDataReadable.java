@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.service.audio;
 
-public class SongDataReadable {
+public class SongDataReadable extends SongDataAbstract {
 
 	private String path;
 
@@ -13,26 +13,6 @@ public class SongDataReadable {
 	private Integer duration;
 
 	private Long bitRate;
-
-	private Integer discNumber;
-
-	private Integer discCount;
-
-	private Integer trackNumber;
-
-	private Integer trackCount;
-
-	private String title;
-
-	private String artist;
-
-	private String albumArtist;
-
-	private String album;
-
-	private Integer year;
-
-	private String genre;
 
 	private Artwork artwork;
 
@@ -84,86 +64,6 @@ public class SongDataReadable {
 		bitRate = aBitRate;
 	}
 
-	public Integer getDiscNumber() {
-		return discNumber;
-	}
-
-	public void setDiscNumber(Integer aDiscNumber) {
-		discNumber = aDiscNumber;
-	}
-
-	public Integer getDiscCount() {
-		return discCount;
-	}
-
-	public void setDiscCount(Integer aDiscCount) {
-		discCount = aDiscCount;
-	}
-
-	public Integer getTrackNumber() {
-		return trackNumber;
-	}
-
-	public void setTrackNumber(Integer aTrackNumber) {
-		trackNumber = aTrackNumber;
-	}
-
-	public Integer getTrackCount() {
-		return trackCount;
-	}
-
-	public void setTrackCount(Integer aTrackCount) {
-		trackCount = aTrackCount;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String aTitle) {
-		title = aTitle;
-	}
-
-	public String getArtist() {
-		return artist;
-	}
-
-	public void setArtist(String aArtist) {
-		artist = aArtist;
-	}
-
-	public String getAlbumArtist() {
-		return albumArtist;
-	}
-
-	public void setAlbumArtist(String aAlbumArtist) {
-		albumArtist = aAlbumArtist;
-	}
-
-	public String getAlbum() {
-		return album;
-	}
-
-	public void setAlbum(String aAlbum) {
-		album = aAlbum;
-	}
-
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer aYear) {
-		year = aYear;
-	}
-
-	public String getGenre() {
-		return genre;
-	}
-
-	public void setGenre(String aGenre) {
-		genre = aGenre;
-	}
-
 	public Artwork getArtwork() {
 		return artwork;
 	}
@@ -174,23 +74,23 @@ public class SongDataReadable {
 
 	@Override
 	public String toString() {
-		return "SongData{" +
+		return "SongDataReadable{" +
 				"path='" + path + '\'' +
 				", format='" + format + '\'' +
 				", mimeType='" + mimeType + '\'' +
 				", size=" + size +
 				", duration=" + duration +
 				", bitRate=" + bitRate +
-				", discNumber=" + discNumber +
-				", discCount=" + discCount +
-				", trackNumber=" + trackNumber +
-				", trackCount=" + trackCount +
-				", title='" + title + '\'' +
-				", artist='" + artist + '\'' +
-				", albumArtist='" + albumArtist + '\'' +
-				", album='" + album + '\'' +
-				", year=" + year +
-				", genre='" + genre + '\'' +
+				", discNumber=" + getDiscNumber() +
+				", discCount=" + getDiscCount() +
+				", trackNumber=" + getTrackNumber() +
+				", trackCount=" + getTrackCount() +
+				", title='" + getTitle() + '\'' +
+				", artist='" + getArtist() + '\'' +
+				", albumArtist='" + getAlbumArtist() + '\'' +
+				", album='" + getAlbum() + '\'' +
+				", year=" + getYear() +
+				", genre='" + getGenre() + '\'' +
 				", artwork=" + artwork +
 				'}';
 	}

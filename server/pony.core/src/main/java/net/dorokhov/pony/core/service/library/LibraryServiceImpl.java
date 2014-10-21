@@ -4,7 +4,17 @@ import net.dorokhov.pony.core.service.audio.SongDataWritable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LibraryImportServiceImpl implements LibraryImportService {
+public class LibraryServiceImpl implements LibraryService {
+
+	@Override
+	public void cleanSongs() {
+
+	}
+
+	@Override
+	public void cleanStoredFiles() {
+
+	}
 
 	@Override
 	public ImportResult importSong(LibrarySong aSongFile) {
@@ -12,8 +22,12 @@ public class LibraryImportServiceImpl implements LibraryImportService {
 	}
 
 	@Override
-	public ImportResult importSong(Long aId, SongDataWritable aSongData) {
+	public ImportResult writeAndImportSong(Long aId, SongDataWritable aSongData) {
 		return null;
 	}
 
+	@Override
+	public void importArtworks() {
+
+	}
 }
