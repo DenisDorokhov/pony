@@ -50,7 +50,7 @@ public class Genre extends BaseEntity<Long> {
 		songSize = aSongSize;
 	}
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "artwork_stored_file_id")
 	public StoredFile getArtwork() {
 		return artwork;
