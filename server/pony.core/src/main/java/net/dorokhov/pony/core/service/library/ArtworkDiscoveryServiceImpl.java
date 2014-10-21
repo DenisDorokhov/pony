@@ -1,6 +1,9 @@
 package net.dorokhov.pony.core.service.library;
 
 import net.dorokhov.pony.core.service.image.ImageSize;
+import net.dorokhov.pony.core.service.library.common.LibraryFolder;
+import net.dorokhov.pony.core.service.library.common.LibraryImage;
+import net.dorokhov.pony.core.service.library.common.LibrarySong;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

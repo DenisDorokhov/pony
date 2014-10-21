@@ -1,5 +1,8 @@
 package net.dorokhov.pony.core.service.library;
 
+import net.dorokhov.pony.core.service.library.common.LibraryFile;
+import net.dorokhov.pony.core.service.library.common.LibraryFolder;
+
 import java.io.File;
 
 public interface FileScanner {

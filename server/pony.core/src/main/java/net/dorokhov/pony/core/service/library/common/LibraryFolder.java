@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.service.library;
+package net.dorokhov.pony.core.service.library.common;
 
 import java.util.Set;
 

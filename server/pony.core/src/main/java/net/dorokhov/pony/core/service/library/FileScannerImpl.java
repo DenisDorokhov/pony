@@ -3,6 +3,7 @@ package net.dorokhov.pony.core.service.library;
 import net.dorokhov.pony.core.service.file.FileTypeService;
 import net.dorokhov.pony.core.service.image.ImageSize;
 import net.dorokhov.pony.core.service.image.ImageSizeReader;
+import net.dorokhov.pony.core.service.library.common.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

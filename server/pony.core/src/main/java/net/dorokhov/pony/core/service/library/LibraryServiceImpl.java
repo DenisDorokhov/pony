@@ -3,14 +3,14 @@ package net.dorokhov.pony.core.service.library;
 import net.dorokhov.pony.core.common.PageProcessor;
 import net.dorokhov.pony.core.dao.AlbumDao;
 import net.dorokhov.pony.core.dao.ArtistDao;
+import net.dorokhov.pony.core.dao.GenreDao;
 import net.dorokhov.pony.core.dao.SongDao;
-import net.dorokhov.pony.core.domain.Album;
-import net.dorokhov.pony.core.domain.Artist;
-import net.dorokhov.pony.core.domain.Song;
-import net.dorokhov.pony.core.domain.StoredFile;
+import net.dorokhov.pony.core.domain.*;
 import net.dorokhov.pony.core.service.LogService;
 import net.dorokhov.pony.core.service.audio.SongDataWritable;
 import net.dorokhov.pony.core.service.file.StoredFileService;
+import net.dorokhov.pony.core.service.library.common.LibraryFolder;
+import net.dorokhov.pony.core.service.library.common.LibrarySong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private ArtistDao artistDao;
 
+	private GenreDao genreDao;
+
 	private StoredFileService storedFileService;
 
 	@Autowired
@@ -64,13 +66,18 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Autowired
+	public void setGenreDao(GenreDao aGenreDao) {
+		genreDao = aGenreDao;
+	}
+
+	@Autowired
 	public void setStoredFileService(StoredFileService aStoredFileService) {
 		storedFileService = aStoredFileService;
 	}
 
 	@Override
 	@Transactional
-	public void cleanSongs(LibraryFolder aLibrary, final ProgressDelegate aDelegate) {
+	public long cleanSongs(LibraryFolder aLibrary, final ProgressDelegate aDelegate) {
 
 		final Set<String> librarySongPaths = new HashSet<>();
 
@@ -120,11 +127,13 @@ public class LibraryServiceImpl implements LibraryService {
 			log.info(message);
 			logService.info("libraryService.deletedSongs", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
 		}
+
+		return itemsToDelete.size();
 	}
 
 	@Override
 	@Transactional
-	public void cleanStoredFiles(final ProgressDelegate aDelegate) {
+	public long cleanArtworks(final ProgressDelegate aDelegate) {
 
 		final List<Long> itemsToDelete = new ArrayList<>();
 
@@ -139,9 +148,7 @@ public class LibraryServiceImpl implements LibraryService {
 					externalFile = new File(aStoredFile.getUserData());
 				}
 
-				boolean shouldDelete = (externalFile == null || !externalFile.exists());
-
-				if (shouldDelete) {
+				if (externalFile == null || !externalFile.exists()) {
 
 					String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
 					String message = "Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]";
@@ -149,19 +156,6 @@ public class LibraryServiceImpl implements LibraryService {
 					log.debug(message);
 					logService.debug("libraryService.deletingNotFoundStoredFile", message, Arrays.asList(filePath, aStoredFile.toString()));
 
-				} else if (songDao.countByArtworkId(aStoredFile.getId()) == 0 &&
-						albumDao.countByArtworkId(aStoredFile.getId()) == 0 &&
-						artistDao.countByArtworkId(aStoredFile.getId()) == 0) {
-
-					shouldDelete = true;
-
-					String message = "Artwork file is not used, deleting stored file [" + aStoredFile + "]";
-
-					log.debug(message);
-					logService.debug("libraryService.deletingNotUsedStoredFile", message, Arrays.asList(aStoredFile.toString()));
-				}
-
-				if (shouldDelete) {
 					itemsToDelete.add(aStoredFile.getId());
 				}
 
@@ -182,6 +176,7 @@ public class LibraryServiceImpl implements LibraryService {
 			clearSongArtwork(id);
 			clearAlbumArtwork(id);
 			clearArtistArtwork(id);
+			clearGenreArtwork(id);
 
 			storedFileService.deleteById(id);
 		}
@@ -193,29 +188,50 @@ public class LibraryServiceImpl implements LibraryService {
 			log.info(message);
 			logService.info("libraryService.deletedStoredFiles", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
 		}
+
+		return itemsToDelete.size();
 	}
 
 	@Override
-	public ImportResult importSong(LibrarySong aSongFile) {
+	public SongImportResult importSong(LibrarySong aSongFile) {
 		return null;
 	}
 
 	@Override
-	public ImportResult writeAndImportSong(Long aId, SongDataWritable aSongData) {
+	public SongImportResult writeAndImportSong(Long aId, SongDataWritable aSongData) {
 		return null;
 	}
 
 	@Override
-	public void importArtworks(ProgressDelegate aDelegate) {
-
+	public long importArtworks(ProgressDelegate aDelegate) {
+		return 0;
 	}
 
 	private void deleteSong(Long aId) {
 		// TODO: implement
 	}
 
+	private void clearGenreArtwork(final Long aStoredFileId) {
+		PageProcessor.Handler<Genre> handler = new PageProcessor.Handler<Genre>() {
+
+			@Override
+			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
+
+				aGenre.setArtwork(null);
+
+				genreDao.save(aGenre);
+			}
+
+			@Override
+			public Page<Genre> getPage(Pageable aPageable) {
+				return genreDao.findByArtworkId(aStoredFileId, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+	}
+
 	private void clearArtistArtwork(final Long aStoredFileId) {
-		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
+		PageProcessor.Handler<Artist> handler = new PageProcessor.Handler<Artist>() {
 
 			@Override
 			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
@@ -230,7 +246,7 @@ public class LibraryServiceImpl implements LibraryService {
 				return artistDao.findByArtworkId(aStoredFileId, aPageable);
 			}
 		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), artistHandler).run();
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 	}
 
 	private void clearAlbumArtwork(final Long aStoredFileId) {

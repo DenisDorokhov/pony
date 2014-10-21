@@ -2,18 +2,20 @@ package net.dorokhov.pony.core.service.library;
 
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.service.audio.SongDataWritable;
+import net.dorokhov.pony.core.service.library.common.LibraryFolder;
+import net.dorokhov.pony.core.service.library.common.LibrarySong;
 
 public interface LibraryService {
 
-	public void cleanSongs(LibraryFolder aLibrary, ProgressDelegate aDelegate);
+	public long cleanSongs(LibraryFolder aLibrary, ProgressDelegate aDelegate);
 
-	public void cleanStoredFiles(ProgressDelegate aDelegate);
+	public long cleanArtworks(ProgressDelegate aDelegate);
 
-	public ImportResult importSong(LibrarySong aSongFile);
+	public SongImportResult importSong(LibrarySong aSongFile);
 
-	public ImportResult writeAndImportSong(Long aId, SongDataWritable aSongData);
+	public SongImportResult writeAndImportSong(Long aId, SongDataWritable aSongData);
 
-	public void importArtworks(ProgressDelegate aDelegate);
+	public long importArtworks(ProgressDelegate aDelegate);
 
 	public static interface ProgressDelegate {
 
@@ -22,6 +24,11 @@ public interface LibraryService {
 	}
 
 	public static interface ImportResult {
+
+
+	}
+
+	public static interface SongImportResult {
 
 		public static enum Status {
 			UNCHANGED, CREATED, MODIFIED
