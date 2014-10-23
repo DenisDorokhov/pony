@@ -3,7 +3,7 @@ package net.dorokhov.pony.core.test.unit;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.dorokhov.pony.core.common.SqlSplitter;
+import net.dorokhov.pony.core.utils.SqlSplitter;
 
 import org.junit.Assert;
 import org.junit.Before;

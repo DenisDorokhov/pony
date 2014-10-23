@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.controller;
 
-import net.dorokhov.pony.core.exception.AlreadyInstalledException;
+import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

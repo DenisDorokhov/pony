@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.file.FileTypeService;
-import net.dorokhov.pony.core.service.file.FileTypeServiceImpl;
+import net.dorokhov.pony.core.file.FileTypeService;
+import net.dorokhov.pony.core.file.FileTypeServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

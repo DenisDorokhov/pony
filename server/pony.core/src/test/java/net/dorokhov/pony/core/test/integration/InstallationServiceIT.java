@@ -1,24 +1,26 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.core.exception.AlreadyInstalledException;
-import net.dorokhov.pony.core.exception.NotInstalledException;
-import net.dorokhov.pony.core.service.InstallationService;
+import net.dorokhov.pony.core.entity.Installation;
+import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
+import net.dorokhov.pony.core.installation.exception.NotInstalledException;
+import net.dorokhov.pony.core.installation.InstallationService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class InstallationServiceIT {
+
+	protected ConfigurableApplicationContext context;
 
 	private InstallationService service;
 
 	@Before
 	public void setUp() throws Exception {
 
-		ApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
+		context = new ClassPathXmlApplicationContext("context.xml");
 
 		service = context.getBean(InstallationService.class);
 
@@ -27,7 +29,12 @@ public class InstallationServiceIT {
 
 	@After
 	public void tearDown() throws Exception {
+
 		restore();
+
+		if (context != null) {
+			context.close();
+		}
 	}
 
 	@Test

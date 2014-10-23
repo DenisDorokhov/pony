@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.image.ImageSize;
-import net.dorokhov.pony.core.service.image.ImageSizeReaderImpl;
+import net.dorokhov.pony.core.image.ImageSize;
+import net.dorokhov.pony.core.image.ImageSizeReaderImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

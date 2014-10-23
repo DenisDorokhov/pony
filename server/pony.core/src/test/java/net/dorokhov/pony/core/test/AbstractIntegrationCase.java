@@ -1,8 +1,8 @@
 package net.dorokhov.pony.core.test;
 
-import net.dorokhov.pony.core.service.InstallationService;
-import net.dorokhov.pony.core.service.search.SearchService;
-import net.dorokhov.pony.core.service.file.StoredFileService;
+import net.dorokhov.pony.core.installation.InstallationService;
+import net.dorokhov.pony.core.search.SearchService;
+import net.dorokhov.pony.core.storage.StoredFileService;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.context.ConfigurableApplicationContext;

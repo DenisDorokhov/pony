@@ -1,9 +1,9 @@
 package net.dorokhov.pony.core.test.unit;
 
-import net.dorokhov.pony.core.service.audio.SongDataReadable;
-import net.dorokhov.pony.core.service.audio.SongDataWritable;
-import net.dorokhov.pony.core.service.file.ChecksumServiceImpl;
-import net.dorokhov.pony.core.service.audio.SongDataServiceImpl;
+import net.dorokhov.pony.core.audio.data.SongDataReadable;
+import net.dorokhov.pony.core.audio.data.SongDataWritable;
+import net.dorokhov.pony.core.file.ChecksumServiceImpl;
+import net.dorokhov.pony.core.audio.SongDataServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;

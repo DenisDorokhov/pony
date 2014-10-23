@@ -1,9 +1,9 @@
 package net.dorokhov.pony.web.service;
 
-import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.core.exception.AlreadyInstalledException;
-import net.dorokhov.pony.core.exception.NotInstalledException;
-import net.dorokhov.pony.core.service.InstallationService;
+import net.dorokhov.pony.core.entity.Installation;
+import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
+import net.dorokhov.pony.core.installation.exception.NotInstalledException;
+import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.web.domain.InstallationDto;
 import net.dorokhov.pony.web.utils.DtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
