@@ -5,50 +5,23 @@ import net.dorokhov.pony.core.service.audio.SongDataWritable;
 import net.dorokhov.pony.core.service.library.common.LibraryFolder;
 import net.dorokhov.pony.core.service.library.common.LibrarySong;
 
+import java.util.List;
+
 public interface LibraryService {
 
-	public long cleanSongs(LibraryFolder aLibrary, ProgressDelegate aDelegate);
+	public void cleanSongs(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
-	public long cleanArtworks(ProgressDelegate aDelegate);
+	public void cleanArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
-	public SongImportResult importSong(LibrarySong aSongFile);
+	public Song importSong(List<LibraryFolder> aLibrary, LibrarySong aSongFile);
 
-	public SongImportResult writeAndImportSong(Long aId, SongDataWritable aSongData);
+	public Song writeAndImportSong(LibraryFolder aLibrary, Long aId, SongDataWritable aSongData);
 
-	public long importArtworks(ProgressDelegate aDelegate);
+	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
 	public static interface ProgressDelegate {
 
 		public void onProgress(double aProgress);
-
-	}
-
-	public static interface ImportResult {
-
-
-	}
-
-	public static interface SongImportResult {
-
-		public static enum Status {
-			UNCHANGED, CREATED, MODIFIED
-		}
-
-		public Song getSong();
-
-		public Status getStatus();
-
-		public boolean isArtistCreated();
-		public boolean isArtistDeleted();
-
-		public boolean isAlbumCreated();
-		public boolean isAlbumDeleted();
-
-		public boolean isGenreCreated();
-		public boolean isGenreDeleted();
-
-		public boolean isArtworkCreated();
-		public boolean isArtworkDeleted();
 
 	}
 }

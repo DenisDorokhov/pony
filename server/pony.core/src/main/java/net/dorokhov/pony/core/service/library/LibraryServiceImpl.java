@@ -18,7 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.File;
 import java.util.*;
@@ -26,12 +33,16 @@ import java.util.*;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
+	private static final Object lock = new Object();
+
 	private static final int CLEANING_BUFFER_SIZE = 300;
 
 	private static final String FILE_TAG_ARTWORK_EMBEDDED = "artworkEmbedded";
 	private static final String FILE_TAG_ARTWORK_EXTERNAL = "artworkExternal";
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
+
+	private TransactionTemplate transactionTemplate;
 
 	private LogService logService;
 
@@ -44,6 +55,11 @@ public class LibraryServiceImpl implements LibraryService {
 	private GenreDao genreDao;
 
 	private StoredFileService storedFileService;
+
+	@Autowired
+	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
+		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+	}
 
 	@Autowired
 	public void setLogService(LogService aLogService) {
@@ -76,13 +92,56 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	@Transactional
-	public long cleanSongs(LibraryFolder aLibrary, final ProgressDelegate aDelegate) {
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void cleanSongs(final List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+		synchronized (lock) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
+					doCleanSongs(aLibrary, aDelegate);
+				}
+			});
+		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void cleanArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+		synchronized (lock) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
+					doCleanArtworks(aDelegate);
+				}
+			});
+		}
+	}
+
+	@Override
+	public Song importSong(List<LibraryFolder> aLibrary, final LibrarySong aSongFile) {
+		// TODO: implement
+		return null;
+	}
+
+	@Override
+	public Song writeAndImportSong(LibraryFolder aLibrary, Long aId, SongDataWritable aSongData) {
+		// TODO: implement
+		return null;
+	}
+
+	@Override
+	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate) {
+		// TODO: implement
+	}
+
+	private void doCleanSongs(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 
 		final Set<String> librarySongPaths = new HashSet<>();
 
-		for (LibrarySong songFile : aLibrary.getChildSongs(true)) {
-			librarySongPaths.add(songFile.getFile().getAbsolutePath());
+		for (LibraryFolder libraryFolder : aLibrary) {
+			for (LibrarySong songFile : libraryFolder.getChildSongs(true)) {
+				librarySongPaths.add(songFile.getFile().getAbsolutePath());
+			}
 		}
 
 		final List<Long> itemsToDelete = new ArrayList<>();
@@ -127,13 +186,9 @@ public class LibraryServiceImpl implements LibraryService {
 			log.info(message);
 			logService.info("libraryService.deletedSongs", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
 		}
-
-		return itemsToDelete.size();
 	}
 
-	@Override
-	@Transactional
-	public long cleanArtworks(final ProgressDelegate aDelegate) {
+	public void doCleanArtworks(final ProgressDelegate aDelegate) {
 
 		final List<Long> itemsToDelete = new ArrayList<>();
 
@@ -188,23 +243,6 @@ public class LibraryServiceImpl implements LibraryService {
 			log.info(message);
 			logService.info("libraryService.deletedStoredFiles", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
 		}
-
-		return itemsToDelete.size();
-	}
-
-	@Override
-	public SongImportResult importSong(LibrarySong aSongFile) {
-		return null;
-	}
-
-	@Override
-	public SongImportResult writeAndImportSong(Long aId, SongDataWritable aSongData) {
-		return null;
-	}
-
-	@Override
-	public long importArtworks(ProgressDelegate aDelegate) {
-		return 0;
 	}
 
 	private void deleteSong(Long aId) {
