@@ -425,6 +425,8 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setArtwork(artwork);
 
 			song = songDao.save(song);
+
+			updateCounters(song);
 		}
 
 		if (song.getArtwork() == null) {
@@ -432,6 +434,28 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 
 		return song;
+	}
+
+	private void updateCounters(Song aSong) {
+
+		Genre genre = aSong.getGenre();
+		Album album = aSong.getAlbum();
+		Artist artist = album.getArtist();
+
+		genre.setSongCount(Long.valueOf(songDao.countByGenreId(genre.getId())).intValue());
+
+		genreDao.save(genre);
+
+		artist.setSongCount(Long.valueOf(songDao.countByAlbumArtistId(artist.getId())).intValue());
+		artist.setSongSize(songDao.sumSizeByArtistId(artist.getId()));
+		artist.setAlbumCount(Long.valueOf(albumDao.countByArtistId(artist.getId())).intValue());
+
+		artistDao.save(artist);
+
+		album.setSongCount(Long.valueOf(songDao.countByAlbumId(album.getId())).intValue());
+		album.setSongSize(songDao.sumSizeByAlbumId(album.getId()));
+
+		albumDao.save(album);
 	}
 
 	private Song importSongArtwork(LibrarySong aSongFile, Song aSong) {
