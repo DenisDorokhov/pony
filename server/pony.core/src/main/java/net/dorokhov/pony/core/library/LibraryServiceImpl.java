@@ -157,10 +157,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 					itemsToDelete.add(aSong.getId());
 
-					String message = "Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].";
-
-					log.debug(message);
-					logService.debug("libraryService.deletingSong", message, Arrays.asList(file.getAbsolutePath(), aSong.toString()));
+					logDebug("libraryService.deletingSong",
+							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
+							file.getAbsolutePath(), aSong.toString());
 				}
 
 				if (aDelegate != null) {
@@ -177,14 +176,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 		for (Long id : itemsToDelete) {
 			deleteSong(id);
-		}
-
-		if (itemsToDelete.size() > 0) {
-
-			String message = "Deleted [" + itemsToDelete.size() + "] songs.";
-
-			log.info(message);
-			logService.info("libraryService.deletedSongs", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
 		}
 	}
 
@@ -206,10 +197,10 @@ public class LibraryServiceImpl implements LibraryService {
 				if (externalFile == null || !externalFile.exists()) {
 
 					String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
-					String message = "Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]";
 
-					log.debug(message);
-					logService.debug("libraryService.deletingNotFoundStoredFile", message, Arrays.asList(filePath, aStoredFile.toString()));
+					logDebug("libraryService.deletingNotFoundStoredFile",
+							"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
+							filePath, aStoredFile.toString());
 
 					itemsToDelete.add(aStoredFile.getId());
 				}
@@ -235,18 +226,76 @@ public class LibraryServiceImpl implements LibraryService {
 
 			storedFileService.deleteById(id);
 		}
-
-		if (itemsToDelete.size() > 0) {
-
-			String message = "Deleted [" + itemsToDelete.size() + "] stored files.";
-
-			log.info(message);
-			logService.info("libraryService.deletedStoredFiles", message, Arrays.asList(String.valueOf(itemsToDelete.size())));
-		}
 	}
 
 	private void deleteSong(Long aId) {
-		// TODO: implement
+
+		Song song = songDao.findById(aId);
+
+		StoredFile songArtwork = song.getArtwork();
+
+		Album album = song.getAlbum();
+		StoredFile albumArtwork = album.getArtwork();
+
+		Artist artist = album.getArtist();
+		StoredFile artistArtwork = artist.getArtwork();
+
+		Genre genre = song.getGenre();
+		StoredFile genreArtwork = genre.getArtwork();
+
+		songDao.delete(song);
+
+		logDebug("libraryService.deletedSong", "Song [" + song + "] has been deleted.", song.toString());
+
+		deleteStoredFileReference(songArtwork);
+
+		album.setSongCount(album.getSongCount() - 1);
+		album.setSongSize(album.getSongSize() - song.getSize());
+
+		if (album.getSongCount() <= 0) {
+
+			albumDao.delete(album);
+
+			logDebug("libraryService.deletedAlbum", "Album [" + album + "] has no songs and has been deleted.", album.toString());
+
+			deleteStoredFileReference(albumArtwork);
+
+			artist.setAlbumCount(artist.getAlbumCount() - 1);
+		}
+
+		artist.setSongCount(artist.getSongCount() - 1);
+		artist.setSongSize(artist.getSongSize() - song.getSize());
+
+		if (artist.getAlbumCount() <= 0 || artist.getSongCount() <= 0) {
+
+			artistDao.delete(artist);
+
+			logDebug("libraryService.deletedAlbum", "Artist [" + artist + "] has no songs and has been deleted.", artist.toString());
+
+			deleteStoredFileReference(artistArtwork);
+		}
+
+		genre.setSongCount(genre.getSongCount() - 1);
+		genre.setSongSize(genre.getSongSize() - song.getSize());
+
+		if (genre.getSongCount() <= 0) {
+
+			genreDao.delete(genre);
+
+			deleteStoredFileReference(genreArtwork);
+		}
+	}
+
+	private void deleteStoredFileReference(StoredFile aStoredFile) {
+
+		aStoredFile.setReferenceCount(aStoredFile.getReferenceCount() - 1);
+
+		if (aStoredFile.getReferenceCount() <= 0) {
+
+			storedFileService.deleteById(aStoredFile.getId());
+
+			logDebug("libraryService.deletedStoredFile", "Stored file [" + aStoredFile + "] has been deleted.", aStoredFile.toString());
+		}
 	}
 
 	private void clearGenreArtwork(final Long aStoredFileId) {
@@ -323,5 +372,10 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+	}
+
+	private void logDebug(String aCode, String aMessage, String... aArguments) {
+		log.debug(aMessage);
+		logService.debug(aCode, aMessage, Arrays.asList(aArguments));
 	}
 }

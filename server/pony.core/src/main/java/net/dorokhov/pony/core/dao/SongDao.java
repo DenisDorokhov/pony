@@ -16,35 +16,55 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByArtworkId(Long aStoredFileId);
 	public long countByGenreId(Long aGenreId);
 
+	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE s.path = ?1")
 	public Song findByPath(String aPath);
 
-	public Page<Song> findByArtworkId(Long aStoredFileId, Pageable aPageable);
-
 	@Query("SELECT s FROM Song s " +
-			"INNER JOIN FETCH s.genre " +
-			"INNER JOIN FETCH s.album a " +
-			"INNER JOIN FETCH a.artist " +
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
 			"WHERE s.id = ?1")
 	public Song findById(Long aId);
 
 	@Query("SELECT s FROM Song s " +
-			"INNER JOIN FETCH s.genre " +
-			"INNER JOIN FETCH s.album a " +
-			"INNER JOIN FETCH a.artist " +
-			"WHERE a.id = ?1")
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE al.id = ?1")
 	public List<Song> findByAlbumId(Long aAlbumId, Sort aSort);
 
 	@Query("SELECT s FROM Song s " +
-			"INNER JOIN FETCH s.genre " +
-			"INNER JOIN FETCH s.album a " +
-			"INNER JOIN FETCH a.artist " +
-			"WHERE a.artist.id = ?1")
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE ar.id = ?1")
 	public List<Song> findByAlbumArtistId(Long aArtistId, Sort aSort);
 
 	@Query("SELECT s FROM Song s " +
-			"INNER JOIN FETCH s.genre " +
-			"INNER JOIN FETCH s.album a " +
-			"INNER JOIN FETCH a.artist " +
-			"WHERE s.genre.id = ?1")
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE g.id = ?1")
 	public List<Song> findByGenreId(Long aGenreId);
+
+	public Page<Song> findByArtworkId(Long aStoredFileId, Pageable aPageable);
 }

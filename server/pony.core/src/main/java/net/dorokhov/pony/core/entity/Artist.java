@@ -19,6 +19,8 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 
 	private String name;
 
+	private Integer albumCount = 0;
+
 	private Integer songCount = 0;
 
 	private Long songSize = 0L;
@@ -35,6 +37,16 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 
 	public void setName(String aName) {
 		name = aName;
+	}
+
+	@Column(name = "album_count", nullable = false)
+	@NotNull
+	public Integer getAlbumCount() {
+		return albumCount;
+	}
+
+	public void setAlbumCount(Integer aAlbumCount) {
+		albumCount = aAlbumCount;
 	}
 
 	@Column(name = "song_count", nullable = false)

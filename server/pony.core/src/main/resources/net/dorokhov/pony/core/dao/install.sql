@@ -131,6 +131,7 @@ CREATE TABLE artist (
 	update_date TIMESTAMP NOT NULL,
 
 	name VARCHAR(255) NOT NULL,
+	album_count INT NOT NULL,
 	song_count INT NOT NULL,
 	song_size BIGINT NOT NULL,
 	artwork_stored_file_id BIGINT,
