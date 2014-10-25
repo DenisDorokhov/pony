@@ -187,7 +187,7 @@ public class LibraryServiceImpl implements LibraryService {
 							Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
 
 							if (song != null && song.getArtwork() == null) {
-								song = importSongArtwork(song);
+								song = importSongArtwork(aSongFile, song);
 							}
 
 							return song;
@@ -236,6 +236,261 @@ public class LibraryServiceImpl implements LibraryService {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate) {
 		// TODO: implement
+	}
+
+	private Genre importGenre(SongDataReadable aSongData) {
+
+		String genreName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(aSongData.getGenre()), null);
+
+		Genre genre = genreDao.findByName(genreName);
+
+		boolean shouldSave = false;
+
+		if (genre == null) {
+			genre = new Genre();
+		}
+
+		if (genre.getId() != null) {
+			if (!ObjectUtils.nullSafeEquals(genre.getName(), genreName)) {
+				shouldSave = true;
+			}
+		}
+
+		if (shouldSave) {
+
+			genre.setName(genreName);
+
+			genre = genreDao.save(genre);
+		}
+
+		return genre;
+	}
+
+	private Artist importArtist(SongDataReadable aSongData) {
+
+		String artistName = aSongData.getAlbumArtist();
+		if (artistName == null) {
+			artistName = aSongData.getArtist();
+		}
+		artistName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(artistName), null);
+
+		Artist artist = artistDao.findByName(artistName);
+
+		boolean shouldSave = false;
+
+		if (artist == null) {
+			artist = new Artist();
+		}
+
+		if (artist.getId() != null) {
+			if (!ObjectUtils.nullSafeEquals(artist.getName(), artistName)) {
+				shouldSave = true;
+			}
+		}
+
+		if (shouldSave) {
+
+			artist.setName(artistName);
+
+			artist = artistDao.save(artist);
+		}
+
+		return artist;
+	}
+
+	private Album importAlbum(SongDataReadable aSongData, Artist aArtist) {
+
+		String albumName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(aSongData.getAlbum()), null);
+
+		Album album = albumDao.findByArtistIdAndName(aArtist.getId(), aSongData.getAlbum());
+
+		boolean shouldSave = false;
+
+		if (album == null) {
+
+			album = new Album();
+			album.setArtist(aArtist);
+
+			shouldSave = true;
+		}
+
+		boolean newAlbum = (album.getId() == null);
+
+		if (!newAlbum) {
+			if (!ObjectUtils.nullSafeEquals(album.getName(), albumName)) {
+				shouldSave = true;
+			}
+			if (!ObjectUtils.nullSafeEquals(album.getYear(), aSongData.getYear())) {
+				shouldSave = true;
+			}
+		}
+
+		if (shouldSave) {
+
+			album.setName(albumName);
+			album.setYear(aSongData.getYear());
+
+			album = albumDao.save(album);
+
+			if (newAlbum) {
+
+				aArtist.setAlbumCount(aArtist.getAlbumCount() + 1);
+
+				artistDao.save(aArtist);
+			}
+		}
+
+		return album;
+	}
+
+	private Song importSong(LibrarySong aSongFile, SongDataReadable aSongData, Album aAlbum, Genre aGenre) {
+
+		boolean shouldSave = false;
+		boolean newArtwork = false;
+
+		StoredFile artwork = null;
+
+		if (aSongData.getArtwork() != null && aSongData.getArtwork().getChecksum() != null) {
+
+			artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
+
+			if (artwork == null) {
+
+				try {
+
+					StoredFileSaveCommand saveCommand = songDataToArtworkStorageCommand(aSongData);
+
+					artwork = storedFileService.save(saveCommand);
+
+					newArtwork = true;
+
+					logDebug("libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork, artwork.toString());
+
+				} catch (Exception e) {
+					logWarn("libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(), e, aSongData.getArtwork().toString());
+				}
+
+				shouldSave = true;
+			}
+		}
+
+		Song song = songDao.findByPath(aSongData.getPath());
+
+		if (song == null) {
+
+			song = new Song();
+			song.setPath(aSongData.getPath());
+			song.setAlbum(aAlbum);
+			song.setGenre(aGenre);
+
+			shouldSave = true;
+		}
+
+		boolean newSong = (song.getId() == null);
+
+		if (!newSong) {
+			if (!ObjectUtils.nullSafeEquals(song.getFormat(), aSongData.getFormat()) ||
+					!ObjectUtils.nullSafeEquals(song.getMimeType(), aSongData.getMimeType()) ||
+					!ObjectUtils.nullSafeEquals(song.getSize(), aSongData.getSize()) ||
+					!ObjectUtils.nullSafeEquals(song.getDuration(), aSongData.getDuration()) ||
+					!ObjectUtils.nullSafeEquals(song.getBitRate(), aSongData.getBitRate()) ||
+
+					!ObjectUtils.nullSafeEquals(song.getDiscNumber(), aSongData.getDiscNumber()) ||
+					!ObjectUtils.nullSafeEquals(song.getDiscCount(), aSongData.getDiscCount()) ||
+
+					!ObjectUtils.nullSafeEquals(song.getTrackNumber(), aSongData.getTrackNumber()) ||
+					!ObjectUtils.nullSafeEquals(song.getTrackCount(), aSongData.getTrackCount()) ||
+
+					!ObjectUtils.nullSafeEquals(song.getName(), aSongData.getTitle()) ||
+					!ObjectUtils.nullSafeEquals(song.getArtistName(), aSongData.getArtist()) ||
+					!ObjectUtils.nullSafeEquals(song.getAlbumArtistName(), aSongData.getAlbumArtist()) ||
+					!ObjectUtils.nullSafeEquals(song.getAlbum(), aSongData.getAlbum()) ||
+					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear()) ||
+					!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
+
+				shouldSave = true;
+			}
+		}
+
+		if (shouldSave) {
+
+			song.setFormat(aSongData.getFormat());
+			song.setMimeType(aSongData.getMimeType());
+			song.setSize(aSongData.getSize());
+			song.setDuration(aSongData.getDuration());
+			song.setBitRate(aSongData.getBitRate());
+
+			song.setDiscNumber(aSongData.getDiscNumber());
+			song.setDiscCount(aSongData.getDiscCount());
+
+			song.setTrackNumber(aSongData.getTrackNumber());
+			song.setTrackCount(aSongData.getTrackCount());
+
+			song.setName(aSongData.getTitle());
+			song.setArtistName(aSongData.getArtist());
+			song.setAlbumArtistName(aSongData.getAlbumArtist());
+			song.setAlbumName(aSongData.getAlbum());
+			song.setYear(aSongData.getYear());
+
+			if (!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
+
+				if (song.getArtwork() != null) {
+					storedFileService.removeReference(song.getArtwork().getId());
+				}
+
+				song.setArtwork(artwork);
+
+				if (artwork != null && !newArtwork) {
+					storedFileService.addReference(artwork.getId());
+				}
+			}
+
+			song = songDao.save(song);
+
+			if (newSong) {
+
+				aAlbum.setSongCount(aAlbum.getSongCount() + 1);
+				aAlbum.setSongSize(aAlbum.getSongSize() + song.getSize());
+
+				albumDao.save(aAlbum);
+
+				aAlbum.getArtist().setSongCount(aAlbum.getArtist().getSongCount() + 1);
+				aAlbum.getArtist().setSongSize(aAlbum.getArtist().getSongSize() + song.getSize());
+
+				artistDao.save(aAlbum.getArtist());
+
+				aGenre.setSongCount(aGenre.getSongCount() + 1);
+
+				genreDao.save(aGenre);
+			}
+		}
+
+		if (song.getArtwork() == null) {
+			song = importSongArtwork(aSongFile, song);
+		}
+
+		return song;
+	}
+
+	private Song importSongArtwork(LibrarySong aSongFile, Song aSong) {
+		// TODO: implement
+		return null;
+	}
+
+	private StoredFileSaveCommand songDataToArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
+
+		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
+
+		thumbnailService.makeThumbnail(aSongData.getArtwork().getBinaryData(), file);
+
+		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
+
+		saveCommand.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
+		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
+		saveCommand.setChecksum(aSongData.getArtwork().getChecksum());
+		saveCommand.setTag(FILE_TAG_ARTWORK_EMBEDDED);
+
+		return saveCommand;
 	}
 
 	private void doCleanSongs(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
@@ -332,222 +587,6 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
-	private Genre importGenre(SongDataReadable aSongData) {
-
-		String genreName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(aSongData.getGenre()), null);
-
-		Genre genre = genreDao.findByName(genreName);
-
-		boolean shouldSave = false;
-
-		if (genre == null) {
-			genre = new Genre();
-		}
-
-		if (genre.getId() != null) {
-			if (!ObjectUtils.nullSafeEquals(genre.getName(), genreName)) {
-				shouldSave = true;
-			}
-		}
-
-		if (shouldSave) {
-
-			genre.setName(genreName);
-
-			genre = genreDao.save(genre);
-		}
-
-		// TODO: update number of songs etc.
-
-		return genre;
-	}
-
-	private Artist importArtist(SongDataReadable aSongData) {
-
-		String artistName = aSongData.getAlbumArtist();
-		if (artistName == null) {
-			artistName = aSongData.getArtist();
-		}
-		artistName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(artistName), null);
-
-		Artist artist = artistDao.findByName(artistName);
-
-		boolean shouldSave = false;
-
-		if (artist == null) {
-			artist = new Artist();
-		}
-
-		if (artist.getId() != null) {
-			if (!ObjectUtils.nullSafeEquals(artist.getName(), artistName)) {
-				shouldSave = true;
-			}
-		}
-
-		if (shouldSave) {
-
-			artist.setName(artistName);
-
-			artist = artistDao.save(artist);
-		}
-
-		// TODO: update number of songs etc.
-
-		return artist;
-	}
-
-	private Album importAlbum(SongDataReadable aSongData, Artist aArtist) {
-
-		String albumName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(aSongData.getAlbum()), null);
-
-		Album album = albumDao.findByArtistIdAndName(aArtist.getId(), aSongData.getAlbum());
-
-		boolean shouldSave = false;
-
-		if (album == null) {
-
-			album = new Album();
-			album.setArtist(aArtist);
-
-			shouldSave = true;
-		}
-
-		if (album.getId() != null) {
-			if (!ObjectUtils.nullSafeEquals(album.getName(), albumName)) {
-				shouldSave = true;
-			}
-			if (!ObjectUtils.nullSafeEquals(album.getYear(), aSongData.getYear())) {
-				shouldSave = true;
-			}
-		}
-
-		if (shouldSave) {
-
-			album.setName(albumName);
-			album.setYear(aSongData.getYear());
-
-			album = albumDao.save(album);
-		}
-
-		// TODO: update number of songs etc.
-
-		return album;
-	}
-
-	private Song importSong(LibrarySong aSongFile, SongDataReadable aSongData, Album aAlbum, Genre aGenre) {
-
-		boolean shouldSave = false;
-
-		StoredFile artwork = null;
-
-		if (aSongData.getArtwork() != null && aSongData.getArtwork().getChecksum() != null) {
-
-			artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
-
-			if (artwork == null) {
-
-				try {
-
-					StoredFileSaveCommand saveCommand = songDataToArtworkStorageCommand(aSongData);
-
-					artwork = storedFileService.save(saveCommand);
-
-					log.debug("artwork stored {}", artwork);
-
-				} catch (Exception e) {
-					log.warn("could not store artwork", e);
-				}
-
-				shouldSave = true;
-			}
-		}
-
-		Song song = songDao.findByPath(aSongData.getPath());
-
-		if (song == null) {
-
-			song = new Song();
-			song.setPath(aSongData.getPath());
-			song.setAlbum(aAlbum);
-			song.setGenre(aGenre);
-
-			shouldSave = true;
-		}
-
-		if (song.getId() != null) {
-
-			if (!ObjectUtils.nullSafeEquals(song.getFormat(), aSongData.getFormat()) ||
-					!ObjectUtils.nullSafeEquals(song.getMimeType(), aSongData.getMimeType()) ||
-					!ObjectUtils.nullSafeEquals(song.getSize(), aSongData.getSize()) ||
-					!ObjectUtils.nullSafeEquals(song.getDuration(), aSongData.getDuration()) ||
-					!ObjectUtils.nullSafeEquals(song.getBitRate(), aSongData.getBitRate()) ||
-
-					!ObjectUtils.nullSafeEquals(song.getDiscNumber(), aSongData.getDiscNumber()) ||
-					!ObjectUtils.nullSafeEquals(song.getDiscCount(), aSongData.getDiscCount()) ||
-
-					!ObjectUtils.nullSafeEquals(song.getTrackNumber(), aSongData.getTrackNumber()) ||
-					!ObjectUtils.nullSafeEquals(song.getTrackCount(), aSongData.getTrackCount()) ||
-
-					!ObjectUtils.nullSafeEquals(song.getName(), aSongData.getTitle()) ||
-					!ObjectUtils.nullSafeEquals(song.getArtistName(), aSongData.getArtist()) ||
-					!ObjectUtils.nullSafeEquals(song.getAlbumArtistName(), aSongData.getAlbumArtist()) ||
-					!ObjectUtils.nullSafeEquals(song.getAlbum(), aSongData.getAlbum()) ||
-					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear()) ||
-					!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
-
-				shouldSave = true;
-			}
-		}
-
-		if (shouldSave) {
-
-			song.setFormat(aSongData.getFormat());
-			song.setMimeType(aSongData.getMimeType());
-			song.setSize(aSongData.getSize());
-			song.setDuration(aSongData.getDuration());
-			song.setBitRate(aSongData.getBitRate());
-
-			song.setDiscNumber(aSongData.getDiscNumber());
-			song.setDiscCount(aSongData.getDiscCount());
-
-			song.setTrackNumber(aSongData.getTrackNumber());
-			song.setTrackCount(aSongData.getTrackCount());
-
-			song.setName(aSongData.getTitle());
-			song.setArtistName(aSongData.getArtist());
-			song.setAlbumArtistName(aSongData.getAlbumArtist());
-			song.setAlbumName(aSongData.getAlbum());
-			song.setYear(aSongData.getYear());
-
-			song.setArtwork(artwork);
-
-			song = songDao.save(song);
-		}
-
-		return song;
-	}
-
-	private Song importSongArtwork(Song aSong) {
-		// TODO: implement
-		return null;
-	}
-
-	private StoredFileSaveCommand songDataToArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
-
-		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
-
-		thumbnailService.makeThumbnail(aSongData.getArtwork().getBinaryData(), file);
-
-		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
-
-		saveCommand.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
-		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
-		saveCommand.setChecksum(aSongData.getArtwork().getChecksum());
-		saveCommand.setTag(FILE_TAG_ARTWORK_EMBEDDED);
-
-		return saveCommand;
-	}
-
 	private void deleteSong(Long aId) {
 
 		Song song = songDao.findById(aId);
@@ -567,7 +606,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 		logDebug("libraryService.deletedSong", "Song [" + song + "] has been deleted.", song.toString());
 
-		deleteStoredFileReference(songArtwork);
+		if (songArtwork != null) {
+			storedFileService.removeReference(songArtwork.getId());
+		}
 
 		album.setSongCount(album.getSongCount() - 1);
 		album.setSongSize(album.getSongSize() - song.getSize());
@@ -578,7 +619,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 			logDebug("libraryService.deletedAlbum", "Album [" + album + "] has no songs and has been deleted.", album.toString());
 
-			deleteStoredFileReference(albumArtwork);
+			if (albumArtwork != null) {
+				storedFileService.removeReference(albumArtwork.getId());
+			}
 
 			artist.setAlbumCount(artist.getAlbumCount() - 1);
 		}
@@ -592,29 +635,20 @@ public class LibraryServiceImpl implements LibraryService {
 
 			logDebug("libraryService.deletedAlbum", "Artist [" + artist + "] has no songs and has been deleted.", artist.toString());
 
-			deleteStoredFileReference(artistArtwork);
+			if (artistArtwork != null) {
+				storedFileService.removeReference(artistArtwork.getId());
+			}
 		}
 
 		genre.setSongCount(genre.getSongCount() - 1);
-		genre.setSongSize(genre.getSongSize() - song.getSize());
 
 		if (genre.getSongCount() <= 0) {
 
 			genreDao.delete(genre);
 
-			deleteStoredFileReference(genreArtwork);
-		}
-	}
-
-	private void deleteStoredFileReference(StoredFile aStoredFile) {
-
-		aStoredFile.setReferenceCount(aStoredFile.getReferenceCount() - 1);
-
-		if (aStoredFile.getReferenceCount() <= 0) {
-
-			storedFileService.deleteById(aStoredFile.getId());
-
-			logDebug("libraryService.deletedStoredFile", "Stored file [" + aStoredFile + "] has been deleted.", aStoredFile.toString());
+			if (genreArtwork != null) {
+				storedFileService.removeReference(genreArtwork.getId());
+			}
 		}
 	}
 
@@ -697,5 +731,15 @@ public class LibraryServiceImpl implements LibraryService {
 	private void logDebug(String aCode, String aMessage, String... aArguments) {
 		log.debug(aMessage);
 		logService.debug(aCode, aMessage, Arrays.asList(aArguments));
+	}
+
+	private void logWarn(String aCode, String aMessage, String... aArguments) {
+		log.warn(aMessage);
+		logService.warn(aCode, aMessage, Arrays.asList(aArguments));
+	}
+
+	private void logWarn(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
+		log.warn(aMessage, aThrowable);
+		logService.warn(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
 	}
 }

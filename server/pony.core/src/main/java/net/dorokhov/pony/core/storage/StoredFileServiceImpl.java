@@ -157,6 +157,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 			storedFile.setTag(aCommand.getTag());
 			storedFile.setUserData(aCommand.getUserData());
 			storedFile.setPath(relativePath);
+			storedFile.setReferenceCount(1L);
 
 			storedFile = storedFileDao.save(storedFile);
 
@@ -185,24 +186,48 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	@Override
 	@Transactional
+	public StoredFile addReference(Long aId) {
+
+		StoredFile storedFile = storedFileDao.findByIdAndLock(aId);
+
+		if (storedFile != null) {
+
+			storedFile.setReferenceCount(storedFile.getReferenceCount() + 1);
+
+			return storedFileDao.save(storedFile);
+		}
+
+		return null;
+	}
+
+	@Override
+	@Transactional
+	public StoredFile removeReference(Long aId) {
+
+		StoredFile storedFile = storedFileDao.findByIdAndLock(aId);
+
+		if (storedFile != null) {
+
+			storedFile.setReferenceCount(storedFile.getReferenceCount() - 1);
+
+			if (storedFile.getReferenceCount() > 0) {
+				return storedFileDao.save(storedFile);
+			} else {
+				delete(storedFile);
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	@Transactional
 	public void deleteById(Long aId) {
 
 		StoredFile storedFile = getById(aId);
 
 		if (storedFile != null) {
-
-			final File file = new File(filesFolder, storedFile.getPath());
-
-			storedFileDao.delete(storedFile);
-
-			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-				@Override
-				public void afterCommit() {
-					if (!file.delete()) {
-						log.warn("could not delete file [{}] from file system", file.getAbsolutePath());
-					}
-				}
-			});
+			delete(storedFile);
 		}
 	}
 
@@ -283,5 +308,21 @@ public class StoredFileServiceImpl implements StoredFileService {
 		} while (file.exists());
 
 		return file.getPath();
+	}
+
+	private void delete(StoredFile aStoredFile) {
+
+		final File file = new File(filesFolder, aStoredFile.getPath());
+
+		storedFileDao.delete(aStoredFile);
+
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+			@Override
+			public void afterCommit() {
+				if (!file.delete()) {
+					log.warn("could not delete file [{}] from file system", file.getAbsolutePath());
+				}
+			}
+		});
 	}
 }

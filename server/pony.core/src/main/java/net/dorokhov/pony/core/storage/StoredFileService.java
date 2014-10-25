@@ -23,6 +23,9 @@ public interface StoredFileService {
 
 	public StoredFile save(StoredFileSaveCommand aCommand);
 
+	public StoredFile addReference(Long aId);
+	public StoredFile removeReference(Long aId);
+
 	public void deleteById(Long aId);
 	public void deleteAll();
 }

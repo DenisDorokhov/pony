@@ -13,11 +13,7 @@ public class Genre extends BaseEntity<Long> {
 
 	private String name;
 
-	private Integer albumCount = 0;
-
 	private Integer songCount = 0;
-
-	private Long songSize = 0L;
 
 	private StoredFile artwork;
 
@@ -32,16 +28,6 @@ public class Genre extends BaseEntity<Long> {
 		name = aName;
 	}
 
-	@Column(name = "album_count", nullable = false)
-	@NotNull
-	public Integer getAlbumCount() {
-		return albumCount;
-	}
-
-	public void setAlbumCount(Integer aAlbumCount) {
-		albumCount = aAlbumCount;
-	}
-
 	@Column(name = "song_count", nullable = false)
 	@NotNull
 	public Integer getSongCount() {
@@ -50,16 +36,6 @@ public class Genre extends BaseEntity<Long> {
 
 	public void setSongCount(Integer aSongCount) {
 		songCount = aSongCount;
-	}
-
-	@Column(name = "song_size", nullable = false)
-	@NotNull
-	public Long getSongSize() {
-		return songSize;
-	}
-
-	public void setSongSize(Long aSongSize) {
-		songSize = aSongSize;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
