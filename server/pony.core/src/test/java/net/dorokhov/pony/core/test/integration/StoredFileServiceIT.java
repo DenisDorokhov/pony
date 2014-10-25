@@ -29,34 +29,17 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 		StoredFile storedFile = service.save(command);
 
-		checkStoredFile(storedFile, 1, 1);
+		checkStoredFile(storedFile, 1);
 
 		storedFile = service.getById(storedFile.getId());
 
-		checkStoredFile(storedFile, 1, 1);
+		checkStoredFile(storedFile, 1);
 
 		command = buildCommand(2);
 
 		storedFile = service.save(command);
 
-		checkStoredFile(storedFile, 2, 1);
-
-		storedFile = service.addReference(storedFile.getId());
-
-		checkStoredFile(storedFile, 2, 2);
-
-		storedFile = service.removeReference(storedFile.getId());
-
-		checkStoredFile(storedFile, 2, 1);
-
-		Assert.assertNull(service.removeReference(storedFile.getId()));
-		Assert.assertNull(service.getById(storedFile.getId()));
-
-		command = buildCommand(3);
-
-		storedFile = service.save(command);
-
-		checkStoredFile(storedFile, 3, 1);
+		checkStoredFile(storedFile, 2);
 
 		Assert.assertEquals(2, service.getCount());
 
@@ -65,7 +48,7 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 		storedFile = service.getByTagAndChecksum("tag", "checksum1");
 
-		checkStoredFile(storedFile, 1, 1);
+		checkStoredFile(storedFile, 1);
 
 		Assert.assertEquals(2, service.getAll(new PageRequest(0, 100)).getTotalElements());
 		Assert.assertEquals(2, service.getByTag("tag", new PageRequest(0, 100)).getTotalElements());
@@ -93,7 +76,7 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 		return command;
 	}
 
-	private void checkStoredFile(StoredFile aStoredFile, int aIndex, long aReferenceCount) {
+	private void checkStoredFile(StoredFile aStoredFile, int aIndex) {
 
 		Assert.assertNotNull(aStoredFile.getId());
 		Assert.assertNotNull(aStoredFile.getCreationDate());
@@ -106,7 +89,6 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertEquals(TEST_FILE_MIME_TYPE, aStoredFile.getMimeType());
 		Assert.assertNotNull(aStoredFile.getPath());
-		Assert.assertEquals(Long.valueOf(aReferenceCount), aStoredFile.getReferenceCount());
 	}
 
 }

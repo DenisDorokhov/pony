@@ -8,6 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 
+	public long countByArtworkId(Long aStoredFileId);
+
 	@Query("SELECT al FROM Album al " +
 			"INNER JOIN FETCH al.artist ar " +
 			"LEFT JOIN FETCH al.artwork " +

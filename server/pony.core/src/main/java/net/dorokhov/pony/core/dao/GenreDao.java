@@ -8,6 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface GenreDao extends PagingAndSortingRepository<Genre, Long> {
 
+	public long countByArtworkId(Long aStoredFileId);
+
 	@Query("SELECT g FROM Genre g " +
 			"LEFT JOIN FETCH g.artwork " +
 			"WHERE g.name = ?1")

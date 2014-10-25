@@ -97,8 +97,6 @@ CREATE TABLE stored_file (
 	path VARCHAR(255) NOT NULL,
 	user_data LONGVARCHAR,
 
-	reference_count BIGINT NOT NULL,
-
 	UNIQUE (path),
 	UNIQUE (tag, checksum)
 );

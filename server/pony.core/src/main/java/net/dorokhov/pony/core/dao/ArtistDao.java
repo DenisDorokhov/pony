@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface ArtistDao extends PagingAndSortingRepository<Artist, Long> {
 
+	public long countByArtworkId(Long aStoredFileId);
+
 	@Query("SELECT ar FROM Artist ar " +
 			"LEFT JOIN FETCH ar.artwork " +
 			"WHERE ar.name = ?1")

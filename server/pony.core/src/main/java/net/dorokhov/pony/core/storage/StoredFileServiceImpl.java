@@ -157,7 +157,6 @@ public class StoredFileServiceImpl implements StoredFileService {
 			storedFile.setTag(aCommand.getTag());
 			storedFile.setUserData(aCommand.getUserData());
 			storedFile.setPath(relativePath);
-			storedFile.setReferenceCount(1L);
 
 			storedFile = storedFileDao.save(storedFile);
 
@@ -182,42 +181,6 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	@Transactional
-	public StoredFile addReference(Long aId) {
-
-		StoredFile storedFile = storedFileDao.findByIdAndLock(aId);
-
-		if (storedFile != null) {
-
-			storedFile.setReferenceCount(storedFile.getReferenceCount() + 1);
-
-			return storedFileDao.save(storedFile);
-		}
-
-		return null;
-	}
-
-	@Override
-	@Transactional
-	public StoredFile removeReference(Long aId) {
-
-		StoredFile storedFile = storedFileDao.findByIdAndLock(aId);
-
-		if (storedFile != null) {
-
-			storedFile.setReferenceCount(storedFile.getReferenceCount() - 1);
-
-			if (storedFile.getReferenceCount() > 0) {
-				return storedFileDao.save(storedFile);
-			} else {
-				delete(storedFile);
-			}
-		}
-
-		return null;
 	}
 
 	@Override

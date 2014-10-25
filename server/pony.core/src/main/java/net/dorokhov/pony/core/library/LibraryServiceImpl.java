@@ -128,12 +128,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void cleanArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void cleanStoredFiles(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 		synchronized (lock) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
 				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					doCleanArtworks(aDelegate);
+					doCleanStoredFiles(aDelegate);
 				}
 			});
 		}
@@ -331,13 +331,6 @@ public class LibraryServiceImpl implements LibraryService {
 			album.setYear(aSongData.getYear());
 
 			album = albumDao.save(album);
-
-			if (newAlbum) {
-
-				aArtist.setAlbumCount(aArtist.getAlbumCount() + 1);
-
-				artistDao.save(aArtist);
-			}
 		}
 
 		return album;
@@ -346,7 +339,6 @@ public class LibraryServiceImpl implements LibraryService {
 	private Song importSong(LibrarySong aSongFile, SongDataReadable aSongData, Album aAlbum, Genre aGenre) {
 
 		boolean shouldSave = false;
-		boolean newArtwork = false;
 
 		StoredFile artwork = null;
 
@@ -361,8 +353,6 @@ public class LibraryServiceImpl implements LibraryService {
 					StoredFileSaveCommand saveCommand = songDataToArtworkStorageCommand(aSongData);
 
 					artwork = storedFileService.save(saveCommand);
-
-					newArtwork = true;
 
 					logDebug("libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork, artwork.toString());
 
@@ -432,37 +422,9 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setAlbumName(aSongData.getAlbum());
 			song.setYear(aSongData.getYear());
 
-			if (!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
-
-				if (song.getArtwork() != null) {
-					storedFileService.removeReference(song.getArtwork().getId());
-				}
-
-				song.setArtwork(artwork);
-
-				if (artwork != null && !newArtwork) {
-					storedFileService.addReference(artwork.getId());
-				}
-			}
+			song.setArtwork(artwork);
 
 			song = songDao.save(song);
-
-			if (newSong) {
-
-				aAlbum.setSongCount(aAlbum.getSongCount() + 1);
-				aAlbum.setSongSize(aAlbum.getSongSize() + song.getSize());
-
-				albumDao.save(aAlbum);
-
-				aAlbum.getArtist().setSongCount(aAlbum.getArtist().getSongCount() + 1);
-				aAlbum.getArtist().setSongSize(aAlbum.getArtist().getSongSize() + song.getSize());
-
-				artistDao.save(aAlbum.getArtist());
-
-				aGenre.setSongCount(aGenre.getSongCount() + 1);
-
-				genreDao.save(aGenre);
-			}
 		}
 
 		if (song.getArtwork() == null) {
@@ -538,7 +500,7 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
-	public void doCleanArtworks(final ProgressDelegate aDelegate) {
+	public void doCleanStoredFiles(final ProgressDelegate aDelegate) {
 
 		final List<Long> itemsToDelete = new ArrayList<>();
 
@@ -547,20 +509,36 @@ public class LibraryServiceImpl implements LibraryService {
 			@Override
 			public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
 
-				File externalFile = null;
+				boolean shouldDelete = false;
 
-				if (aStoredFile.getUserData() != null) {
-					externalFile = new File(aStoredFile.getUserData());
+				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(FILE_TAG_ARTWORK_FILE)) {
+
+					File externalFile = null;
+
+					if (aStoredFile.getUserData() != null) {
+						externalFile = new File(aStoredFile.getUserData());
+					}
+
+					if (externalFile == null || !externalFile.exists()) {
+
+						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
+
+						logDebug("libraryService.deletingNotFoundStoredFile",
+								"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
+								filePath, aStoredFile.toString());
+
+						shouldDelete = true;
+					}
 				}
 
-				if (externalFile == null || !externalFile.exists()) {
+				if (!shouldDelete) {
+					shouldDelete = (genreDao.countByArtworkId(aStoredFile.getId()) == 0 &&
+							artistDao.countByArtworkId(aStoredFile.getId()) == 0 &&
+							albumDao.countByArtworkId(aStoredFile.getId()) == 0 &&
+							songDao.countByArtworkId(aStoredFile.getId()) == 0);
+				}
 
-					String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
-
-					logDebug("libraryService.deletingNotFoundStoredFile",
-							"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
-							filePath, aStoredFile.toString());
-
+				if (shouldDelete) {
 					itemsToDelete.add(aStoredFile.getId());
 				}
 
@@ -571,7 +549,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			@Override
 			public Page<StoredFile> getPage(Pageable aPageable) {
-				return storedFileService.getByTag(FILE_TAG_ARTWORK_FILE, aPageable);
+				return storedFileService.getAll(aPageable);
 			}
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), storedFileHandler).run();
@@ -591,24 +569,13 @@ public class LibraryServiceImpl implements LibraryService {
 
 		Song song = songDao.findById(aId);
 
-		StoredFile songArtwork = song.getArtwork();
-
 		Album album = song.getAlbum();
-		StoredFile albumArtwork = album.getArtwork();
-
 		Artist artist = album.getArtist();
-		StoredFile artistArtwork = artist.getArtwork();
-
 		Genre genre = song.getGenre();
-		StoredFile genreArtwork = genre.getArtwork();
 
 		songDao.delete(song);
 
-		logDebug("libraryService.deletedSong", "Song [" + song + "] has been deleted.", song.toString());
-
-		if (songArtwork != null) {
-			storedFileService.removeReference(songArtwork.getId());
-		}
+		logDebug("libraryService.deletedSong", "Song " + song + " has been deleted.", song.toString());
 
 		album.setSongCount(album.getSongCount() - 1);
 		album.setSongSize(album.getSongSize() - song.getSize());
@@ -617,11 +584,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			albumDao.delete(album);
 
-			logDebug("libraryService.deletedAlbum", "Album [" + album + "] has no songs and has been deleted.", album.toString());
-
-			if (albumArtwork != null) {
-				storedFileService.removeReference(albumArtwork.getId());
-			}
+			logDebug("libraryService.deletedAlbum", "Album " + album + " has no songs and has been deleted.", album.toString());
 
 			artist.setAlbumCount(artist.getAlbumCount() - 1);
 		}
@@ -633,11 +596,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			artistDao.delete(artist);
 
-			logDebug("libraryService.deletedAlbum", "Artist [" + artist + "] has no songs and has been deleted.", artist.toString());
-
-			if (artistArtwork != null) {
-				storedFileService.removeReference(artistArtwork.getId());
-			}
+			logDebug("libraryService.deletedAlbum", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
 		}
 
 		genre.setSongCount(genre.getSongCount() - 1);
@@ -646,9 +605,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			genreDao.delete(genre);
 
-			if (genreArtwork != null) {
-				storedFileService.removeReference(genreArtwork.getId());
-			}
+			logDebug("libraryService.deletedGenre", "Genre " + genre + " has no songs and has been deleted.", genre.toString());
 		}
 	}
 
@@ -731,11 +688,6 @@ public class LibraryServiceImpl implements LibraryService {
 	private void logDebug(String aCode, String aMessage, String... aArguments) {
 		log.debug(aMessage);
 		logService.debug(aCode, aMessage, Arrays.asList(aArguments));
-	}
-
-	private void logWarn(String aCode, String aMessage, String... aArguments) {
-		log.warn(aMessage);
-		logService.warn(aCode, aMessage, Arrays.asList(aArguments));
 	}
 
 	private void logWarn(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
