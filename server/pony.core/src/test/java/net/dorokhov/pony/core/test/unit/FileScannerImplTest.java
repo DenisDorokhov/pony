@@ -41,6 +41,7 @@ public class FileScannerImplTest {
 		service = new FileScannerImpl();
 		service.setFileTypeService(new FileTypeServiceImpl());
 		service.setImageSizeReader(new ImageSizeReaderImpl());
+		service.setChecksumService(new ChecksumServiceImpl());
 
 		FileUtils.deleteDirectory(TEST_FOLDER);
 	}
@@ -206,6 +207,7 @@ public class FileScannerImplTest {
 
 			Assert.assertNotNull(item.getFile());
 			Assert.assertNotNull(item.getMimeType());
+			Assert.assertNotNull(item.getChecksum());
 			Assert.assertTrue(aFolder == item.getParentFolder());
 
 			if (item instanceof LibraryImage) {

@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.library;
 
+import net.dorokhov.pony.core.file.ChecksumService;
 import net.dorokhov.pony.core.file.FileTypeService;
 import net.dorokhov.pony.core.image.ImageSize;
 import net.dorokhov.pony.core.image.ImageSizeReader;
@@ -19,6 +20,8 @@ public class FileScannerImpl implements FileScanner {
 
 	private ImageSizeReader imageSizeReader;
 
+	private ChecksumService checksumService;
+
 	@Autowired
 	public void setFileTypeService(FileTypeService aFileTypeService) {
 		fileTypeService = aFileTypeService;
@@ -27,6 +30,11 @@ public class FileScannerImpl implements FileScanner {
 	@Autowired
 	public void setImageSizeReader(ImageSizeReader aImageSizeReader) {
 		imageSizeReader = aImageSizeReader;
+	}
+
+	@Autowired
+	public void setChecksumService(ChecksumService aChecksumService) {
+		checksumService = aChecksumService;
 	}
 
 	@Override
@@ -300,10 +308,12 @@ public class FileScannerImpl implements FileScanner {
 	private abstract class AbstractLibraryFile extends AbstractLibraryNode implements LibraryFile {
 
 		private final Object mimeTypeLock = new Object();
+		private final Object checksumLock = new Object();
 
 		private AtomicBoolean isMimeTypeNull = new AtomicBoolean();
 
 		private volatile String mimeType;
+		private volatile String checksum;
 
 		protected AbstractLibraryFile(File aFile, LibraryFolder aParentFolder) {
 			super(aFile, aParentFolder);
@@ -326,6 +336,20 @@ public class FileScannerImpl implements FileScanner {
 			}
 
 			return mimeType;
+		}
+
+		@Override
+		public String getChecksum() throws Exception {
+
+			if (checksum == null) {
+				synchronized (checksumLock) {
+					if (checksum == null) {
+						checksum = checksumService.calculateChecksum(getFile());
+					}
+				}
+			}
+
+			return checksum;
 		}
 	}
 

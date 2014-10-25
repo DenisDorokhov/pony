@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.audio.SongDataService;
 import net.dorokhov.pony.core.audio.data.SongDataReadable;
 import net.dorokhov.pony.core.image.ThumbnailService;
 import net.dorokhov.pony.core.library.file.LibraryFolder;
+import net.dorokhov.pony.core.library.file.LibraryImage;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.storage.StoredFileSaveCommand;
 import net.dorokhov.pony.core.utils.PageProcessor;
@@ -68,6 +69,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private ThumbnailService thumbnailService;
 
+	private ArtworkDiscoveryService artworkDiscoveryService;
+
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
 		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -111,6 +114,11 @@ public class LibraryServiceImpl implements LibraryService {
 	@Autowired
 	public void setThumbnailService(ThumbnailService aThumbnailService) {
 		thumbnailService = aThumbnailService;
+	}
+
+	@Autowired
+	public void setArtworkDiscoveryService(ArtworkDiscoveryService aArtworkDiscoveryService) {
+		artworkDiscoveryService = aArtworkDiscoveryService;
 	}
 
 	@Override
@@ -187,7 +195,7 @@ public class LibraryServiceImpl implements LibraryService {
 							Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
 
 							if (song != null && song.getArtwork() == null) {
-								song = importSongArtwork(aSongFile, song);
+								song = discoverSongArtwork(aSongFile, song);
 							}
 
 							return song;
@@ -430,7 +438,7 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 
 		if (song.getArtwork() == null) {
-			song = importSongArtwork(aSongFile, song);
+			song = discoverSongArtwork(aSongFile, song);
 		}
 
 		return song;
@@ -458,9 +466,72 @@ public class LibraryServiceImpl implements LibraryService {
 		albumDao.save(album);
 	}
 
-	private Song importSongArtwork(LibrarySong aSongFile, Song aSong) {
-		// TODO: implement
-		return null;
+	private Song discoverSongArtwork(LibrarySong aSongFile, Song aSong) {
+
+		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(aSongFile);
+
+		if (artwork != null) {
+
+			String mimeType = artwork.getMimeType();
+
+			if (mimeType != null) {
+
+				String checksum = null;
+
+				try {
+					checksum = artwork.getChecksum();
+				} catch (Exception e) {
+					logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
+				}
+
+				if (checksum != null) {
+
+					StoredFile storedFile = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_FILE, checksum);
+
+					if (storedFile == null) {
+
+						File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
+
+						boolean thumbnailReady = false;
+
+						try {
+
+							thumbnailService.makeThumbnail(artwork.getFile(), file);
+
+							thumbnailReady = true;
+
+						} catch (Exception e) {
+							logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
+						}
+
+						if (thumbnailReady) {
+
+							StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
+
+							saveCommand.setName(aSong.getArtistName() + " " + aSong.getAlbumName() + " " + aSong.getName());
+							saveCommand.setMimeType(mimeType);
+							saveCommand.setChecksum(checksum);
+							saveCommand.setTag(FILE_TAG_ARTWORK_FILE);
+							saveCommand.setUserData(artwork.getFile().getAbsolutePath());
+
+							storedFile = storedFileService.save(saveCommand);
+
+							logDebug("libraryService.fileArtworkStored", "File artwork stored " + storedFile, storedFile.toString());
+
+							aSong.getAlbum().setArtwork(storedFile);
+
+							albumDao.save(aSong.getAlbum());
+
+							aSong.setArtwork(storedFile);
+
+							songDao.save(aSong);
+						}
+					}
+				}
+			}
+		}
+
+		return aSong;
 	}
 
 	private StoredFileSaveCommand songDataToArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
