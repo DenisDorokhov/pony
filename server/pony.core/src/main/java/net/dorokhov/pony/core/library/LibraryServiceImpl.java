@@ -300,7 +300,15 @@ public class LibraryServiceImpl implements LibraryService {
 
 			artist.setName(artistName);
 
+			boolean newArtist = (artist.getId() == null);
+
 			artist = artistDao.save(artist);
+
+			if (newArtist) {
+				logDebug("libraryService.artistCreated", "Artist " + artist + " has been created.", artist.toString());
+			} else {
+				logDebug("libraryService.artistUpdated", "Artist " + artist + " has been updated.", artist.toString());
+			}
 		}
 
 		return artist;
@@ -322,9 +330,7 @@ public class LibraryServiceImpl implements LibraryService {
 			shouldSave = true;
 		}
 
-		boolean newAlbum = (album.getId() == null);
-
-		if (!newAlbum) {
+		if (album.getId() != null) {
 			if (!ObjectUtils.nullSafeEquals(album.getName(), albumName)) {
 				shouldSave = true;
 			}
@@ -338,7 +344,15 @@ public class LibraryServiceImpl implements LibraryService {
 			album.setName(albumName);
 			album.setYear(aSongData.getYear());
 
+			boolean newAlbum = (album.getId() == null);
+
 			album = albumDao.save(album);
+
+			if (newAlbum) {
+				logDebug("libraryService.albumCreated", "Album " + album + " has been created.", album.toString());
+			} else {
+				logDebug("libraryService.albumUpdated", "Album " + album + " has been updated.", album.toString());
+			}
 		}
 
 		return album;
@@ -358,7 +372,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 				try {
 
-					StoredFileSaveCommand saveCommand = songDataToArtworkStorageCommand(aSongData);
+					StoredFileSaveCommand saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
 
 					artwork = storedFileService.save(saveCommand);
 
@@ -367,8 +381,6 @@ public class LibraryServiceImpl implements LibraryService {
 				} catch (Exception e) {
 					logWarn("libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(), e, aSongData.getArtwork().toString());
 				}
-
-				shouldSave = true;
 			}
 		}
 
@@ -384,9 +396,7 @@ public class LibraryServiceImpl implements LibraryService {
 			shouldSave = true;
 		}
 
-		boolean newSong = (song.getId() == null);
-
-		if (!newSong) {
+		if (song.getId() != null) {
 			if (!ObjectUtils.nullSafeEquals(song.getFormat(), aSongData.getFormat()) ||
 					!ObjectUtils.nullSafeEquals(song.getMimeType(), aSongData.getMimeType()) ||
 					!ObjectUtils.nullSafeEquals(song.getSize(), aSongData.getSize()) ||
@@ -432,12 +442,22 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song.setArtwork(artwork);
 
+			boolean newSong = (song.getId() == null);
+
 			song = songDao.save(song);
 
 			updateCounters(song);
+
+			if (newSong) {
+				logDebug("libraryService.songCreated", "Song " + song + " has been created.", song.toString());
+			} else {
+				logDebug("libraryService.songUpdated", "Song " + song + " has been updated.", song.toString());
+			}
 		}
 
 		if (song.getArtwork() == null) {
+			// TODO: return stored file, so we can update artwork earlier
+			// TODO: set album artwork if it's null
 			song = discoverSongArtwork(aSongFile, song);
 		}
 
@@ -490,41 +510,38 @@ public class LibraryServiceImpl implements LibraryService {
 
 					if (storedFile == null) {
 
-						File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
-
-						boolean thumbnailReady = false;
-
 						try {
 
-							thumbnailService.makeThumbnail(artwork.getFile(), file);
-
-							thumbnailReady = true;
-
-						} catch (Exception e) {
-							logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
-						}
-
-						if (thumbnailReady) {
-
-							StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
-
-							saveCommand.setName(aSong.getArtistName() + " " + aSong.getAlbumName() + " " + aSong.getName());
-							saveCommand.setMimeType(mimeType);
-							saveCommand.setChecksum(checksum);
-							saveCommand.setTag(FILE_TAG_ARTWORK_FILE);
-							saveCommand.setUserData(artwork.getFile().getAbsolutePath());
+							StoredFileSaveCommand saveCommand = buildFileArtworkStorageCommand(aSong, artwork, mimeType, checksum);
 
 							storedFile = storedFileService.save(saveCommand);
 
 							logDebug("libraryService.fileArtworkStored", "File artwork stored " + storedFile, storedFile.toString());
 
-							aSong.getAlbum().setArtwork(storedFile);
+						} catch (Exception e) {
+							logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
+						}
 
-							albumDao.save(aSong.getAlbum());
+						if (storedFile != null) {
+
+							if (aSong.getAlbum().getArtwork() == null) {
+
+								aSong.getAlbum().setArtwork(storedFile);
+
+								albumDao.save(aSong.getAlbum());
+
+								logDebug("libraryService.albumFileArtworkSet",
+										"File artwork " + storedFile + " set for album " + aSong.getAlbum(),
+										storedFile.toString(), aSong.getAlbum().toString());
+							}
 
 							aSong.setArtwork(storedFile);
 
 							songDao.save(aSong);
+
+							logDebug("libraryService.songFileArtworkSet",
+									"File artwork " + storedFile + " set for song " + aSong,
+									storedFile.toString(), aSong.toString());
 						}
 					}
 				}
@@ -534,7 +551,7 @@ public class LibraryServiceImpl implements LibraryService {
 		return aSong;
 	}
 
-	private StoredFileSaveCommand songDataToArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
+	private StoredFileSaveCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
 
@@ -546,6 +563,23 @@ public class LibraryServiceImpl implements LibraryService {
 		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
 		saveCommand.setChecksum(aSongData.getArtwork().getChecksum());
 		saveCommand.setTag(FILE_TAG_ARTWORK_EMBEDDED);
+
+		return saveCommand;
+	}
+
+	private StoredFileSaveCommand buildFileArtworkStorageCommand(Song aSong, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
+
+		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
+
+		thumbnailService.makeThumbnail(aArtwork.getFile(), file);
+
+		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
+
+		saveCommand.setName(aSong.getArtistName() + " " + aSong.getAlbumName() + " " + aSong.getName());
+		saveCommand.setMimeType(aMimeType);
+		saveCommand.setChecksum(aChecksum);
+		saveCommand.setTag(FILE_TAG_ARTWORK_FILE);
+		saveCommand.setUserData(aArtwork.getFile().getAbsolutePath());
 
 		return saveCommand;
 	}
@@ -656,7 +690,11 @@ public class LibraryServiceImpl implements LibraryService {
 			clearArtistArtwork(id);
 			clearGenreArtwork(id);
 
+			StoredFile storedFile = storedFileService.getById(id);
+
 			storedFileService.deleteById(id);
+
+			logDebug("libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.", storedFile.toString());
 		}
 	}
 
