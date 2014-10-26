@@ -706,11 +706,10 @@ public class LibraryServiceImpl implements LibraryService {
 					}
 				}
 
-				if (!shouldDelete) {
-					shouldDelete = (genreDao.countByArtworkId(aStoredFile.getId()) == 0 &&
-							artistDao.countByArtworkId(aStoredFile.getId()) == 0 &&
-							albumDao.countByArtworkId(aStoredFile.getId()) == 0 &&
-							songDao.countByArtworkId(aStoredFile.getId()) == 0);
+				if (!shouldDelete && aStoredFile.getTag() != null) {
+					if (aStoredFile.getTag().equals(FILE_TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(FILE_TAG_ARTWORK_FILE)) {
+						shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
+					}
 				}
 
 				if (shouldDelete) {
