@@ -47,7 +47,6 @@ public abstract class BaseEntity<T extends Serializable> implements AbstractEnti
 	@PrePersist
 	public void prePersist() {
 		setCreationDate(new Date());
-		setUpdateDate(new Date());
 	}
 
 	@PreUpdate

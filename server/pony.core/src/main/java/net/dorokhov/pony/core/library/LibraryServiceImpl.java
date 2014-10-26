@@ -46,9 +46,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private static final int CLEANING_BUFFER_SIZE = 300;
 
-	private static final String FILE_TAG_ARTWORK_EMBEDDED = "artworkEmbedded";
-	private static final String FILE_TAG_ARTWORK_FILE = "artworkFile";
-
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	private TransactionTemplate transactionTemplate;
@@ -525,7 +522,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		if (aSongData.getArtwork() != null && aSongData.getArtwork().getChecksum() != null) {
 
-			artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
+			artwork = storedFileService.getByTagAndChecksum(StoredFile.TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
 
 			if (artwork == null) {
 
@@ -568,7 +565,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 				if (checksum != null) {
 
-					artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_FILE, checksum);
+					artwork = storedFileService.getByTagAndChecksum(StoredFile.TAG_ARTWORK_FILE, checksum);
 
 					if (artwork == null) {
 
@@ -593,7 +590,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private StoredFileSaveCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
 
-		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
+		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
 
 		thumbnailService.makeThumbnail(aSongData.getArtwork().getBinaryData(), file);
 
@@ -602,14 +599,14 @@ public class LibraryServiceImpl implements LibraryService {
 		saveCommand.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
 		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
 		saveCommand.setChecksum(aSongData.getArtwork().getChecksum());
-		saveCommand.setTag(FILE_TAG_ARTWORK_EMBEDDED);
+		saveCommand.setTag(StoredFile.TAG_ARTWORK_EMBEDDED);
 
 		return saveCommand;
 	}
 
 	private StoredFileSaveCommand buildFileArtworkStorageCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
 
-		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
+		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
 
 		thumbnailService.makeThumbnail(aArtwork.getFile(), file);
 
@@ -639,7 +636,7 @@ public class LibraryServiceImpl implements LibraryService {
 		saveCommand.setName(artist + " " + album + " " + title);
 		saveCommand.setMimeType(aMimeType);
 		saveCommand.setChecksum(aChecksum);
-		saveCommand.setTag(FILE_TAG_ARTWORK_FILE);
+		saveCommand.setTag(StoredFile.TAG_ARTWORK_FILE);
 		saveCommand.setUserData(aArtwork.getFile().getAbsolutePath());
 
 		return saveCommand;
@@ -701,7 +698,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 				boolean shouldDelete = false;
 
-				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(FILE_TAG_ARTWORK_FILE)) {
+				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
 
 					File externalFile = null;
 
@@ -722,7 +719,7 @@ public class LibraryServiceImpl implements LibraryService {
 				}
 
 				if (!shouldDelete && aStoredFile.getTag() != null) {
-					if (aStoredFile.getTag().equals(FILE_TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(FILE_TAG_ARTWORK_FILE)) {
+					if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
 						shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
 					}
 				}

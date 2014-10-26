@@ -80,7 +80,7 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertNotNull(aStoredFile.getId());
 		Assert.assertNotNull(aStoredFile.getCreationDate());
-		Assert.assertNotNull(aStoredFile.getUpdateDate());
+		Assert.assertNull(aStoredFile.getUpdateDate());
 
 		Assert.assertEquals("file" + aIndex, aStoredFile.getName());
 		Assert.assertEquals("checksum" + aIndex, aStoredFile.getChecksum());

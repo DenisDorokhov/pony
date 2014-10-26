@@ -1,12 +1,14 @@
 package net.dorokhov.pony.core.library;
 
-import net.dorokhov.pony.core.dao.ScanResultDao;
+import net.dorokhov.pony.core.dao.*;
 import net.dorokhov.pony.core.entity.ScanResult;
 import net.dorokhov.pony.core.entity.Song;
+import net.dorokhov.pony.core.entity.StoredFile;
 import net.dorokhov.pony.core.library.exception.ConcurrentScanException;
 import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
+import net.dorokhov.pony.core.storage.StoredFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,13 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private LibraryService libraryService;
 
+	private SongDao songDao;
+	private GenreDao genreDao;
+	private ArtistDao artistDao;
+	private AlbumDao albumDao;
+
+	private StoredFileService storedFileService;
+
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
 		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -87,6 +96,31 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	@Autowired
 	public void setLibraryService(LibraryService aLibraryService) {
 		libraryService = aLibraryService;
+	}
+
+	@Autowired
+	public void setSongDao(SongDao aSongDao) {
+		songDao = aSongDao;
+	}
+
+	@Autowired
+	public void setGenreDao(GenreDao aGenreDao) {
+		genreDao = aGenreDao;
+	}
+
+	@Autowired
+	public void setArtistDao(ArtistDao aArtistDao) {
+		artistDao = aArtistDao;
+	}
+
+	@Autowired
+	public void setAlbumDao(AlbumDao aAlbumDao) {
+		albumDao = aAlbumDao;
+	}
+
+	@Autowired
+	public void setStoredFileService(StoredFileService aStoredFileService) {
+		storedFileService = aStoredFileService;
 	}
 
 	@PreDestroy
@@ -202,16 +236,87 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		return scanResult;
 	}
 
-	private ScanResult doScan(final List<File> aTargetFolders) {
+	private ScanResult doScan(final List<File> aTargetFolders) throws InterruptedException {
 
 		List<String> targetPaths = new ArrayList<>();
 		for (File targetFolder : aTargetFolders) {
 			targetPaths.add(targetFolder.getAbsolutePath());
 		}
 
+		ScanResult lastScan = getLastResult();
+
+		long songCountBeforeScan = songDao.count();
+		long genreCountBeforeScan = genreDao.count();
+		long artistCountBeforeScan = artistDao.count();
+		long albumCountBeforeScan = albumDao.count();
+		long artworkCountBeforeScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
+
 		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", (String[]) targetPaths.toArray());
 
 		long startTime = System.nanoTime();
+
+		List<LibrarySong> songFiles = performScanSteps(aTargetFolders);
+
+		long endTime = System.nanoTime();
+
+		long songCountAfterScan = songDao.count();
+		long songCountCreated = songDao.countByCreationDateGreaterThan(lastScan.getDate());
+		long songCountUpdated = songDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long songCountDeleted = Math.max(0, songCountBeforeScan - (songCountAfterScan - songCountCreated));
+
+		long genreCountAfterScan = genreDao.count();
+		long genreCountCreated = genreDao.countByCreationDateGreaterThan(lastScan.getDate());
+		long genreCountUpdated = genreDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long genreCountDeleted = Math.max(0, genreCountBeforeScan - (genreCountAfterScan - genreCountCreated));
+
+		long artistCountAfterScan = artistDao.count();
+		long artistCountCreated = artistDao.countByCreationDateGreaterThan(lastScan.getDate());
+		long artistCountUpdated = artistDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long artistCountDeleted = Math.max(0, artistCountBeforeScan - (artistCountAfterScan - artistCountCreated));
+
+		long albumCountAfterScan = albumDao.count();
+		long albumCountCreated = albumDao.countByCreationDateGreaterThan(lastScan.getDate());
+		long albumCountUpdated = albumDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long albumCountDeleted = Math.max(0, albumCountBeforeScan - (albumCountAfterScan - albumCountCreated));
+
+		long artworkCountAfterScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
+		long artworkCountCreated = storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScan.getDate()) +
+				storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_FILE, lastScan.getDate());
+		long artworkCountUpdated = storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScan.getDate()) +
+				storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_FILE, lastScan.getDate());
+		long artworkCountDeleted = Math.max(0, artworkCountBeforeScan - (artworkCountAfterScan - artworkCountCreated));
+
+		ScanResult scanResult = new ScanResult();
+
+		scanResult.setFolders(targetPaths);
+		scanResult.setDuration(endTime - startTime);
+
+		scanResult.setFoundSongCount(Integer.valueOf(songFiles.size()).longValue());
+
+		scanResult.setCreatedArtistCount(artistCountCreated);
+		scanResult.setUpdatedArtistCount(artistCountUpdated);
+		scanResult.setDeletedArtistCount(artistCountDeleted);
+
+		scanResult.setCreatedAlbumCount(albumCountCreated);
+		scanResult.setUpdatedAlbumCount(albumCountUpdated);
+		scanResult.setDeletedAlbumCount(albumCountDeleted);
+
+		scanResult.setCreatedGenreCount(genreCountCreated);
+		scanResult.setUpdatedGenreCount(genreCountUpdated);
+		scanResult.setDeletedGenreCount(genreCountDeleted);
+
+		scanResult.setCreatedSongCount(songCountCreated);
+		scanResult.setUpdatedSongCount(songCountUpdated);
+		scanResult.setDeletedSongCount(songCountDeleted);
+
+		scanResult.setCreatedArtworkCount(artworkCountCreated);
+		scanResult.setUpdatedArtworkCount(artworkCountUpdated);
+		scanResult.setDeletedArtworkCount(artworkCountDeleted);
+
+		return scanResultDao.save(scanResult);
+	}
+
+	private List<LibrarySong> performScanSteps(final List<File> aTargetFolders) {
 
 		logInfo("libraryScanService.searchingMediaFiles", "Searching media files...");
 
@@ -263,16 +368,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			}
 		});
 
-		long endTime = System.nanoTime();
-
-		ScanResult scanResult = new ScanResult();
-
-		scanResult.setFolders(targetPaths);
-		scanResult.setDuration(endTime - startTime);
-
-		// TODO: set scan result properties
-
-		return scanResultDao.save(scanResult);
+		return songFiles;
 	}
 
 	private void logInfo(String aCode, String aMessage, String... aArguments) {

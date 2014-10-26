@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface SongDao extends PagingAndSortingRepository<Song, Long> {
@@ -21,6 +22,8 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByAlbumArtistId(Long aArtistId);
 	public long countByAlbumId(Long aAlbumId);
 	public long countByArtworkId(Long aStoredFileId);
+	public long countByCreationDateGreaterThan(Date aDate);
+	public long countByUpdateDateGreaterThan(Date aDate);
 
 	public Song findByPath(String aPath);
 

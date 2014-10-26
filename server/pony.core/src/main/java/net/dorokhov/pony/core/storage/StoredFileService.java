@@ -5,11 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 public interface StoredFileService {
 
 	public long getCount();
+	public long getCountByTag(String aTag);
+	public long getCountByTagAndCreationDate(String aTag, Date aMinimalCreationDate);
+	public long getCountByTagAndUpdateDate(String aTag, Date aMinimalUpdateDate);
 
 	public StoredFile getById(Long aId);
 	public StoredFile getByTagAndChecksum(String aTag, String aChecksum);

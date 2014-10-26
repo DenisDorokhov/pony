@@ -17,9 +17,7 @@ public class ScanResult {
 
 	private Long duration;
 
-	private Long scannedSongCount;
-
-	private Long scannedFolderCount;
+	private Long foundSongCount;
 
 	private Long createdArtistCount;
 
@@ -46,6 +44,8 @@ public class ScanResult {
 	private Long deletedSongCount;
 
 	private Long createdArtworkCount;
+
+	private Long updatedArtworkCount;
 
 	private Long deletedArtworkCount;
 
@@ -94,22 +94,12 @@ public class ScanResult {
 
 	@Column(name = "scanned_song_count")
 	@NotNull
-	public Long getScannedSongCount() {
-		return scannedSongCount;
+	public Long getFoundSongCount() {
+		return foundSongCount;
 	}
 
-	public void setScannedSongCount(Long aScannedSongCount) {
-		scannedSongCount = aScannedSongCount;
-	}
-
-	@Column(name = "scanned_folder_count")
-	@NotNull
-	public Long getScannedFolderCount() {
-		return scannedFolderCount;
-	}
-
-	public void setScannedFolderCount(Long aScannedFolderCount) {
-		scannedFolderCount = aScannedFolderCount;
+	public void setFoundSongCount(Long aScannedSongCount) {
+		foundSongCount = aScannedSongCount;
 	}
 
 	@Column(name = "created_artist_count")
@@ -232,7 +222,7 @@ public class ScanResult {
 		deletedSongCount = aDeletedSongCount;
 	}
 
-	@Column(name = "imported_artwork_count")
+	@Column(name = "created_artwork_count")
 	@NotNull
 	public Long getCreatedArtworkCount() {
 		return createdArtworkCount;
@@ -240,6 +230,16 @@ public class ScanResult {
 
 	public void setCreatedArtworkCount(Long aImportedArtworkCount) {
 		createdArtworkCount = aImportedArtworkCount;
+	}
+
+	@Column(name = "updated_artwork_count")
+	@NotNull
+	public Long getUpdatedArtworkCount() {
+		return updatedArtworkCount;
+	}
+
+	public void setUpdatedArtworkCount(Long aUpdatedArtworkCount) {
+		updatedArtworkCount = aUpdatedArtworkCount;
 	}
 
 	@Column(name = "deleted_artwork_count")

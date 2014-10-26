@@ -7,11 +7,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ArtistDao extends PagingAndSortingRepository<Artist, Long> {
 
-	public long countByArtworkId(Long aStoredFileId);
+	public long countByCreationDateGreaterThan(Date aDate);
+	public long countByUpdateDateGreaterThan(Date aDate);
 
 	public Artist findByName(String aName);
 

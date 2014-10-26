@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -60,6 +61,24 @@ public class StoredFileServiceImpl implements StoredFileService {
 	@Transactional(readOnly = true)
 	public long getCount() {
 		return storedFileDao.count();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public long getCountByTag(String aTag) {
+		return storedFileDao.countByTag(aTag);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public long getCountByTagAndCreationDate(String aTag, Date aMinimalCreationDate) {
+		return storedFileDao.countByTagAndCreationDateGreaterThan(aTag, aMinimalCreationDate);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public long getCountByTagAndUpdateDate(String aTag, Date aMinimalUpdateDate) {
+		return storedFileDao.countByTagAndUpdateDateGreaterThan(aTag, aMinimalUpdateDate);
 	}
 
 	@Override

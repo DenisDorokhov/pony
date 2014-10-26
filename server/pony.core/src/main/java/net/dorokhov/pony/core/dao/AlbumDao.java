@@ -6,10 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Date;
+
 public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 
 	public long countByArtistId(Long aArtistId);
-	public long countByArtworkId(Long aStoredFileId);
+	public long countByCreationDateGreaterThan(Date aDate);
+	public long countByUpdateDateGreaterThan(Date aDate);
 
 	public Album findByArtistIdAndName(Long aArtistId, String aName);
 

@@ -91,7 +91,6 @@ public class Config implements AbstractEntity<String> {
 	@PrePersist
 	public void prePersist() {
 		setCreationDate(new Date());
-		setUpdateDate(new Date());
 	}
 
 	@PreUpdate

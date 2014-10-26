@@ -3,7 +3,7 @@ CREATE TABLE installation (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	version VARCHAR(255) NOT NULL
 );
@@ -41,7 +41,7 @@ CREATE TABLE config (
 	id VARCHAR(255) NOT NULL,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	value LONGVARCHAR,
 
@@ -56,8 +56,7 @@ CREATE TABLE library_scan_result (
 
 	duration BIGINT NOT NULL,
 
-	scanned_song_count BIGINT NOT NULL,
-	scanned_folder_count BIGINT NOT NULL,
+	found_song_count BIGINT NOT NULL,
 
 	created_artist_count BIGINT NOT NULL,
 	updated_artist_count BIGINT NOT NULL,
@@ -76,6 +75,7 @@ CREATE TABLE library_scan_result (
 	deleted_song_count BIGINT NOT NULL,
 
 	created_artwork_count BIGINT NOT NULL,
+	updated_artwork_count BIGINT NOT NULL,
 	deleted_artwork_count BIGINT NOT NULL
 );
 
@@ -95,7 +95,7 @@ CREATE TABLE stored_file (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	name VARCHAR(255) NOT NULL,
 	mime_type VARCHAR(255) NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE genre (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	name VARCHAR(255) NOT NULL,
 	song_count INT NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE artist (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	name VARCHAR(255) NOT NULL,
 	album_count INT NOT NULL,
@@ -150,7 +150,7 @@ CREATE TABLE album (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	name VARCHAR(255) NOT NULL,
 	year INT,
@@ -172,7 +172,7 @@ CREATE TABLE song (
 	id BIGINT IDENTITY,
 
 	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
 
 	path VARCHAR(255) NOT NULL,
 	format VARCHAR(255) NOT NULL,
@@ -210,4 +210,4 @@ CREATE TABLE song (
 
 CREATE INDEX index_song_track_number_name ON song(disc_number, track_number, name);
 
-INSERT INTO installation (creation_date, update_date, version) VALUES (NOW(), NOW(), '1.0');
+INSERT INTO installation (creation_date, version) VALUES (NOW(), '1.0');

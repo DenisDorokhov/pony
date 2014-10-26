@@ -12,6 +12,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "stored_file", uniqueConstraints = @UniqueConstraint(columnNames = {"tag", "checksum"}))
 public class StoredFile extends BaseEntity<Long> {
 
+	public static final String TAG_ARTWORK_EMBEDDED = "artworkEmbedded";
+	public static final String TAG_ARTWORK_FILE = "artworkFile";
+
 	private String name;
 
 	private String mimeType;
