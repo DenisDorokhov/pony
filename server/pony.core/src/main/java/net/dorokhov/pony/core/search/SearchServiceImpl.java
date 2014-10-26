@@ -63,6 +63,11 @@ public class SearchServiceImpl implements SearchService {
 
 		FullTextQuery jpaQuery = buildQuery(aQuery, Artist.class, "name");
 
+		Criteria criteria = getSession().createCriteria(Artist.class)
+				.setFetchMode("artwork", FetchMode.JOIN);
+
+		jpaQuery.setCriteriaQuery(criteria);
+
 		jpaQuery.setSort(new Sort(new SortField("name", SortField.STRING)));
 		jpaQuery.setFirstResult(0);
 		jpaQuery.setMaxResults(aMaxResults);
@@ -78,7 +83,9 @@ public class SearchServiceImpl implements SearchService {
 		FullTextQuery jpaQuery = buildQuery(aQuery, Album.class, "name");
 
 		Criteria criteria = getSession().createCriteria(Album.class)
-				.setFetchMode("artist", FetchMode.JOIN);
+				.setFetchMode("artwork", FetchMode.JOIN)
+				.setFetchMode("artist", FetchMode.JOIN)
+				.setFetchMode("artist.artwork", FetchMode.JOIN);
 
 		jpaQuery.setCriteriaQuery(criteria);
 
@@ -97,8 +104,11 @@ public class SearchServiceImpl implements SearchService {
 		FullTextQuery jpaQuery = buildQuery(aQuery, Song.class, "name");
 
 		Criteria criteria = getSession().createCriteria(Song.class)
+				.setFetchMode("artwork", FetchMode.JOIN)
 				.setFetchMode("album", FetchMode.JOIN)
-				.setFetchMode("album.artist", FetchMode.JOIN);
+				.setFetchMode("album.artwork", FetchMode.JOIN)
+				.setFetchMode("album.artist", FetchMode.JOIN)
+				.setFetchMode("album.artist.artwork", FetchMode.JOIN);
 
 		jpaQuery.setCriteriaQuery(criteria);
 

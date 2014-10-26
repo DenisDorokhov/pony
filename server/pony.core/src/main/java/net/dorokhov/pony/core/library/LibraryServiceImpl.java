@@ -739,7 +739,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private void deleteSong(Long aId) {
 
-		Song song = songDao.findById(aId);
+		Song song = songDao.findOne(aId);
 
 		Album album = song.getAlbum();
 		Artist artist = album.getArtist();

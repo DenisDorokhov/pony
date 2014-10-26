@@ -11,11 +11,6 @@ public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 	public long countByArtistId(Long aArtistId);
 	public long countByArtworkId(Long aStoredFileId);
 
-	@Query("SELECT al FROM Album al " +
-			"INNER JOIN FETCH al.artist ar " +
-			"LEFT JOIN FETCH al.artwork " +
-			"LEFT JOIN FETCH ar.artwork " +
-			"WHERE ar.id = ?1 AND al.name = ?2")
 	public Album findByArtistIdAndName(Long aArtistId, String aName);
 
 	@Query(value = "SELECT DISTINCT s.album FROM Song s " +
