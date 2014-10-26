@@ -141,6 +141,20 @@ public class StoredFileServiceImpl implements StoredFileService {
 			throw new RuntimeException("File [" + aCommand.getFile().getAbsolutePath() + "] is directory.");
 		}
 
+		StoredFile storedFile;
+
+		if (aCommand.getId() != null) {
+
+			storedFile = storedFileDao.findOne(aCommand.getId());
+
+			if (storedFile == null) {
+				throw new RuntimeException("Stored file [" + aCommand.getId() + "] not found.");
+			}
+
+		} else {
+			storedFile = new StoredFile();
+		}
+
 		File targetFile = null;
 
 		try {
@@ -168,7 +182,14 @@ public class StoredFileServiceImpl implements StoredFileService {
 				}
 			}
 
-			StoredFile storedFile = new StoredFile();
+			final File fileToDeleteOnRollback = targetFile;
+			final File fileToDeleteOnCommit;
+
+			if (storedFile.getId() != null) {
+				fileToDeleteOnCommit = new File(filesFolder, storedFile.getPath());
+			} else {
+				fileToDeleteOnCommit = null;
+			}
 
 			storedFile.setName(aCommand.getName());
 			storedFile.setMimeType(aCommand.getMimeType());
@@ -179,12 +200,14 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 			storedFile = storedFileDao.save(storedFile);
 
-			final File fileToDeleteOnRollback = targetFile;
-
 			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 				@Override
 				public void afterCompletion(int aStatus) {
-					if (aStatus != STATUS_COMMITTED) {
+					if (aStatus == STATUS_COMMITTED) {
+						if (fileToDeleteOnCommit != null) {
+							fileToDeleteOnCommit.delete();
+						}
+					} else {
 						fileToDeleteOnRollback.delete();
 					}
 				}

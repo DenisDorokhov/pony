@@ -12,6 +12,8 @@ public class StoredFileSaveCommand {
 
 	private final File file;
 
+	private Long id;
+
 	private String name;
 
 	private String mimeType;
@@ -41,6 +43,14 @@ public class StoredFileSaveCommand {
 
 	public File getFile() {
 		return file;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long aId) {
+		id = aId;
 	}
 
 	public String getName() {

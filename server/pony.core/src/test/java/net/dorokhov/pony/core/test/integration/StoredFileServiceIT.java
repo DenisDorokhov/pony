@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Date;
+
 public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 	private static final String TEST_FILE_PATH = "data/image.png";
@@ -24,6 +26,9 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 	@Test
 	public void test() throws Exception {
+
+		Date minCreationDate = new Date();
+		Date minUpdateDate = new Date();
 
 		StoredFileSaveCommand command = buildCommand(1);
 
@@ -41,7 +46,16 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 
 		checkStoredFile(storedFile, 2);
 
+		command = buildCommand(3, storedFile.getId());
+
+		storedFile = service.save(command);
+
+		checkStoredFile(storedFile, 3, true);
+
 		Assert.assertEquals(2, service.getCount());
+		Assert.assertEquals(2, service.getCountByTag("tag"));
+		Assert.assertEquals(2, service.getCountByTagAndCreationDate("tag", minCreationDate));
+		Assert.assertEquals(1, service.getCountByTagAndUpdateDate("tag", minUpdateDate));
 
 		Assert.assertNotNull(service.getFile(storedFile.getId()));
 		Assert.assertNotNull(service.getFile(storedFile));
@@ -64,9 +78,14 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 	}
 
 	private StoredFileSaveCommand buildCommand(int aIndex) throws Exception{
+		return buildCommand(aIndex, null);
+	}
+
+	private StoredFileSaveCommand buildCommand(int aIndex, Long aId) throws Exception{
 
 		StoredFileSaveCommand command = new StoredFileSaveCommand(StoredFileSaveCommand.Type.COPY, new ClassPathResource(TEST_FILE_PATH).getFile());
 
+		command.setId(aId);
 		command.setName("file" + aIndex);
 		command.setMimeType(TEST_FILE_MIME_TYPE);
 		command.setChecksum("checksum" + aIndex);
@@ -77,10 +96,19 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 	}
 
 	private void checkStoredFile(StoredFile aStoredFile, int aIndex) {
+		checkStoredFile(aStoredFile, aIndex, false);
+	}
+
+	private void checkStoredFile(StoredFile aStoredFile, int aIndex, boolean aUpdated) {
 
 		Assert.assertNotNull(aStoredFile.getId());
 		Assert.assertNotNull(aStoredFile.getCreationDate());
-		Assert.assertNull(aStoredFile.getUpdateDate());
+
+		if (aUpdated) {
+			Assert.assertNotNull(aStoredFile.getUpdateDate());
+		} else {
+			Assert.assertNull(aStoredFile.getUpdateDate());
+		}
 
 		Assert.assertEquals("file" + aIndex, aStoredFile.getName());
 		Assert.assertEquals("checksum" + aIndex, aStoredFile.getChecksum());
