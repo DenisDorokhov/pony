@@ -195,7 +195,22 @@ public class LibraryServiceImpl implements LibraryService {
 							Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
 
 							if (song != null && song.getArtwork() == null) {
-								song = discoverSongArtwork(aSongFile, song);
+
+								StoredFile artwork = discoverFileArtwork(song, null, aSongFile);
+
+								if (artwork != null) {
+
+									song.setArtwork(artwork);
+
+									songDao.save(song);
+
+									if (song.getAlbum().getArtwork() == null) {
+
+										song.getAlbum().setArtwork(artwork);
+
+										albumDao.save(song.getAlbum());
+									}
+								}
 							}
 
 							return song;
@@ -362,28 +377,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 		boolean shouldSave = false;
 
-		StoredFile artwork = null;
-
-		if (aSongData.getArtwork() != null && aSongData.getArtwork().getChecksum() != null) {
-
-			artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
-
-			if (artwork == null) {
-
-				try {
-
-					StoredFileSaveCommand saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
-
-					artwork = storedFileService.save(saveCommand);
-
-					logDebug("libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork, artwork.toString());
-
-				} catch (Exception e) {
-					logWarn("libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(), e, aSongData.getArtwork().toString());
-				}
-			}
-		}
-
 		Song song = songDao.findByPath(aSongData.getPath());
 
 		if (song == null) {
@@ -394,6 +387,11 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setGenre(aGenre);
 
 			shouldSave = true;
+		}
+
+		StoredFile artwork = discoverEmbeddedArtwork(aSongData);
+		if (artwork == null) {
+			artwork = discoverFileArtwork(null, aSongData, aSongFile);
 		}
 
 		if (song.getId() != null) {
@@ -453,12 +451,13 @@ public class LibraryServiceImpl implements LibraryService {
 			} else {
 				logDebug("libraryService.songUpdated", "Song " + song + " has been updated.", song.toString());
 			}
-		}
 
-		if (song.getArtwork() == null) {
-			// TODO: return stored file, so we can update artwork earlier
-			// TODO: set album artwork if it's null
-			song = discoverSongArtwork(aSongFile, song);
+			if (song.getAlbum().getArtwork() == null) {
+
+				song.getAlbum().setArtwork(artwork);
+
+				albumDao.save(song.getAlbum());
+			}
 		}
 
 		return song;
@@ -486,69 +485,76 @@ public class LibraryServiceImpl implements LibraryService {
 		albumDao.save(album);
 	}
 
-	private Song discoverSongArtwork(LibrarySong aSongFile, Song aSong) {
+	private StoredFile discoverEmbeddedArtwork(SongDataReadable aSongData) {
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(aSongFile);
+		StoredFile artwork = null;
 
-		if (artwork != null) {
+		if (aSongData.getArtwork() != null && aSongData.getArtwork().getChecksum() != null) {
 
-			String mimeType = artwork.getMimeType();
+			artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_EMBEDDED, aSongData.getArtwork().getChecksum());
+
+			if (artwork == null) {
+
+				try {
+
+					StoredFileSaveCommand saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
+
+					artwork = storedFileService.save(saveCommand);
+
+					logDebug("libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork, artwork.toString());
+
+				} catch (Exception e) {
+					logWarn("libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(), e, aSongData.getArtwork().toString());
+				}
+			}
+		}
+
+		return artwork;
+	}
+
+	private StoredFile discoverFileArtwork(Song aSong, SongDataReadable aSongData, LibrarySong aSongFile) {
+
+		StoredFile artwork = null;
+
+		LibraryImage artworkImage = artworkDiscoveryService.discoverArtwork(aSongFile);
+
+		if (artworkImage != null) {
+
+			String mimeType = artworkImage.getMimeType();
 
 			if (mimeType != null) {
 
 				String checksum = null;
 
 				try {
-					checksum = artwork.getChecksum();
+					checksum = artworkImage.getChecksum();
 				} catch (Exception e) {
 					logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
 				}
 
 				if (checksum != null) {
 
-					StoredFile storedFile = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_FILE, checksum);
+					artwork = storedFileService.getByTagAndChecksum(FILE_TAG_ARTWORK_FILE, checksum);
 
-					if (storedFile == null) {
+					if (artwork == null) {
 
 						try {
 
-							StoredFileSaveCommand saveCommand = buildFileArtworkStorageCommand(aSong, artwork, mimeType, checksum);
+							StoredFileSaveCommand saveCommand = buildFileArtworkStorageCommand(aSong, aSongData, artworkImage, mimeType, checksum);
 
-							storedFile = storedFileService.save(saveCommand);
+							artwork = storedFileService.save(saveCommand);
 
-							logDebug("libraryService.fileArtworkStored", "File artwork stored " + storedFile, storedFile.toString());
+							logDebug("libraryService.fileArtworkStored", "File artwork stored " + artwork, artwork.toString());
 
 						} catch (Exception e) {
 							logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
-						}
-
-						if (storedFile != null) {
-
-							if (aSong.getAlbum().getArtwork() == null) {
-
-								aSong.getAlbum().setArtwork(storedFile);
-
-								albumDao.save(aSong.getAlbum());
-
-								logDebug("libraryService.albumFileArtworkSet",
-										"File artwork " + storedFile + " set for album " + aSong.getAlbum(),
-										storedFile.toString(), aSong.getAlbum().toString());
-							}
-
-							aSong.setArtwork(storedFile);
-
-							songDao.save(aSong);
-
-							logDebug("libraryService.songFileArtworkSet",
-									"File artwork " + storedFile + " set for song " + aSong,
-									storedFile.toString(), aSong.toString());
 						}
 					}
 				}
 			}
 		}
 
-		return aSong;
+		return artwork;
 	}
 
 	private StoredFileSaveCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
@@ -567,15 +573,36 @@ public class LibraryServiceImpl implements LibraryService {
 		return saveCommand;
 	}
 
-	private StoredFileSaveCommand buildFileArtworkStorageCommand(Song aSong, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
+	private StoredFileSaveCommand buildFileArtworkStorageCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + FILE_TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
 
 		thumbnailService.makeThumbnail(aArtwork.getFile(), file);
 
+		String artist = null;
+		if (aSong != null) {
+			artist = aSong.getArtistName();
+		} else if (aSongData != null) {
+			artist = aSongData.getArtist();
+		}
+
+		String album = null;
+		if (aSong != null) {
+			album = aSong.getAlbumName();
+		} else if (aSongData != null) {
+			album = aSongData.getAlbum();
+		}
+
+		String title = null;
+		if (aSong != null) {
+			title = aSong.getName();
+		} else if (aSongData != null) {
+			title = aSongData.getTitle();
+		}
+
 		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
 
-		saveCommand.setName(aSong.getArtistName() + " " + aSong.getAlbumName() + " " + aSong.getName());
+		saveCommand.setName(artist + " " + album + " " + title);
 		saveCommand.setMimeType(aMimeType);
 		saveCommand.setChecksum(aChecksum);
 		saveCommand.setTag(FILE_TAG_ARTWORK_FILE);

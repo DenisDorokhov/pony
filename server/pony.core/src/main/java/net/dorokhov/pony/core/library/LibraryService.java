@@ -11,13 +11,13 @@ public interface LibraryService {
 
 	public void cleanSongs(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
+	public void cleanStoredFiles(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
+
 	public Song importSong(List<LibraryFolder> aLibrary, LibrarySong aSongFile);
 
 	public Song writeAndImportSong(LibraryFolder aLibrary, Long aId, SongDataWritable aSongData);
 
 	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
-
-	public void cleanStoredFiles(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
 	public static interface ProgressDelegate {
 

@@ -91,6 +91,7 @@ public class StoredFile extends BaseEntity<Long> {
 				", path='" + path + '\'' +
 				", tag='" + tag + '\'' +
 				", checksum='" + checksum + '\'' +
+				", userData='" + userData + '\'' +
 				'}';
 	}
 }
