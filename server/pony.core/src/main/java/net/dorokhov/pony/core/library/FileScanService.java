@@ -5,7 +5,7 @@ import net.dorokhov.pony.core.library.file.LibraryFolder;
 
 import java.io.File;
 
-public interface FileScanner {
+public interface FileScanService {
 
 	public LibraryFile scanFile(File aFile);
 

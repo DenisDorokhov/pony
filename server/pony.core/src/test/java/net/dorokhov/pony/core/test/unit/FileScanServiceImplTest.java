@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.test.unit;
 
 import net.dorokhov.pony.core.audio.SongDataServiceImpl;
-import net.dorokhov.pony.core.library.FileScannerImpl;
+import net.dorokhov.pony.core.library.FileScanServiceImpl;
 import net.dorokhov.pony.core.file.ChecksumServiceImpl;
 import net.dorokhov.pony.core.file.FileTypeServiceImpl;
 import net.dorokhov.pony.core.image.ImageSizeReaderImpl;
@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FileScannerImplTest {
+public class FileScanServiceImplTest {
 
-	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "FileScannerImplTest");
+	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "FileScanServiceImplTest");
 
 	private static final String TEST_IMAGE_PATH = "data/image.png";
 	private static final String TEST_SONG_PATH = "data/Metallica-Battery-with_artwork.mp3";
 	private static final String TEST_OTHER_PATH = "data/mp3-info.txt";
 
-	private FileScannerImpl service;
+	private FileScanServiceImpl service;
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class FileScannerImplTest {
 
 		songDataService.setChecksumService(new ChecksumServiceImpl());
 
-		service = new FileScannerImpl();
+		service = new FileScanServiceImpl();
 		service.setFileTypeService(new FileTypeServiceImpl());
 		service.setImageSizeReader(new ImageSizeReaderImpl());
 		service.setChecksumService(new ChecksumServiceImpl());

@@ -11,7 +11,7 @@ public interface LibraryService {
 
 	public void cleanSongs(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
-	public void cleanStoredFiles(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
+	public void cleanArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
 	public Song importSong(List<LibraryFolder> aLibrary, LibrarySong aSongFile);
 

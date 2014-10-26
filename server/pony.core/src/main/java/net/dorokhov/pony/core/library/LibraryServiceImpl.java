@@ -136,7 +136,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void cleanStoredFiles(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void cleanArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 		synchronized (lock) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
@@ -467,20 +467,35 @@ public class LibraryServiceImpl implements LibraryService {
 		Album album = aSong.getAlbum();
 		Artist artist = album.getArtist();
 
-		genre.setSongCount(Long.valueOf(songDao.countByGenreId(genre.getId())).intValue());
+		album.setSongCount(Long.valueOf(songDao.countByAlbumId(album.getId())).intValue());
+		album.setSongSize(songDao.sumSizeByAlbumId(album.getId()));
 
-		genreDao.save(genre);
+		if (album.getSongCount() > 0) {
+			albumDao.save(album);
+		} else {
+			albumDao.delete(album);
+			logDebug("libraryService.deletedAlbum", "Album " + album + " has no songs and has been deleted.", album.toString());
+		}
 
 		artist.setSongCount(Long.valueOf(songDao.countByAlbumArtistId(artist.getId())).intValue());
 		artist.setSongSize(songDao.sumSizeByArtistId(artist.getId()));
 		artist.setAlbumCount(Long.valueOf(albumDao.countByArtistId(artist.getId())).intValue());
 
-		artistDao.save(artist);
+		if (artist.getSongCount() > 0) {
+			artistDao.save(artist);
+		} else {
+			artistDao.delete(artist);
+			logDebug("libraryService.deletedArtist", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
+		}
 
-		album.setSongCount(Long.valueOf(songDao.countByAlbumId(album.getId())).intValue());
-		album.setSongSize(songDao.sumSizeByAlbumId(album.getId()));
+		genre.setSongCount(Long.valueOf(songDao.countByGenreId(genre.getId())).intValue());
 
-		albumDao.save(album);
+		if (genre.getSongCount() > 0) {
+			genreDao.save(genre);
+		} else {
+			genreDao.delete(genre);
+			logDebug("libraryService.deletedGenre", "Genre " + genre + " has no songs and has been deleted.", genre.toString());
+		}
 	}
 
 	private Song discoverSongArtwork(Song aSong, LibrarySong aSongFile) {
@@ -812,7 +827,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			artistDao.delete(artist);
 
-			logDebug("libraryService.deletedAlbum", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
+			logDebug("libraryService.deletedArtist", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
 		}
 
 		genre.setSongCount(genre.getSongCount() - 1);

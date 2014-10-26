@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class FileScannerImpl implements FileScanner {
+public class FileScanServiceImpl implements FileScanService {
 
 	private FileTypeService fileTypeService;
 

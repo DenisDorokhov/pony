@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.test.unit;
 
 import net.dorokhov.pony.core.audio.SongDataServiceImpl;
 import net.dorokhov.pony.core.library.ArtworkDiscoveryServiceImpl;
-import net.dorokhov.pony.core.library.FileScannerImpl;
+import net.dorokhov.pony.core.library.FileScanServiceImpl;
 import net.dorokhov.pony.core.file.ChecksumServiceImpl;
 import net.dorokhov.pony.core.file.FileTypeServiceImpl;
 import net.dorokhov.pony.core.image.ImageSizeReaderImpl;
@@ -26,7 +26,7 @@ public class ArtworkDiscoveryServiceImplTest {
 	private static final String TEST_FILE_PATH = "data/image.png"; // red picture 90x100
 	private static final File TEST_FOLDER = new File(FileUtils.getTempDirectory(), "ArtworkServiceImplTest");
 
-	private FileScannerImpl fileScanner;
+	private FileScanServiceImpl fileScanService;
 
 	private ArtworkDiscoveryServiceImpl artworkDiscoveryService;
 
@@ -37,9 +37,9 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		songDataService.setChecksumService(new ChecksumServiceImpl());
 
-		fileScanner = new FileScannerImpl();
-		fileScanner.setFileTypeService(new FileTypeServiceImpl());
-		fileScanner.setImageSizeReader(new ImageSizeReaderImpl());
+		fileScanService = new FileScanServiceImpl();
+		fileScanService.setFileTypeService(new FileTypeServiceImpl());
+		fileScanService.setImageSizeReader(new ImageSizeReaderImpl());
 
 		artworkDiscoveryService = new ArtworkDiscoveryServiceImpl();
 
@@ -64,7 +64,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		FileUtils.touch(new File(TEST_FOLDER, "song.mp3"));
 
-		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
+		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
 		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
@@ -84,7 +84,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		FileUtils.copyFile(testImage, image);
 
-		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
+		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
 		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
@@ -108,7 +108,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		FileUtils.touch(new File(childFolder, "song.mp3"));
 
-		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
+		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
 		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(getChildFolderByName(testFolder, "test"), "song.mp3"));
 
@@ -132,7 +132,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		FileUtils.copyFile(testImage, image);
 
-		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
+		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
 		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 
@@ -147,7 +147,7 @@ public class ArtworkDiscoveryServiceImplTest {
 		FileUtils.touch(new File(TEST_FOLDER, "song.mp3"));
 		FileUtils.touch(new File(TEST_FOLDER, "cover.jpg"));
 
-		LibraryFolder testFolder = fileScanner.scanFolder(TEST_FOLDER);
+		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
 		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
 

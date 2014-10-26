@@ -54,20 +54,27 @@ CREATE TABLE library_scan_result (
 
 	date TIMESTAMP NOT NULL,
 
-	success BIT(1) NOT NULL,
-
 	duration BIGINT NOT NULL,
+
 	scanned_song_count BIGINT NOT NULL,
 	scanned_folder_count BIGINT NOT NULL,
+
 	created_artist_count BIGINT NOT NULL,
+	updated_artist_count BIGINT NOT NULL,
 	deleted_artist_count BIGINT NOT NULL,
+
 	created_album_count BIGINT NOT NULL,
+	updated_album_count BIGINT NOT NULL,
 	deleted_album_count BIGINT NOT NULL,
+
 	created_genre_count BIGINT NOT NULL,
+	updated_genre_count BIGINT NOT NULL,
 	deleted_genre_count BIGINT NOT NULL,
+
 	created_song_count BIGINT NOT NULL,
 	updated_song_count BIGINT NOT NULL,
 	deleted_song_count BIGINT NOT NULL,
+
 	created_artwork_count BIGINT NOT NULL,
 	deleted_artwork_count BIGINT NOT NULL
 );

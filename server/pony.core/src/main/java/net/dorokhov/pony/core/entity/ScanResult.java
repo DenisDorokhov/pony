@@ -6,14 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "library_scan_result")
-public class LibraryScanResult {
+@Table(name = "scan_result")
+public class ScanResult {
 
 	private Long id;
 
 	private Date date;
-
-	private Boolean success;
 
 	private List<String> folders;
 
@@ -25,13 +23,19 @@ public class LibraryScanResult {
 
 	private Long createdArtistCount;
 
+	private Long updatedArtistCount;
+
 	private Long deletedArtistCount;
 
 	private Long createdAlbumCount;
 
+	private Long updatedAlbumCount;
+
 	private Long deletedAlbumCount;
 
 	private Long createdGenreCount;
+
+	private Long updatedGenreCount;
 
 	private Long deletedGenreCount;
 
@@ -65,16 +69,6 @@ public class LibraryScanResult {
 
 	public void setDate(Date aDate) {
 		date = aDate;
-	}
-
-	@Column(name = "success")
-	@NotNull
-	public Boolean getSuccess() {
-		return success;
-	}
-
-	public void setSuccess(Boolean aSuccess) {
-		success = aSuccess;
 	}
 
 	@Column(name="path")
@@ -128,6 +122,16 @@ public class LibraryScanResult {
 		createdArtistCount = aCreatedArtistCount;
 	}
 
+	@Column(name = "updated_artist_count")
+	@NotNull
+	public Long getUpdatedArtistCount() {
+		return updatedArtistCount;
+	}
+
+	public void setUpdatedArtistCount(Long aUpdatedArtistCount) {
+		updatedArtistCount = aUpdatedArtistCount;
+	}
+
 	@Column(name = "deleted_artist_count")
 	@NotNull
 	public Long getDeletedArtistCount() {
@@ -148,6 +152,16 @@ public class LibraryScanResult {
 		createdAlbumCount = aCreatedAlbumCount;
 	}
 
+	@Column(name = "updated_album_count")
+	@NotNull
+	public Long getUpdatedAlbumCount() {
+		return updatedAlbumCount;
+	}
+
+	public void setUpdatedAlbumCount(Long aUpdatedAlbumCount) {
+		updatedAlbumCount = aUpdatedAlbumCount;
+	}
+
 	@Column(name = "deleted_album_count")
 	@NotNull
 	public Long getDeletedAlbumCount() {
@@ -166,6 +180,16 @@ public class LibraryScanResult {
 
 	public void setCreatedGenreCount(Long aCreatedGenreCount) {
 		createdGenreCount = aCreatedGenreCount;
+	}
+
+	@Column(name = "updated_genre_count")
+	@NotNull
+	public Long getUpdatedGenreCount() {
+		return updatedGenreCount;
+	}
+
+	public void setUpdatedGenreCount(Long aUpdatedGenreCount) {
+		updatedGenreCount = aUpdatedGenreCount;
 	}
 
 	@Column(name = "deleted_genre_count")
@@ -249,7 +273,7 @@ public class LibraryScanResult {
 
 		if (aObj != null && id != null && getClass().equals(aObj.getClass())) {
 
-			LibraryScanResult that = (LibraryScanResult) aObj;
+			ScanResult that = (ScanResult) aObj;
 
 			return id.equals(that.id);
 		}
