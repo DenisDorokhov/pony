@@ -197,8 +197,15 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate) {
-		// TODO: implement
+	public void importArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+		synchronized (lock) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
+					doImportArtworks(aDelegate);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -672,7 +679,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		final List<Long> itemsToDelete = new ArrayList<>();
 
-		PageProcessor.Handler<StoredFile> storedFileHandler = new PageProcessor.Handler<StoredFile>() {
+		PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
 
 			@Override
 			public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
@@ -720,7 +727,7 @@ public class LibraryServiceImpl implements LibraryService {
 				return storedFileService.getAll(aPageable);
 			}
 		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), storedFileHandler).run();
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
 		for (final Long id : itemsToDelete) {
 
@@ -735,6 +742,44 @@ public class LibraryServiceImpl implements LibraryService {
 
 			logDebug("libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.", storedFile.toString());
 		}
+	}
+
+	private void doImportArtworks(final ProgressDelegate aDelegate) {
+		PageProcessor.Handler<Artist> handler = new PageProcessor.Handler<Artist>() {
+
+			@Override
+			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
+
+				List<Album> albumsWithArtwork = new ArrayList<>();
+
+				for (Album album : aArtist.getAlbums()) {
+					if (album.getArtwork() != null) {
+						albumsWithArtwork.add(album);
+					}
+				}
+
+				if (albumsWithArtwork.size() > 0) {
+
+					Collections.sort(albumsWithArtwork);
+
+					Album album = albumsWithArtwork.get((int)Math.floor(albumsWithArtwork.size() / 2.0));
+
+					aArtist.setArtwork(album.getArtwork());
+
+					artistDao.save(aArtist);
+				}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress(aIndexInAll / (double) aPage.getTotalElements());
+				}
+			}
+
+			@Override
+			public Page<Artist> getPage(Pageable aPageable) {
+				return artistDao.findByArtworkId(null, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 	}
 
 	private void deleteSong(Long aId) {
