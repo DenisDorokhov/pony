@@ -15,9 +15,9 @@ public interface LibraryService {
 
 	public Song importSong(List<LibraryFolder> aLibrary, LibrarySong aSongFile);
 
-	public Song writeAndImportSong(LibraryFolder aLibrary, Long aId, SongDataWritable aSongData);
-
 	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
+
+	public Song writeAndImportSong(LibrarySong aSongFile, SongDataWritable aSongData);
 
 	public static interface ProgressDelegate {
 
