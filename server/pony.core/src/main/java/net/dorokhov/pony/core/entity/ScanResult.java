@@ -20,33 +20,23 @@ public class ScanResult {
 	private Long foundSongCount;
 
 	private Long createdArtistCount;
-
 	private Long updatedArtistCount;
-
 	private Long deletedArtistCount;
 
 	private Long createdAlbumCount;
-
 	private Long updatedAlbumCount;
-
 	private Long deletedAlbumCount;
 
 	private Long createdGenreCount;
-
 	private Long updatedGenreCount;
-
 	private Long deletedGenreCount;
 
 	private Long createdSongCount;
-
 	private Long updatedSongCount;
-
 	private Long deletedSongCount;
 
 	private Long createdArtworkCount;
-
 	private Long updatedArtworkCount;
-
 	private Long deletedArtworkCount;
 
 	@Id

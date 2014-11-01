@@ -94,6 +94,26 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertEquals(Long.valueOf(14), result.getFoundSongCount());
 
+		Assert.assertEquals(Long.valueOf(3), result.getCreatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtistCount());
+
+		Assert.assertEquals(Long.valueOf(5), result.getCreatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedAlbumCount());
+
+		Assert.assertEquals(Long.valueOf(1), result.getCreatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedGenreCount());
+
+		Assert.assertEquals(Long.valueOf(14), result.getCreatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
+
 		result = service.getLastResult();
 
 		Assert.assertNotNull(result);

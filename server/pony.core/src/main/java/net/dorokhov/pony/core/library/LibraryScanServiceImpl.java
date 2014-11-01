@@ -246,7 +246,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		ScanResult lastScan = getLastResult();
-		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(Long.MIN_VALUE));
+		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(0L));
 
 		long songCountBeforeScan = songDao.count();
 		long genreCountBeforeScan = genreDao.count();
