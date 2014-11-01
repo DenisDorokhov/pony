@@ -273,6 +273,10 @@ public class LibraryServiceImpl implements LibraryService {
 
 		Song song = songDao.findByPath(aSongData.getPath());
 
+		Album oldAlbum = null;
+		Artist oldArtist = null;
+		Genre oldGenre = null;
+
 		if (song == null) {
 
 			song = new Song();
@@ -281,6 +285,11 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setGenre(aGenre);
 
 			shouldSave = true;
+
+		} else {
+			oldAlbum = song.getAlbum();
+			oldArtist = song.getAlbum().getArtist();
+			oldGenre = song.getGenre();
 		}
 
 		StoredFile artwork = discoverEmbeddedArtwork(aSongData);
@@ -338,7 +347,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song = songDao.save(song);
 
-			updateCounters(song);
+			deleteEntitiesWithoutSongs(oldAlbum, oldArtist, oldGenre);
 
 			if (newSong) {
 				logDebug("libraryService.songCreated", "Song " + song + " has been created.", song.toString());
@@ -467,43 +476,6 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 
 		return album;
-	}
-
-	private void updateCounters(Song aSong) {
-
-		Genre genre = aSong.getGenre();
-		Album album = aSong.getAlbum();
-		Artist artist = album.getArtist();
-
-		album.setSongCount(Long.valueOf(songDao.countByAlbumId(album.getId())).intValue());
-		album.setSongSize(songDao.sumSizeByAlbumId(album.getId()));
-
-		if (album.getSongCount() > 0) {
-			albumDao.save(album);
-		} else {
-			albumDao.delete(album);
-			logDebug("libraryService.deletedAlbum", "Album " + album + " has no songs and has been deleted.", album.toString());
-		}
-
-		artist.setSongCount(Long.valueOf(songDao.countByAlbumArtistId(artist.getId())).intValue());
-		artist.setSongSize(songDao.sumSizeByArtistId(artist.getId()));
-		artist.setAlbumCount(Long.valueOf(albumDao.countByArtistId(artist.getId())).intValue());
-
-		if (artist.getSongCount() > 0) {
-			artistDao.save(artist);
-		} else {
-			artistDao.delete(artist);
-			logDebug("libraryService.deletedArtist", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
-		}
-
-		genre.setSongCount(Long.valueOf(songDao.countByGenreId(genre.getId())).intValue());
-
-		if (genre.getSongCount() > 0) {
-			genreDao.save(genre);
-		} else {
-			genreDao.delete(genre);
-			logDebug("libraryService.deletedGenre", "Genre " + genre + " has no songs and has been deleted.", genre.toString());
-		}
 	}
 
 	private Song discoverSongArtwork(Song aSong, LibrarySong aSongFile) {
@@ -849,43 +821,34 @@ public class LibraryServiceImpl implements LibraryService {
 
 		Song song = songDao.findOne(aId);
 
-		Album album = song.getAlbum();
-		Artist artist = album.getArtist();
-		Genre genre = song.getGenre();
-
 		songDao.delete(song);
 
 		logDebug("libraryService.deletedSong", "Song " + song + " has been deleted.", song.toString());
 
-		album.setSongCount(album.getSongCount() - 1);
-		album.setSongSize(album.getSongSize() - song.getSize());
+		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre());
+	}
 
-		if (album.getSongCount() <= 0) {
+	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre) {
 
-			albumDao.delete(album);
+		if (songDao.countByAlbumId(aAlbum.getId()) == 0) {
 
-			logDebug("libraryService.deletedAlbum", "Album " + album + " has no songs and has been deleted.", album.toString());
+			albumDao.delete(aAlbum);
 
-			artist.setAlbumCount(artist.getAlbumCount() - 1);
+			logDebug("libraryService.deletedAlbum", "Album " + aAlbum + " has no songs and has been deleted.", aAlbum.toString());
 		}
 
-		artist.setSongCount(artist.getSongCount() - 1);
-		artist.setSongSize(artist.getSongSize() - song.getSize());
+		if (songDao.countByAlbumArtistId(aArtist.getId()) == 0) {
 
-		if (artist.getAlbumCount() <= 0 || artist.getSongCount() <= 0) {
+			artistDao.delete(aArtist);
 
-			artistDao.delete(artist);
-
-			logDebug("libraryService.deletedArtist", "Artist " + artist + " has no songs and has been deleted.", artist.toString());
+			logDebug("libraryService.deletedArtist", "Artist " + aArtist + " has no songs and has been deleted.", aArtist.toString());
 		}
 
-		genre.setSongCount(genre.getSongCount() - 1);
+		if (songDao.countByGenreId(aGenre.getId()) == 0) {
 
-		if (genre.getSongCount() <= 0) {
+			genreDao.delete(aGenre);
 
-			genreDao.delete(genre);
-
-			logDebug("libraryService.deletedGenre", "Genre " + genre + " has no songs and has been deleted.", genre.toString());
+			logDebug("libraryService.deletedGenre", "Genre " + aGenre + " has no songs and has been deleted.", aGenre.toString());
 		}
 	}
 

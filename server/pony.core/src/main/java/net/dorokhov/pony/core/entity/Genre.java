@@ -3,7 +3,6 @@ package net.dorokhov.pony.core.entity;
 import net.dorokhov.pony.core.entity.common.BaseEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,6 @@ import java.util.List;
 public class Genre extends BaseEntity<Long> {
 
 	private String name;
-
-	private Integer songCount = 0;
 
 	private StoredFile artwork;
 
@@ -26,16 +23,6 @@ public class Genre extends BaseEntity<Long> {
 
 	public void setName(String aName) {
 		name = aName;
-	}
-
-	@Column(name = "song_count", nullable = false)
-	@NotNull
-	public Integer getSongCount() {
-		return songCount;
-	}
-
-	public void setSongCount(Integer aSongCount) {
-		songCount = aSongCount;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)

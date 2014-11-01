@@ -8,7 +8,6 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +17,6 @@ import java.util.List;
 public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 
 	private String name;
-
-	private Integer albumCount = 0;
-
-	private Integer songCount = 0;
-
-	private Long songSize = 0L;
 
 	private StoredFile artwork;
 
@@ -37,36 +30,6 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 
 	public void setName(String aName) {
 		name = aName;
-	}
-
-	@Column(name = "album_count", nullable = false)
-	@NotNull
-	public Integer getAlbumCount() {
-		return albumCount;
-	}
-
-	public void setAlbumCount(Integer aAlbumCount) {
-		albumCount = aAlbumCount;
-	}
-
-	@Column(name = "song_count", nullable = false)
-	@NotNull
-	public Integer getSongCount() {
-		return songCount;
-	}
-
-	public void setSongCount(Integer aSongCount) {
-		songCount = aSongCount;
-	}
-
-	@Column(name = "song_size", nullable = false)
-	@NotNull
-	public Long getSongSize() {
-		return songSize;
-	}
-
-	public void setSongSize(Long aSongSize) {
-		songSize = aSongSize;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)

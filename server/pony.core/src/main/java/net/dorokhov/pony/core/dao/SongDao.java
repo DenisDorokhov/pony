@@ -12,12 +12,6 @@ import java.util.List;
 
 public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 
-	@Query("SELECT SUM(s.size) FROM Song s WHERE s.album.artist.id = ?1")
-	public long sumSizeByArtistId(Long aGenreId);
-
-	@Query("SELECT SUM(s.size) FROM Song s WHERE s.album.id = ?1")
-	public long sumSizeByAlbumId(Long aGenreId);
-
 	public long countByGenreId(Long aGenreId);
 	public long countByAlbumArtistId(Long aArtistId);
 	public long countByAlbumId(Long aAlbumId);
