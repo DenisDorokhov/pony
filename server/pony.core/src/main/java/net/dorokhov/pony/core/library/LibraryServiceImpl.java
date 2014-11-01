@@ -2,20 +2,20 @@ package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.audio.SongDataService;
 import net.dorokhov.pony.core.audio.data.SongDataReadable;
-import net.dorokhov.pony.core.image.ThumbnailService;
-import net.dorokhov.pony.core.library.file.LibraryFolder;
-import net.dorokhov.pony.core.library.file.LibraryImage;
-import net.dorokhov.pony.core.library.file.LibrarySong;
-import net.dorokhov.pony.core.storage.StoredFileSaveCommand;
-import net.dorokhov.pony.core.utils.PageProcessor;
+import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.dao.AlbumDao;
 import net.dorokhov.pony.core.dao.ArtistDao;
 import net.dorokhov.pony.core.dao.GenreDao;
 import net.dorokhov.pony.core.dao.SongDao;
 import net.dorokhov.pony.core.entity.*;
+import net.dorokhov.pony.core.image.ThumbnailService;
+import net.dorokhov.pony.core.library.file.LibraryFolder;
+import net.dorokhov.pony.core.library.file.LibraryImage;
+import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
-import net.dorokhov.pony.core.audio.data.SongDataWritable;
+import net.dorokhov.pony.core.storage.StoredFileSaveCommand;
 import net.dorokhov.pony.core.storage.StoredFileService;
+import net.dorokhov.pony.core.utils.PageProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -151,7 +151,17 @@ public class LibraryServiceImpl implements LibraryService {
 
 		Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
 
-		if (song == null || song.getUpdateDate().getTime() < aSongFile.getFile().lastModified()) {
+		boolean shouldImport = (song == null);
+
+		if (!shouldImport) {
+			if (song.getUpdateDate() != null) {
+				shouldImport = (song.getUpdateDate().getTime() < aSongFile.getFile().lastModified());
+			} else {
+				shouldImport = (song.getCreationDate().getTime() < aSongFile.getFile().lastModified());
+			}
+		}
+
+		if (shouldImport) {
 
 			final SongDataReadable songData;
 
@@ -561,7 +571,7 @@ public class LibraryServiceImpl implements LibraryService {
 				try {
 					checksum = artworkImage.getChecksum();
 				} catch (Exception e) {
-					logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
+					logWarn("libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
 				}
 
 				if (checksum != null) {
@@ -576,10 +586,10 @@ public class LibraryServiceImpl implements LibraryService {
 
 							artwork = storedFileService.save(saveCommand);
 
-							logDebug("libraryService.fileArtworkStored", "File artwork stored " + artwork, artwork.toString());
+							logDebug("libraryService.fileArtworkCreated", "File artwork created " + artwork, artwork.toString());
 
 						} catch (Exception e) {
-							logWarn("libraryService.fileArtworkNotStored", "Could not store file artwork", e);
+							logWarn("libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
 						}
 					}
 				}
@@ -716,6 +726,13 @@ public class LibraryServiceImpl implements LibraryService {
 								filePath, aStoredFile.toString());
 
 						shouldDelete = true;
+
+					} else {
+						if (aStoredFile.getUpdateDate() != null) {
+							shouldDelete = (aStoredFile.getUpdateDate().getTime() < externalFile.lastModified());
+						} else {
+							shouldDelete = (aStoredFile.getCreationDate().getTime() < externalFile.lastModified());
+						}
 					}
 				}
 
