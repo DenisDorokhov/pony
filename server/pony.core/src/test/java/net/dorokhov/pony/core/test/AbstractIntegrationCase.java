@@ -5,10 +5,14 @@ import net.dorokhov.pony.core.search.SearchService;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class AbstractIntegrationCase {
+
+	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	protected ConfigurableApplicationContext context;
 

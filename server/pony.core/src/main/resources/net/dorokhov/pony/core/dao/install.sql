@@ -48,7 +48,7 @@ CREATE TABLE config (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE library_scan_result (
+CREATE TABLE scan_result (
 
 	id BIGINT IDENTITY,
 
@@ -79,15 +79,17 @@ CREATE TABLE library_scan_result (
 	deleted_artwork_count BIGINT NOT NULL
 );
 
-CREATE INDEX index_library_scan_result_date ON library_scan_result(date);
+CREATE INDEX index_library_scan_result_date ON scan_result(date);
 
-CREATE TABLE library_scan_result_folder (
+CREATE TABLE scan_result_folder (
 
-	library_scan_result_id BIGINT NOT NULL,
+	scan_result_id BIGINT NOT NULL,
 
 	path VARCHAR(255) NOT NULL,
 
-	PRIMARY KEY (library_scan_result_id, path)
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+	PRIMARY KEY (scan_result_id, path)
 );
 
 CREATE TABLE stored_file (
@@ -118,7 +120,7 @@ CREATE TABLE genre (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255) NOT NULL,
+	name VARCHAR(255),
 
 	artwork_stored_file_id BIGINT,
 
@@ -134,7 +136,7 @@ CREATE TABLE artist (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255) NOT NULL,
+	name VARCHAR(255),
 
 	artwork_stored_file_id BIGINT,
 
@@ -150,7 +152,7 @@ CREATE TABLE album (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255) NOT NULL,
+	name VARCHAR(255),
 	year INT,
 
 	artwork_stored_file_id BIGINT,

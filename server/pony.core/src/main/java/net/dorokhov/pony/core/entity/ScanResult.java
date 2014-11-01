@@ -73,7 +73,7 @@ public class ScanResult {
 
 	@Column(name="path")
 	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name="library_scan_result_folder", joinColumns=@JoinColumn(name="library_scan_result_id"))
+	@CollectionTable(name="scan_result_folder", joinColumns=@JoinColumn(name="scan_result_id"))
 	public List<String> getFolders() {
 		return folders;
 	}
@@ -92,7 +92,7 @@ public class ScanResult {
 		duration = aDuration;
 	}
 
-	@Column(name = "scanned_song_count")
+	@Column(name = "found_song_count")
 	@NotNull
 	public Long getFoundSongCount() {
 		return foundSongCount;

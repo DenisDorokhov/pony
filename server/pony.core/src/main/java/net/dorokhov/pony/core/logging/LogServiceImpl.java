@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -41,25 +42,25 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText) {
 		return debug(aCode, aText, (String)null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText, List<String> aArguments) {
 		return debug(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText, Throwable aThrowable) {
 		return debug(aCode, aText, aThrowable, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
@@ -70,13 +71,13 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText, String aDetails) {
 		return debug(aCode, aText, aDetails, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage debug(String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
@@ -87,25 +88,25 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText) {
 		return info(aCode, aText, (String)null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText, List<String> aArguments) {
 		return info(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText, Throwable aThrowable) {
 		return info(aCode, aText, aThrowable, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
@@ -116,13 +117,13 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText, String aDetails) {
 		return info(aCode, aText, aDetails, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage info(String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
@@ -133,25 +134,25 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText) {
 		return warn(aCode, aText, (String)null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText, List<String> aArguments) {
 		return warn(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText, Exception aException) {
 		return warn(aCode, aText, aException, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
@@ -162,13 +163,13 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText, String aDetails) {
 		return warn(aCode, aText, aDetails, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage warn(String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
@@ -179,25 +180,25 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText) {
 		return error(aCode, aText, (String)null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText, List<String> aArguments) {
 		return error(aCode, aText, (String)null, aArguments);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText, Throwable aThrowable) {
 		return error(aCode, aText, aThrowable, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
@@ -208,13 +209,13 @@ public class LogServiceImpl implements LogService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText, String aDetails) {
 		return error(aCode, aText, aDetails, null);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public LogMessage error(String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {

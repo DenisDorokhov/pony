@@ -48,4 +48,12 @@ public class Genre extends BaseEntity<Long> {
 	public void setSongs(List<Song> aSongs) {
 		songs = aSongs;
 	}
+
+	@Override
+	public String toString() {
+		return "Genre{" +
+				"id=" + getId() +
+				", name='" + name + '\'' +
+				'}';
+	}
 }

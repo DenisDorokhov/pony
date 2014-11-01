@@ -29,6 +29,7 @@ import javax.annotation.PreDestroy;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -238,12 +239,13 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private ScanResult doScan(final List<File> aTargetFolders) throws InterruptedException {
 
-		List<String> targetPaths = new ArrayList<>();
-		for (File targetFolder : aTargetFolders) {
-			targetPaths.add(targetFolder.getAbsolutePath());
+		String[] targetPaths = new String[aTargetFolders.size()];
+		for (int i = 0; i < aTargetFolders.size(); i++) {
+			targetPaths[i] = aTargetFolders.get(i).getAbsolutePath();
 		}
 
 		ScanResult lastScan = getLastResult();
+		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(Long.MIN_VALUE));
 
 		long songCountBeforeScan = songDao.count();
 		long genreCountBeforeScan = genreDao.count();
@@ -251,7 +253,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		long albumCountBeforeScan = albumDao.count();
 		long artworkCountBeforeScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
 
-		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", (String[]) targetPaths.toArray());
+		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", targetPaths);
 
 		long startTime = System.nanoTime();
 
@@ -260,35 +262,35 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		long endTime = System.nanoTime();
 
 		long songCountAfterScan = songDao.count();
-		long songCountCreated = songDao.countByCreationDateGreaterThan(lastScan.getDate());
-		long songCountUpdated = songDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long songCountCreated = songDao.countByCreationDateGreaterThan(lastScanDate);
+		long songCountUpdated = songDao.countByUpdateDateGreaterThan(lastScanDate);
 		long songCountDeleted = Math.max(0, songCountBeforeScan - (songCountAfterScan - songCountCreated));
 
 		long genreCountAfterScan = genreDao.count();
-		long genreCountCreated = genreDao.countByCreationDateGreaterThan(lastScan.getDate());
-		long genreCountUpdated = genreDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long genreCountCreated = genreDao.countByCreationDateGreaterThan(lastScanDate);
+		long genreCountUpdated = genreDao.countByUpdateDateGreaterThan(lastScanDate);
 		long genreCountDeleted = Math.max(0, genreCountBeforeScan - (genreCountAfterScan - genreCountCreated));
 
 		long artistCountAfterScan = artistDao.count();
-		long artistCountCreated = artistDao.countByCreationDateGreaterThan(lastScan.getDate());
-		long artistCountUpdated = artistDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long artistCountCreated = artistDao.countByCreationDateGreaterThan(lastScanDate);
+		long artistCountUpdated = artistDao.countByUpdateDateGreaterThan(lastScanDate);
 		long artistCountDeleted = Math.max(0, artistCountBeforeScan - (artistCountAfterScan - artistCountCreated));
 
 		long albumCountAfterScan = albumDao.count();
-		long albumCountCreated = albumDao.countByCreationDateGreaterThan(lastScan.getDate());
-		long albumCountUpdated = albumDao.countByUpdateDateGreaterThan(lastScan.getDate());
+		long albumCountCreated = albumDao.countByCreationDateGreaterThan(lastScanDate);
+		long albumCountUpdated = albumDao.countByUpdateDateGreaterThan(lastScanDate);
 		long albumCountDeleted = Math.max(0, albumCountBeforeScan - (albumCountAfterScan - albumCountCreated));
 
 		long artworkCountAfterScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
-		long artworkCountCreated = storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScan.getDate()) +
-				storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_FILE, lastScan.getDate());
-		long artworkCountUpdated = storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScan.getDate()) +
-				storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_FILE, lastScan.getDate());
+		long artworkCountCreated = storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScanDate) +
+				storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_FILE, lastScanDate);
+		long artworkCountUpdated = storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScanDate) +
+				storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_FILE, lastScanDate);
 		long artworkCountDeleted = Math.max(0, artworkCountBeforeScan - (artworkCountAfterScan - artworkCountCreated));
 
 		ScanResult scanResult = new ScanResult();
 
-		scanResult.setFolders(targetPaths);
+		scanResult.setFolders(Arrays.asList(targetPaths));
 		scanResult.setDuration(endTime - startTime);
 
 		scanResult.setFoundSongCount(Integer.valueOf(songFiles.size()).longValue());
@@ -377,12 +379,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	}
 
 	private void logWarn(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
-		log.warn(aMessage);
+		log.warn(aMessage, aThrowable);
 		logService.warn(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
 	}
 
 	private void logError(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
-		log.error(aMessage);
+		log.error(aMessage, aThrowable);
 		logService.error(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
 	}
 

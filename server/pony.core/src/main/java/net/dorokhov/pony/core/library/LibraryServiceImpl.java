@@ -375,7 +375,10 @@ public class LibraryServiceImpl implements LibraryService {
 		boolean shouldSave = false;
 
 		if (genre == null) {
+
 			genre = new Genre();
+
+			shouldSave = true;
 		}
 
 		if (genre.getId() != null) {
@@ -388,7 +391,15 @@ public class LibraryServiceImpl implements LibraryService {
 
 			genre.setName(genreName);
 
+			boolean newGenre = (genre.getId() == null);
+
 			genre = genreDao.save(genre);
+
+			if (newGenre) {
+				logDebug("libraryService.artistCreated", "Genre " + genre + " has been created.", genre.toString());
+			} else {
+				logDebug("libraryService.artistUpdated", "Genre " + genre + " has been updated.", genre.toString());
+			}
 		}
 
 		return genre;
@@ -407,7 +418,10 @@ public class LibraryServiceImpl implements LibraryService {
 		boolean shouldSave = false;
 
 		if (artist == null) {
+
 			artist = new Artist();
+
+			shouldSave = true;
 		}
 
 		if (artist.getId() != null) {
@@ -830,21 +844,21 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre) {
 
-		if (songDao.countByAlbumId(aAlbum.getId()) == 0) {
+		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
 
 			albumDao.delete(aAlbum);
 
 			logDebug("libraryService.deletedAlbum", "Album " + aAlbum + " has no songs and has been deleted.", aAlbum.toString());
 		}
 
-		if (songDao.countByAlbumArtistId(aArtist.getId()) == 0) {
+		if (aArtist != null && songDao.countByAlbumArtistId(aArtist.getId()) == 0) {
 
 			artistDao.delete(aArtist);
 
 			logDebug("libraryService.deletedArtist", "Artist " + aArtist + " has no songs and has been deleted.", aArtist.toString());
 		}
 
-		if (songDao.countByGenreId(aGenre.getId()) == 0) {
+		if (aGenre != null && songDao.countByGenreId(aGenre.getId()) == 0) {
 
 			genreDao.delete(aGenre);
 
