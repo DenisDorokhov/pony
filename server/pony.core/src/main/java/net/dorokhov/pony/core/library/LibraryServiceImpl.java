@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -671,7 +672,7 @@ public class LibraryServiceImpl implements LibraryService {
 				}
 
 				if (aDelegate != null) {
-					aDelegate.onProgress(aIndexInAll / (double) aPage.getTotalElements());
+					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
 				}
 			}
 
@@ -729,7 +730,7 @@ public class LibraryServiceImpl implements LibraryService {
 				}
 
 				if (aDelegate != null) {
-					aDelegate.onProgress(aIndexInAll / (double) aPage.getTotalElements());
+					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
 				}
 			}
 
@@ -756,32 +757,66 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	private void doImportArtworks(final ProgressDelegate aDelegate) {
-		PageProcessor.Handler<Artist> handler = new PageProcessor.Handler<Artist>() {
+
+		final long genreCount = genreDao.count();
+		final long artistCount = artistDao.count();
+
+		final long entityCount = genreCount + artistCount;
+
+		PageProcessor.Handler<Genre> genreHandler = new PageProcessor.Handler<Genre>() {
+
+			@Override
+			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
+
+				long albumCount = albumDao.countByGenreIdAndArtworkNotNull(aGenre.getId());
+
+				if (albumCount > 0) {
+
+					Page<Album> albumPage = albumDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
+							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
+
+					if (albumPage.getNumberOfElements() > 0) {
+
+						aGenre.setArtwork(albumPage.getContent().get(0).getArtwork());
+
+						genreDao.save(aGenre);
+					}
+				}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((aIndexInAll + 1) / (double) entityCount);
+				}
+			}
+
+			@Override
+			public Page<Genre> getPage(Pageable aPageable) {
+				return genreDao.findByArtworkId(null, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), genreHandler).run();
+
+		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
 
 			@Override
 			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
 
-				List<Album> albumsWithArtwork = new ArrayList<>();
+				long albumCount = albumDao.countByArtistIdAndArtworkNotNull(aArtist.getId());
 
-				for (Album album : aArtist.getAlbums()) {
-					if (album.getArtwork() != null) {
-						albumsWithArtwork.add(album);
+				if (albumCount > 0) {
+
+					Page<Album> albumPage = albumDao.findByArtistIdAndArtworkNotNull(aArtist.getId(),
+							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
+
+					if (albumPage.getNumberOfElements() > 0) {
+
+						aArtist.setArtwork(albumPage.getContent().get(0).getArtwork());
+
+						artistDao.save(aArtist);
 					}
 				}
 
-				if (albumsWithArtwork.size() > 0) {
-
-					Collections.sort(albumsWithArtwork);
-
-					Album album = albumsWithArtwork.get((int)Math.floor(albumsWithArtwork.size() / 2.0));
-
-					aArtist.setArtwork(album.getArtwork());
-
-					artistDao.save(aArtist);
-				}
-
 				if (aDelegate != null) {
-					aDelegate.onProgress(aIndexInAll / (double) aPage.getTotalElements());
+					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
 				}
 			}
 
@@ -790,7 +825,7 @@ public class LibraryServiceImpl implements LibraryService {
 				return artistDao.findByArtworkId(null, aPageable);
 			}
 		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), artistHandler).run();
 	}
 
 	private void deleteSong(Long aId) {
