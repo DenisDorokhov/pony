@@ -11,8 +11,7 @@ import java.util.List;
 public interface StoredFileDao extends PagingAndSortingRepository<StoredFile, Long> {
 
 	public long countByTag(String aTag);
-	public long countByTagAndCreationDateGreaterThan(String aTag, Date aDate);
-	public long countByTagAndUpdateDateGreaterThan(String aTag, Date aDate);
+	public long countByTagAndDateGreaterThan(String aTag, Date aDate);
 
 	public Page<StoredFile> findByTag(String aTag, Pageable aPageable);
 

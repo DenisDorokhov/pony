@@ -36,7 +36,6 @@ public class ScanResult {
 	private Long deletedSongCount;
 
 	private Long createdArtworkCount;
-	private Long updatedArtworkCount;
 	private Long deletedArtworkCount;
 
 	@Id
@@ -222,16 +221,6 @@ public class ScanResult {
 		createdArtworkCount = aImportedArtworkCount;
 	}
 
-	@Column(name = "updated_artwork_count")
-	@NotNull
-	public Long getUpdatedArtworkCount() {
-		return updatedArtworkCount;
-	}
-
-	public void setUpdatedArtworkCount(Long aUpdatedArtworkCount) {
-		updatedArtworkCount = aUpdatedArtworkCount;
-	}
-
 	@Column(name = "deleted_artwork_count")
 	@NotNull
 	public Long getDeletedArtworkCount() {
@@ -292,7 +281,6 @@ public class ScanResult {
 				", updatedSongCount=" + updatedSongCount +
 				", deletedSongCount=" + deletedSongCount +
 				", createdArtworkCount=" + createdArtworkCount +
-				", updatedArtworkCount=" + updatedArtworkCount +
 				", deletedArtworkCount=" + deletedArtworkCount +
 				'}';
 	}

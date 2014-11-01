@@ -715,11 +715,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 					} else {
 
-						if (aStoredFile.getUpdateDate() != null) {
-							shouldDelete = (aStoredFile.getUpdateDate().getTime() < externalFile.lastModified());
-						} else {
-							shouldDelete = (aStoredFile.getCreationDate().getTime() < externalFile.lastModified());
-						}
+						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
 
 						if (shouldDelete) {
 							logDebug("libraryService.deletingModifiedStoredFile",

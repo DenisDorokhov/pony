@@ -281,10 +281,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		long albumCountDeleted = Math.max(0, albumCountBeforeScan - (albumCountAfterScan - albumCountCreated));
 
 		long artworkCountAfterScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
-		long artworkCountCreated = storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScanDate) +
-				storedFileService.getCountByTagAndCreationDate(StoredFile.TAG_ARTWORK_FILE, lastScanDate);
-		long artworkCountUpdated = storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScanDate) +
-				storedFileService.getCountByTagAndUpdateDate(StoredFile.TAG_ARTWORK_FILE, lastScanDate);
+		long artworkCountCreated = storedFileService.getCountByTagAndMinimalDate(StoredFile.TAG_ARTWORK_EMBEDDED, lastScanDate) +
+				storedFileService.getCountByTagAndMinimalDate(StoredFile.TAG_ARTWORK_FILE, lastScanDate);
 		long artworkCountDeleted = Math.max(0, artworkCountBeforeScan - (artworkCountAfterScan - artworkCountCreated));
 
 		ScanResult scanResult = new ScanResult();
@@ -311,7 +309,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		scanResult.setDeletedSongCount(songCountDeleted);
 
 		scanResult.setCreatedArtworkCount(artworkCountCreated);
-		scanResult.setUpdatedArtworkCount(artworkCountUpdated);
 		scanResult.setDeletedArtworkCount(artworkCountDeleted);
 
 		scanResult = scanResultDao.save(scanResult);

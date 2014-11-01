@@ -1,19 +1,19 @@
 package net.dorokhov.pony.core.entity;
 
-import net.dorokhov.pony.core.entity.common.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "stored_file", uniqueConstraints = @UniqueConstraint(columnNames = {"tag", "checksum"}))
-public class StoredFile extends BaseEntity<Long> {
+public class StoredFile {
 
 	public static final String TAG_ARTWORK_EMBEDDED = "artworkEmbedded";
 	public static final String TAG_ARTWORK_FILE = "artworkFile";
+
+	private Long id;
+
+	private Date date;
 
 	private String name;
 
@@ -26,6 +26,27 @@ public class StoredFile extends BaseEntity<Long> {
 	private String path;
 
 	private String userData;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long aId) {
+		id = aId;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "date")
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date aDate) {
+		date = aDate;
+	}
 
 	@Column(name = "name", nullable = false)
 	@NotNull
@@ -83,6 +104,33 @@ public class StoredFile extends BaseEntity<Long> {
 
 	public void setUserData(String aUserData) {
 		userData = aUserData;
+	}
+
+	@PrePersist
+	public void prePersist() {
+		setDate(new Date());
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object aObj) {
+
+		if (this == aObj) {
+			return true;
+		}
+
+		if (aObj != null && id != null && getClass().equals(aObj.getClass())) {
+
+			StoredFile that = (StoredFile) aObj;
+
+			return id.equals(that.id);
+		}
+
+		return false;
 	}
 
 	@Override

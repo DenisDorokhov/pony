@@ -75,7 +75,6 @@ CREATE TABLE scan_result (
 	deleted_song_count BIGINT NOT NULL,
 
 	created_artwork_count BIGINT NOT NULL,
-	updated_artwork_count BIGINT NOT NULL,
 	deleted_artwork_count BIGINT NOT NULL
 );
 
@@ -96,8 +95,7 @@ CREATE TABLE stored_file (
 
 	id BIGINT IDENTITY,
 
-	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP,
+	date TIMESTAMP NOT NULL,
 
 	name VARCHAR(255) NOT NULL,
 	mime_type VARCHAR(255) NOT NULL,

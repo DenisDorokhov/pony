@@ -111,7 +111,6 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
 
 		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
 
 		didCallStart = false;
@@ -151,7 +150,6 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
 
 		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
 
 		result = service.getLastResult();
