@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.storage.StoredFileService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -42,7 +37,21 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private final static int NUMBER_OF_THREADS = 10;
-	private final static int NUMBER_OF_STEPS = 5;
+	private final static int NUMBER_OF_STEPS = 6;
+
+	private final static int STEP_PREPARING = 1;
+	private final static int STEP_SEARCHING_MEDIA_FILES = 2;
+	private final static int STEP_CLEANING_SONGS = 3;
+	private final static int STEP_CLEANING_ARTWORKS = 4;
+	private final static int STEP_IMPORTING_SONGS = 5;
+	private final static int STEP_NORMALIZING = 6;
+
+	private final static String STEP_CODE_PREPARING = "preparing";
+	private final static String STEP_CODE_SEARCHING_MEDIA_FILES = "searchingMediaFiles";
+	private final static String STEP_CODE_CLEANING_SONGS = "cleaningSongs";
+	private final static String STEP_CODE_CLEANING_ARTWORKS = "cleaningArtworks";
+	private final static String STEP_CODE_IMPORTING_SONGS = "importingSongs";
+	private final static String STEP_CODE_NORMALIZING = "normalizing";
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -56,8 +65,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	private final AtomicReference<ExecutorService> executorReference = new AtomicReference<>();
 
 	private final AtomicInteger completedImportTaskCount = new AtomicInteger();
-
-	private TransactionTemplate transactionTemplate;
 
 	private LogService logService;
 
@@ -73,11 +80,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	private AlbumDao albumDao;
 
 	private StoredFileService storedFileService;
-
-	@Autowired
-	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
-		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
-	}
 
 	@Autowired
 	public void setLogService(LogService aLogService) {
@@ -177,8 +179,10 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				throw new ConcurrentScanException();
 			}
 
-			statusReference.set(new StatusImpl(aTargetFolders, 1, "searchingMediaFiles", -1));
+			statusReference.set(new StatusImpl(aTargetFolders, STEP_PREPARING, STEP_CODE_PREPARING, -1));
 		}
+
+		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", aTargetFolders.toString());
 
 		synchronized (delegatesLock) {
 			for (Delegate next : new ArrayList<>(delegates)) {
@@ -189,6 +193,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				}
 			}
 		}
+
+		updateStatus(statusReference.get());
 
 		ScanResult scanResult;
 
@@ -210,12 +216,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		} catch (final Exception scanException) {
 
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus status) {
-					logError("libraryScanService.scanFailed", "Scan failed.", scanException);
-				}
-			});
+			logError("libraryScanService.scanFailed", "Scan failed.", scanException);
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -252,8 +253,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		long artistCountBeforeScan = artistDao.count();
 		long albumCountBeforeScan = albumDao.count();
 		long artworkCountBeforeScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);
-
-		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", targetPaths);
 
 		long startTime = System.nanoTime();
 
@@ -315,33 +314,43 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		scanResult.setUpdatedArtworkCount(artworkCountUpdated);
 		scanResult.setDeletedArtworkCount(artworkCountDeleted);
 
-		return scanResultDao.save(scanResult);
+		scanResult = scanResultDao.save(scanResult);
+
+		logInfo("libraryScanService.scanFinished", "Scanning library " + aTargetFolders + " finished with result " + scanResult.toString(),
+				StringUtils.join(targetPaths, ", "), scanResult.toString());
+
+		return scanResult;
 	}
 
 	private List<LibrarySong> performScanSteps(final List<File> aTargetFolders) {
 
 		logInfo("libraryScanService.searchingMediaFiles", "Searching media files...");
-
+		updateStatus(new StatusImpl(aTargetFolders, STEP_SEARCHING_MEDIA_FILES, STEP_CODE_SEARCHING_MEDIA_FILES, -1.0));
 		List<LibraryFolder> library = new ArrayList<>();
 		for (File targetFolder : aTargetFolders) {
 			library.add(fileScanService.scanFolder(targetFolder));
 		}
 
 		logInfo("libraryScanService.cleaningSongs", "Cleaning songs...");
+		updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_SONGS, STEP_CODE_CLEANING_SONGS, 0.0));
 		libraryService.cleanSongs(library, new LibraryService.ProgressDelegate() {
 			@Override
 			public void onProgress(double aProgress) {
-				statusReference.set(new StatusImpl(aTargetFolders, 2, "cleaningArtworks", aProgress));
+				updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_SONGS, STEP_CODE_CLEANING_SONGS, aProgress));
 			}
 		});
 
 		logInfo("libraryScanService.cleaningArtworks", "Cleaning artworks...");
+		updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_ARTWORKS, STEP_CODE_CLEANING_ARTWORKS, 0.0));
 		libraryService.cleanArtworks(library, new LibraryService.ProgressDelegate() {
 			@Override
 			public void onProgress(double aProgress) {
-				statusReference.set(new StatusImpl(aTargetFolders, 3, "cleaningArtworks", aProgress));
+				updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_ARTWORKS, STEP_CODE_CLEANING_ARTWORKS, aProgress));
 			}
 		});
+
+		logInfo("libraryScanService.importingSongs", "Importing songs...");
+		updateStatus(new StatusImpl(aTargetFolders, STEP_IMPORTING_SONGS, STEP_CODE_IMPORTING_SONGS, 0.0));
 
 		List<LibrarySong> songFiles = new ArrayList<>();
 		for (LibraryFolder folder : library) {
@@ -362,15 +371,31 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			throw new RuntimeException(e);
 		}
 
-		logInfo("libraryScanService.importingArtworks", "Importing artworks...");
-		libraryService.importArtworks(library, new LibraryService.ProgressDelegate() {
+		logInfo("libraryScanService.normalizing", "Normalizing...");
+		updateStatus(new StatusImpl(aTargetFolders, STEP_NORMALIZING, STEP_CODE_NORMALIZING, 0.0));
+		libraryService.normalize(library, new LibraryService.ProgressDelegate() {
 			@Override
 			public void onProgress(double aProgress) {
-				statusReference.set(new StatusImpl(aTargetFolders, 5, "importingArtworks", aProgress));
+				updateStatus(new StatusImpl(aTargetFolders, STEP_NORMALIZING, STEP_CODE_NORMALIZING, aProgress));
 			}
 		});
 
 		return songFiles;
+	}
+
+	private void updateStatus(StatusImpl aStatus) {
+
+		statusReference.set(aStatus);
+
+		synchronized (delegatesLock) {
+			for (Delegate next : new ArrayList<>(delegates)) {
+				try {
+					next.onScanProgress(aStatus);
+				} catch (Exception e) {
+					log.error("Exception thrown when delegating onScanProgress to " + next, e);
+				}
+			}
+		}
 	}
 
 	private void logInfo(String aCode, String aMessage, String... aArguments) {
@@ -395,8 +420,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		private final int step;
 		private final String stepCode;
 
-		public StatusImpl(List<File> aTargetFiles, int aStep, String aStepCode, double aProgress) {
-			targetFolders = aTargetFiles != null ? new ArrayList<>(aTargetFiles) : null;
+		public StatusImpl(List<File> aTargetFolders, int aStep, String aStepCode, double aProgress) {
+			targetFolders = aTargetFolders != null ? new ArrayList<>(aTargetFolders) : null;
 			step = aStep;
 			stepCode = aStepCode;
 			progress = aProgress;
@@ -462,17 +487,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 			double progress = completedImportTaskCount.incrementAndGet() / (double) taskCount;
 
-			statusReference.set(new StatusImpl(targetFolders, 2, "importingSongs", progress));
-
-			synchronized (delegatesLock) {
-				for (Delegate next : new ArrayList<>(delegates)) {
-					try {
-						next.onScanProgress(getStatus());
-					} catch (Exception e) {
-						log.error("Exception thrown when delegating onScanProgress", e);
-					}
-				}
-			}
+			updateStatus(new StatusImpl(targetFolders, STEP_IMPORTING_SONGS, STEP_CODE_IMPORTING_SONGS, progress));
 
 			return song;
 		}

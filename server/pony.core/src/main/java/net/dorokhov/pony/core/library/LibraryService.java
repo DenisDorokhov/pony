@@ -15,7 +15,7 @@ public interface LibraryService {
 
 	public Song importSong(List<LibraryFolder> aLibrary, LibrarySong aSongFile);
 
-	public void importArtworks(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
+	public void normalize(List<LibraryFolder> aLibrary, ProgressDelegate aDelegate);
 
 	public Song writeAndImportSong(LibrarySong aSongFile, SongDataWritable aSongData);
 

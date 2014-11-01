@@ -280,4 +280,30 @@ public class ScanResult {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "ScanResult{" +
+				"id=" + id +
+				", date=" + date +
+				", folders=" + folders +
+				", duration=" + duration +
+				", foundSongCount=" + foundSongCount +
+				", createdArtistCount=" + createdArtistCount +
+				", updatedArtistCount=" + updatedArtistCount +
+				", deletedArtistCount=" + deletedArtistCount +
+				", createdAlbumCount=" + createdAlbumCount +
+				", updatedAlbumCount=" + updatedAlbumCount +
+				", deletedAlbumCount=" + deletedAlbumCount +
+				", createdGenreCount=" + createdGenreCount +
+				", updatedGenreCount=" + updatedGenreCount +
+				", deletedGenreCount=" + deletedGenreCount +
+				", createdSongCount=" + createdSongCount +
+				", updatedSongCount=" + updatedSongCount +
+				", deletedSongCount=" + deletedSongCount +
+				", createdArtworkCount=" + createdArtworkCount +
+				", updatedArtworkCount=" + updatedArtworkCount +
+				", deletedArtworkCount=" + deletedArtworkCount +
+				'}';
+	}
 }

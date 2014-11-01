@@ -205,12 +205,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void importArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void normalize(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 		synchronized (lock) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
 				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					doImportArtworks(aDelegate);
+					doNormalize(aDelegate);
 				}
 			});
 		}
@@ -714,10 +714,17 @@ public class LibraryServiceImpl implements LibraryService {
 						shouldDelete = true;
 
 					} else {
+
 						if (aStoredFile.getUpdateDate() != null) {
 							shouldDelete = (aStoredFile.getUpdateDate().getTime() < externalFile.lastModified());
 						} else {
 							shouldDelete = (aStoredFile.getCreationDate().getTime() < externalFile.lastModified());
+						}
+
+						if (shouldDelete) {
+							logDebug("libraryService.deletingModifiedStoredFile",
+									"Artwork file modified [" + externalFile.getAbsolutePath() + "], deleting stored file [" + aStoredFile + "]",
+									externalFile.getAbsolutePath(), aStoredFile.toString());
 						}
 					}
 				}
@@ -759,7 +766,7 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 	}
 
-	private void doImportArtworks(final ProgressDelegate aDelegate) {
+	private void doNormalize(final ProgressDelegate aDelegate) {
 
 		final long genreCount = genreDao.count();
 		final long artistCount = artistDao.count();
