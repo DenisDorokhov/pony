@@ -114,6 +114,46 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
 
+		didCallStart = false;
+		didCallFinish = false;
+		didCallFail = false;
+
+		result = service.scan(filesToScan);
+
+		Assert.assertTrue(didCallStart);
+		Assert.assertTrue(didCallFinish);
+		Assert.assertFalse(didCallFail);
+
+		Assert.assertNotNull(result.getId());
+		Assert.assertNotNull(result.getDate());
+
+		Assert.assertEquals(1, result.getFolders().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), result.getFolders().get(0));
+
+		Assert.assertTrue(result.getDuration() > 0);
+
+		Assert.assertEquals(Long.valueOf(14), result.getFoundSongCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtistCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedAlbumCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedGenreCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
+
+		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
+
 		result = service.getLastResult();
 
 		Assert.assertNotNull(result);
