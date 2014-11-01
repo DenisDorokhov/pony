@@ -82,13 +82,14 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 		return command;
 	}
 
-	private void checkStoredFile(StoredFile aStoredFile, int aIndex) {
+	private void checkStoredFile(StoredFile aStoredFile, int aIndex) throws Exception {
 
 		Assert.assertNotNull(aStoredFile.getId());
 		Assert.assertNotNull(aStoredFile.getDate());
 
 		Assert.assertEquals("file" + aIndex, aStoredFile.getName());
 		Assert.assertEquals("checksum" + aIndex, aStoredFile.getChecksum());
+		Assert.assertEquals(new ClassPathResource(TEST_FILE_PATH).getFile().length(), (long) aStoredFile.getSize());
 		Assert.assertEquals("tag", aStoredFile.getTag());
 		Assert.assertEquals("userData" + aIndex, aStoredFile.getUserData());
 

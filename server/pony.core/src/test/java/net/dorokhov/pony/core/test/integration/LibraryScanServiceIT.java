@@ -78,82 +78,100 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 		filesToScan.add(new ClassPathResource(TEST_FOLDER_PATH).getFile());
 
-		ScanResult result = service.scan(filesToScan);
+		ScanResult scanResult = service.scan(filesToScan);
 
 		Assert.assertTrue(didCallStart);
 		Assert.assertTrue(didCallFinish);
 		Assert.assertFalse(didCallFail);
 
-		Assert.assertNotNull(result.getId());
-		Assert.assertNotNull(result.getDate());
+		Assert.assertNotNull(scanResult.getId());
+		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, result.getFolders().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), result.getFolders().get(0));
+		Assert.assertEquals(1, scanResult.getFolders().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getFolders().get(0));
 
-		Assert.assertTrue(result.getDuration() > 0);
+		Assert.assertTrue(scanResult.getDuration() > 0);
 
-		Assert.assertEquals(Long.valueOf(14), result.getFoundSongCount());
+		Assert.assertEquals(Long.valueOf(235942), scanResult.getSongSize());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkSize());
 
-		Assert.assertEquals(Long.valueOf(3), result.getCreatedArtistCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtistCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtistCount());
+		Assert.assertEquals(Long.valueOf(1), scanResult.getGenreCount());
+		Assert.assertEquals(Long.valueOf(3), scanResult.getArtistCount());
+		Assert.assertEquals(Long.valueOf(5), scanResult.getAlbumCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkCount());
 
-		Assert.assertEquals(Long.valueOf(5), result.getCreatedAlbumCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedAlbumCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedAlbumCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
 
-		Assert.assertEquals(Long.valueOf(1), result.getCreatedGenreCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedGenreCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedGenreCount());
+		Assert.assertEquals(Long.valueOf(3), scanResult.getCreatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtistCount());
 
-		Assert.assertEquals(Long.valueOf(14), result.getCreatedSongCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedSongCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
+		Assert.assertEquals(Long.valueOf(5), scanResult.getCreatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedAlbumCount());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
+		Assert.assertEquals(Long.valueOf(1), scanResult.getCreatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedGenreCount());
+
+		Assert.assertEquals(Long.valueOf(14), scanResult.getCreatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedSongCount());
+
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtworkCount());
 
 		didCallStart = false;
 		didCallFinish = false;
 		didCallFail = false;
 
-		result = service.scan(filesToScan);
+		scanResult = service.scan(filesToScan);
 
 		Assert.assertTrue(didCallStart);
 		Assert.assertTrue(didCallFinish);
 		Assert.assertFalse(didCallFail);
 
-		Assert.assertNotNull(result.getId());
-		Assert.assertNotNull(result.getDate());
+		Assert.assertNotNull(scanResult.getId());
+		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, result.getFolders().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), result.getFolders().get(0));
+		Assert.assertEquals(1, scanResult.getFolders().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getFolders().get(0));
 
-		Assert.assertTrue(result.getDuration() > 0);
+		Assert.assertTrue(scanResult.getDuration() > 0);
 
-		Assert.assertEquals(Long.valueOf(14), result.getFoundSongCount());
+		Assert.assertEquals(Long.valueOf(235942), scanResult.getSongSize());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkSize());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtistCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedArtistCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtistCount());
+		Assert.assertEquals(Long.valueOf(1), scanResult.getGenreCount());
+		Assert.assertEquals(Long.valueOf(3), scanResult.getArtistCount());
+		Assert.assertEquals(Long.valueOf(5), scanResult.getAlbumCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkCount());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedAlbumCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedAlbumCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedAlbumCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedGenreCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedGenreCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedArtistCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtistCount());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedSongCount());
-		Assert.assertEquals(Long.valueOf(0), result.getUpdatedSongCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedAlbumCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedAlbumCount());
 
-		Assert.assertEquals(Long.valueOf(0), result.getCreatedArtworkCount());
-		Assert.assertEquals(Long.valueOf(0), result.getDeletedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedGenreCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedGenreCount());
 
-		result = service.getLastResult();
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedSongCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedSongCount());
 
-		Assert.assertNotNull(result);
+		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtworkCount());
+
+		scanResult = service.getLastResult();
+
+		Assert.assertNotNull(scanResult);
 	}
 }

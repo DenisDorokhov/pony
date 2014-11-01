@@ -3,6 +3,7 @@ package net.dorokhov.pony.core.dao;
 import net.dorokhov.pony.core.entity.StoredFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Date;
@@ -12,6 +13,9 @@ public interface StoredFileDao extends PagingAndSortingRepository<StoredFile, Lo
 
 	public long countByTag(String aTag);
 	public long countByTagAndDateGreaterThan(String aTag, Date aDate);
+
+	@Query("SELECT SUM(f.size) FROM StoredFile f WHERE f.tag = ?1")
+	public Long sumSizeByTag(String aTag);
 
 	public Page<StoredFile> findByTag(String aTag, Pageable aPageable);
 

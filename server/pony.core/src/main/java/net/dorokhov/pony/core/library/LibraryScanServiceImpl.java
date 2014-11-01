@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.storage.StoredFileService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,6 +233,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		} finally {
 			executorReference.set(null);
+			completedImportTaskCount.set(0);
 			statusReference.set(null);
 		}
 
@@ -289,6 +291,15 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		scanResult.setFolders(Arrays.asList(targetPaths));
 		scanResult.setDuration(endTime - startTime);
+
+		scanResult.setSongSize(ObjectUtils.defaultIfNull(songDao.sumSize(), 0L));
+		scanResult.setArtworkSize(storedFileService.getSizeByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getSizeByTag(StoredFile.TAG_ARTWORK_FILE));
+
+		scanResult.setGenreCount(genreCountAfterScan);
+		scanResult.setArtistCount(artistCountAfterScan);
+		scanResult.setAlbumCount(albumCountAfterScan);
+		scanResult.setSongCount(songCountAfterScan);
+		scanResult.setArtworkCount(artworkCountAfterScan);
 
 		scanResult.setFoundSongCount(Integer.valueOf(songFiles.size()).longValue());
 

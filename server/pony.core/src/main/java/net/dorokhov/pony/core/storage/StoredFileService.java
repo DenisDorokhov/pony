@@ -14,6 +14,8 @@ public interface StoredFileService {
 	public long getCountByTag(String aTag);
 	public long getCountByTagAndMinimalDate(String aTag, Date aMinimalDate);
 
+	public long getSizeByTag(String aTag);
+
 	public StoredFile getById(Long aId);
 	public StoredFile getByTagAndChecksum(String aTag, String aChecksum);
 

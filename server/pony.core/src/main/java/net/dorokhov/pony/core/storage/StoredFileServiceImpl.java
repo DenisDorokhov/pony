@@ -77,6 +77,15 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public long getSizeByTag(String aTag) {
+
+		Long size = storedFileDao.sumSizeByTag(aTag);
+
+		return size != null ? size : 0;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public StoredFile getById(Long aId) {
 		return storedFileDao.findOne(aId);
 	}
@@ -169,6 +178,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 			storedFile.setName(aCommand.getName());
 			storedFile.setMimeType(aCommand.getMimeType());
 			storedFile.setChecksum(aCommand.getChecksum());
+			storedFile.setSize(targetFile.length());
 			storedFile.setTag(aCommand.getTag());
 			storedFile.setUserData(aCommand.getUserData());
 			storedFile.setPath(relativePath);

@@ -56,6 +56,15 @@ CREATE TABLE scan_result (
 
 	duration BIGINT NOT NULL,
 
+	song_size BIGINT NOT NULL,
+	artwork_size BIGINT NOT NULL,
+
+	genre_count BIGINT NOT NULL,
+	artist_count BIGINT NOT NULL,
+	album_count BIGINT NOT NULL,
+	song_count BIGINT NOT NULL,
+	artwork_count BIGINT NOT NULL,
+
 	found_song_count BIGINT NOT NULL,
 
 	created_artist_count BIGINT NOT NULL,
@@ -100,6 +109,7 @@ CREATE TABLE stored_file (
 	name VARCHAR(255) NOT NULL,
 	mime_type VARCHAR(255) NOT NULL,
 	checksum VARCHAR(255) NOT NULL,
+	size BIGINT NOT NULL,
 	tag VARCHAR(255),
 	path VARCHAR(255) NOT NULL,
 	user_data LONGVARCHAR,

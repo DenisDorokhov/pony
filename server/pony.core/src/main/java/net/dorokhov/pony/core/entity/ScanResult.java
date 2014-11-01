@@ -17,6 +17,15 @@ public class ScanResult {
 
 	private Long duration;
 
+	private Long songSize;
+	private Long artworkSize;
+
+	private Long genreCount;
+	private Long artistCount;
+	private Long albumCount;
+	private Long songCount;
+	private Long artworkCount;
+
 	private Long foundSongCount;
 
 	private Long createdArtistCount;
@@ -79,6 +88,76 @@ public class ScanResult {
 
 	public void setDuration(Long aDuration) {
 		duration = aDuration;
+	}
+
+	@Column(name = "song_size")
+	@NotNull
+	public Long getSongSize() {
+		return songSize;
+	}
+
+	public void setSongSize(Long aSongSize) {
+		songSize = aSongSize;
+	}
+
+	@Column(name = "artwork_size")
+	@NotNull
+	public Long getArtworkSize() {
+		return artworkSize;
+	}
+
+	public void setArtworkSize(Long aArtworkSize) {
+		artworkSize = aArtworkSize;
+	}
+
+	@Column(name = "genre_count")
+	@NotNull
+	public Long getGenreCount() {
+		return genreCount;
+	}
+
+	public void setGenreCount(Long aGenreCount) {
+		genreCount = aGenreCount;
+	}
+
+	@Column(name = "artist_count")
+	@NotNull
+	public Long getArtistCount() {
+		return artistCount;
+	}
+
+	public void setArtistCount(Long aArtistCount) {
+		artistCount = aArtistCount;
+	}
+
+	@Column(name = "album_count")
+	@NotNull
+	public Long getAlbumCount() {
+		return albumCount;
+	}
+
+	public void setAlbumCount(Long aAlbumCount) {
+		albumCount = aAlbumCount;
+	}
+
+	@Column(name = "song_count")
+	@NotNull
+	public Long getSongCount() {
+		return songCount;
+	}
+
+	public void setSongCount(Long aSongCount) {
+		songCount = aSongCount;
+	}
+
+	@Column(name = "artwork_count")
+	@NotNull
+	public Long getArtworkCount() {
+		return artworkCount;
+	}
+
+	public void setArtworkCount(Long aArtworkCount) {
+		artworkCount = aArtworkCount;
 	}
 
 	@Column(name = "found_song_count")

@@ -21,6 +21,8 @@ public class StoredFile {
 
 	private String checksum;
 
+	private Long size;
+
 	private String tag;
 
 	private String path;
@@ -76,6 +78,16 @@ public class StoredFile {
 
 	public void setChecksum(String aChecksum) {
 		checksum = aChecksum;
+	}
+
+	@Column(name = "size", nullable = false)
+	@NotNull
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long aSize) {
+		size = aSize;
 	}
 
 	@Column(name = "tag")

@@ -19,6 +19,9 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByCreationDateGreaterThan(Date aDate);
 	public long countByUpdateDateGreaterThan(Date aDate);
 
+	@Query("SELECT SUM(s.size) FROM Song s")
+	public Long sumSize();
+
 	public Song findByPath(String aPath);
 
 	@Query("SELECT s FROM Song s " +
