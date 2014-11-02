@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.ObjectUtils;
 
@@ -120,28 +119,129 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void cleanSongs(final List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
-		synchronized (lock) {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					doCleanSongs(aLibrary, aDelegate);
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void cleanSongs(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+
+		final Set<String> librarySongPaths = new HashSet<>();
+
+		for (LibraryFolder libraryFolder : aLibrary) {
+			for (LibrarySong songFile : libraryFolder.getChildSongs(true)) {
+				librarySongPaths.add(songFile.getFile().getAbsolutePath());
+			}
+		}
+
+		final List<Long> itemsToDelete = new ArrayList<>();
+
+		PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
+
+			@Override
+			public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
+
+				File file = new File(aSong.getPath());
+
+				if (!librarySongPaths.contains(file.getAbsolutePath()) || !file.exists()) {
+
+					itemsToDelete.add(aSong.getId());
+
+					logDebug("libraryService.deletingSong",
+							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
+							file.getAbsolutePath(), aSong.toString());
 				}
-			});
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
+				}
+			}
+
+			@Override
+			public Page<Song> getPage(Pageable aPageable) {
+				return songDao.findAll(aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+
+		for (Long id : itemsToDelete) {
+			deleteSong(id);
 		}
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void cleanArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
-		synchronized (lock) {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					doCleanStoredFiles(aDelegate);
+
+		final List<Long> itemsToDelete = new ArrayList<>();
+
+		PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
+
+			@Override
+			public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
+
+				boolean shouldDelete = false;
+
+				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
+
+					File externalFile = null;
+
+					if (aStoredFile.getUserData() != null) {
+						externalFile = new File(aStoredFile.getUserData());
+					}
+
+					if (externalFile == null || !externalFile.exists()) {
+
+						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
+
+						logDebug("libraryService.deletingNotFoundStoredFile",
+								"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
+								filePath, aStoredFile.toString());
+
+						shouldDelete = true;
+
+					} else {
+
+						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
+
+						if (shouldDelete) {
+							logDebug("libraryService.deletingModifiedStoredFile",
+									"Artwork file modified [" + externalFile.getAbsolutePath() + "], deleting stored file [" + aStoredFile + "]",
+									externalFile.getAbsolutePath(), aStoredFile.toString());
+						}
+					}
 				}
-			});
+
+				if (!shouldDelete && aStoredFile.getTag() != null) {
+					if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
+						shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
+					}
+				}
+
+				if (shouldDelete) {
+					itemsToDelete.add(aStoredFile.getId());
+				}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
+				}
+			}
+
+			@Override
+			public Page<StoredFile> getPage(Pageable aPageable) {
+				return storedFileService.getAll(aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+
+		for (final Long id : itemsToDelete) {
+
+			clearSongArtwork(id);
+			clearAlbumArtwork(id);
+			clearArtistArtwork(id);
+			clearGenreArtwork(id);
+
+			StoredFile storedFile = storedFileService.getById(id);
+
+			storedFileService.deleteById(id);
+
+			logDebug("libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.", storedFile.toString());
 		}
 	}
 
@@ -204,47 +304,103 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void normalize(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
-		synchronized (lock) {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				public void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					doNormalize(aDelegate);
+
+		final long genreCount = genreDao.count();
+		final long artistCount = artistDao.count();
+
+		final long entityCount = genreCount + artistCount;
+
+		PageProcessor.Handler<Genre> genreHandler = new PageProcessor.Handler<Genre>() {
+
+			@Override
+			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
+
+				long albumCount = albumDao.countByGenreIdAndArtworkNotNull(aGenre.getId());
+
+				if (albumCount > 0) {
+
+					Page<Album> albumPage = albumDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
+							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
+
+					if (albumPage.getNumberOfElements() > 0) {
+
+						aGenre.setArtwork(albumPage.getContent().get(0).getArtwork());
+
+						genreDao.save(aGenre);
+					}
 				}
-			});
-		}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((aIndexInAll + 1) / (double) entityCount);
+				}
+			}
+
+			@Override
+			public Page<Genre> getPage(Pageable aPageable) {
+				return genreDao.findByArtworkId(null, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), genreHandler).run();
+
+		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
+
+			@Override
+			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
+
+				long albumCount = albumDao.countByArtistIdAndArtworkNotNull(aArtist.getId());
+
+				if (albumCount > 0) {
+
+					Page<Album> albumPage = albumDao.findByArtistIdAndArtworkNotNull(aArtist.getId(),
+							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
+
+					if (albumPage.getNumberOfElements() > 0) {
+
+						aArtist.setArtwork(albumPage.getContent().get(0).getArtwork());
+
+						artistDao.save(aArtist);
+					}
+				}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
+				}
+			}
+
+			@Override
+			public Page<Artist> getPage(Pageable aPageable) {
+				return artistDao.findByArtworkId(null, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), artistHandler).run();
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional(readOnly = true)
 	public Song writeAndImportSong(final LibrarySong aSongFile, final SongDataWritable aSongData) {
 
-		Song song;
+		Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
 
-		synchronized (lock) {
-			song = transactionTemplate.execute(new TransactionCallback<Song>() {
-				@Override
-				public Song doInTransaction(TransactionStatus status) {
+		if (song != null) {
 
-					Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
+			final SongDataReadable updatedSongData;
 
-					if (song != null) {
+			try {
+				updatedSongData = songDataService.write(new File(song.getPath()), aSongData);
+			} catch (Exception e) {
+				throw new RuntimeException("Could not write data " + aSongData + " to song [" + song.getPath() + "]");
+			}
 
-						SongDataReadable updatedSongData;
-
-						try {
-							updatedSongData = songDataService.write(new File(song.getPath()), aSongData);
-						} catch (Exception e) {
-							throw new RuntimeException("Could not write data " + aSongData + " to song [" + song.getPath() + "]");
-						}
-
-						song = importSong(aSongFile, updatedSongData);
+			synchronized (lock) {
+				song = transactionTemplate.execute(new TransactionCallback<Song>() {
+					@Override
+					public Song doInTransaction(TransactionStatus status) {
+						return importSong(aSongFile, updatedSongData);
 					}
-
-					return song;
-				}
-			});
+				});
+			}
 		}
 
 		return song;
@@ -637,201 +793,6 @@ public class LibraryServiceImpl implements LibraryService {
 		saveCommand.setUserData(aArtwork.getFile().getAbsolutePath());
 
 		return saveCommand;
-	}
-
-	private void doCleanSongs(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
-
-		final Set<String> librarySongPaths = new HashSet<>();
-
-		for (LibraryFolder libraryFolder : aLibrary) {
-			for (LibrarySong songFile : libraryFolder.getChildSongs(true)) {
-				librarySongPaths.add(songFile.getFile().getAbsolutePath());
-			}
-		}
-
-		final List<Long> itemsToDelete = new ArrayList<>();
-
-		PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
-
-			@Override
-			public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
-
-				File file = new File(aSong.getPath());
-
-				if (!librarySongPaths.contains(file.getAbsolutePath()) || !file.exists()) {
-
-					itemsToDelete.add(aSong.getId());
-
-					logDebug("libraryService.deletingSong",
-							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
-							file.getAbsolutePath(), aSong.toString());
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
-				}
-			}
-
-			@Override
-			public Page<Song> getPage(Pageable aPageable) {
-				return songDao.findAll(aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-
-		for (Long id : itemsToDelete) {
-			deleteSong(id);
-		}
-	}
-
-	public void doCleanStoredFiles(final ProgressDelegate aDelegate) {
-
-		final List<Long> itemsToDelete = new ArrayList<>();
-
-		PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
-
-			@Override
-			public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
-
-				boolean shouldDelete = false;
-
-				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
-
-					File externalFile = null;
-
-					if (aStoredFile.getUserData() != null) {
-						externalFile = new File(aStoredFile.getUserData());
-					}
-
-					if (externalFile == null || !externalFile.exists()) {
-
-						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
-
-						logDebug("libraryService.deletingNotFoundStoredFile",
-								"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
-								filePath, aStoredFile.toString());
-
-						shouldDelete = true;
-
-					} else {
-
-						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
-
-						if (shouldDelete) {
-							logDebug("libraryService.deletingModifiedStoredFile",
-									"Artwork file modified [" + externalFile.getAbsolutePath() + "], deleting stored file [" + aStoredFile + "]",
-									externalFile.getAbsolutePath(), aStoredFile.toString());
-						}
-					}
-				}
-
-				if (!shouldDelete && aStoredFile.getTag() != null) {
-					if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
-						shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
-					}
-				}
-
-				if (shouldDelete) {
-					itemsToDelete.add(aStoredFile.getId());
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
-				}
-			}
-
-			@Override
-			public Page<StoredFile> getPage(Pageable aPageable) {
-				return storedFileService.getAll(aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-
-		for (final Long id : itemsToDelete) {
-
-			clearSongArtwork(id);
-			clearAlbumArtwork(id);
-			clearArtistArtwork(id);
-			clearGenreArtwork(id);
-
-			StoredFile storedFile = storedFileService.getById(id);
-
-			storedFileService.deleteById(id);
-
-			logDebug("libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.", storedFile.toString());
-		}
-	}
-
-	private void doNormalize(final ProgressDelegate aDelegate) {
-
-		final long genreCount = genreDao.count();
-		final long artistCount = artistDao.count();
-
-		final long entityCount = genreCount + artistCount;
-
-		PageProcessor.Handler<Genre> genreHandler = new PageProcessor.Handler<Genre>() {
-
-			@Override
-			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
-
-				long albumCount = albumDao.countByGenreIdAndArtworkNotNull(aGenre.getId());
-
-				if (albumCount > 0) {
-
-					Page<Album> albumPage = albumDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
-							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
-
-					if (albumPage.getNumberOfElements() > 0) {
-
-						aGenre.setArtwork(albumPage.getContent().get(0).getArtwork());
-
-						genreDao.save(aGenre);
-					}
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((aIndexInAll + 1) / (double) entityCount);
-				}
-			}
-
-			@Override
-			public Page<Genre> getPage(Pageable aPageable) {
-				return genreDao.findByArtworkId(null, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), genreHandler).run();
-
-		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
-
-			@Override
-			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
-
-				long albumCount = albumDao.countByArtistIdAndArtworkNotNull(aArtist.getId());
-
-				if (albumCount > 0) {
-
-					Page<Album> albumPage = albumDao.findByArtistIdAndArtworkNotNull(aArtist.getId(),
-							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
-
-					if (albumPage.getNumberOfElements() > 0) {
-
-						aArtist.setArtwork(albumPage.getContent().get(0).getArtwork());
-
-						artistDao.save(aArtist);
-					}
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
-				}
-			}
-
-			@Override
-			public Page<Artist> getPage(Pageable aPageable) {
-				return artistDao.findByArtworkId(null, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), artistHandler).run();
 	}
 
 	private void deleteSong(Long aId) {
