@@ -66,8 +66,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 		configDao.save(config);
 
-		log.info("Successfully installed.");
-		logService.info("installationService.installed", "Successfully installed.");
+		logService.info(log, "installationService.installed", "Successfully installed.");
 
 		return installation;
 	}

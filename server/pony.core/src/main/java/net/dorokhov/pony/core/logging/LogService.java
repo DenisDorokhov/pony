@@ -1,6 +1,7 @@
 package net.dorokhov.pony.core.logging;
 
 import net.dorokhov.pony.core.entity.LogMessage;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,41 +15,41 @@ public interface LogService {
 	public Page<LogMessage> getByType(LogMessage.Type aMinimalType, Pageable aPageable);
 	public Page<LogMessage> getByTypeAndDate(LogMessage.Type aMinimalType, Date aMinDate, Date aMaxDate, Pageable aPageable);
 
-	public LogMessage debug(String aCode, String aText);
-	public LogMessage debug(String aCode, String aText, List<String> aArguments);
+	public LogMessage debug(Logger aLogger, String aCode, String aText);
+	public LogMessage debug(Logger aLogger, String aCode, String aText, List<String> aArguments);
 
-	public LogMessage debug(String aCode, String aText, Throwable aThrowable);
-	public LogMessage debug(String aCode, String aText, Throwable aThrowable, List<String> aArguments);
+	public LogMessage debug(Logger aLogger, String aCode, String aText, Throwable aThrowable);
+	public LogMessage debug(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments);
 
-	public LogMessage debug(String aCode, String aText, String aDetails);
-	public LogMessage debug(String aCode, String aText, String aDetails, List<String> aArguments);
+	public LogMessage debug(Logger aLogger, String aCode, String aText, String aDetails);
+	public LogMessage debug(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments);
 
-	public LogMessage info(String aCode, String aText);
-	public LogMessage info(String aCode, String aText, List<String> aArguments);
+	public LogMessage info(Logger aLogger, String aCode, String aText);
+	public LogMessage info(Logger aLogger, String aCode, String aText, List<String> aArguments);
 
-	public LogMessage info(String aCode, String aText, Throwable aThrowable);
-	public LogMessage info(String aCode, String aText, Throwable aThrowable, List<String> aArguments);
+	public LogMessage info(Logger aLogger, String aCode, String aText, Throwable aThrowable);
+	public LogMessage info(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments);
 
-	public LogMessage info(String aCode, String aText, String aDetails);
-	public LogMessage info(String aCode, String aText, String aDetails, List<String> aArguments);
+	public LogMessage info(Logger aLogger, String aCode, String aText, String aDetails);
+	public LogMessage info(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments);
 
-	public LogMessage warn(String aCode, String aText);
-	public LogMessage warn(String aCode, String aText, List<String> aArguments);
+	public LogMessage warn(Logger aLogger, String aCode, String aText);
+	public LogMessage warn(Logger aLogger, String aCode, String aText, List<String> aArguments);
 
-	public LogMessage warn(String aCode, String aText, Exception aException);
-	public LogMessage warn(String aCode, String aText, Throwable aThrowable, List<String> aArguments);
+	public LogMessage warn(Logger aLogger, String aCode, String aText, Exception aException);
+	public LogMessage warn(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments);
 
-	public LogMessage warn(String aCode, String aText, String aDetails);
-	public LogMessage warn(String aCode, String aText, String aDetails, List<String> aArguments);
+	public LogMessage warn(Logger aLogger, String aCode, String aText, String aDetails);
+	public LogMessage warn(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments);
 
-	public LogMessage error(String aCode, String aText);
-	public LogMessage error(String aCode, String aText, List<String> aArguments);
+	public LogMessage error(Logger aLogger, String aCode, String aText);
+	public LogMessage error(Logger aLogger, String aCode, String aText, List<String> aArguments);
 
-	public LogMessage error(String aCode, String aText, Throwable aThrowable);
-	public LogMessage error(String aCode, String aText, Throwable aThrowable, List<String> aArguments);
+	public LogMessage error(Logger aLogger, String aCode, String aText, Throwable aThrowable);
+	public LogMessage error(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments);
 
-	public LogMessage error(String aCode, String aText, String aDetails);
-	public LogMessage error(String aCode, String aText, String aDetails, List<String> aArguments);
+	public LogMessage error(Logger aLogger, String aCode, String aText, String aDetails);
+	public LogMessage error(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments);
 
 	public void deleteAll();
 }

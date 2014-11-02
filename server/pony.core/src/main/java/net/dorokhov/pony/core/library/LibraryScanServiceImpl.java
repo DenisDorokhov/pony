@@ -183,7 +183,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			statusReference.set(new StatusImpl(aTargetFolders, STEP_PREPARING, STEP_CODE_PREPARING, -1));
 		}
 
-		logInfo("libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...", aTargetFolders.toString());
+		logService.info(log, "libraryScanService.scanStarted", "Scanning library " + aTargetFolders + "...",
+				Arrays.asList(aTargetFolders.toString()));
 
 		synchronized (delegatesLock) {
 			for (Delegate next : new ArrayList<>(delegates)) {
@@ -217,7 +218,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		} catch (final Exception scanException) {
 
-			logError("libraryScanService.scanFailed", "Scan failed.", scanException);
+			logService.error(log, "libraryScanService.scanFailed", "Scan failed.", scanException);
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -324,22 +325,22 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		scanResult = scanResultDao.save(scanResult);
 
-		logInfo("libraryScanService.scanFinished", "Scanning library " + aTargetFolders + " finished with result " + scanResult.toString(),
-				StringUtils.join(targetPaths, ", "), scanResult.toString());
+		logService.info(log, "libraryScanService.scanFinished", "Scanning library " + aTargetFolders + " finished with result " + scanResult.toString(),
+				Arrays.asList(StringUtils.join(targetPaths, ", "), scanResult.toString()));
 
 		return scanResult;
 	}
 
 	private List<LibrarySong> performScanSteps(final List<File> aTargetFolders) {
 
-		logInfo("libraryScanService.searchingMediaFiles", "Searching media files...");
+		logService.info(log, "libraryScanService.searchingMediaFiles", "Searching media files...");
 		updateStatus(new StatusImpl(aTargetFolders, STEP_SEARCHING_MEDIA_FILES, STEP_CODE_SEARCHING_MEDIA_FILES, -1.0));
 		List<LibraryFolder> library = new ArrayList<>();
 		for (File targetFolder : aTargetFolders) {
 			library.add(fileScanService.scanFolder(targetFolder));
 		}
 
-		logInfo("libraryScanService.cleaningSongs", "Cleaning songs...");
+		logService.info(log, "libraryScanService.cleaningSongs", "Cleaning songs...");
 		updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_SONGS, STEP_CODE_CLEANING_SONGS, 0.0));
 		libraryService.cleanSongs(library, new LibraryService.ProgressDelegate() {
 			@Override
@@ -348,7 +349,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			}
 		});
 
-		logInfo("libraryScanService.cleaningArtworks", "Cleaning artworks...");
+		logService.info(log, "libraryScanService.cleaningArtworks", "Cleaning artworks...");
 		updateStatus(new StatusImpl(aTargetFolders, STEP_CLEANING_ARTWORKS, STEP_CODE_CLEANING_ARTWORKS, 0.0));
 		libraryService.cleanArtworks(library, new LibraryService.ProgressDelegate() {
 			@Override
@@ -357,7 +358,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			}
 		});
 
-		logInfo("libraryScanService.importingSongs", "Importing songs...");
+		logService.info(log, "libraryScanService.importingSongs", "Importing songs...");
 		updateStatus(new StatusImpl(aTargetFolders, STEP_IMPORTING_SONGS, STEP_CODE_IMPORTING_SONGS, 0.0));
 
 		List<LibrarySong> songFiles = new ArrayList<>();
@@ -379,7 +380,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			throw new RuntimeException(e);
 		}
 
-		logInfo("libraryScanService.normalizing", "Normalizing...");
+		logService.info(log, "libraryScanService.normalizing", "Normalizing...");
 		updateStatus(new StatusImpl(aTargetFolders, STEP_NORMALIZING, STEP_CODE_NORMALIZING, 0.0));
 		libraryService.normalize(library, new LibraryService.ProgressDelegate() {
 			@Override
@@ -404,21 +405,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				}
 			}
 		}
-	}
-
-	private void logInfo(String aCode, String aMessage, String... aArguments) {
-		log.info(aMessage);
-		logService.info(aCode, aMessage, Arrays.asList(aArguments));
-	}
-
-	private void logWarn(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
-		log.warn(aMessage, aThrowable);
-		logService.warn(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
-	}
-
-	private void logError(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
-		log.error(aMessage, aThrowable);
-		logService.error(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
 	}
 
 	private class StatusImpl implements Status {
@@ -490,7 +476,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			try {
 				song = libraryService.importSong(library, songFile);
 			} catch (Exception e) {
-				logWarn("libraryScanService.songImportFailed", "Could not import song from file [" + songFile.getFile().getAbsolutePath() + "]", e, songFile.getFile().getAbsolutePath());
+				logService.warn(log, "libraryScanService.songImportFailed", "Could not import song from file [" + songFile.getFile().getAbsolutePath() + "]",
+						e, Arrays.asList(songFile.getFile().getAbsolutePath()));
 			}
 
 			double progress = completedImportTaskCount.incrementAndGet() / (double) taskCount;

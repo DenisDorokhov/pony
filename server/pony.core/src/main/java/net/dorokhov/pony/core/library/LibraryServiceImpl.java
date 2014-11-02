@@ -143,9 +143,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 					itemsToDelete.add(aSong.getId());
 
-					logDebug("libraryService.deletingSong",
+					logService.debug(log, "libraryService.deletingSong",
 							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
-							file.getAbsolutePath(), aSong.toString());
+							Arrays.asList(file.getAbsolutePath(), aSong.toString()));
 				}
 
 				if (aDelegate != null) {
@@ -190,9 +190,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
 
-						logDebug("libraryService.deletingNotFoundStoredFile",
+						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
 								"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
-								filePath, aStoredFile.toString());
+								Arrays.asList(filePath, aStoredFile.toString()));
 
 						shouldDelete = true;
 
@@ -201,9 +201,9 @@ public class LibraryServiceImpl implements LibraryService {
 						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
 
 						if (shouldDelete) {
-							logDebug("libraryService.deletingModifiedStoredFile",
+							logService.debug(log, "libraryService.deletingModifiedStoredFile",
 									"Artwork file modified [" + externalFile.getAbsolutePath() + "], deleting stored file [" + aStoredFile + "]",
-									externalFile.getAbsolutePath(), aStoredFile.toString());
+									Arrays.asList(externalFile.getAbsolutePath(), aStoredFile.toString()));
 						}
 					}
 				}
@@ -241,7 +241,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 			storedFileService.deleteById(id);
 
-			logDebug("libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.", storedFile.toString());
+			logService.debug(log, "libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.",
+					Arrays.asList(storedFile.toString()));
 		}
 	}
 
@@ -506,9 +507,11 @@ public class LibraryServiceImpl implements LibraryService {
 			deleteEntitiesWithoutSongs(oldAlbum, oldArtist, oldGenre);
 
 			if (newSong) {
-				logDebug("libraryService.songCreated", "Song " + song + " has been created.", song.toString());
+				logService.debug(log, "libraryService.songCreated", "Song " + song + " has been created.",
+						Arrays.asList(song.toString()));
 			} else {
-				logDebug("libraryService.songUpdated", "Song " + song + " has been updated.", song.toString());
+				logService.debug(log, "libraryService.songUpdated", "Song " + song + " has been updated.",
+						Arrays.asList(song.toString()));
 			}
 
 			if (song.getAlbum().getArtwork() == null) {
@@ -552,9 +555,11 @@ public class LibraryServiceImpl implements LibraryService {
 			genre = genreDao.save(genre);
 
 			if (newGenre) {
-				logDebug("libraryService.artistCreated", "Genre " + genre + " has been created.", genre.toString());
+				logService.debug(log, "libraryService.artistCreated", "Genre " + genre + " has been created.",
+						Arrays.asList(genre.toString()));
 			} else {
-				logDebug("libraryService.artistUpdated", "Genre " + genre + " has been updated.", genre.toString());
+				logService.debug(log, "libraryService.artistUpdated", "Genre " + genre + " has been updated.",
+						Arrays.asList(genre.toString()));
 			}
 		}
 
@@ -595,9 +600,11 @@ public class LibraryServiceImpl implements LibraryService {
 			artist = artistDao.save(artist);
 
 			if (newArtist) {
-				logDebug("libraryService.artistCreated", "Artist " + artist + " has been created.", artist.toString());
+				logService.debug(log, "libraryService.artistCreated", "Artist " + artist + " has been created.",
+						Arrays.asList(artist.toString()));
 			} else {
-				logDebug("libraryService.artistUpdated", "Artist " + artist + " has been updated.", artist.toString());
+				logService.debug(log, "libraryService.artistUpdated", "Artist " + artist + " has been updated.",
+						Arrays.asList(artist.toString()));
 			}
 		}
 
@@ -639,9 +646,11 @@ public class LibraryServiceImpl implements LibraryService {
 			album = albumDao.save(album);
 
 			if (newAlbum) {
-				logDebug("libraryService.albumCreated", "Album " + album + " has been created.", album.toString());
+				logService.debug(log, "libraryService.albumCreated", "Album " + album + " has been created.",
+						Arrays.asList(album.toString()));
 			} else {
-				logDebug("libraryService.albumUpdated", "Album " + album + " has been updated.", album.toString());
+				logService.debug(log, "libraryService.albumUpdated", "Album " + album + " has been updated.",
+						Arrays.asList(album.toString()));
 			}
 		}
 
@@ -685,10 +694,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 					artwork = storedFileService.save(saveCommand);
 
-					logDebug("libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork, artwork.toString());
+					logService.debug(log, "libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork,
+							Arrays.asList(artwork.toString()));
 
 				} catch (Exception e) {
-					logWarn("libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(), e, aSongData.getArtwork().toString());
+					logService.warn(log, "libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(),
+							e, Arrays.asList(aSongData.getArtwork().toString()));
 				}
 			}
 		}
@@ -713,7 +724,7 @@ public class LibraryServiceImpl implements LibraryService {
 				try {
 					checksum = artworkImage.getChecksum();
 				} catch (Exception e) {
-					logWarn("libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
+					logService.warn(log, "libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
 				}
 
 				if (checksum != null) {
@@ -728,10 +739,11 @@ public class LibraryServiceImpl implements LibraryService {
 
 							artwork = storedFileService.save(saveCommand);
 
-							logDebug("libraryService.fileArtworkCreated", "File artwork created " + artwork, artwork.toString());
+							logService.debug(log, "libraryService.fileArtworkCreated", "File artwork created " + artwork,
+									Arrays.asList(artwork.toString()));
 
 						} catch (Exception e) {
-							logWarn("libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
+							logService.warn(log, "libraryService.fileArtworkNotCreated", "Could not create file artwork", e);
 						}
 					}
 				}
@@ -801,7 +813,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 		songDao.delete(song);
 
-		logDebug("libraryService.deletedSong", "Song " + song + " has been deleted.", song.toString());
+		logService.debug(log, "libraryService.deletedSong", "Song " + song + " has been deleted.",
+				Arrays.asList(song.toString()));
 
 		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre());
 	}
@@ -812,21 +825,24 @@ public class LibraryServiceImpl implements LibraryService {
 
 			albumDao.delete(aAlbum);
 
-			logDebug("libraryService.deletedAlbum", "Album " + aAlbum + " has no songs and has been deleted.", aAlbum.toString());
+			logService.debug(log, "libraryService.deletedAlbum", "Album " + aAlbum + " has no songs and has been deleted.",
+					Arrays.asList(aAlbum.toString()));
 		}
 
 		if (aArtist != null && songDao.countByAlbumArtistId(aArtist.getId()) == 0) {
 
 			artistDao.delete(aArtist);
 
-			logDebug("libraryService.deletedArtist", "Artist " + aArtist + " has no songs and has been deleted.", aArtist.toString());
+			logService.debug(log, "libraryService.deletedArtist", "Artist " + aArtist + " has no songs and has been deleted.",
+					Arrays.asList(aArtist.toString()));
 		}
 
 		if (aGenre != null && songDao.countByGenreId(aGenre.getId()) == 0) {
 
 			genreDao.delete(aGenre);
 
-			logDebug("libraryService.deletedGenre", "Genre " + aGenre + " has no songs and has been deleted.", aGenre.toString());
+			logService.debug(log, "libraryService.deletedGenre", "Genre " + aGenre + " has no songs and has been deleted.",
+					Arrays.asList(aGenre.toString()));
 		}
 	}
 
@@ -904,15 +920,5 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-	}
-
-	private void logDebug(String aCode, String aMessage, String... aArguments) {
-		log.debug(aMessage);
-		logService.debug(aCode, aMessage, Arrays.asList(aArguments));
-	}
-
-	private void logWarn(String aCode, String aMessage, Throwable aThrowable, String... aArguments) {
-		log.warn(aMessage, aThrowable);
-		logService.warn(aCode, aMessage, aThrowable, Arrays.asList(aArguments));
 	}
 }
