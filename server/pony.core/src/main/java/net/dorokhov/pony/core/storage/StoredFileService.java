@@ -28,6 +28,6 @@ public interface StoredFileService {
 
 	public StoredFile save(StoredFileSaveCommand aCommand);
 
-	public void deleteById(Long aId);
+	public void delete(Long aId);
 	public void deleteAll();
 }

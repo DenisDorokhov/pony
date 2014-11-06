@@ -325,7 +325,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		scanResult = scanResultDao.save(scanResult);
 
-		logService.info(log, "libraryScanService.scanFinished", "Scanning library " + aTargetFolders + " finished with result " + scanResult.toString(),
+		logService.info(log, "libraryScanService.scanFinished", "Scan of " + aTargetFolders + " has been finished with result " + scanResult.toString() + ".",
 				Arrays.asList(StringUtils.join(targetPaths, ", "), scanResult.toString()));
 
 		return scanResult;
@@ -476,7 +476,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			try {
 				song = libraryService.importSong(library, songFile);
 			} catch (Exception e) {
-				logService.warn(log, "libraryScanService.songImportFailed", "Could not import song from file [" + songFile.getFile().getAbsolutePath() + "]",
+				logService.warn(log, "libraryScanService.songImportFailed", "Could not import song from file [" + songFile.getFile().getAbsolutePath() + "].",
 						e, Arrays.asList(songFile.getFile().getAbsolutePath()));
 			}
 

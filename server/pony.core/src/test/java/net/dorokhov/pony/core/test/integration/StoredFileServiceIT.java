@@ -60,7 +60,7 @@ public class StoredFileServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(2, service.getByTag("tag", new PageRequest(0, 100)).getTotalElements());
 		Assert.assertEquals(1, service.getByChecksum("checksum1").size());
 
-		service.deleteById(storedFile.getId());
+		service.delete(storedFile.getId());
 
 		Assert.assertEquals(1, service.getCount());
 

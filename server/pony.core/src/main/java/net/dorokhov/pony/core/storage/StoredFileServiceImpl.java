@@ -208,7 +208,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	@Override
 	@Transactional
-	public void deleteById(Long aId) {
+	public void delete(Long aId) {
 
 		StoredFile storedFile = getById(aId);
 

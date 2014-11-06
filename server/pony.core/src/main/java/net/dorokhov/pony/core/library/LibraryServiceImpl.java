@@ -143,8 +143,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 					itemsToDelete.add(aSong.getId());
 
-					logService.debug(log, "libraryService.deletingSong",
-							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
+					logService.debug(log, "libraryService.deletedNotFoundSong",
+							"Song file not found [" + file.getAbsolutePath() + "], song [" + aSong + "] has been deleted.",
 							Arrays.asList(file.getAbsolutePath(), aSong.toString()));
 				}
 
@@ -190,8 +190,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
 
-						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-								"Artwork file not found [" + filePath + "], deleting stored file [" + aStoredFile + "]",
+						logService.debug(log, "libraryService.deletedNotFoundStoredFile",
+								"Artwork file [" + filePath + "] not found, stored file [" + aStoredFile + "] has been deleted.",
 								Arrays.asList(filePath, aStoredFile.toString()));
 
 						shouldDelete = true;
@@ -201,8 +201,8 @@ public class LibraryServiceImpl implements LibraryService {
 						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
 
 						if (shouldDelete) {
-							logService.debug(log, "libraryService.deletingModifiedStoredFile",
-									"Artwork file modified [" + externalFile.getAbsolutePath() + "], deleting stored file [" + aStoredFile + "]",
+							logService.debug(log, "libraryService.deletedModifiedStoredFile",
+									"Artwork file [" + externalFile.getAbsolutePath() + "] modified, stored file [" + aStoredFile + "] has been deleted.",
 									Arrays.asList(externalFile.getAbsolutePath(), aStoredFile.toString()));
 						}
 					}
@@ -239,7 +239,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			StoredFile storedFile = storedFileService.getById(id);
 
-			storedFileService.deleteById(id);
+			storedFileService.delete(id);
 
 			logService.debug(log, "libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.",
 					Arrays.asList(storedFile.toString()));
@@ -430,9 +430,9 @@ public class LibraryServiceImpl implements LibraryService {
 
 		Song song = songDao.findByPath(aSongData.getPath());
 
-		Album oldAlbum = null;
-		Artist oldArtist = null;
-		Genre oldGenre = null;
+		Album overriddenAlbum = null;
+		Genre overriddenGenre = null;
+		StoredFile overriddenArtwork = null;
 
 		if (song == null) {
 
@@ -442,11 +442,6 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setGenre(aGenre);
 
 			shouldSave = true;
-
-		} else {
-			oldAlbum = song.getAlbum();
-			oldArtist = song.getAlbum().getArtist();
-			oldGenre = song.getGenre();
 		}
 
 		StoredFile artwork = discoverEmbeddedArtwork(aSongData);
@@ -473,6 +468,24 @@ public class LibraryServiceImpl implements LibraryService {
 					!ObjectUtils.nullSafeEquals(song.getAlbum(), aSongData.getAlbum()) ||
 					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear()) ||
 					!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
+
+				shouldSave = true;
+			}
+			if (!ObjectUtils.nullSafeEquals(song.getAlbum(), aAlbum)) {
+
+				overriddenAlbum = song.getAlbum();
+
+				shouldSave = true;
+			}
+			if (!ObjectUtils.nullSafeEquals(song.getGenre(), aGenre)) {
+
+				overriddenGenre = song.getGenre();
+
+				shouldSave = true;
+			}
+			if (!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
+
+				overriddenArtwork = song.getArtwork();
 
 				shouldSave = true;
 			}
@@ -504,7 +517,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song = songDao.save(song);
 
-			deleteEntitiesWithoutSongs(oldAlbum, oldArtist, oldGenre);
+			deleteEntitiesWithoutSongs(overriddenAlbum, overriddenAlbum != null ? overriddenAlbum.getArtist() : null, overriddenGenre, overriddenArtwork);
 
 			if (newSong) {
 				logService.debug(log, "libraryService.songCreated", "Song " + song + " has been created.",
@@ -694,11 +707,11 @@ public class LibraryServiceImpl implements LibraryService {
 
 					artwork = storedFileService.save(saveCommand);
 
-					logService.debug(log, "libraryService.embeddedArtworkStored", "Embedded artwork stored " + artwork,
+					logService.debug(log, "libraryService.embeddedArtworkStored", "Embedded artwork " + artwork + " has been stored.",
 							Arrays.asList(artwork.toString()));
 
 				} catch (Exception e) {
-					logService.warn(log, "libraryService.embeddedArtworkNotStored", "Could not store embedded artwork " + aSongData.getArtwork(),
+					logService.warn(log, "libraryService.embeddedArtworkNotStored", "Embedded artwork " + aSongData.getArtwork() + " could not be stored.",
 							e, Arrays.asList(aSongData.getArtwork().toString()));
 				}
 			}
@@ -739,7 +752,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 							artwork = storedFileService.save(saveCommand);
 
-							logService.debug(log, "libraryService.fileArtworkCreated", "File artwork created " + artwork,
+							logService.debug(log, "libraryService.fileArtworkCreated", "File artwork " + artwork + " has been created.",
 									Arrays.asList(artwork.toString()));
 
 						} catch (Exception e) {
@@ -816,10 +829,10 @@ public class LibraryServiceImpl implements LibraryService {
 		logService.debug(log, "libraryService.deletedSong", "Song " + song + " has been deleted.",
 				Arrays.asList(song.toString()));
 
-		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre());
+		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre(), song.getArtwork());
 	}
 
-	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre) {
+	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre, StoredFile aArtwork) {
 
 		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
 
@@ -828,7 +841,6 @@ public class LibraryServiceImpl implements LibraryService {
 			logService.debug(log, "libraryService.deletedAlbum", "Album " + aAlbum + " has no songs and has been deleted.",
 					Arrays.asList(aAlbum.toString()));
 		}
-
 		if (aArtist != null && songDao.countByAlbumArtistId(aArtist.getId()) == 0) {
 
 			artistDao.delete(aArtist);
@@ -836,13 +848,20 @@ public class LibraryServiceImpl implements LibraryService {
 			logService.debug(log, "libraryService.deletedArtist", "Artist " + aArtist + " has no songs and has been deleted.",
 					Arrays.asList(aArtist.toString()));
 		}
-
 		if (aGenre != null && songDao.countByGenreId(aGenre.getId()) == 0) {
 
 			genreDao.delete(aGenre);
 
 			logService.debug(log, "libraryService.deletedGenre", "Genre " + aGenre + " has no songs and has been deleted.",
 					Arrays.asList(aGenre.toString()));
+		}
+		if (aArtwork != null && songDao.countByArtworkId(aArtwork.getId()) == 0) {
+
+			storedFileService.delete(aArtwork.getId());
+
+			logService.debug(log, "libraryService.deletedNotUsedStoredFile",
+					"Artwork [" + aArtwork + "] not used and has been deleted.",
+					Arrays.asList(aArtwork.toString()));
 		}
 	}
 
