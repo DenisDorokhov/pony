@@ -13,7 +13,7 @@ import java.util.List;
 public interface ArtistDao extends PagingAndSortingRepository<Artist, Long> {
 
 	public long countByCreationDateGreaterThan(Date aDate);
-	public long countByUpdateDateGreaterThan(Date aDate);
+	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
 
 	public Artist findByName(String aName);
 

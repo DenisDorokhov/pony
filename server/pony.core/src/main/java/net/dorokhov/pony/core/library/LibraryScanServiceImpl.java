@@ -265,22 +265,22 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		long songCountAfterScan = songDao.count();
 		long songCountCreated = songDao.countByCreationDateGreaterThan(lastScanDate);
-		long songCountUpdated = songDao.countByUpdateDateGreaterThan(lastScanDate);
+		long songCountUpdated = songDao.countByCreationDateLessThanAndUpdateDateGreaterThan(lastScanDate, lastScanDate);
 		long songCountDeleted = Math.max(0, songCountBeforeScan - (songCountAfterScan - songCountCreated));
 
 		long genreCountAfterScan = genreDao.count();
 		long genreCountCreated = genreDao.countByCreationDateGreaterThan(lastScanDate);
-		long genreCountUpdated = genreDao.countByUpdateDateGreaterThan(lastScanDate);
+		long genreCountUpdated = genreDao.countByCreationDateLessThanAndUpdateDateGreaterThan(lastScanDate, lastScanDate);
 		long genreCountDeleted = Math.max(0, genreCountBeforeScan - (genreCountAfterScan - genreCountCreated));
 
 		long artistCountAfterScan = artistDao.count();
 		long artistCountCreated = artistDao.countByCreationDateGreaterThan(lastScanDate);
-		long artistCountUpdated = artistDao.countByUpdateDateGreaterThan(lastScanDate);
+		long artistCountUpdated = artistDao.countByCreationDateLessThanAndUpdateDateGreaterThan(lastScanDate, lastScanDate);
 		long artistCountDeleted = Math.max(0, artistCountBeforeScan - (artistCountAfterScan - artistCountCreated));
 
 		long albumCountAfterScan = albumDao.count();
 		long albumCountCreated = albumDao.countByCreationDateGreaterThan(lastScanDate);
-		long albumCountUpdated = albumDao.countByUpdateDateGreaterThan(lastScanDate);
+		long albumCountUpdated = albumDao.countByCreationDateLessThanAndUpdateDateGreaterThan(lastScanDate, lastScanDate);
 		long albumCountDeleted = Math.max(0, albumCountBeforeScan - (albumCountAfterScan - albumCountCreated));
 
 		long artworkCountAfterScan = storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getCountByTag(StoredFile.TAG_ARTWORK_FILE);

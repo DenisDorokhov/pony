@@ -17,7 +17,8 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByAlbumId(Long aAlbumId);
 	public long countByArtworkId(Long aStoredFileId);
 	public long countByCreationDateGreaterThan(Date aDate);
-	public long countByUpdateDateGreaterThan(Date aDate);
+	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
+	public long countByGenreIdAndArtworkNotNull(Long aGenreId);
 
 	@Query("SELECT SUM(s.size) FROM Song s")
 	public Long sumSize();
@@ -34,5 +35,9 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 			"WHERE ar.id = ?1")
 	public List<Song> findByAlbumArtistId(Long aArtistId, Sort aSort);
 
+	public Page<Song> findByGenreId(Long aGenreId, Pageable aPageable);
+
 	public Page<Song> findByArtworkId(Long aStoredFileId, Pageable aPageable);
+
+	public Page<Song> findByGenreIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
 }

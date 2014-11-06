@@ -10,7 +10,7 @@ import java.util.Date;
 public interface GenreDao extends PagingAndSortingRepository<Genre, Long> {
 
 	public long countByCreationDateGreaterThan(Date aDate);
-	public long countByUpdateDateGreaterThan(Date aDate);
+	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
 
 	public Genre findByName(String aName);
 

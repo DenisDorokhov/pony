@@ -318,16 +318,16 @@ public class LibraryServiceImpl implements LibraryService {
 			@Override
 			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
 
-				long albumCount = albumDao.countByGenreIdAndArtworkNotNull(aGenre.getId());
+				long songCount = songDao.countByGenreIdAndArtworkNotNull(aGenre.getId());
 
-				if (albumCount > 0) {
+				if (songCount > 0) {
 
-					Page<Album> albumPage = albumDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
-							new PageRequest((int) Math.floor(albumCount / 2.0), 1, Sort.Direction.ASC, "year"));
+					Page<Song> songPage = songDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
+							new PageRequest((int) Math.floor(songCount / 2.0), 1, new Sort(Sort.Direction.ASC, "year")));
 
-					if (albumPage.getNumberOfElements() > 0) {
+					if (songPage.getNumberOfElements() > 0) {
 
-						aGenre.setArtwork(albumPage.getContent().get(0).getArtwork());
+						aGenre.setArtwork(songPage.getContent().get(0).getArtwork());
 
 						genreDao.save(aGenre);
 					}

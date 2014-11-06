@@ -32,10 +32,6 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 	@Before
 	public void setUp() throws Exception {
 
-		didCallStart = false;
-		didCallFinish = false;
-		didCallFail = false;
-
 		service = context.getBean(LibraryScanService.class);
 
 		delegate = new LibraryScanService.Delegate() {
@@ -64,6 +60,8 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		};
 
 		service.addDelegate(delegate);
+
+		resetFlags();
 	}
 
 	@After
@@ -72,7 +70,7 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 	}
 
 	@Test
-	public void testScan() throws Exception {
+	public void testNormalScan() throws Exception {
 
 		List<File> filesToScan = new ArrayList<>();
 
@@ -92,14 +90,14 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 
-		Assert.assertEquals(Long.valueOf(235942), scanResult.getSongSize());
-		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkSize());
+		Assert.assertEquals(Long.valueOf(239569), scanResult.getSongSize());
+		Assert.assertTrue(scanResult.getArtworkSize() > 0);
 
 		Assert.assertEquals(Long.valueOf(1), scanResult.getGenreCount());
 		Assert.assertEquals(Long.valueOf(3), scanResult.getArtistCount());
 		Assert.assertEquals(Long.valueOf(5), scanResult.getAlbumCount());
 		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
-		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkCount());
+		Assert.assertEquals(Long.valueOf(2), scanResult.getArtworkCount());
 
 		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
 
@@ -119,14 +117,26 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedSongCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedSongCount());
 
-		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtworkCount());
+		Assert.assertEquals(Long.valueOf(2), scanResult.getCreatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtworkCount());
 
 		didCallStart = false;
 		didCallFinish = false;
 		didCallFail = false;
 
-		scanResult = service.scan(filesToScan);
+
+	}
+
+	@Test
+	public void testRepeatedScan() throws Exception {
+
+		List<File> filesToScan = new ArrayList<>();
+
+		filesToScan.add(new ClassPathResource(TEST_FOLDER_PATH).getFile());
+
+		service.scan(filesToScan);
+
+		ScanResult scanResult = service.scan(filesToScan);
 
 		Assert.assertTrue(didCallStart);
 		Assert.assertTrue(didCallFinish);
@@ -140,14 +150,14 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 
-		Assert.assertEquals(Long.valueOf(235942), scanResult.getSongSize());
-		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkSize());
+		Assert.assertEquals(Long.valueOf(239569), scanResult.getSongSize());
+		Assert.assertTrue(scanResult.getArtworkSize() > 0);
 
 		Assert.assertEquals(Long.valueOf(1), scanResult.getGenreCount());
 		Assert.assertEquals(Long.valueOf(3), scanResult.getArtistCount());
 		Assert.assertEquals(Long.valueOf(5), scanResult.getAlbumCount());
 		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
-		Assert.assertEquals(Long.valueOf(0), scanResult.getArtworkCount());
+		Assert.assertEquals(Long.valueOf(2), scanResult.getArtworkCount());
 
 		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
 
@@ -173,5 +183,11 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		scanResult = service.getLastResult();
 
 		Assert.assertNotNull(scanResult);
+	}
+
+	private void resetFlags() {
+		didCallStart = false;
+		didCallFinish = false;
+		didCallFail = false;
 	}
 }
