@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.entity.Song;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -19,6 +20,7 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public long countByCreationDateGreaterThan(Date aDate);
 	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
 	public long countByGenreIdAndArtworkNotNull(Long aGenreId);
+	public long countByAlbumIdAndArtworkNotNull(Long aGenreId);
 
 	@Query("SELECT SUM(s.size) FROM Song s")
 	public Long sumSize();
@@ -37,7 +39,10 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 
 	public Page<Song> findByGenreId(Long aGenreId, Pageable aPageable);
 
-	public Page<Song> findByArtworkId(Long aStoredFileId, Pageable aPageable);
-
 	public Page<Song> findByGenreIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
+	public Page<Song> findByAlbumIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
+
+	@Modifying(clearAutomatically = true)
+	@Query("UPDATE Song s SET s.artwork = NULL WHERE s.artwork.id = ?1")
+	public void clearArtworkByArtworkId(Long aStoredFileId);
 }

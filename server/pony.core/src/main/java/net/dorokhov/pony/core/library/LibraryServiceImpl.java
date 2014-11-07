@@ -231,18 +231,7 @@ public class LibraryServiceImpl implements LibraryService {
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
 		for (final Long id : itemsToDelete) {
-
-			clearSongArtwork(id);
-			clearAlbumArtwork(id);
-			clearArtistArtwork(id);
-			clearGenreArtwork(id);
-
-			StoredFile storedFile = storedFileService.getById(id);
-
-			storedFileService.delete(id);
-
-			logService.debug(log, "libraryService.deletedSong", "Stored file " + storedFile + " has been deleted.",
-					Arrays.asList(storedFile.toString()));
+			deleteArtwork(id);
 		}
 	}
 
@@ -308,10 +297,11 @@ public class LibraryServiceImpl implements LibraryService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void normalize(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 
-		final long genreCount = genreDao.count();
-		final long artistCount = artistDao.count();
+		final long genreCount = genreDao.countByArtworkId(null);
+		final long albumCount = albumDao.countByArtworkId(null);
+		final long artistCount = artistDao.countByArtworkId(null);
 
-		final long entityCount = genreCount + artistCount;
+		final long entityCount = genreCount + albumCount + artistCount;
 
 		PageProcessor.Handler<Genre> genreHandler = new PageProcessor.Handler<Genre>() {
 
@@ -345,6 +335,38 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), genreHandler).run();
 
+		PageProcessor.Handler<Album> albumHandler = new PageProcessor.Handler<Album>() {
+
+			@Override
+			public void process(Album aAlbum, Page<Album> aPage, int aIndexInPage, long aIndexInAll) {
+
+				long songCount = songDao.countByAlbumIdAndArtworkNotNull(aAlbum.getId());
+
+				if (songCount > 0) {
+
+					Page<Song> songPage = songDao.findByAlbumIdAndArtworkNotNull(aAlbum.getId(),
+							new PageRequest((int) Math.floor(songCount / 2.0), 1, new Sort(Sort.Direction.ASC, "discNumber", "trackNumber", "id")));
+
+					if (songPage.getNumberOfElements() > 0) {
+
+						aAlbum.setArtwork(songPage.getContent().get(0).getArtwork());
+
+						albumDao.save(aAlbum);
+					}
+				}
+
+				if (aDelegate != null) {
+					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
+				}
+			}
+
+			@Override
+			public Page<Album> getPage(Pageable aPageable) {
+				return albumDao.findByArtworkId(null, aPageable);
+			}
+		};
+		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), albumHandler).run();
+
 		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
 
 			@Override
@@ -366,7 +388,7 @@ public class LibraryServiceImpl implements LibraryService {
 				}
 
 				if (aDelegate != null) {
-					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
+					aDelegate.onProgress((genreCount + albumCount + aIndexInAll + 1) / (double) entityCount);
 				}
 			}
 
@@ -832,6 +854,21 @@ public class LibraryServiceImpl implements LibraryService {
 		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre(), song.getArtwork());
 	}
 
+	private void deleteArtwork(Long aId) {
+
+		songDao.clearArtworkByArtworkId(aId);
+		albumDao.clearArtworkByArtworkId(aId);
+		artistDao.clearArtworkByArtworkId(aId);
+		genreDao.clearArtworkByArtworkId(aId);
+
+		StoredFile storedFile = storedFileService.getById(aId);
+
+		storedFileService.delete(aId);
+
+		logService.debug(log, "libraryService.deletedStoredFile", "Stored file " + storedFile + " has been deleted.",
+				Arrays.asList(storedFile.toString()));
+	}
+
 	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre, StoredFile aArtwork) {
 
 		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
@@ -857,87 +894,11 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 		if (aArtwork != null && songDao.countByArtworkId(aArtwork.getId()) == 0) {
 
-			storedFileService.delete(aArtwork.getId());
-
 			logService.debug(log, "libraryService.deletedNotUsedStoredFile",
 					"Artwork [" + aArtwork + "] not used and has been deleted.",
 					Arrays.asList(aArtwork.toString()));
+
+			deleteArtwork(aArtwork.getId());
 		}
-	}
-
-	private void clearGenreArtwork(final Long aStoredFileId) {
-		PageProcessor.Handler<Genre> handler = new PageProcessor.Handler<Genre>() {
-
-			@Override
-			public void process(Genre aGenre, Page<Genre> aPage, int aIndexInPage, long aIndexInAll) {
-
-				aGenre.setArtwork(null);
-
-				genreDao.save(aGenre);
-			}
-
-			@Override
-			public Page<Genre> getPage(Pageable aPageable) {
-				return genreDao.findByArtworkId(aStoredFileId, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-	}
-
-	private void clearArtistArtwork(final Long aStoredFileId) {
-		PageProcessor.Handler<Artist> handler = new PageProcessor.Handler<Artist>() {
-
-			@Override
-			public void process(Artist aArtist, Page<Artist> aPage, int aIndexInPage, long aIndexInAll) {
-
-				aArtist.setArtwork(null);
-
-				artistDao.save(aArtist);
-			}
-
-			@Override
-			public Page<Artist> getPage(Pageable aPageable) {
-				return artistDao.findByArtworkId(aStoredFileId, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-	}
-
-	private void clearAlbumArtwork(final Long aStoredFileId) {
-		PageProcessor.Handler<Album> handler = new PageProcessor.Handler<Album>() {
-
-			@Override
-			public void process(Album aAlbum, Page<Album> aPage, int aIndexInPage, long aIndexInAll) {
-
-				aAlbum.setArtwork(null);
-
-				albumDao.save(aAlbum);
-			}
-
-			@Override
-			public Page<Album> getPage(Pageable aPageable) {
-				return albumDao.findByArtworkId(aStoredFileId, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
-	}
-
-	private void clearSongArtwork(final Long aStoredFileId) {
-		PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
-
-			@Override
-			public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
-
-				aSong.setArtwork(null);
-
-				songDao.save(aSong);
-			}
-
-			@Override
-			public Page<Song> getPage(Pageable aPageable) {
-				return songDao.findByArtworkId(aStoredFileId, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 	}
 }
