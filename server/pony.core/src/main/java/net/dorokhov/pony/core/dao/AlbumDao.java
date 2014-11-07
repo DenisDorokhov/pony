@@ -12,6 +12,7 @@ import java.util.Date;
 public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 
 	public long countByArtworkId(Long aStoredFileId);
+	public long countByArtistId(Long aArtistId);
 	public long countByCreationDateGreaterThan(Date aDate);
 	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
 	public long countByArtistIdAndArtworkNotNull(Long aArtistId);

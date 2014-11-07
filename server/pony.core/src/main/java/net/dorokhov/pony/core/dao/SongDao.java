@@ -14,7 +14,6 @@ import java.util.List;
 public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 
 	public long countByGenreId(Long aGenreId);
-	public long countByAlbumArtistId(Long aArtistId);
 	public long countByAlbumId(Long aAlbumId);
 	public long countByArtworkId(Long aStoredFileId);
 	public long countByCreationDateGreaterThan(Date aDate);

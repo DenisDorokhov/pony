@@ -18,8 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -67,6 +73,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private final AtomicInteger completedImportTaskCount = new AtomicInteger();
 
+	private TransactionTemplate transactionTemplate;
+
 	private LogService logService;
 
 	private ScanResultDao scanResultDao;
@@ -81,6 +89,11 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	private AlbumDao albumDao;
 
 	private StoredFileService storedFileService;
+
+	@Autowired
+	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
+		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+	}
 
 	@Autowired
 	public void setLogService(LogService aLogService) {
@@ -171,8 +184,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public ScanResult scan(List<File> aTargetFolders) throws ConcurrentScanException {
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public ScanResult scan(final List<File> aTargetFolders) throws ConcurrentScanException {
 
 		synchronized (statusCheckLock) {
 
@@ -204,7 +217,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_THREADS));
 
-			scanResult = doScan(aTargetFolders);
+			scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
+				@Override
+				public ScanResult doInTransaction(TransactionStatus status) {
+					return doScan(aTargetFolders);
+				}
+			});
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -238,10 +256,13 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			statusReference.set(null);
 		}
 
+		logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getFolders() + " has been finished with result " + scanResult.toString() + ".",
+				Arrays.asList(StringUtils.join(scanResult.getFolders(), ", "), scanResult.toString()));
+
 		return scanResult;
 	}
 
-	private ScanResult doScan(final List<File> aTargetFolders) throws InterruptedException {
+	private ScanResult doScan(final List<File> aTargetFolders) {
 
 		String[] targetPaths = new String[aTargetFolders.size()];
 		for (int i = 0; i < aTargetFolders.size(); i++) {
@@ -323,12 +344,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		scanResult.setCreatedArtworkCount(artworkCountCreated);
 		scanResult.setDeletedArtworkCount(artworkCountDeleted);
 
-		scanResult = scanResultDao.save(scanResult);
-
-		logService.info(log, "libraryScanService.scanFinished", "Scan of " + aTargetFolders + " has been finished with result " + scanResult.toString() + ".",
-				Arrays.asList(StringUtils.join(targetPaths, ", "), scanResult.toString()));
-
-		return scanResult;
+		return scanResultDao.save(scanResult);
 	}
 
 	private List<LibrarySong> performScanSteps(final List<File> aTargetFolders) {
