@@ -224,6 +224,9 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				}
 			});
 
+			logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getFolders() + " has been finished with result " + scanResult.toString() + ".",
+					Arrays.asList(StringUtils.join(scanResult.getFolders(), ", "), scanResult.toString()));
+
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
 					try {
@@ -255,9 +258,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			completedImportTaskCount.set(0);
 			statusReference.set(null);
 		}
-
-		logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getFolders() + " has been finished with result " + scanResult.toString() + ".",
-				Arrays.asList(StringUtils.join(scanResult.getFolders(), ", "), scanResult.toString()));
 
 		return scanResult;
 	}

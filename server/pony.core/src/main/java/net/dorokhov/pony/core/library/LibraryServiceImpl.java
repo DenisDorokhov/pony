@@ -298,10 +298,9 @@ public class LibraryServiceImpl implements LibraryService {
 	public void normalize(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
 
 		final long genreCount = genreDao.countByArtworkId(null);
-		final long albumCount = albumDao.countByArtworkId(null);
 		final long artistCount = artistDao.countByArtworkId(null);
 
-		final long entityCount = genreCount + albumCount + artistCount;
+		final long entityCount = genreCount + artistCount;
 
 		PageProcessor.Handler<Genre> genreHandler = new PageProcessor.Handler<Genre>() {
 
@@ -335,38 +334,6 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), genreHandler).run();
 
-		PageProcessor.Handler<Album> albumHandler = new PageProcessor.Handler<Album>() {
-
-			@Override
-			public void process(Album aAlbum, Page<Album> aPage, int aIndexInPage, long aIndexInAll) {
-
-				long albumSongCount = songDao.countByAlbumIdAndArtworkNotNull(aAlbum.getId());
-
-				if (albumSongCount > 0) {
-
-					Page<Song> songPage = songDao.findByAlbumIdAndArtworkNotNull(aAlbum.getId(),
-							new PageRequest((int) Math.floor(albumSongCount / 2.0), 1, new Sort(Sort.Direction.ASC, "discNumber", "trackNumber", "id")));
-
-					if (songPage.getNumberOfElements() > 0) {
-
-						aAlbum.setArtwork(songPage.getContent().get(0).getArtwork());
-
-						albumDao.save(aAlbum);
-					}
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
-				}
-			}
-
-			@Override
-			public Page<Album> getPage(Pageable aPageable) {
-				return albumDao.findByArtworkId(null, aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), albumHandler).run();
-
 		PageProcessor.Handler<Artist> artistHandler = new PageProcessor.Handler<Artist>() {
 
 			@Override
@@ -388,7 +355,7 @@ public class LibraryServiceImpl implements LibraryService {
 				}
 
 				if (aDelegate != null) {
-					aDelegate.onProgress((genreCount + albumCount + aIndexInAll + 1) / (double) entityCount);
+					aDelegate.onProgress((genreCount + aIndexInAll + 1) / (double) entityCount);
 				}
 			}
 
@@ -535,6 +502,8 @@ public class LibraryServiceImpl implements LibraryService {
 				logService.debug(log, "libraryService.updatingSong", "Updating song " + song + ".",
 						Arrays.asList(song.toString()));
 			}
+
+			song.setAlbum(albumDao.findOne(song.getAlbum().getId()));
 
 			if (song.getAlbum().getArtwork() == null) {
 
