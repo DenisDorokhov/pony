@@ -9,11 +9,17 @@ import java.util.List;
 @Table(name = "scan_result")
 public class ScanResult {
 
+	public static enum Type {
+		FULL, EDIT
+	}
+
 	private Long id;
 
 	private Date date;
 
-	private List<String> folders;
+	private Type type;
+
+	private List<String> paths;
 
 	private Long duration;
 
@@ -69,15 +75,26 @@ public class ScanResult {
 		date = aDate;
 	}
 
-	@Column(name="path")
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name="scan_result_folder", joinColumns=@JoinColumn(name="scan_result_id"))
-	public List<String> getFolders() {
-		return folders;
+	@Column(name = "type")
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	public Type getType() {
+		return type;
 	}
 
-	public void setFolders(List<String> aTargetFiles) {
-		folders = aTargetFiles;
+	public void setType(Type aType) {
+		type = aType;
+	}
+
+	@Column(name="value")
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name="scan_result_path", joinColumns=@JoinColumn(name="scan_result_id"))
+	public List<String> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(List<String> aTargetFiles) {
+		paths = aTargetFiles;
 	}
 
 	@Column(name = "duration")
@@ -344,8 +361,16 @@ public class ScanResult {
 		return "ScanResult{" +
 				"id=" + id +
 				", date=" + date +
-				", folders=" + folders +
+				", type=" + type +
+				", paths=" + paths +
 				", duration=" + duration +
+				", songSize=" + songSize +
+				", artworkSize=" + artworkSize +
+				", genreCount=" + genreCount +
+				", artistCount=" + artistCount +
+				", albumCount=" + albumCount +
+				", songCount=" + songCount +
+				", artworkCount=" + artworkCount +
 				", foundSongCount=" + foundSongCount +
 				", createdArtistCount=" + createdArtistCount +
 				", updatedArtistCount=" + updatedArtistCount +

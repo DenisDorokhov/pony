@@ -14,7 +14,7 @@ CREATE TABLE log_message (
 
 	date TIMESTAMP NOT NULL,
 
-	type VARCHAR(255) NOT NULL,
+	type TINYINT NOT NULL,
 
 	code VARCHAR(255) NOT NULL,
 	text LONGVARCHAR,
@@ -54,6 +54,8 @@ CREATE TABLE scan_result (
 
 	date TIMESTAMP NOT NULL,
 
+	type VARCHAR(255) NOT NULL,
+
 	duration BIGINT NOT NULL,
 
 	song_size BIGINT NOT NULL,
@@ -89,15 +91,15 @@ CREATE TABLE scan_result (
 
 CREATE INDEX index_library_scan_result_date ON scan_result(date);
 
-CREATE TABLE scan_result_folder (
+CREATE TABLE scan_result_path (
 
 	scan_result_id BIGINT NOT NULL,
 
-	path VARCHAR(255) NOT NULL,
+	value VARCHAR(255) NOT NULL,
 
 	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE CASCADE ON UPDATE CASCADE,
 
-	PRIMARY KEY (scan_result_id, path)
+	PRIMARY KEY (scan_result_id, value)
 );
 
 CREATE TABLE stored_file (

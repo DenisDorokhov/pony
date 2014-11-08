@@ -85,8 +85,8 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertNotNull(scanResult.getId());
 		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, scanResult.getFolders().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getFolders().get(0));
+		Assert.assertEquals(1, scanResult.getPaths().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getPaths().get(0));
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 
@@ -145,8 +145,8 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertNotNull(scanResult.getId());
 		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, scanResult.getFolders().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getFolders().get(0));
+		Assert.assertEquals(1, scanResult.getPaths().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getPaths().get(0));
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 

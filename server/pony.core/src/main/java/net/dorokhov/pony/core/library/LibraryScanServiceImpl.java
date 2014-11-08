@@ -224,8 +224,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				}
 			});
 
-			logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getFolders() + " has been finished with result " + scanResult.toString() + ".",
-					Arrays.asList(StringUtils.join(scanResult.getFolders(), ", "), scanResult.toString()));
+			logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getPaths() + " has been finished with result " + scanResult.toString() + ".",
+					Arrays.asList(StringUtils.join(scanResult.getPaths(), ", "), scanResult.toString()));
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -311,7 +311,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		ScanResult scanResult = new ScanResult();
 
-		scanResult.setFolders(Arrays.asList(targetPaths));
+		scanResult.setPaths(Arrays.asList(targetPaths));
+		scanResult.setType(ScanResult.Type.FULL);
 		scanResult.setDuration(endTime - startTime);
 
 		scanResult.setSongSize(ObjectUtils.defaultIfNull(songDao.sumSize(), 0L));
