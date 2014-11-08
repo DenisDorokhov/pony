@@ -18,9 +18,17 @@ public interface LibraryScanService {
 
 	public ScanResult scan(List<File> aTargetFolders) throws ConcurrentScanException;
 
+	public ScanResult edit(LibraryScanEditCommand aCommand) throws ConcurrentScanException;
+
 	public static interface Status {
 
-		public List<File> getTargetFolders();
+		public static enum Action {
+			SCAN, EDIT
+		}
+
+		public Action getAction();
+
+		public List<File> getFiles();
 
 		public int getStep();
 
@@ -33,7 +41,7 @@ public interface LibraryScanService {
 
 	public static interface Delegate {
 
-		public void onScanStart(List<File> aTargetFolders);
+		public void onScanStart(Status.Action aAction, List<File> aTargetFiles);
 
 		public void onScanProgress(Status aStatus);
 

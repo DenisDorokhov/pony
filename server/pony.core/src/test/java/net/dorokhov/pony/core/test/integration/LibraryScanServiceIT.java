@@ -37,7 +37,7 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		delegate = new LibraryScanService.Delegate() {
 
 			@Override
-			public void onScanStart(List<File> aTargetFolders) {
+			public void onScanStart(LibraryScanService.Status.Action aAction, List<File> aTargetFiles) {
 				didCallStart = true;
 			}
 
@@ -119,12 +119,6 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertEquals(Long.valueOf(2), scanResult.getCreatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtworkCount());
-
-		didCallStart = false;
-		didCallFinish = false;
-		didCallFail = false;
-
-
 	}
 
 	@Test
@@ -135,6 +129,8 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		filesToScan.add(new ClassPathResource(TEST_FOLDER_PATH).getFile());
 
 		service.scan(filesToScan);
+
+		resetFlags();
 
 		ScanResult scanResult = service.scan(filesToScan);
 
