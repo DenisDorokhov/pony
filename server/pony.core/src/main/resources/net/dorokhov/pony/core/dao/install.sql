@@ -67,7 +67,7 @@ CREATE TABLE scan_result (
 	song_count BIGINT NOT NULL,
 	artwork_count BIGINT NOT NULL,
 
-	found_song_count BIGINT NOT NULL,
+	processed_song_count BIGINT NOT NULL,
 
 	created_artist_count BIGINT NOT NULL,
 	updated_artist_count BIGINT NOT NULL,

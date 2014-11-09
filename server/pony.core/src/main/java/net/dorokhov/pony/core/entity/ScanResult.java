@@ -32,7 +32,7 @@ public class ScanResult {
 	private Long songCount;
 	private Long artworkCount;
 
-	private Long foundSongCount;
+	private Long processedSongCount;
 
 	private Long createdArtistCount;
 	private Long updatedArtistCount;
@@ -177,14 +177,14 @@ public class ScanResult {
 		artworkCount = aArtworkCount;
 	}
 
-	@Column(name = "found_song_count")
+	@Column(name = "processed_song_count")
 	@NotNull
-	public Long getFoundSongCount() {
-		return foundSongCount;
+	public Long getProcessedSongCount() {
+		return processedSongCount;
 	}
 
-	public void setFoundSongCount(Long aScannedSongCount) {
-		foundSongCount = aScannedSongCount;
+	public void setProcessedSongCount(Long aScannedSongCount) {
+		processedSongCount = aScannedSongCount;
 	}
 
 	@Column(name = "created_artist_count")
@@ -371,7 +371,7 @@ public class ScanResult {
 				", albumCount=" + albumCount +
 				", songCount=" + songCount +
 				", artworkCount=" + artworkCount +
-				", foundSongCount=" + foundSongCount +
+				", foundSongCount=" + processedSongCount +
 				", createdArtistCount=" + createdArtistCount +
 				", updatedArtistCount=" + updatedArtistCount +
 				", deletedArtistCount=" + deletedArtistCount +

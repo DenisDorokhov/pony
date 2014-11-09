@@ -18,7 +18,7 @@ public interface LibraryScanService {
 
 	public ScanResult scan(List<File> aTargetFolders) throws ConcurrentScanException;
 
-	public ScanResult edit(LibraryScanEditCommand aCommand) throws ConcurrentScanException;
+	public ScanResult edit(List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException;
 
 	public static interface Status {
 

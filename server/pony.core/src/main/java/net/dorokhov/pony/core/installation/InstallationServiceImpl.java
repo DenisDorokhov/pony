@@ -66,15 +66,15 @@ public class InstallationServiceImpl implements InstallationService {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public synchronized Installation install() throws AlreadyInstalledException {
 
+		if (getInstallation() != null) {
+			throw new AlreadyInstalledException();
+		}
+
 		log.info("Installing...");
 
 		Installation installation = transactionTemplate.execute(new TransactionCallback<Installation>() {
 			@Override
 			public Installation doInTransaction(TransactionStatus status) {
-
-				if (getInstallation() != null) {
-					throw new AlreadyInstalledException();
-				}
 
 				Installation installation = installationDao.install();
 
@@ -98,14 +98,15 @@ public class InstallationServiceImpl implements InstallationService {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public synchronized void uninstall() throws NotInstalledException {
 
+		if (getInstallation() == null) {
+			throw new NotInstalledException();
+		}
+
+		logService.info(log, "installationService.uninstalling", "Uninstalling...");
+
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-
-				if (getInstallation() == null) {
-					throw new NotInstalledException();
-				}
-
 				installationDao.uninstall();
 			}
 		});

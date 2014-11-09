@@ -99,7 +99,7 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
 		Assert.assertEquals(Long.valueOf(2), scanResult.getArtworkCount());
 
-		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getProcessedSongCount());
 
 		Assert.assertEquals(Long.valueOf(3), scanResult.getCreatedArtistCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedArtistCount());
@@ -155,7 +155,7 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(14), scanResult.getSongCount());
 		Assert.assertEquals(Long.valueOf(2), scanResult.getArtworkCount());
 
-		Assert.assertEquals(Long.valueOf(14), scanResult.getFoundSongCount());
+		Assert.assertEquals(Long.valueOf(14), scanResult.getProcessedSongCount());
 
 		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtistCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getUpdatedArtistCount());

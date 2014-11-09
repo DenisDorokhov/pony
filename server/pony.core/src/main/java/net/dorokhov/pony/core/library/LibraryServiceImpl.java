@@ -9,7 +9,6 @@ import net.dorokhov.pony.core.dao.GenreDao;
 import net.dorokhov.pony.core.dao.SongDao;
 import net.dorokhov.pony.core.entity.*;
 import net.dorokhov.pony.core.image.ThumbnailService;
-import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibraryImage;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
@@ -120,14 +119,11 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void cleanSongs(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void cleanSongs(List<LibrarySong> aSongFiles, final ProgressDelegate aDelegate) {
 
-		final Set<String> librarySongPaths = new HashSet<>();
-
-		for (LibraryFolder libraryFolder : aLibrary) {
-			for (LibrarySong songFile : libraryFolder.getChildSongs(true)) {
-				librarySongPaths.add(songFile.getFile().getAbsolutePath());
-			}
+		final Set<String> songPaths = new HashSet<>();
+		for (LibrarySong songFile : aSongFiles) {
+			songPaths.add(songFile.getFile().getAbsolutePath());
 		}
 
 		final List<Long> itemsToDelete = new ArrayList<>();
@@ -137,15 +133,13 @@ public class LibraryServiceImpl implements LibraryService {
 			@Override
 			public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
 
-				File file = new File(aSong.getPath());
-
-				if (!librarySongPaths.contains(file.getAbsolutePath()) || !file.exists()) {
+				if (!songPaths.contains(aSong.getPath())) {
 
 					itemsToDelete.add(aSong.getId());
 
 					logService.debug(log, "libraryService.deletingNotFoundSong",
-							"Song file not found [" + file.getAbsolutePath() + "], deleting song [" + aSong + "].",
-							Arrays.asList(file.getAbsolutePath(), aSong.toString()));
+							"Song file not found [" + aSong.getPath() + "], deleting song [" + aSong + "].",
+							Arrays.asList(aSong.getPath(), aSong.toString()));
 				}
 
 				if (aDelegate != null) {
@@ -167,7 +161,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void cleanArtworks(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void cleanArtworks(List<LibraryImage> aImageFiles, final ProgressDelegate aDelegate) {
+
+		final Set<String> imagePaths = new HashSet<>();
+		for (LibraryImage imageFile : aImageFiles) {
+			imagePaths.add(imageFile.getFile().getAbsolutePath());
+		}
 
 		final List<Long> itemsToDelete = new ArrayList<>();
 
@@ -180,30 +179,29 @@ public class LibraryServiceImpl implements LibraryService {
 
 				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
 
-					File externalFile = null;
-
+					String externalFilePath = null;
 					if (aStoredFile.getUserData() != null) {
-						externalFile = new File(aStoredFile.getUserData());
+						externalFilePath = aStoredFile.getUserData();
 					}
 
-					if (externalFile == null || !externalFile.exists()) {
-
-						String filePath = (externalFile != null ? externalFile.getAbsolutePath() : null);
+					if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
 
 						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-								"Artwork file [" + filePath + "] not found, deleting stored file [" + aStoredFile + "].",
-								Arrays.asList(filePath, aStoredFile.toString()));
+								"Artwork file [" + externalFilePath + "] not found, deleting stored file [" + aStoredFile + "].",
+								Arrays.asList(externalFilePath, aStoredFile.toString()));
 
 						shouldDelete = true;
 
 					} else {
 
+						File externalFile = new File(externalFilePath);
+
 						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
 
 						if (shouldDelete) {
 							logService.debug(log, "libraryService.deletingModifiedStoredFile",
-									"Artwork file [" + externalFile.getAbsolutePath() + "] modified, deleting stored file [" + aStoredFile + "].",
-									Arrays.asList(externalFile.getAbsolutePath(), aStoredFile.toString()));
+									"Artwork file [" + externalFilePath + "] modified, deleting stored file [" + aStoredFile + "].",
+									Arrays.asList(externalFilePath, aStoredFile.toString()));
 						}
 					}
 				}
@@ -236,66 +234,8 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	public Song importSong(List<LibraryFolder> aLibrary, final LibrarySong aSongFile) {
-
-		Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
-
-		boolean shouldImport = (song == null);
-
-		if (!shouldImport) {
-			if (song.getUpdateDate() != null) {
-				shouldImport = (song.getUpdateDate().getTime() < aSongFile.getFile().lastModified());
-			} else {
-				shouldImport = (song.getCreationDate().getTime() < aSongFile.getFile().lastModified());
-			}
-		}
-
-		if (shouldImport) {
-
-			final SongDataReadable songData;
-
-			try {
-				songData = songDataService.read(aSongFile.getFile());
-			} catch (Exception e) {
-				throw new RuntimeException("Could not read song data from [" + aSongFile.getFile().getAbsolutePath() + "]", e);
-			}
-
-			synchronized (lock) {
-				song = transactionTemplate.execute(new TransactionCallback<Song>() {
-					@Override
-					public Song doInTransaction(TransactionStatus status) {
-						return importSong(aSongFile, songData);
-					}
-				});
-			}
-
-		} else {
-			if (song.getArtwork() == null) {
-				synchronized (lock) {
-					song = transactionTemplate.execute(new TransactionCallback<Song>() {
-						@Override
-						public Song doInTransaction(TransactionStatus status) {
-
-							Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
-
-							if (song != null && song.getArtwork() == null) {
-								song = discoverSongArtwork(song, aSongFile);
-							}
-
-							return song;
-						}
-					});
-				}
-			}
-		}
-
-		return song;
-	}
-
-	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void normalize(List<LibraryFolder> aLibrary, final ProgressDelegate aDelegate) {
+	public void normalize(final ProgressDelegate aDelegate) {
 
 		final long genreCount = genreDao.countByArtworkId(null);
 		final long artistCount = artistDao.countByArtworkId(null);
@@ -365,6 +305,64 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), artistHandler).run();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Song importSong(final LibrarySong aSongFile) {
+
+		Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
+
+		boolean shouldImport = (song == null);
+
+		if (!shouldImport) {
+			if (song.getUpdateDate() != null) {
+				shouldImport = (song.getUpdateDate().getTime() < aSongFile.getFile().lastModified());
+			} else {
+				shouldImport = (song.getCreationDate().getTime() < aSongFile.getFile().lastModified());
+			}
+		}
+
+		if (shouldImport) {
+
+			final SongDataReadable songData;
+
+			try {
+				songData = songDataService.read(aSongFile.getFile());
+			} catch (Exception e) {
+				throw new RuntimeException("Could not read song data from [" + aSongFile.getFile().getAbsolutePath() + "]", e);
+			}
+
+			synchronized (lock) {
+				song = transactionTemplate.execute(new TransactionCallback<Song>() {
+					@Override
+					public Song doInTransaction(TransactionStatus status) {
+						return importSong(aSongFile, songData);
+					}
+				});
+			}
+
+		} else {
+			if (song.getArtwork() == null) {
+				synchronized (lock) {
+					song = transactionTemplate.execute(new TransactionCallback<Song>() {
+						@Override
+						public Song doInTransaction(TransactionStatus status) {
+
+							Song song = songDao.findByPath(aSongFile.getFile().getAbsolutePath());
+
+							if (song != null && song.getArtwork() == null) {
+								song = discoverSongArtwork(song, aSongFile);
+							}
+
+							return song;
+						}
+					});
+				}
+			}
+		}
+
+		return song;
 	}
 
 	@Override
