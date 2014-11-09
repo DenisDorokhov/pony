@@ -256,7 +256,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 					if (songPage.getNumberOfElements() > 0) {
 
-						aGenre.setArtwork(songPage.getContent().get(0).getArtwork());
+						StoredFile artwork = songPage.getContent().get(0).getArtwork();
+
+						logService.debug(log, "libraryService.settingGenreArtwork", "Setting genre " + aGenre + " artwork " + artwork,
+								Arrays.asList(aGenre.toString(), artwork.toString()));
+
+						aGenre.setArtwork(artwork);
 
 						genreDao.save(aGenre);
 					}
@@ -288,7 +293,12 @@ public class LibraryServiceImpl implements LibraryService {
 
 					if (albumPage.getNumberOfElements() > 0) {
 
-						aArtist.setArtwork(albumPage.getContent().get(0).getArtwork());
+						StoredFile artwork = albumPage.getContent().get(0).getArtwork();
+
+						logService.debug(log, "libraryService.settingArtistArtwork", "Setting artist " + aArtist + " artwork " + artwork,
+								Arrays.asList(aArtist.toString(), artwork.toString()));
+
+						aArtist.setArtwork(artwork);
 
 						artistDao.save(aArtist);
 					}
@@ -503,7 +513,10 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song.setAlbum(albumDao.findOne(song.getAlbum().getId()));
 
-			if (song.getAlbum().getArtwork() == null) {
+			if (artwork != null && song.getAlbum().getArtwork() == null) {
+
+				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album " + song.getAlbum() + " artwork " + artwork,
+						Arrays.asList(song.getAlbum().toString(), artwork.toString()));
 
 				song.getAlbum().setArtwork(artwork);
 
@@ -657,6 +670,9 @@ public class LibraryServiceImpl implements LibraryService {
 			aSong = songDao.save(aSong);
 
 			if (aSong.getAlbum().getArtwork() == null) {
+
+				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album " + aSong.getAlbum() + " artwork " + artwork,
+						Arrays.asList(aSong.getAlbum().toString(), artwork.toString()));
 
 				aSong.getAlbum().setArtwork(artwork);
 
