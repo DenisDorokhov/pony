@@ -19,7 +19,8 @@ public class ScanResult {
 
 	private Type type;
 
-	private List<String> paths;
+	private List<String> targetPaths;
+	private List<String> failedPaths;
 
 	private Long duration;
 
@@ -87,14 +88,25 @@ public class ScanResult {
 	}
 
 	@Column(name="value")
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name="scan_result_path", joinColumns=@JoinColumn(name="scan_result_id"))
-	public List<String> getPaths() {
-		return paths;
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name="scan_result_target_path", joinColumns=@JoinColumn(name="scan_result_id"))
+	public List<String> getTargetPaths() {
+		return targetPaths;
 	}
 
-	public void setPaths(List<String> aTargetFiles) {
-		paths = aTargetFiles;
+	public void setTargetPaths(List<String> aTargetFiles) {
+		targetPaths = aTargetFiles;
+	}
+
+	@Column(name="value")
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name="scan_result_failed_path", joinColumns=@JoinColumn(name="scan_result_id"))
+	public List<String> getFailedPaths() {
+		return failedPaths;
+	}
+
+	public void setFailedPaths(List<String> aFailedPaths) {
+		failedPaths = aFailedPaths;
 	}
 
 	@Column(name = "duration")
@@ -362,7 +374,7 @@ public class ScanResult {
 				"id=" + id +
 				", date=" + date +
 				", type=" + type +
-				", paths=" + paths +
+				", paths=" + targetPaths +
 				", duration=" + duration +
 				", songSize=" + songSize +
 				", artworkSize=" + artworkSize +

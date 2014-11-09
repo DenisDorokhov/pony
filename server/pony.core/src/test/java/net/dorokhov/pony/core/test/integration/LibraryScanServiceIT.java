@@ -85,13 +85,15 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertNotNull(scanResult.getId());
 		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, scanResult.getPaths().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getPaths().get(0));
+		Assert.assertEquals(1, scanResult.getTargetPaths().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getTargetPaths().get(0));
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 
 		Assert.assertEquals(Long.valueOf(239569), scanResult.getSongSize());
 		Assert.assertTrue(scanResult.getArtworkSize() > 0);
+
+		Assert.assertEquals(0, scanResult.getFailedPaths().size());
 
 		Assert.assertEquals(Long.valueOf(1), scanResult.getGenreCount());
 		Assert.assertEquals(Long.valueOf(3), scanResult.getArtistCount());
@@ -141,8 +143,10 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertNotNull(scanResult.getId());
 		Assert.assertNotNull(scanResult.getDate());
 
-		Assert.assertEquals(1, scanResult.getPaths().size());
-		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getPaths().get(0));
+		Assert.assertEquals(1, scanResult.getTargetPaths().size());
+		Assert.assertEquals(filesToScan.get(0).getAbsolutePath(), scanResult.getTargetPaths().get(0));
+
+		Assert.assertEquals(0, scanResult.getFailedPaths().size());
 
 		Assert.assertTrue(scanResult.getDuration() > 0);
 

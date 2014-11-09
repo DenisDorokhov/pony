@@ -34,10 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -84,7 +81,9 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private final AtomicReference<ExecutorService> executorReference = new AtomicReference<>();
 
-	private final AtomicInteger completedImportTaskCount = new AtomicInteger();
+	private final AtomicInteger processedTaskCount = new AtomicInteger();
+
+	private final List<String> failedPaths = Collections.synchronizedList(new ArrayList<String>());
 
 	private TransactionTemplate transactionTemplate;
 
@@ -233,21 +232,19 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			}
 		}
 
-		ScanResult scanResult;
-
 		try {
 
 			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_SCAN_THREADS));
 
-			scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
+			ScanResult scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
 				@Override
 				public ScanResult doInTransaction(TransactionStatus status) {
 					return doScan(aTargetFolders);
 				}
 			});
 
-			logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getPaths() + " has been finished with result " + scanResult.toString() + ".",
-					Arrays.asList(StringUtils.join(scanResult.getPaths(), ", "), scanResult.toString()));
+			logService.info(log, "libraryScanService.scanFinished", "Scan of " + scanResult.getTargetPaths() + " has been finished with result " + scanResult.toString() + ".",
+					Arrays.asList(StringUtils.join(scanResult.getTargetPaths(), ", "), scanResult.toString()));
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -258,6 +255,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 					}
 				}
 			}
+
+			return scanResult;
 
 		} catch (final Exception scanException) {
 
@@ -277,11 +276,10 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		} finally {
 			executorReference.set(null);
-			completedImportTaskCount.set(0);
+			processedTaskCount.set(0);
+			failedPaths.clear();
 			statusReference.set(null);
 		}
-
-		return scanResult;
 	}
 
 	@Override
@@ -333,21 +331,19 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			}
 		}
 
-		ScanResult scanResult;
-
 		try {
 
 			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_EDIT_THREADS));
 
-			scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
+			ScanResult scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
 				@Override
 				public ScanResult doInTransaction(TransactionStatus status) {
 					return doEdit(editCommands);
 				}
 			});
 
-			logService.info(log, "libraryScanService.editFinished", "Edit of files " + scanResult.getPaths() + " has been finished with result " + scanResult.toString() + ".",
-					Arrays.asList(StringUtils.join(scanResult.getPaths(), ", "), scanResult.toString()));
+			logService.info(log, "libraryScanService.editFinished", "Edit of files " + scanResult.getTargetPaths() + " has been finished with result " + scanResult.toString() + ".",
+					Arrays.asList(StringUtils.join(scanResult.getTargetPaths(), ", "), scanResult.toString()));
 
 			synchronized (delegatesLock) {
 				for (Delegate next : new ArrayList<>(delegates)) {
@@ -358,6 +354,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 					}
 				}
 			}
+
+			return scanResult;
 
 		} catch (final Exception editException) {
 
@@ -377,11 +375,10 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		} finally {
 			executorReference.set(null);
-			completedImportTaskCount.set(0);
+			processedTaskCount.set(0);
+			failedPaths.clear();
 			statusReference.set(null);
 		}
-
-		return scanResult;
 	}
 
 	private ScanResult doScan(final List<File> aTargetFolders) {
@@ -570,7 +567,9 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		ScanResult scanResult = new ScanResult();
 
-		scanResult.setPaths(aPaths);
+		scanResult.setTargetPaths(aPaths);
+		scanResult.setFailedPaths(new ArrayList<>(failedPaths));
+
 		scanResult.setType(aType);
 		scanResult.setDuration(endTime - startTime);
 
@@ -712,11 +711,14 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			try {
 				libraryService.importSong(songFile);
 			} catch (Exception e) {
+
 				logService.warn(log, "libraryScanService.songImportFailed", "Could not import song from file [" + songFile.getFile().getAbsolutePath() + "].",
 						e, Arrays.asList(songFile.getFile().getAbsolutePath()));
+
+				failedPaths.add(songFile.getFile().getAbsolutePath());
 			}
 
-			double progress = completedImportTaskCount.incrementAndGet() / (double) taskCount;
+			double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
 
 			updateStatus(StatusImpl.buildScanStatus(targetFolders, STEP_SCAN_IMPORTING_SONGS, STEP_CODE_SCAN_IMPORTING_SONGS, progress));
 
@@ -744,11 +746,14 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			try {
 				libraryService.writeAndImportSong(command.getSongFile(), command.getSongData());
 			} catch (Exception e) {
+
 				logService.warn(log, "libraryScanService.songWriteFailed", "Could not write song file [" + command.getSongFile().getFile().getAbsolutePath() + "].",
 						e, Arrays.asList(command.getSongFile().getFile().getAbsolutePath()));
+
+				failedPaths.add(command.getSongFile().getFile().getAbsolutePath());
 			}
 
-			double progress = completedImportTaskCount.incrementAndGet() / (double) taskCount;
+			double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
 
 			updateStatus(StatusImpl.buildScanStatus(targetFiles, STEP_EDIT_WRITING_SONGS, STEP_CODE_EDIT_WRITING_SONGS, progress));
 

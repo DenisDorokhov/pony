@@ -91,7 +91,18 @@ CREATE TABLE scan_result (
 
 CREATE INDEX index_library_scan_result_date ON scan_result(date);
 
-CREATE TABLE scan_result_path (
+CREATE TABLE scan_result_target_path (
+
+	scan_result_id BIGINT NOT NULL,
+
+	value VARCHAR(255) NOT NULL,
+
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+	PRIMARY KEY (scan_result_id, value)
+);
+
+CREATE TABLE scan_result_failed_path (
 
 	scan_result_id BIGINT NOT NULL,
 
