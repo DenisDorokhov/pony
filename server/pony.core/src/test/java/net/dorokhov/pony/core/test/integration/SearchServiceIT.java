@@ -55,16 +55,19 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 		songDao.save(buildSong(album, genre));
 
+		Assert.assertEquals(1, searchService.searchGenres("gen foo", 10).size());
 		Assert.assertEquals(1, searchService.searchArtists("the art Foo", 10).size());
 		Assert.assertEquals(1, searchService.searchAlbums("Alb of foo", 10).size());
 		Assert.assertEquals(1, searchService.searchSongs("the So foo", 10).size());
 
+		Assert.assertEquals(0, searchService.searchArtists("genre2", 10).size());
 		Assert.assertEquals(0, searchService.searchArtists("artist2", 10).size());
 		Assert.assertEquals(0, searchService.searchAlbums("album2", 10).size());
 		Assert.assertEquals(0, searchService.searchSongs("song2", 10).size());
 
 		searchService.clearIndex();
 
+		Assert.assertEquals(0, searchService.searchGenres("gen foo", 10).size());
 		Assert.assertEquals(0, searchService.searchArtists("art foo", 10).size());
 		Assert.assertEquals(0, searchService.searchAlbums("alb foo", 10).size());
 		Assert.assertEquals(0, searchService.searchSongs("so foo", 10).size());
@@ -93,7 +96,7 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 		Genre genre = new Genre();
 
-		genre.setName("someGenre");
+		genre.setName("genre1 foobar");
 
 		return genre;
 	}

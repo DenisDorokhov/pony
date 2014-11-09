@@ -2,6 +2,7 @@ package net.dorokhov.pony.core.search;
 
 import net.dorokhov.pony.core.entity.Album;
 import net.dorokhov.pony.core.entity.Artist;
+import net.dorokhov.pony.core.entity.Genre;
 import net.dorokhov.pony.core.entity.Song;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.search.*;
@@ -47,13 +48,34 @@ public class SearchServiceImpl implements SearchService {
 
 		FullTextEntityManager fullTextSession = Search.getFullTextEntityManager(entityManager);
 
+		fullTextSession.purgeAll(Genre.class);
 		fullTextSession.purgeAll(Artist.class);
 		fullTextSession.purgeAll(Album.class);
 		fullTextSession.purgeAll(Song.class);
 
+		fullTextSession.getSearchFactory().optimize(Genre.class);
 		fullTextSession.getSearchFactory().optimize(Artist.class);
 		fullTextSession.getSearchFactory().optimize(Album.class);
 		fullTextSession.getSearchFactory().optimize(Song.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
+	public List<Genre> searchGenres(String aQuery, int aMaxResults) {
+
+		FullTextQuery jpaQuery = buildQuery(aQuery, Genre.class, "name");
+
+		Criteria criteria = getSession().createCriteria(Genre.class)
+				.setFetchMode("artwork", FetchMode.JOIN);
+
+		jpaQuery.setCriteriaQuery(criteria);
+
+		jpaQuery.setSort(new Sort(new SortField("name", SortField.STRING)));
+		jpaQuery.setFirstResult(0);
+		jpaQuery.setMaxResults(aMaxResults);
+
+		return (List<Genre>)jpaQuery.getResultList();
 	}
 
 	@Override

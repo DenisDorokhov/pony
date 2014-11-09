@@ -1,6 +1,11 @@
 package net.dorokhov.pony.core.entity;
 
 import net.dorokhov.pony.core.entity.common.BaseEntity;
+import net.dorokhov.pony.core.search.SearchAnalyzer;
+import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,7 +13,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "genre")
-public class Genre extends BaseEntity<Long> {
+@Indexed
+public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 
 	private String name;
 
@@ -17,6 +23,7 @@ public class Genre extends BaseEntity<Long> {
 	private List<Song> songs;
 
 	@Column(name = "name")
+	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
 	public String getName() {
 		return name;
 	}
@@ -47,6 +54,12 @@ public class Genre extends BaseEntity<Long> {
 
 	public void setSongs(List<Song> aSongs) {
 		songs = aSongs;
+	}
+
+	@Override
+	@SuppressWarnings("NullableProblems")
+	public int compareTo(Genre aGenre) {
+		return ObjectUtils.compare(getName(), aGenre.getName());
 	}
 
 	@Override
