@@ -4,14 +4,18 @@ import net.dorokhov.pony.core.entity.Installation;
 import net.dorokhov.pony.core.utils.SqlSplitter;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.SQLGrammarException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
+import javax.sql.DataSource;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.List;
 
 @Repository
@@ -20,7 +24,14 @@ public class InstallationDaoImpl implements InstallationDao {
 	public final static String SCRIPT_INSTALL = "/net/dorokhov/pony/core/dao/install.sql";
 	public final static String SCRIPT_UNINSTALL = "/net/dorokhov/pony/core/dao/uninstall.sql";
 
+	private DataSource dataSource;
+
 	private EntityManager entityManager;
+
+	@Autowired
+	public void setDataSource(DataSource aDataSource) {
+		dataSource = aDataSource;
+	}
 
 	@PersistenceContext
 	public void setEntityManager(EntityManager aEntityManager) {
@@ -28,7 +39,7 @@ public class InstallationDaoImpl implements InstallationDao {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional
 	public Installation findInstallation() {
 
 		Installation installation = null;
@@ -82,6 +93,10 @@ public class InstallationDaoImpl implements InstallationDao {
 
 	private Installation doFindInstallation() {
 
+		if (!hasInstallationTable()) {
+			return null;
+		}
+
 		List<Installation> installationList = entityManager.createQuery("SELECT i FROM Installation i", Installation.class).getResultList();
 
 		if (installationList.size() > 1) {
@@ -89,6 +104,37 @@ public class InstallationDaoImpl implements InstallationDao {
 		}
 
 		return installationList.size() > 0 ? installationList.get(0) : null;
+	}
+
+	private boolean hasInstallationTable() {
+
+		Connection connection = null;
+
+		try {
+
+			String tableName = Installation.class.getAnnotation(Table.class).name();
+
+			connection = dataSource.getConnection();
+
+			ResultSet rs = connection.getMetaData().getTables(null, null, "%", null);
+			while (rs.next()) {
+				if (rs.getString(3).equalsIgnoreCase(tableName)) {
+					return true;
+				}
+			}
+
+			return false;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				//noinspection EmptyCatchBlock
+				try {
+					connection.close();
+				} catch (Exception e) {}
+			}
+		}
 	}
 
 	private String fetchScriptContents(String aScript) throws Exception {
@@ -101,5 +147,4 @@ public class InstallationDaoImpl implements InstallationDao {
 
 		return IOUtils.toString(inputStream, "UTF-8");
 	}
-
 }
