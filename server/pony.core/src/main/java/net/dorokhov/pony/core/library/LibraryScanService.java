@@ -2,6 +2,9 @@ package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.entity.ScanResult;
 import net.dorokhov.pony.core.library.exception.ConcurrentScanException;
+import net.dorokhov.pony.core.library.exception.FileNotFoundException;
+import net.dorokhov.pony.core.library.exception.NotFolderException;
+import net.dorokhov.pony.core.library.exception.NotSongException;
 
 import java.io.File;
 import java.util.List;
@@ -16,9 +19,9 @@ public interface LibraryScanService {
 
 	public ScanResult getLastResult();
 
-	public ScanResult scan(List<File> aTargetFolders) throws ConcurrentScanException;
+	public ScanResult scan(List<File> aTargetFolders) throws ConcurrentScanException, FileNotFoundException, NotFolderException;
 
-	public ScanResult edit(List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException;
+	public ScanResult edit(List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException, FileNotFoundException, NotSongException;
 
 	public static interface Status {
 

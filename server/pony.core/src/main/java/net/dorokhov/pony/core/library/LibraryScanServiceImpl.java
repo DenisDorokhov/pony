@@ -1,9 +1,13 @@
 package net.dorokhov.pony.core.library;
 
+import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.dao.*;
 import net.dorokhov.pony.core.entity.ScanResult;
 import net.dorokhov.pony.core.entity.StoredFile;
 import net.dorokhov.pony.core.library.exception.ConcurrentScanException;
+import net.dorokhov.pony.core.library.exception.FileNotFoundException;
+import net.dorokhov.pony.core.library.exception.NotFolderException;
+import net.dorokhov.pony.core.library.exception.NotSongException;
 import net.dorokhov.pony.core.library.file.LibraryFile;
 import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibraryImage;
@@ -194,7 +198,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanResult scan(final List<File> aTargetFolders) throws ConcurrentScanException {
+	public ScanResult scan(final List<File> aTargetFolders) throws ConcurrentScanException, FileNotFoundException, NotFolderException {
 
 		synchronized (statusCheckLock) {
 
@@ -219,6 +223,15 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		updateStatus(statusReference.get());
+
+		for (File folder : aTargetFolders) {
+			if (!folder.exists()) {
+				throw new FileNotFoundException(folder);
+			}
+			if (!folder.isDirectory()) {
+				throw new NotFolderException(folder);
+			}
+		}
 
 		ScanResult scanResult;
 
@@ -272,7 +285,8 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	}
 
 	@Override
-	public ScanResult edit(final List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException {
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public ScanResult edit(List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException, FileNotFoundException, NotSongException {
 
 		List<File> targetFiles = new ArrayList<>();
 		for (LibraryScanEditCommand command : aCommands) {
@@ -303,6 +317,22 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		updateStatus(statusReference.get());
 
+		final List<EditCommand> editCommands = new ArrayList<>();
+		for (LibraryScanEditCommand command : aCommands) {
+
+			if (!command.getFile().exists()) {
+				throw new FileNotFoundException(command.getFile());
+			}
+
+			LibraryFile libraryFile = fileScanService.scanFile(command.getFile());
+
+			if (libraryFile instanceof LibrarySong) {
+				editCommands.add(new EditCommand((LibrarySong) libraryFile, command.getSongData()));
+			} else {
+				throw new NotSongException(command.getFile());
+			}
+		}
+
 		ScanResult scanResult;
 
 		try {
@@ -312,7 +342,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
 				@Override
 				public ScanResult doInTransaction(TransactionStatus status) {
-					return doEdit(aCommands);
+					return doEdit(editCommands);
 				}
 			});
 
@@ -369,11 +399,11 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		});
 	}
 
-	private ScanResult doEdit(final List<LibraryScanEditCommand> aCommands) {
+	private ScanResult doEdit(final List<EditCommand> aCommands) {
 
 		List<String> targetPaths = new ArrayList<>();
-		for (LibraryScanEditCommand command : aCommands) {
-			targetPaths.add(command.getFile().getAbsolutePath());
+		for (EditCommand command : aCommands) {
+			targetPaths.add(command.getSongFile().getFile().getAbsolutePath());
 		}
 
 		return calculateScanResult(ScanResult.Type.EDIT, targetPaths, new ScanProcessor() {
@@ -445,11 +475,11 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		return songFiles.size();
 	}
 
-	private int performEditSteps(List<LibraryScanEditCommand> aCommands) {
+	private int performEditSteps(List<EditCommand> aCommands) {
 
 		final List<File> targetFiles = new ArrayList<>();
-		for (LibraryScanEditCommand command : aCommands) {
-			targetFiles.add(command.getFile());
+		for (EditCommand command : aCommands) {
+			targetFiles.add(command.getSongFile().getFile());
 		}
 
 		logService.info(log, "libraryScanService.writingSongs", "Importing songs...");
@@ -458,7 +488,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		ExecutorService executor = executorReference.get();
 
 		List<Future<Void>> futureList = new ArrayList<>();
-		for (LibraryScanEditCommand command : aCommands) {
+		for (EditCommand command : aCommands) {
 			futureList.add(executor.submit(new WriteSongTask(targetFiles, command, aCommands.size())));
 		}
 		for (Future<Void> future : futureList) {
@@ -642,6 +672,26 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 	}
 
+	private class EditCommand {
+
+		private LibrarySong songFile;
+
+		private SongDataWritable songData;
+
+		private EditCommand(LibrarySong aSongFile, SongDataWritable aSongData) {
+			songFile = aSongFile;
+			songData = aSongData;
+		}
+
+		public LibrarySong getSongFile() {
+			return songFile;
+		}
+
+		public SongDataWritable getSongData() {
+			return songData;
+		}
+	}
+
 	private class ImportSongTask implements Callable<Void> {
 
 		private final List<File> targetFolders;
@@ -678,11 +728,11 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 		private final List<File> targetFiles;
 
-		private final LibraryScanEditCommand command;
+		private final EditCommand command;
 
 		private final int taskCount;
 
-		private WriteSongTask(List<File> aTargetFiles, LibraryScanEditCommand aCommand, int aTaskCount) {
+		private WriteSongTask(List<File> aTargetFiles, EditCommand aCommand, int aTaskCount) {
 			targetFiles = aTargetFiles;
 			command = aCommand;
 			taskCount = aTaskCount;
@@ -692,18 +742,10 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		public Void call() throws Exception {
 
 			try {
-
-				LibraryFile file = fileScanService.scanFile(command.getFile());
-
-				if (file instanceof LibrarySong) {
-					libraryService.writeAndImportSong((LibrarySong) file, command.getSongData());
-				} else {
-					throw new RuntimeException("File is not a song.");
-				}
-
+				libraryService.writeAndImportSong(command.getSongFile(), command.getSongData());
 			} catch (Exception e) {
-				logService.warn(log, "libraryScanService.songWriteFailed", "Could not write song file [" + command.getFile().getAbsolutePath() + "].",
-						e, Arrays.asList(command.getFile().getAbsolutePath()));
+				logService.warn(log, "libraryScanService.songWriteFailed", "Could not write song file [" + command.getSongFile().getFile().getAbsolutePath() + "].",
+						e, Arrays.asList(command.getSongFile().getFile().getAbsolutePath()));
 			}
 
 			double progress = completedImportTaskCount.incrementAndGet() / (double) taskCount;
