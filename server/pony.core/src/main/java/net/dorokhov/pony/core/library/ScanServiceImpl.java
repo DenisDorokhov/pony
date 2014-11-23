@@ -3,11 +3,10 @@ package net.dorokhov.pony.core.library;
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.dao.*;
 import net.dorokhov.pony.core.entity.ScanResult;
+import net.dorokhov.pony.core.entity.Song;
 import net.dorokhov.pony.core.entity.StoredFile;
-import net.dorokhov.pony.core.library.exception.ConcurrentScanException;
-import net.dorokhov.pony.core.library.exception.FileNotFoundException;
-import net.dorokhov.pony.core.library.exception.NotFolderException;
-import net.dorokhov.pony.core.library.exception.NotSongException;
+import net.dorokhov.pony.core.entity.common.ScanType;
+import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.library.file.LibraryFile;
 import net.dorokhov.pony.core.library.file.LibraryFolder;
 import net.dorokhov.pony.core.library.file.LibraryImage;
@@ -40,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
-public class LibraryScanServiceImpl implements LibraryScanService {
+public class ScanServiceImpl implements ScanService {
 
 	private final static int NUMBER_OF_SCAN_THREADS = 10;
 	private final static int NUMBER_OF_SCAN_STEPS = 6;
@@ -74,6 +73,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private final Object delegatesLock = new Object();
 	private final Object statusCheckLock = new Object();
+	private final Object progressLock = new Object();
 
 	private final List<Delegate> delegates = new ArrayList<>();
 
@@ -199,6 +199,15 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public ScanResult scan(final List<File> aTargetFolders) throws ConcurrentScanException, FileNotFoundException, NotFolderException {
 
+		for (File folder : aTargetFolders) {
+			if (!folder.exists()) {
+				throw new FileNotFoundException(folder);
+			}
+			if (!folder.isDirectory()) {
+				throw new NotFolderException(folder);
+			}
+		}
+
 		synchronized (statusCheckLock) {
 
 			if (statusReference.get() != null) {
@@ -214,7 +223,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		synchronized (delegatesLock) {
 			for (Delegate next : new ArrayList<>(delegates)) {
 				try {
-					next.onScanStart(Status.Action.SCAN, new ArrayList<>(aTargetFolders));
+					next.onScanStart(ScanType.FULL, new ArrayList<>(aTargetFolders));
 				} catch (Exception e) {
 					log.error("Exception thrown when delegating onScanStart to " + next, e);
 				}
@@ -222,15 +231,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		updateStatus(statusReference.get());
-
-		for (File folder : aTargetFolders) {
-			if (!folder.exists()) {
-				throw new FileNotFoundException(folder);
-			}
-			if (!folder.isDirectory()) {
-				throw new NotFolderException(folder);
-			}
-		}
 
 		try {
 
@@ -284,11 +284,38 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanResult edit(List<LibraryScanEditCommand> aCommands) throws ConcurrentScanException, FileNotFoundException, NotSongException {
+	public ScanResult edit(List<ScanEditCommand> aCommands) throws ConcurrentScanException, FileNotFoundException, NotSongException {
 
-		List<File> targetFiles = new ArrayList<>();
-		for (LibraryScanEditCommand command : aCommands) {
-			targetFiles.add(command.getFile());
+		final List<File> targetFiles = new ArrayList<>();
+		final List<String> targetPaths = new ArrayList<>();
+		final List<EditCommand> editCommands = new ArrayList<>();
+
+		for (ScanEditCommand command : aCommands) {
+
+			Song song = songDao.findOne(command.getSongId());
+
+			if (song != null) {
+
+				File songFile = new File(song.getPath());
+
+				if (songFile.exists()) {
+
+					targetFiles.add(songFile);
+					targetPaths.add(song.getPath());
+
+					LibraryFile libraryFile = fileScanService.scanFile(songFile);
+
+					if (libraryFile instanceof LibrarySong) {
+						editCommands.add(new EditCommand((LibrarySong) libraryFile, command.getSongData()));
+					} else {
+						throw new NotSongException(songFile);
+					}
+				} else {
+					throw new FileNotFoundException(songFile);
+				}
+			} else {
+				throw new SongNotFoundException(command.getSongId());
+			}
 		}
 
 		synchronized (statusCheckLock) {
@@ -300,13 +327,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			statusReference.set(StatusImpl.buildEditStatus(targetFiles, STEP_EDIT_PREPARING, STEP_CODE_EDIT_PREPARING, -1));
 		}
 
-		logService.info(log, "libraryScanService.editStarted", "Editing files " + targetFiles + "...",
-				Arrays.asList(targetFiles.toString()));
+		logService.info(log, "libraryScanService.editStarted", "Editing files " + targetFiles + "...", targetPaths);
 
 		synchronized (delegatesLock) {
 			for (Delegate next : new ArrayList<>(delegates)) {
 				try {
-					next.onScanStart(Status.Action.EDIT, new ArrayList<>(targetFiles));
+					next.onScanStart(ScanType.EDIT, new ArrayList<>(targetFiles));
 				} catch (Exception e) {
 					log.error("Exception thrown when delegating onScanStart to " + next, e);
 				}
@@ -314,22 +340,6 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		updateStatus(statusReference.get());
-
-		final List<EditCommand> editCommands = new ArrayList<>();
-		for (LibraryScanEditCommand command : aCommands) {
-
-			if (!command.getFile().exists()) {
-				throw new FileNotFoundException(command.getFile());
-			}
-
-			LibraryFile libraryFile = fileScanService.scanFile(command.getFile());
-
-			if (libraryFile instanceof LibrarySong) {
-				editCommands.add(new EditCommand((LibrarySong) libraryFile, command.getSongData()));
-			} else {
-				throw new NotSongException(command.getFile());
-			}
-		}
 
 		try {
 
@@ -388,7 +398,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			targetPaths.add(folder.getAbsolutePath());
 		}
 
-		return calculateScanResult(ScanResult.Type.FULL, targetPaths, new ScanProcessor() {
+		return calculateScanResult(ScanType.FULL, targetPaths, new ScanProcessor() {
 			@Override
 			public int process() {
 				return performScanSteps(aTargetFolders);
@@ -403,7 +413,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 			targetPaths.add(command.getSongFile().getFile().getAbsolutePath());
 		}
 
-		return calculateScanResult(ScanResult.Type.EDIT, targetPaths, new ScanProcessor() {
+		return calculateScanResult(ScanType.EDIT, targetPaths, new ScanProcessor() {
 			@Override
 			public int process() {
 				return performEditSteps(aCommands);
@@ -523,7 +533,7 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 	}
 
-	private ScanResult calculateScanResult(ScanResult.Type aType, List<String> aPaths, ScanProcessor aProcessor) {
+	private ScanResult calculateScanResult(ScanType aType, List<String> aPaths, ScanProcessor aProcessor) {
 
 		ScanResult lastScan = getLastResult();
 		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(0L));
@@ -612,15 +622,15 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 
 	private static class StatusImpl implements Status {
 
-		private final Action action;
+		private final ScanType type;
 		private final List<File> files;
 		private final int step;
 		private final String stepCode;
 		private final int totalSteps;
 		private final double progress;
 
-		public StatusImpl(Action aAction, List<File> aFiles, int aStep, String aStepCode, int aTotalSteps, double aProgress) {
-			action = aAction;
+		public StatusImpl(ScanType aType, List<File> aFiles, int aStep, String aStepCode, int aTotalSteps, double aProgress) {
+			type = aType;
 			files = aFiles != null ? new ArrayList<>(aFiles) : null;
 			step = aStep;
 			stepCode = aStepCode;
@@ -629,12 +639,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		public StatusImpl(Status aStatus) {
-			this(aStatus.getAction(), aStatus.getFiles(), aStatus.getStep(), aStatus.getStepCode(), aStatus.getTotalSteps(), aStatus.getProgress());
+			this(aStatus.getScanType(), aStatus.getFiles(), aStatus.getStep(), aStatus.getStepCode(), aStatus.getTotalSteps(), aStatus.getProgress());
 		}
 
 		@Override
-		public Action getAction() {
-			return action;
+		public ScanType getScanType() {
+			return type;
 		}
 
 		@Override
@@ -663,11 +673,11 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 		}
 
 		public static StatusImpl buildScanStatus(List<File> aFiles, int aStep, String aStepCode, double aProgress) {
-			return new StatusImpl(Action.SCAN, aFiles, aStep, aStepCode, NUMBER_OF_SCAN_STEPS, aProgress);
+			return new StatusImpl(ScanType.FULL, aFiles, aStep, aStepCode, NUMBER_OF_SCAN_STEPS, aProgress);
 		}
 
 		public static StatusImpl buildEditStatus(List<File> aFiles, int aStep, String aStepCode, double aProgress) {
-			return new StatusImpl(Action.EDIT, aFiles, aStep, aStepCode, NUMBER_OF_EDIT_STEPS, aProgress);
+			return new StatusImpl(ScanType.EDIT, aFiles, aStep, aStepCode, NUMBER_OF_EDIT_STEPS, aProgress);
 		}
 	}
 
@@ -718,9 +728,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				failedPaths.add(songFile.getFile().getAbsolutePath());
 			}
 
-			double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
+			synchronized (progressLock) {
 
-			updateStatus(StatusImpl.buildScanStatus(targetFolders, STEP_SCAN_IMPORTING_SONGS, STEP_CODE_SCAN_IMPORTING_SONGS, progress));
+				double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
+
+				updateStatus(StatusImpl.buildScanStatus(targetFolders, STEP_SCAN_IMPORTING_SONGS, STEP_CODE_SCAN_IMPORTING_SONGS, progress));
+			}
 
 			return null;
 		}
@@ -753,9 +766,12 @@ public class LibraryScanServiceImpl implements LibraryScanService {
 				failedPaths.add(command.getSongFile().getFile().getAbsolutePath());
 			}
 
-			double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
+			synchronized (progressLock) {
 
-			updateStatus(StatusImpl.buildScanStatus(targetFiles, STEP_EDIT_WRITING_SONGS, STEP_CODE_EDIT_WRITING_SONGS, progress));
+				double progress = processedTaskCount.incrementAndGet() / (double) taskCount;
+
+				updateStatus(StatusImpl.buildScanStatus(targetFiles, STEP_EDIT_WRITING_SONGS, STEP_CODE_EDIT_WRITING_SONGS, progress));
+			}
 
 			return null;
 		}

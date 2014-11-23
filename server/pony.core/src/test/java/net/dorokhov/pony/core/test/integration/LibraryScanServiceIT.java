@@ -1,7 +1,8 @@
 package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.entity.ScanResult;
-import net.dorokhov.pony.core.library.LibraryScanService;
+import net.dorokhov.pony.core.entity.common.ScanType;
+import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.After;
 import org.junit.Assert;
@@ -21,9 +22,9 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 
 	private final Format progressFormatter = new DecimalFormat("###.##");
 
-	private LibraryScanService service;
+	private ScanService service;
 
-	private LibraryScanService.Delegate delegate;
+	private ScanService.Delegate delegate;
 
 	private boolean didCallStart;
 	private boolean didCallFinish;
@@ -32,17 +33,17 @@ public class LibraryScanServiceIT extends AbstractIntegrationCase {
 	@Before
 	public void setUp() throws Exception {
 
-		service = context.getBean(LibraryScanService.class);
+		service = context.getBean(ScanService.class);
 
-		delegate = new LibraryScanService.Delegate() {
+		delegate = new ScanService.Delegate() {
 
 			@Override
-			public void onScanStart(LibraryScanService.Status.Action aAction, List<File> aTargetFiles) {
+			public void onScanStart(ScanType aType, List<File> aTargetFiles) {
 				didCallStart = true;
 			}
 
 			@Override
-			public void onScanProgress(LibraryScanService.Status aStatus) {
+			public void onScanProgress(ScanService.Status aStatus) {
 				log.info("library scanner step [{}] ({} / {}) did progress {}%",
 						aStatus.getStepCode(), aStatus.getStep(), aStatus.getTotalSteps(),
 						progressFormatter.format(aStatus.getProgress() * 100.0));

@@ -89,7 +89,26 @@ CREATE TABLE scan_result (
 	deleted_artwork_count BIGINT NOT NULL
 );
 
-CREATE INDEX index_library_scan_result_date ON scan_result(date);
+CREATE INDEX index_scan_result_date ON scan_result(date);
+
+CREATE TABLE scan_job (
+
+	id BIGINT IDENTITY,
+
+	creation_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
+
+	type VARCHAR(255) NOT NULL,
+	status VARCHAR(255) NOT NULL,
+
+	log_message_id BIGINT,
+	scan_result_id BIGINT,
+
+	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE SET NULL ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE INDEX index_scan_job_status ON scan_job(status);
 
 CREATE TABLE scan_result_target_path (
 

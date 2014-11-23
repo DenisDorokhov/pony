@@ -1,5 +1,7 @@
 package net.dorokhov.pony.core.entity;
 
+import net.dorokhov.pony.core.entity.common.ScanType;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -9,15 +11,11 @@ import java.util.List;
 @Table(name = "scan_result")
 public class ScanResult {
 
-	public static enum Type {
-		FULL, EDIT
-	}
-
 	private Long id;
 
 	private Date date;
 
-	private Type type;
+	private ScanType type;
 
 	private List<String> targetPaths;
 	private List<String> failedPaths;
@@ -79,11 +77,11 @@ public class ScanResult {
 	@Column(name = "type")
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	public Type getType() {
+	public ScanType getType() {
 		return type;
 	}
 
-	public void setType(Type aType) {
+	public void setType(ScanType aType) {
 		type = aType;
 	}
 
