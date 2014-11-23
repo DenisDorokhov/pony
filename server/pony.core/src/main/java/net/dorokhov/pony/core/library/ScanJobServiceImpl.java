@@ -136,13 +136,13 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanJob createScanJob() throws LibraryNotDefinedException {
+	public ScanJob startScanJob() throws LibraryNotDefinedException {
 		return doCreateScanJob(getLibraryFolders());
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanJob createEditJob(final List<ScanEditCommand> aCommands) {
+	public ScanJob startEditJob(final List<ScanEditCommand> aCommands) {
 
 		final ScanJob job = transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 			@Override
@@ -191,6 +191,65 @@ public class ScanJobServiceImpl implements ScanJobService {
 		}).start();
 
 		return job;
+	}
+
+	@Override
+	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
+	synchronized public void startAutoScanJobIfNeeded() {
+		if (installationService.getInstallation() != null) {
+
+			log.debug("Checking if automatic scan needed...");
+
+			boolean shouldScan = false;
+
+			List<File> libraryFiles = getLibraryFolders();
+
+			if (libraryFiles.size() > 0) {
+
+				if (scanService.getStatus() == null) {
+
+					Config config = configDao.findOne(Config.AUTO_SCAN_INTERVAL);
+
+					if (config != null && config.getValue() != null) {
+
+						ScanResult lastResult = scanService.getLastResult();
+
+						if (lastResult != null) {
+
+							long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
+
+							if (secondsSinceLastScan >= config.getLong()) {
+								shouldScan = true;
+							} else {
+								log.debug("Too early for automatic scan.");
+							}
+
+						} else {
+
+							log.debug("Library was never scanned before.");
+
+							shouldScan = true;
+						}
+
+					} else {
+						log.debug("Automatic scan is off.");
+					}
+
+				} else {
+					log.debug("Library is already being scanned.");
+				}
+
+			} else {
+				log.debug("No library files defined.");
+			}
+
+			if (shouldScan) {
+
+				log.info("Starting automatic scan...");
+
+				doCreateScanJob(libraryFiles);
+			}
+		}
 	}
 
 	private ScanJob doCreateScanJob(final List<File> aTargetFolders) throws LibraryNotDefinedException {
@@ -364,64 +423,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 				return scanJobDao.save(job);
 			}
 		}));
-	}
-
-	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
-	synchronized public void autoScanIfNeeded() {
-		if (installationService.getInstallation() != null) {
-
-			log.debug("Checking if automatic scan needed...");
-
-			boolean shouldScan = false;
-
-			List<File> libraryFiles = getLibraryFolders();
-
-			if (libraryFiles.size() > 0) {
-
-				if (scanService.getStatus() == null) {
-
-					Config config = configDao.findOne(Config.AUTO_SCAN_INTERVAL);
-
-					if (config != null && config.getValue() != null) {
-
-						ScanResult lastResult = scanService.getLastResult();
-
-						if (lastResult != null) {
-
-							long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
-
-							if (secondsSinceLastScan >= config.getLong()) {
-								shouldScan = true;
-							} else {
-								log.debug("Too early for automatic scan.");
-							}
-
-						} else {
-
-							log.debug("Library was never scanned before.");
-
-							shouldScan = true;
-						}
-
-					} else {
-						log.debug("Automatic scan is off.");
-					}
-
-				} else {
-					log.debug("Library is already being scanned.");
-				}
-
-			} else {
-				log.debug("No library files defined.");
-			}
-
-			if (shouldScan) {
-
-				log.info("Starting automatic scan...");
-
-				doCreateScanJob(libraryFiles);
-			}
-		}
 	}
 
 	private List<File> getLibraryFolders() {

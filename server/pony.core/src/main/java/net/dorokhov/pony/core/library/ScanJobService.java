@@ -13,9 +13,10 @@ public interface ScanJobService {
 
 	public ScanJob getById(Long aId);
 
-	public ScanJob createScanJob() throws LibraryNotDefinedException;
+	public ScanJob startScanJob() throws LibraryNotDefinedException;
+	public ScanJob startEditJob(List<ScanEditCommand> aCommands);
 
-	public ScanJob createEditJob(List<ScanEditCommand> aCommands);
+	public void startAutoScanJobIfNeeded();
 
 	public static interface Delegate {
 

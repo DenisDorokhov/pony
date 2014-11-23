@@ -75,7 +75,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		isExceptionThrown = false;
 		try {
-			scanJobService.createScanJob();
+			scanJobService.startScanJob();
 		} catch (LibraryNotDefinedException e) {
 			isExceptionThrown = true;
 		}
@@ -90,7 +90,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		ScanJob job;
 
-		job = scanJobService.createScanJob();
+		job = scanJobService.startScanJob();
 
 		Assert.assertEquals(1, creationCallCounter);
 		Assert.assertEquals(0, updateCallCounter);
@@ -126,7 +126,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		ScanJob job;
 
-		job = scanJobService.createScanJob();
+		job = scanJobService.startScanJob();
 
 		Assert.assertEquals(1, creationCallCounter);
 		Assert.assertEquals(0, updateCallCounter);
