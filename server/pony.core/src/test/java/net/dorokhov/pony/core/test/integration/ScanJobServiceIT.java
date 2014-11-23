@@ -1,18 +1,26 @@
 package net.dorokhov.pony.core.test.integration;
 
+import net.dorokhov.pony.core.dao.ConfigDao;
+import net.dorokhov.pony.core.entity.Config;
 import net.dorokhov.pony.core.entity.ScanJob;
 import net.dorokhov.pony.core.entity.common.ScanType;
 import net.dorokhov.pony.core.library.ScanJobService;
+import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 public class ScanJobServiceIT extends AbstractIntegrationCase {
 
+	private static final String TEST_FOLDER_PATH = "data/library";
+
 	private final Object lock = new Object();
 
-	private ScanJobService service;
+	private ScanJobService scanJobService;
+
+	private ConfigDao configDao;
 
 	private int creationCallCounter;
 	private int updateCallCounter;
@@ -20,8 +28,10 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 	@Before
 	public void setUp() throws Exception {
 
-		service = context.getBean(ScanJobService.class);
-		service.addDelegate(new ScanJobService.Delegate() {
+		configDao = context.getBean(ConfigDao.class);
+
+		scanJobService = context.getBean(ScanJobService.class);
+		scanJobService.addDelegate(new ScanJobService.Delegate() {
 			@Override
 			public void onJobCreation(ScanJob aJob) {
 				creationCallCounter++;
@@ -49,11 +59,28 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 	}
 
 	@Test
-	public void testScan() throws Exception {
+	public void testNotDefinedLibraryScan() throws Exception {
+
+		boolean isExceptionThrown;
+
+		isExceptionThrown = false;
+		try {
+			scanJobService.createScanJob();
+		} catch (LibraryNotDefinedException e) {
+			isExceptionThrown = true;
+		}
+
+		Assert.assertTrue(isExceptionThrown);
+	}
+
+	@Test
+	public void testSuccessfulScanJob() throws Exception {
+
+		configDao.save(new Config(Config.LIBRARY_FOLDERS, new ClassPathResource(TEST_FOLDER_PATH).getFile().getAbsolutePath()));
 
 		ScanJob job;
 
-		job = service.createScanJob();
+		job = scanJobService.createScanJob();
 
 		Assert.assertEquals(1, creationCallCounter);
 		Assert.assertEquals(0, updateCallCounter);
@@ -72,7 +99,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(1, creationCallCounter);
 		Assert.assertEquals(2, updateCallCounter);
 
-		job = service.getById(job.getId());
+		job = scanJobService.getById(job.getId());
 
 		Assert.assertNotNull(job.getCreationDate());
 		Assert.assertNotNull(job.getUpdateDate());
@@ -80,5 +107,41 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(ScanJob.Status.COMPLETE, job.getStatus());
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNotNull(job.getScanResult());
+	}
+
+	@Test
+	public void testFailedScanJob() throws Exception {
+
+		configDao.save(new Config(Config.LIBRARY_FOLDERS, "/notExistingFile"));
+
+		ScanJob job;
+
+		job = scanJobService.createScanJob();
+
+		Assert.assertEquals(1, creationCallCounter);
+		Assert.assertEquals(0, updateCallCounter);
+
+		Assert.assertNotNull(job.getCreationDate());
+		Assert.assertNull(job.getUpdateDate());
+		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanJob.Status.STARTING, job.getStatus());
+		Assert.assertNotNull(job.getLogMessage());
+		Assert.assertNull(job.getScanResult());
+
+		synchronized (lock) {
+			lock.wait();
+		}
+
+		Assert.assertEquals(1, creationCallCounter);
+		Assert.assertEquals(2, updateCallCounter);
+
+		job = scanJobService.getById(job.getId());
+
+		Assert.assertNotNull(job.getCreationDate());
+		Assert.assertNotNull(job.getUpdateDate());
+		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanJob.Status.FAILED, job.getStatus());
+		Assert.assertNotNull(job.getLogMessage());
+		Assert.assertNull(job.getScanResult());
 	}
 }

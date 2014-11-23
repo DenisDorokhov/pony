@@ -136,7 +136,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanJob createScanJob() {
+	public ScanJob createScanJob() throws LibraryNotDefinedException {
 		return doCreateScanJob(getLibraryFolders());
 	}
 
@@ -148,7 +148,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 			@Override
 			public ScanJob doInTransaction(TransactionStatus status) {
 
-				LogMessage logMessage = logService.info(log, "scanJobService.editJobStarting", "Starting edit job for " + aCommands.size() + " songs...", String.valueOf(aCommands.size()));
+				LogMessage logMessage = logService.info(log, "scanJobService.editJobStarting", "Starting edit job for [" + aCommands.size() + "] songs...", String.valueOf(aCommands.size()));
 
 				ScanJob startingJob = new ScanJob();
 
@@ -193,7 +193,11 @@ public class ScanJobServiceImpl implements ScanJobService {
 		return job;
 	}
 
-	private ScanJob doCreateScanJob(final List<File> aTargetFolders) {
+	private ScanJob doCreateScanJob(final List<File> aTargetFolders) throws LibraryNotDefinedException {
+
+		if (aTargetFolders.size() == 0) {
+			throw new LibraryNotDefinedException();
+		}
 
 		final List<String> targetPaths = new ArrayList<>();
 		for (File file : aTargetFolders) {
@@ -273,9 +277,9 @@ public class ScanJobServiceImpl implements ScanJobService {
 		try {
 			result = scanService.scan(aTargetFolders);
 		} catch (FileNotFoundException e) {
-			logMessage = logService.error(log, "scanJobService.scanJobErrorFileNotFound", "File " + e.getFile().getAbsolutePath() + " not found.", Arrays.asList(e.getFile().getAbsolutePath()));
+			logMessage = logService.error(log, "scanJobService.scanJobErrorFileNotFound", "File [" + e.getFile().getAbsolutePath() + "] not found.", Arrays.asList(e.getFile().getAbsolutePath()));
 		} catch (NotFolderException e) {
-			logMessage = logService.error(log, "scanJobService.scanJobErrorNotFolder", "File " + e.getFile().getAbsolutePath() + " must be a folder.", Arrays.asList(e.getFile().getAbsolutePath()));
+			logMessage = logService.error(log, "scanJobService.scanJobErrorNotFolder", "File [" + e.getFile().getAbsolutePath() + "] must be a folder.", Arrays.asList(e.getFile().getAbsolutePath()));
 		} catch (ConcurrentScanException e) {
 			logMessage = logService.error(log, "scanJobService.scanJobErrorConcurrentScan", "Library is already scanning.", e);
 		} catch (Exception e) {
@@ -295,7 +299,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				if (currentResult != null) {
 					job.setStatus(ScanJob.Status.COMPLETE);
-					job.setLogMessage(logService.info(log, "scanJobService.scanJobComplete", "Scan job complete for " + aTargetFolders, targetPaths));
+					job.setLogMessage(logService.info(log, "scanJobService.scanJobComplete", "Scan job complete for " + aTargetFolders + ".", targetPaths));
 				} else {
 					job.setStatus(ScanJob.Status.FAILED);
 					job.setLogMessage(currentLogMessage);
@@ -315,7 +319,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 				ScanJob job = scanJobDao.findOne(aJobId);
 
 				job.setStatus(ScanJob.Status.STARTED);
-				job.setLogMessage(logService.info(log, "scanJobService.editJobStarted", "Started edit job for " + aCommands.size() + " songs...", String.valueOf(aCommands.size())));
+				job.setLogMessage(logService.info(log, "scanJobService.editJobStarted", "Started edit job for [" + aCommands.size() + "] songs...", String.valueOf(aCommands.size())));
 
 				return scanJobDao.save(job);
 			}
@@ -327,11 +331,11 @@ public class ScanJobServiceImpl implements ScanJobService {
 		try {
 			result = scanService.edit(aCommands);
 		} catch (SongNotFoundException e) {
-			logMessage = logService.error(log, "scanJobService.editJobErrorSongNotFound", "Song " + e.getSongId() + " not found.", Arrays.asList(String.valueOf(e.getSongId())));
+			logMessage = logService.error(log, "scanJobService.editJobErrorSongNotFound", "Song [" + e.getSongId() + "] not found.", Arrays.asList(String.valueOf(e.getSongId())));
 		} catch (FileNotFoundException e) {
-			logMessage = logService.error(log, "scanJobService.editJobErrorFileNotFound", "File " + e.getFile().getAbsolutePath() + " not found.", Arrays.asList(e.getFile().getAbsolutePath()));
+			logMessage = logService.error(log, "scanJobService.editJobErrorFileNotFound", "File [" + e.getFile().getAbsolutePath() + "] not found.", Arrays.asList(e.getFile().getAbsolutePath()));
 		} catch (NotSongException e) {
-			logMessage = logService.error(log, "scanJobService.editJobErrorNotSong", "File " + e.getFile().getAbsolutePath() + " is not a song.", Arrays.asList(e.getFile().getAbsolutePath()));
+			logMessage = logService.error(log, "scanJobService.editJobErrorNotSong", "File [" + e.getFile().getAbsolutePath() + "] is not a song.", Arrays.asList(e.getFile().getAbsolutePath()));
 		} catch (ConcurrentScanException e) {
 			logMessage = logService.error(log, "scanJobService.editJobErrorConcurrentScan", "Library is already scanning.", e);
 		} catch (Exception e) {
@@ -351,7 +355,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				if (currentResult != null) {
 					job.setStatus(ScanJob.Status.COMPLETE);
-					job.setLogMessage(logService.info(log, "scanJobService.editJobComplete", "Edit job complete for " + aCommands.size() + " songs.", String.valueOf(aCommands.size())));
+					job.setLogMessage(logService.info(log, "scanJobService.editJobComplete", "Edit job complete for [" + aCommands.size() + "] songs.", String.valueOf(aCommands.size())));
 				} else {
 					job.setStatus(ScanJob.Status.FAILED);
 					job.setLogMessage(currentLogMessage);
@@ -366,7 +370,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 	synchronized public void autoScanIfNeeded() {
 		if (installationService.getInstallation() != null) {
 
-			log.debug("checking if automatic scan needed...");
+			log.debug("Checking if automatic scan needed...");
 
 			boolean shouldScan = false;
 
@@ -389,31 +393,31 @@ public class ScanJobServiceImpl implements ScanJobService {
 							if (secondsSinceLastScan >= config.getLong()) {
 								shouldScan = true;
 							} else {
-								log.debug("too early for automatic scan");
+								log.debug("Too early for automatic scan.");
 							}
 
 						} else {
 
-							log.debug("library was never scanned before");
+							log.debug("Library was never scanned before.");
 
 							shouldScan = true;
 						}
 
 					} else {
-						log.debug("automatic scan is off");
+						log.debug("Automatic scan is off.");
 					}
 
 				} else {
-					log.debug("library is already being scanned");
+					log.debug("Library is already being scanned.");
 				}
 
 			} else {
-				log.debug("no library files defined");
+				log.debug("No library files defined.");
 			}
 
 			if (shouldScan) {
 
-				log.info("starting automatic scan...");
+				log.info("Starting automatic scan...");
 
 				doCreateScanJob(libraryFiles);
 			}

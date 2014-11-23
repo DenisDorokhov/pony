@@ -1,6 +1,7 @@
 package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.entity.ScanJob;
+import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface ScanJobService {
 
 	public ScanJob getById(Long aId);
 
-	public ScanJob createScanJob();
+	public ScanJob createScanJob() throws LibraryNotDefinedException;
 
 	public ScanJob createEditJob(List<ScanEditCommand> aCommands);
 
