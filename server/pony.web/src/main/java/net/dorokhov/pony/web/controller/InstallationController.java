@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Locale;
 
@@ -34,7 +35,11 @@ public class InstallationController {
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.POST)
-	public String doInstallation(Model aModel, Locale aLocale) {
+	public String install(
+			@RequestParam("libraryFolder[]") String[] aLibraryFolders,
+			@RequestParam("adminLogin") String aAdminLogin,
+			@RequestParam("adminPassword") String aAdminPassword,
+			Model aModel, Locale aLocale) {
 
 		boolean success = true;
 

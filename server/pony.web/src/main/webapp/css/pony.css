@@ -4,3 +4,7 @@
     padding-top: 25px;
     margin-top: 50px;
 }
+
+#libraryFolderContainer > div.input-group {
+    margin-bottom: 5px;
+}
