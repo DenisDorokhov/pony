@@ -25,13 +25,13 @@
         <property name="password" value="" />
     </bean>
 
-    <bean id="hsqlShutdownManager" class="net.dorokhov.pony.core.utils.HsqlShutdownManager" destroy-method="shutdown">
+    <bean id="hsqlShutdownManager" class="net.dorokhov.pony.core.common.HsqlShutdownManager" destroy-method="shutdown">
         <property name="dataSource" ref="dataSource" />
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="hsqlShutdownManager">
         <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="net.dorokhov.pony.core.entity" />
+        <property name="packagesToScan" value="net.dorokhov.pony.core.domain" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
         </property>

@@ -1,6 +1,6 @@
-package net.dorokhov.pony.core.entity;
+package net.dorokhov.pony.core.domain;
 
-import net.dorokhov.pony.core.entity.common.BaseEntity;
+import net.dorokhov.pony.core.domain.common.BaseEntity;
 import net.dorokhov.pony.core.search.SearchAnalyzer;
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.search.annotations.Analyzer;

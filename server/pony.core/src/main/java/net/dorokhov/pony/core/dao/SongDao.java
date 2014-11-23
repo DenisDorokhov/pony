@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.dao;
 
-import net.dorokhov.pony.core.entity.Song;
+import net.dorokhov.pony.core.domain.Song;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

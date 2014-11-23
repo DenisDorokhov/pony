@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.dao;
 
-import net.dorokhov.pony.core.entity.Installation;
-import net.dorokhov.pony.core.utils.SqlSplitter;
+import net.dorokhov.pony.core.domain.Installation;
+import net.dorokhov.pony.core.common.SqlSplitter;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;

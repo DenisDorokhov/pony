@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
-import net.dorokhov.pony.core.entity.Song;
+import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.library.file.LibraryImage;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 

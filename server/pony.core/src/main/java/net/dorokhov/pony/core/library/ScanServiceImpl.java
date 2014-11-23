@@ -2,10 +2,10 @@ package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.dao.*;
-import net.dorokhov.pony.core.entity.ScanResult;
-import net.dorokhov.pony.core.entity.Song;
-import net.dorokhov.pony.core.entity.StoredFile;
-import net.dorokhov.pony.core.entity.common.ScanType;
+import net.dorokhov.pony.core.domain.ScanResult;
+import net.dorokhov.pony.core.domain.Song;
+import net.dorokhov.pony.core.domain.StoredFile;
+import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.library.file.LibraryFile;
 import net.dorokhov.pony.core.library.file.LibraryFolder;

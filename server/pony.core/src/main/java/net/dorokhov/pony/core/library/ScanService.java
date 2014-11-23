@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.library;
 
-import net.dorokhov.pony.core.entity.ScanResult;
-import net.dorokhov.pony.core.entity.common.ScanType;
+import net.dorokhov.pony.core.domain.ScanResult;
+import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.exception.*;
 
 import java.io.File;

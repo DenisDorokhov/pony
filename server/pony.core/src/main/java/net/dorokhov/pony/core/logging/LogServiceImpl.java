@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.logging;
 
 import net.dorokhov.pony.core.dao.LogMessageDao;
-import net.dorokhov.pony.core.entity.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessage;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

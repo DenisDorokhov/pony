@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.storage.StoredFileSaveCommand;
-import net.dorokhov.pony.core.entity.StoredFile;
+import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.Assert;

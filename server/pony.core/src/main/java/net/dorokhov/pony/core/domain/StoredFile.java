@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.entity;
+package net.dorokhov.pony.core.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

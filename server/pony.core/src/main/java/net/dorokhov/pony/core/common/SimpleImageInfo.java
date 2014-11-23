@@ -27,7 +27,7 @@
  *  -------------------------------------------------------------------------------
  */
 
-package net.dorokhov.pony.core.utils;
+package net.dorokhov.pony.core.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

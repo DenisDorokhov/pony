@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.entity.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.Assert;

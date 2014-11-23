@@ -1,6 +1,4 @@
-package net.dorokhov.pony.core.entity;
-
-import net.dorokhov.pony.core.entity.common.ScanType;
+package net.dorokhov.pony.core.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.library;
 
-import net.dorokhov.pony.core.entity.ScanJob;
+import net.dorokhov.pony.core.domain.ScanJob;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 
 import java.util.List;

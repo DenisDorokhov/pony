@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.logging;
 
-import net.dorokhov.pony.core.entity.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessage;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.utils;
 
-import net.dorokhov.pony.core.entity.Installation;
+import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.web.domain.InstallationDto;
 
 public class DtoConverter {

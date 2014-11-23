@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.entity.Installation;
+import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.installation.InstallationService;

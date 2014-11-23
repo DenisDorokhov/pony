@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.dao;
 
-import net.dorokhov.pony.core.entity.ScanJob;
+import net.dorokhov.pony.core.domain.ScanJob;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;

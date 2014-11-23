@@ -1,9 +1,9 @@
 package net.dorokhov.pony.core.search;
 
-import net.dorokhov.pony.core.entity.Album;
-import net.dorokhov.pony.core.entity.Artist;
-import net.dorokhov.pony.core.entity.Genre;
-import net.dorokhov.pony.core.entity.Song;
+import net.dorokhov.pony.core.domain.Album;
+import net.dorokhov.pony.core.domain.Artist;
+import net.dorokhov.pony.core.domain.Genre;
+import net.dorokhov.pony.core.domain.Song;
 
 import java.util.List;
 

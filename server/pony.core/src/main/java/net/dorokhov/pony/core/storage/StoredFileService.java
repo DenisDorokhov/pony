@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.storage;
 
-import net.dorokhov.pony.core.entity.StoredFile;
+import net.dorokhov.pony.core.domain.StoredFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

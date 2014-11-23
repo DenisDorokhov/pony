@@ -2,8 +2,8 @@ package net.dorokhov.pony.core.installation;
 
 import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.dao.InstallationDao;
-import net.dorokhov.pony.core.entity.Config;
-import net.dorokhov.pony.core.entity.Installation;
+import net.dorokhov.pony.core.domain.Config;
+import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.logging.LogService;

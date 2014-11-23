@@ -1,4 +1,4 @@
-package net.dorokhov.pony.core.entity.common;
+package net.dorokhov.pony.core.domain.common;
 
 import javax.persistence.*;
 import java.io.Serializable;

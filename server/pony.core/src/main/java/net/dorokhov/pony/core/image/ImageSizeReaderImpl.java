@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.image;
 
-import net.dorokhov.pony.core.utils.SimpleImageInfo;
+import net.dorokhov.pony.core.common.SimpleImageInfo;
 import org.springframework.stereotype.Service;
 
 import java.io.File;

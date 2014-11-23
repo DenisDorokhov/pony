@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.storage;
 
 import net.dorokhov.pony.core.dao.StoredFileDao;
-import net.dorokhov.pony.core.entity.StoredFile;
+import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.file.FileTypeService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;

@@ -1,12 +1,13 @@
 package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.dao.ConfigDao;
-import net.dorokhov.pony.core.entity.Config;
-import net.dorokhov.pony.core.entity.ScanJob;
-import net.dorokhov.pony.core.entity.common.ScanType;
+import net.dorokhov.pony.core.domain.Config;
+import net.dorokhov.pony.core.domain.ScanJob;
+import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.ScanJobService;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,8 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 	private ConfigDao configDao;
 
+	private ScanJobService.Delegate delegate;
+
 	private int creationCallCounter;
 	private int updateCallCounter;
 
@@ -31,7 +34,8 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 		configDao = context.getBean(ConfigDao.class);
 
 		scanJobService = context.getBean(ScanJobService.class);
-		scanJobService.addDelegate(new ScanJobService.Delegate() {
+
+		delegate = new ScanJobService.Delegate() {
 			@Override
 			public void onJobCreation(ScanJob aJob) {
 				creationCallCounter++;
@@ -48,9 +52,15 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 					}
 				}
 			}
-		});
+		};
+		scanJobService.addDelegate(delegate);
 
 		resetCounters();
+	}
+
+	@After
+	public void tearDown() {
+		scanJobService.removeDelegate(delegate);
 	}
 
 	private void resetCounters() {

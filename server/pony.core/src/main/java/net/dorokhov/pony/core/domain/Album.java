@@ -1,6 +1,6 @@
-package net.dorokhov.pony.core.entity;
+package net.dorokhov.pony.core.domain;
 
-import net.dorokhov.pony.core.entity.common.BaseEntity;
+import net.dorokhov.pony.core.domain.common.BaseEntity;
 import net.dorokhov.pony.core.search.SearchAnalyzer;
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.search.annotations.Analyzer;
@@ -8,19 +8,24 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "genre")
+@Table(name = "album")
 @Indexed
-public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
+public class Album extends BaseEntity<Long> implements Comparable<Album> {
 
 	private String name;
+
+	private Integer year;
 
 	private StoredFile artwork;
 
 	private List<Song> songs;
+
+	private Artist artist;
 
 	@Column(name = "name")
 	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
@@ -30,6 +35,15 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 
 	public void setName(String aName) {
 		name = aName;
+	}
+
+	@Column(name = "year")
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer aYear) {
+		year = aYear;
 	}
 
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -42,7 +56,7 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 		artwork = aArtwork;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "genre")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "album")
 	public List<Song> getSongs() {
 
 		if (songs == null) {
@@ -56,16 +70,43 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 		songs = aSongs;
 	}
 
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "artist_id", nullable = false)
+	@NotNull
+	public Artist getArtist() {
+		return artist;
+	}
+
+	public void setArtist(Artist aArtist) {
+		artist = aArtist;
+	}
+
 	@Override
 	@SuppressWarnings("NullableProblems")
-	public int compareTo(Genre aGenre) {
-		return ObjectUtils.compare(getName(), aGenre.getName());
+	public int compareTo(Album aAlbum) {
+
+		int result = 0;
+
+		if (!equals(aAlbum)) {
+
+			result = ObjectUtils.compare(getArtist(), aAlbum.getArtist());
+
+			if (result == 0) {
+				result = ObjectUtils.compare(getYear(), aAlbum.getYear());
+			}
+			if (result == 0) {
+				result = ObjectUtils.compare(getName(), aAlbum.getName());
+			}
+		}
+
+		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "Genre{" +
+		return "Album{" +
 				"id=" + getId() +
+				", artist='" + artist + '\'' +
 				", name='" + name + '\'' +
 				'}';
 	}
