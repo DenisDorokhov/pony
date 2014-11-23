@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -157,19 +156,17 @@ public class ScanJobServiceImpl implements ScanJobService {
 				startingJob.setStatus(ScanJob.Status.STARTING);
 				startingJob.setLogMessage(logMessage);
 
-				startingJob = scanJobDao.save(startingJob);
-
-				for (Delegate next : new ArrayList<>(delegates)) {
-					try {
-						next.onJobCreation(startingJob);
-					} catch (Exception e) {
-						log.error("Exception thrown when delegating onJobCreation to " + next, e);
-					}
-				}
-
-				return startingJob;
+				return scanJobDao.save(startingJob);
 			}
 		});
+
+		for (Delegate next : new ArrayList<>(delegates)) {
+			try {
+				next.onJobCreation(job);
+			} catch (Exception e) {
+				log.error("Exception thrown when delegating onJobCreation to " + next, e);
+			}
+		}
 
 		new Thread(new Runnable() {
 			@Override
@@ -177,18 +174,18 @@ public class ScanJobServiceImpl implements ScanJobService {
 				try {
 					doEditJob(job.getId(), aCommands);
 				} catch (final Exception e) {
-					transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+					propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 						@Override
-						protected void doInTransactionWithoutResult(TransactionStatus status) {
+						public ScanJob doInTransaction(TransactionStatus status) {
 
 							ScanJob failedJob = scanJobDao.findOne(job.getId());
 
 							failedJob.setStatus(ScanJob.Status.FAILED);
 							failedJob.setLogMessage(logService.error(log, "scanJobService.editJobErrorUnknown", "Unexpected error occurred when performing edit job.", e));
 
-							updateJob(failedJob);
+							return scanJobDao.save(failedJob);
 						}
-					});
+					}));
 				}
 			}
 		}).start();
@@ -213,19 +210,17 @@ public class ScanJobServiceImpl implements ScanJobService {
 				startingJob.setStatus(ScanJob.Status.STARTING);
 				startingJob.setLogMessage(logService.info(log, "scanJobService.scanJobStarting", "Starting scan job for " + aTargetFolders + "...", targetPaths));
 
-				startingJob = scanJobDao.save(startingJob);
-
-				for (Delegate next : new ArrayList<>(delegates)) {
-					try {
-						next.onJobCreation(startingJob);
-					} catch (Exception e) {
-						log.error("Exception thrown when delegating onJobCreation to " + next, e);
-					}
-				}
-
-				return startingJob;
+				return scanJobDao.save(startingJob);
 			}
 		});
+
+		for (Delegate next : new ArrayList<>(delegates)) {
+			try {
+				next.onJobCreation(job);
+			} catch (Exception e) {
+				log.error("Exception thrown when delegating onJobCreation to " + next, e);
+			}
+		}
 
 		new Thread(new Runnable() {
 			@Override
@@ -233,18 +228,18 @@ public class ScanJobServiceImpl implements ScanJobService {
 				try {
 					doScanJob(job.getId(), aTargetFolders);
 				} catch (final Exception e) {
-					transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+					propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 						@Override
-						protected void doInTransactionWithoutResult(TransactionStatus status) {
+						public ScanJob doInTransaction(TransactionStatus status) {
 
 							ScanJob failedJob = scanJobDao.findOne(job.getId());
 
 							failedJob.setStatus(ScanJob.Status.FAILED);
 							failedJob.setLogMessage(logService.error(log, "scanJobService.scanJobErrorUnknown", "Unexpected error occurred when performing scan job.", e));
 
-							updateJob(failedJob);
+							return scanJobDao.save(failedJob);
 						}
-					});
+					}));
 				}
 			}
 		}).start();
@@ -259,18 +254,18 @@ public class ScanJobServiceImpl implements ScanJobService {
 			targetPaths.add(file.getAbsolutePath());
 		}
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
+			public ScanJob doInTransaction(TransactionStatus status) {
 
 				ScanJob job = scanJobDao.findOne(aJobId);
 
 				job.setStatus(ScanJob.Status.STARTED);
 				job.setLogMessage(logService.info(log, "scanJobService.scanJobStarted", "Started scan job for " + aTargetFolders + "...", targetPaths));
 
-				updateJob(job);
+				return scanJobDao.save(job);
 			}
-		});
+		}));
 
 		ScanResult result = null;
 		LogMessage logMessage = null;
@@ -290,9 +285,9 @@ public class ScanJobServiceImpl implements ScanJobService {
 		final ScanResult currentResult = result;
 		final LogMessage currentLogMessage = logMessage;
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
+			public ScanJob doInTransaction(TransactionStatus status) {
 
 				ScanJob job = scanJobDao.findOne(aJobId);
 
@@ -306,25 +301,25 @@ public class ScanJobServiceImpl implements ScanJobService {
 					job.setLogMessage(currentLogMessage);
 				}
 
-				updateJob(job);
+				return scanJobDao.save(job);
 			}
-		});
+		}));
 	}
 
 	private void doEditJob(final Long aJobId, final List<ScanEditCommand> aCommands) {
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
+			public ScanJob doInTransaction(TransactionStatus status) {
 
 				ScanJob job = scanJobDao.findOne(aJobId);
 
 				job.setStatus(ScanJob.Status.STARTED);
 				job.setLogMessage(logService.info(log, "scanJobService.editJobStarted", "Started edit job for " + aCommands.size() + " songs...", String.valueOf(aCommands.size())));
 
-				updateJob(job);
+				return scanJobDao.save(job);
 			}
-		});
+		}));
 
 		ScanResult result = null;
 		LogMessage logMessage = null;
@@ -346,9 +341,9 @@ public class ScanJobServiceImpl implements ScanJobService {
 		final ScanResult currentResult = result;
 		final LogMessage currentLogMessage = logMessage;
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		propagateUpdate(transactionTemplate.execute(new TransactionCallback<ScanJob>() {
 			@Override
-			protected void doInTransactionWithoutResult(TransactionStatus status) {
+			public ScanJob doInTransaction(TransactionStatus status) {
 
 				ScanJob job = scanJobDao.findOne(aJobId);
 
@@ -362,9 +357,9 @@ public class ScanJobServiceImpl implements ScanJobService {
 					job.setLogMessage(currentLogMessage);
 				}
 
-				updateJob(job);
+				return scanJobDao.save(job);
 			}
-		});
+		}));
 	}
 
 	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
@@ -445,10 +440,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 		return result;
 	}
 
-	private ScanJob updateJob(ScanJob aJob) {
-
-		ScanJob updatedJob = scanJobDao.save(aJob);
-
+	private void propagateUpdate(ScanJob aJob) {
 		for (Delegate next : new ArrayList<>(delegates)) {
 			try {
 				next.onJobUpdate(aJob);
@@ -456,7 +448,5 @@ public class ScanJobServiceImpl implements ScanJobService {
 				log.error("Exception thrown when delegating onJobUpdate to " + next, e);
 			}
 		}
-
-		return updatedJob;
 	}
 }

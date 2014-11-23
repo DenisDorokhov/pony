@@ -16,7 +16,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LibraryScanServiceIT extends AbstractIntegrationCase {
+public class ScanServiceIT extends AbstractIntegrationCase {
 
 	private static final String TEST_FOLDER_PATH = "data/library";
 
