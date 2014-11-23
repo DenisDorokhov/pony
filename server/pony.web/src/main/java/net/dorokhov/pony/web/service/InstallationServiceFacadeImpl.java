@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.core.domain.Installation;
+import net.dorokhov.pony.web.domain.InstallationCommandDto;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.installation.InstallationService;
@@ -31,7 +32,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 	@Override
 	@Transactional
-	public InstallationDto install() throws AlreadyInstalledException {
+	public InstallationDto install(InstallationCommandDto aCommand) throws AlreadyInstalledException {
 		return DtoConverter.installationToDto(installationService.install());
 	}
 
