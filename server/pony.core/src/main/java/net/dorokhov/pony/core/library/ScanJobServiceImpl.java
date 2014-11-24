@@ -1,19 +1,16 @@
 package net.dorokhov.pony.core.library;
 
+import net.dorokhov.pony.core.common.PageProcessor;
 import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.dao.ScanJobDao;
-import net.dorokhov.pony.core.domain.Config;
-import net.dorokhov.pony.core.domain.LogMessage;
-import net.dorokhov.pony.core.domain.ScanJob;
-import net.dorokhov.pony.core.domain.ScanResult;
-import net.dorokhov.pony.core.domain.ScanType;
+import net.dorokhov.pony.core.domain.*;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.logging.LogService;
-import net.dorokhov.pony.core.common.PageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,8 +35,6 @@ import java.util.List;
 @Service
 public class ScanJobServiceImpl implements ScanJobService {
 
-	private static final String LIBRARY_PATH_SEPARATOR = ";";
-
 	private static final int INTERRUPTION_BUFFER_SIZE = 100;
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
@@ -59,6 +54,8 @@ public class ScanJobServiceImpl implements ScanJobService {
 	private ScanService scanService;
 
 	private LogService logService;
+
+	private String libraryFoldersSeparator;
 
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
@@ -88,6 +85,11 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Autowired
 	public void setLogService(LogService aLogService) {
 		logService = aLogService;
+	}
+
+	@Value("${libraryFoldersConfig.separator}")
+	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
+		libraryFoldersSeparator = aLibraryFoldersSeparator;
 	}
 
 	@PostConstruct
@@ -432,7 +434,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 		Config config = configDao.findOne(Config.LIBRARY_FOLDERS);
 
 		if (config != null && config.getValue() != null) {
-			for (String path : config.getValue().split(LIBRARY_PATH_SEPARATOR)) {
+			for (String path : config.getValue().split(libraryFoldersSeparator)) {
 
 				path = path.trim();
 

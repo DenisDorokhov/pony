@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.utils;
+package net.dorokhov.pony.web.common;
 
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.web.domain.InstallationDto;
