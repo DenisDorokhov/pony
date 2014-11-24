@@ -16,6 +16,7 @@ public interface ScanJobService {
 	public ScanJob startScanJob() throws LibraryNotDefinedException;
 	public ScanJob startEditJob(List<ScanEditCommand> aCommands);
 
+	public void markCurrentJobsInterrupted();
 	public void startAutoScanJobIfNeeded();
 
 	public static interface Delegate {

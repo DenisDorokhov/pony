@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ScanJobServiceImpl implements ScanJobService {
@@ -90,28 +92,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Value("${libraryFoldersConfig.separator}")
 	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
 		libraryFoldersSeparator = aLibraryFoldersSeparator;
-	}
-
-	@PostConstruct
-	@Transactional
-	public void onPostConstruct() {
-		if (installationService.getInstallation() != null) {
-			PageProcessor.Handler<ScanJob> handler = new PageProcessor.Handler<ScanJob>() {
-				@Override
-				public void process(ScanJob aJob, Page<ScanJob> aPage, int aIndexInPage, long aIndexInAll) {
-
-					aJob.setStatus(ScanJob.Status.INTERRUPTED);
-
-					scanJobDao.save(aJob);
-				}
-
-				@Override
-				public Page<ScanJob> getPage(Pageable aPageable) {
-					return scanJobDao.findByStatusIn(Arrays.asList(ScanJob.Status.STARTING, ScanJob.Status.STARTED), aPageable);
-				}
-			};
-			new PageProcessor<>(INTERRUPTION_BUFFER_SIZE, new Sort("id"), handler).run();
-		}
 	}
 
 	@Override
@@ -195,7 +175,42 @@ public class ScanJobServiceImpl implements ScanJobService {
 		return job;
 	}
 
+	@PostConstruct
+	@Transactional
+	public void markCurrentJobsInterrupted() {
+		if (installationService.getInstallation() != null) {
+
+			final AtomicInteger interruptedJobsCount = new AtomicInteger();
+
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
+					PageProcessor.Handler<ScanJob> handler = new PageProcessor.Handler<ScanJob>() {
+						@Override
+						public void process(ScanJob aJob, Page<ScanJob> aPage, int aIndexInPage, long aIndexInAll) {
+
+							aJob.setStatus(ScanJob.Status.INTERRUPTED);
+
+							scanJobDao.save(aJob);
+
+							interruptedJobsCount.incrementAndGet();
+						}
+
+						@Override
+						public Page<ScanJob> getPage(Pageable aPageable) {
+							return scanJobDao.findByStatusIn(Arrays.asList(ScanJob.Status.STARTING, ScanJob.Status.STARTED), aPageable);
+						}
+					};
+					new PageProcessor<>(INTERRUPTION_BUFFER_SIZE, new Sort("id"), handler).run();
+				}
+			});
+
+			logService.warn(log, "scanJobService.scanJobInterrupting", "[" + interruptedJobsCount.get() + "] jobs interrupted.", Arrays.asList(String.valueOf(interruptedJobsCount.get())));
+		}
+	}
+
 	@Override
+	@Transactional
 	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
 	synchronized public void startAutoScanJobIfNeeded() {
 		if (installationService.getInstallation() != null) {
