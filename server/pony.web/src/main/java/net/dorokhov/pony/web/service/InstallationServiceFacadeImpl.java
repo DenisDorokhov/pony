@@ -49,7 +49,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		command.getConfig().add(libraryPathsToConfig(aCommand.getLibraryFolders()));
 
-		return DtoConverter.installationToDto(installationService.install(new InstallationCommand()));
+		return DtoConverter.installationToDto(installationService.install(command));
 	}
 
 	private Config libraryPathsToConfig(List<String> aLibraryPaths) {
