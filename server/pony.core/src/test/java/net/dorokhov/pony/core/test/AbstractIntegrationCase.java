@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.test;
 
+import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.search.SearchService;
 import net.dorokhov.pony.core.storage.StoredFileService;
@@ -37,7 +38,7 @@ public class AbstractIntegrationCase {
 			installationService.uninstall();
 		}
 
-		installationService.install();
+		installationService.install(new InstallationCommand());
 	}
 
 	@After

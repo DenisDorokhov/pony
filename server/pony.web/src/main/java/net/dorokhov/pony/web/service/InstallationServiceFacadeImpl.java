@@ -1,10 +1,10 @@
 package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.web.domain.InstallationCommandDto;
-import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
-import net.dorokhov.pony.core.installation.exception.NotInstalledException;
+import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
+import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
+import net.dorokhov.pony.web.domain.InstallationCommandDto;
 import net.dorokhov.pony.web.domain.InstallationDto;
 import net.dorokhov.pony.web.utils.DtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +33,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 	@Override
 	@Transactional
 	public InstallationDto install(InstallationCommandDto aCommand) throws AlreadyInstalledException {
-		return DtoConverter.installationToDto(installationService.install());
-	}
-
-	@Override
-	@Transactional
-	public void uninstall() throws NotInstalledException {
-		installationService.uninstall();
+		// TODO: build real installation command
+		return DtoConverter.installationToDto(installationService.install(new InstallationCommand()));
 	}
 }

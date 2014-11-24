@@ -21,6 +21,10 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class InstallationServiceImpl implements InstallationService {
 
@@ -64,7 +68,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public synchronized Installation install() throws AlreadyInstalledException {
+	public synchronized Installation install(InstallationCommand aCommand) throws AlreadyInstalledException {
 
 		if (getInstallation() != null) {
 			throw new AlreadyInstalledException();
@@ -72,18 +76,27 @@ public class InstallationServiceImpl implements InstallationService {
 
 		log.info("Installing...");
 
+		final HashMap<String, Config> configMap = configsToMap(aCommand.getConfig());
+
+		if (configMap.get(Config.AUTO_SCAN_INTERVAL) == null) {
+
+			Config config = new Config();
+
+			config.setId(Config.AUTO_SCAN_INTERVAL);
+			config.setInteger(CONFIG_AUTO_SCAN_INTERVAL);
+
+			configMap.put(Config.AUTO_SCAN_INTERVAL, config);
+		}
+
 		Installation installation = transactionTemplate.execute(new TransactionCallback<Installation>() {
 			@Override
 			public Installation doInTransaction(TransactionStatus status) {
 
 				Installation installation = installationDao.install();
 
-				Config config = new Config();
-
-				config.setId(Config.AUTO_SCAN_INTERVAL);
-				config.setInteger(CONFIG_AUTO_SCAN_INTERVAL);
-
-				configDao.save(config);
+				for (Map.Entry<String, Config> entry : configMap.entrySet()) {
+					configDao.save(entry.getValue());
+				}
 
 				return installation;
 			}
@@ -112,5 +125,16 @@ public class InstallationServiceImpl implements InstallationService {
 		});
 
 		log.info("Successfully uninstalled.");
+	}
+
+	private HashMap<String, Config> configsToMap(List<Config> aConfigs) {
+
+		HashMap<String, Config> configMap = new HashMap<>();
+
+		for (Config config : aConfigs) {
+			configMap.put(config.getId(), config);
+		}
+
+		return configMap;
 	}
 }

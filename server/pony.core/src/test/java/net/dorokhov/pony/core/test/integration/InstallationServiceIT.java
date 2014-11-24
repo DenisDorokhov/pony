@@ -1,6 +1,9 @@
 package net.dorokhov.pony.core.test.integration;
 
+import net.dorokhov.pony.core.dao.ConfigDao;
+import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
+import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.installation.InstallationService;
@@ -11,18 +14,23 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Arrays;
+
 public class InstallationServiceIT {
 
 	protected ConfigurableApplicationContext context;
 
-	private InstallationService service;
+	private InstallationService installationService;
+
+	private ConfigDao configDao;
 
 	@Before
 	public void setUp() throws Exception {
 
 		context = new ClassPathXmlApplicationContext("context.xml");
 
-		service = context.getBean(InstallationService.class);
+		installationService = context.getBean(InstallationService.class);
+		configDao = context.getBean(ConfigDao.class);
 
 		restore();
 	}
@@ -42,43 +50,54 @@ public class InstallationServiceIT {
 
 		boolean isExceptionThrown;
 
-		Assert.assertNull(service.getInstallation());
+		InstallationCommand defaultCommand = new InstallationCommand();
 
-		checkInstallation(service.install());
-		checkInstallation(service.getInstallation());
+		Assert.assertNull(installationService.getInstallation());
+
+		checkInstallation(installationService.install(defaultCommand));
+		checkInstallation(installationService.getInstallation());
+
+		Assert.assertNotNull(configDao.findOne(Config.AUTO_SCAN_INTERVAL));
 
 		isExceptionThrown = false;
 
 		try {
-			service.install();
+			installationService.install(new InstallationCommand());
 		} catch (AlreadyInstalledException e) {
 			isExceptionThrown = true;
 		}
 
 		Assert.assertTrue(isExceptionThrown);
 
-		service.uninstall();
+		installationService.uninstall();
 
-		Assert.assertNull(service.getInstallation());
+		Assert.assertNull(installationService.getInstallation());
 
 		isExceptionThrown = false;
 
 		try {
-			service.uninstall();
+			installationService.uninstall();
 		} catch (NotInstalledException e) {
 			isExceptionThrown = true;
 		}
 
 		Assert.assertTrue(isExceptionThrown);
 
-		service.install(); // check installation after uninstallation
+		InstallationCommand testCommand = new InstallationCommand();
 
-		checkInstallation(service.getInstallation());
+		testCommand.setConfig(Arrays.asList(new Config(Config.AUTO_SCAN_INTERVAL, 1000), new Config("testId", "testValue")));
+
+		installationService.install(testCommand);
+
+		checkInstallation(installationService.getInstallation());
+
+		Assert.assertEquals(1000, configDao.findOne(Config.AUTO_SCAN_INTERVAL).getInteger());
+		Assert.assertEquals("testValue", configDao.findOne("testId").getValue());
 	}
 
 	private void restore() throws Exception {
-		if (service.getInstallation() != null) {
-			service.uninstall();
+		if (installationService.getInstallation() != null) {
+			installationService.uninstall();
 		}
 	}
 
