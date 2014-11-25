@@ -95,7 +95,12 @@ public class InstallationServiceImpl implements InstallationService {
 				Installation installation = installationDao.install();
 
 				for (Map.Entry<String, Config> entry : configMap.entrySet()) {
-					configDao.save(entry.getValue());
+
+					Config config = entry.getValue();
+
+					log.debug("Configuring option [" + config.getValue() + "]...");
+
+					configDao.save(config);
 				}
 
 				return installation;

@@ -3,9 +3,9 @@ package net.dorokhov.pony.core.library;
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.dao.*;
 import net.dorokhov.pony.core.domain.ScanResult;
+import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.domain.StoredFile;
-import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.library.file.LibraryFile;
 import net.dorokhov.pony.core.library.file.LibraryFolder;
@@ -455,6 +455,13 @@ public class ScanServiceImpl implements ScanService {
 
 		logService.info(log, "libraryScanService.importingSongs", "Importing songs...");
 		updateStatus(StatusImpl.buildScanStatus(aTargetFolders, STEP_SCAN_IMPORTING_SONGS, STEP_CODE_SCAN_IMPORTING_SONGS, 0.0));
+
+		Collections.sort(songFiles, new Comparator<LibrarySong>() {
+			@Override
+			public int compare(LibrarySong song1, LibrarySong song2) {
+				return song1.getFile().getAbsolutePath().compareTo(song2.getFile().getAbsolutePath());
+			}
+		});
 
 		ExecutorService executor = executorReference.get();
 
