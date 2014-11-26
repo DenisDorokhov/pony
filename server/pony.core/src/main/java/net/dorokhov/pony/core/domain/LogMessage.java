@@ -26,7 +26,7 @@ public class LogMessage {
 
 	private String details;
 
-	private List<String> arguments;
+	private List<LogMessageArgument> arguments;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,10 +88,9 @@ public class LogMessage {
 		details = aMessageDetails;
 	}
 
-	@Column(name = "value")
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "log_message_argument", joinColumns = @JoinColumn(name="log_message_id"))
-	public List<String> getArguments() {
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "logMessage")
+	@OrderBy("sort ASC")
+	public List<LogMessageArgument> getArguments() {
 
 		if (arguments == null) {
 			arguments = new ArrayList<>();
@@ -100,7 +99,7 @@ public class LogMessage {
 		return arguments;
 	}
 
-	public void setArguments(List<String> aArguments) {
+	public void setArguments(List<LogMessageArgument> aArguments) {
 		arguments = aArguments;
 	}
 

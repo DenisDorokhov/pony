@@ -2,6 +2,7 @@ package net.dorokhov.pony.core.logging;
 
 import net.dorokhov.pony.core.dao.LogMessageDao;
 import net.dorokhov.pony.core.domain.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessageArgument;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,8 +263,20 @@ public class LogServiceImpl implements LogService {
 		message.setType(aType);
 		message.setCode(aCode);
 		message.setText(aText);
-		message.setArguments(aArguments);
 		message.setDetails(aDetails);
+
+		if (aArguments != null) {
+			for (int i = 0; i < aArguments.size(); i++) {
+
+				LogMessageArgument argument = new LogMessageArgument();
+
+				argument.setSort(i);
+				argument.setValue(aArguments.get(i));
+				argument.setLogMessage(message);
+
+				message.getArguments().add(argument);
+			}
+		}
 
 		return logMessageDao.save(message);
 	}

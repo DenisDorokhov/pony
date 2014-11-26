@@ -27,13 +27,14 @@ CREATE INDEX index_log_message_date_type ON log_message(date, type);
 
 CREATE TABLE log_message_argument (
 
-	log_message_id BIGINT NOT NULL,
+	id BIGINT IDENTITY,
 
+	sort TINYINT NOT NULL,
 	value LONGVARCHAR,
 
-	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	log_message_id BIGINT NOT NULL,
 
-	PRIMARY KEY (log_message_id, value)
+	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE config (

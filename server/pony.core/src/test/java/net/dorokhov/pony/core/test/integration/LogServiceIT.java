@@ -1,6 +1,7 @@
 package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.domain.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessageArgument;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import org.junit.Assert;
@@ -143,6 +144,15 @@ public class LogServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(aType, aMessage.getType());
 		Assert.assertEquals(aCode, aMessage.getCode());
 		Assert.assertEquals(aText, aMessage.getText());
-		Assert.assertEquals(aArguments, aMessage.getArguments());
+
+		for (int i = 0; i < aArguments.size(); i++) {
+
+			LogMessageArgument argument = aMessage.getArguments().get(i);
+
+			Assert.assertNotNull(argument.getId());
+			Assert.assertEquals(Integer.valueOf(i), argument.getSort());
+			Assert.assertEquals(aArguments.get(i), argument.getValue());
+			Assert.assertEquals(aMessage.getId(), argument.getLogMessage().getId());
+		}
 	}
 }
