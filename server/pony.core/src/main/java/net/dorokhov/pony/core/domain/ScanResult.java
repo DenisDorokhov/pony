@@ -369,8 +369,9 @@ public class ScanResult {
 		return "ScanResult{" +
 				"id=" + id +
 				", date=" + date +
-				", type=" + scanType +
-				", paths=" + targetPaths +
+				", scanType=" + scanType +
+				", targetPaths=" + targetPaths +
+				", failedPaths=" + failedPaths +
 				", duration=" + duration +
 				", songSize=" + songSize +
 				", artworkSize=" + artworkSize +
@@ -379,7 +380,7 @@ public class ScanResult {
 				", albumCount=" + albumCount +
 				", songCount=" + songCount +
 				", artworkCount=" + artworkCount +
-				", foundSongCount=" + processedSongCount +
+				", processedSongCount=" + processedSongCount +
 				", createdArtistCount=" + createdArtistCount +
 				", updatedArtistCount=" + updatedArtistCount +
 				", deletedArtistCount=" + deletedArtistCount +

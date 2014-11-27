@@ -55,4 +55,9 @@ public class LogMessageArgument {
 	public void setLogMessage(LogMessage aLogMessage) {
 		logMessage = aLogMessage;
 	}
+
+	@Override
+	public String toString() {
+		return value;
+	}
 }

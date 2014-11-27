@@ -131,4 +131,17 @@ public class LogMessage {
 
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "LogMessage{" +
+				"id=" + id +
+				", date=" + date +
+				", type=" + type +
+				", code='" + code + '\'' +
+				", text='" + text + '\'' +
+				", details='" + details + '\'' +
+				", arguments=" + arguments +
+				'}';
+	}
 }

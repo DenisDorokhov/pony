@@ -62,4 +62,17 @@ public class ScanJob extends BaseEntity<Long> {
 	public void setScanResult(ScanResult aScanResult) {
 		scanResult = aScanResult;
 	}
+
+	@Override
+	public String toString() {
+		return "ScanJob{" +
+				"id=" + getId() +
+				", creationDate=" + getCreationDate() +
+				", updateDate=" + getUpdateDate() +
+				", scanType=" + scanType +
+				", status=" + status +
+				", logMessage=" + logMessage +
+				", scanResult=" + scanResult +
+				'}';
+	}
 }
