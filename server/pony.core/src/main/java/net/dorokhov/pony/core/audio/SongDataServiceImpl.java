@@ -10,8 +10,6 @@ import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.datatype.Artwork;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,6 @@ import java.io.File;
 
 @Service
 public class SongDataServiceImpl implements SongDataService {
-
-	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	private ChecksumService checksumService;
 
@@ -31,12 +27,7 @@ public class SongDataServiceImpl implements SongDataService {
 
 	@Override
 	public SongDataReadable read(File aFile) throws Exception {
-
-		SongDataReadable songData = readSongData(AudioFileIO.read(aFile));
-
-		log.debug("song data has been read: {}", songData);
-
-		return songData;
+		return readSongData(AudioFileIO.read(aFile));
 	}
 
 	@Override
@@ -99,11 +90,7 @@ public class SongDataServiceImpl implements SongDataService {
 
 		AudioFileIO.write(audioFile);
 
-		SongDataReadable songData = readSongData(audioFile);
-
-		log.debug("song data has been written: {}", songData);
-
-		return songData;
+		return readSongData(audioFile);
 	}
 
 	private String parseStringTag(Tag aTag, FieldKey aKey) {

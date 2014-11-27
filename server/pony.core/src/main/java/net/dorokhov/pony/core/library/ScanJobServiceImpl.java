@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -112,6 +113,12 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public Page<ScanJob> getAll(Pageable aPageable) {
+		return scanJobDao.findAll(aPageable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public ScanJob getById(Long aId) {
 		return scanJobDao.findOne(aId);
 	}
@@ -134,7 +141,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				ScanJob startingJob = new ScanJob();
 
-				startingJob.setType(ScanType.EDIT);
+				startingJob.setScanType(ScanType.EDIT);
 				startingJob.setStatus(ScanJob.Status.STARTING);
 				startingJob.setLogMessage(logMessage);
 
@@ -231,7 +238,9 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 					if (config != null && config.getValue() != null) {
 
-						ScanResult lastResult = scanService.getLastResult();
+						Page<ScanResult> page = scanService.getAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
+
+						ScanResult lastResult = page.getTotalElements() > 0 ? page.getContent().get(0) : null;
 
 						if (lastResult != null) {
 
@@ -288,7 +297,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				ScanJob startingJob = new ScanJob();
 
-				startingJob.setType(ScanType.FULL);
+				startingJob.setScanType(ScanType.FULL);
 				startingJob.setStatus(ScanJob.Status.STARTING);
 				startingJob.setLogMessage(logService.info(log, "scanJobService.scanJobStarting", "Starting scan job for " + aTargetFolders + "...", targetPaths));
 

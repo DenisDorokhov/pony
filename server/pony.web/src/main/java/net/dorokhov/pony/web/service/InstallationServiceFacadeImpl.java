@@ -5,7 +5,6 @@ import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
-import net.dorokhov.pony.web.common.DtoConverter;
 import net.dorokhov.pony.web.domain.InstallationCommandDto;
 import net.dorokhov.pony.web.domain.InstallationDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,18 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 	private InstallationService installationService;
 
+	private DtoConverter dtoConverter;
+
 	private String libraryFoldersSeparator;
 
 	@Autowired
 	public void setInstallationService(InstallationService aInstallationService) {
 		installationService = aInstallationService;
+	}
+
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
 	}
 
 	@Value("${libraryFoldersConfig.separator}")
@@ -38,7 +44,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		Installation installation = installationService.getInstallation();
 
-		return installation != null ? DtoConverter.installationToDto(installation) : null;
+		return installation != null ? dtoConverter.installationToDto(installation) : null;
 	}
 
 	@Override
@@ -49,7 +55,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		command.getConfig().add(libraryPathsToConfig(aCommand.getLibraryFolders()));
 
-		return DtoConverter.installationToDto(installationService.install(command));
+		return dtoConverter.installationToDto(installationService.install(command));
 	}
 
 	private Config libraryPathsToConfig(List<String> aLibraryPaths) {

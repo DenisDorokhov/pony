@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -188,11 +189,14 @@ public class ScanServiceImpl implements ScanService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ScanResult getLastResult() {
+	public Page<ScanResult> getAll(Pageable aPageable) {
+		return scanResultDao.findAll(aPageable);
+	}
 
-		Page<ScanResult> scanResults = scanResultDao.findAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
-
-		return scanResults.getNumberOfElements() > 0 ? scanResults.getContent().get(0) : null;
+	@Override
+	@Transactional(readOnly = true)
+	public ScanResult getById(Long aId) {
+		return scanResultDao.findOne(aId);
 	}
 
 	@Override
@@ -542,7 +546,10 @@ public class ScanServiceImpl implements ScanService {
 
 	private ScanResult calculateScanResult(ScanType aType, List<String> aPaths, ScanProcessor aProcessor) {
 
-		ScanResult lastScan = getLastResult();
+		Page<ScanResult> scanResults = scanResultDao.findAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
+
+		ScanResult lastScan = scanResults.getNumberOfElements() > 0 ? scanResults.getContent().get(0) : null;
+
 		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(0L));
 
 		long songCountBeforeScan = songDao.count();
@@ -587,7 +594,7 @@ public class ScanServiceImpl implements ScanService {
 		scanResult.setTargetPaths(aPaths);
 		scanResult.setFailedPaths(new ArrayList<>(failedPaths));
 
-		scanResult.setType(aType);
+		scanResult.setScanType(aType);
 		scanResult.setDuration(endTime - startTime);
 
 		scanResult.setSongSize(ObjectUtils.defaultIfNull(songDao.sumSize(), 0L));

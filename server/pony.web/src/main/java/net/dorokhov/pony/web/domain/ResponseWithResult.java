@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.domain.response;
+package net.dorokhov.pony.web.domain;
 
 import java.io.Serializable;
 

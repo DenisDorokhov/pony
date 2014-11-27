@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.PageRequest;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -181,9 +182,7 @@ public class ScanServiceIT extends AbstractIntegrationCase {
 		Assert.assertEquals(Long.valueOf(0), scanResult.getCreatedArtworkCount());
 		Assert.assertEquals(Long.valueOf(0), scanResult.getDeletedArtworkCount());
 
-		scanResult = service.getLastResult();
-
-		Assert.assertNotNull(scanResult);
+		Assert.assertTrue(service.getAll(new PageRequest(0, 1)).getTotalElements() > 0);
 	}
 
 	private void resetFlags() {

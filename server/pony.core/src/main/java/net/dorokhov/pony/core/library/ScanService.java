@@ -3,6 +3,8 @@ package net.dorokhov.pony.core.library;
 import net.dorokhov.pony.core.domain.ScanResult;
 import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.exception.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.File;
 import java.util.List;
@@ -15,7 +17,9 @@ public interface ScanService {
 
 	public Status getStatus();
 
-	public ScanResult getLastResult();
+	public Page<ScanResult> getAll(Pageable aPageable);
+
+	public ScanResult getById(Long aId);
 
 	public ScanResult scan(List<File> aTargetFolders) throws FileNotFoundException, NotFolderException, ConcurrentScanException;
 

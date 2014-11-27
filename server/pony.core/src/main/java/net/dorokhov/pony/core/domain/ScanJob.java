@@ -13,7 +13,7 @@ public class ScanJob extends BaseEntity<Long> {
 		STARTING, STARTED, COMPLETE, FAILED, INTERRUPTED
 	}
 
-	private ScanType type;
+	private ScanType scanType;
 
 	private Status status;
 
@@ -24,12 +24,12 @@ public class ScanJob extends BaseEntity<Long> {
 	@Column(name = "type")
 	@Enumerated(EnumType.STRING)
 	@NotNull
-	public ScanType getType() {
-		return type;
+	public ScanType getScanType() {
+		return scanType;
 	}
 
-	public void setType(ScanType aType) {
-		type = aType;
+	public void setScanType(ScanType aType) {
+		scanType = aType;
 	}
 
 	@Column(name = "status")

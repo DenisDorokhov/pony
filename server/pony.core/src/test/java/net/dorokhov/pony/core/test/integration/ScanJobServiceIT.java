@@ -97,7 +97,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertNotNull(job.getCreationDate());
 		Assert.assertNull(job.getUpdateDate());
-		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanType.FULL, job.getScanType());
 		Assert.assertEquals(ScanJob.Status.STARTING, job.getStatus());
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNull(job.getScanResult());
@@ -113,7 +113,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertNotNull(job.getCreationDate());
 		Assert.assertNotNull(job.getUpdateDate());
-		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanType.FULL, job.getScanType());
 		Assert.assertEquals(ScanJob.Status.COMPLETE, job.getStatus());
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNotNull(job.getScanResult());
@@ -133,7 +133,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertNotNull(job.getCreationDate());
 		Assert.assertNull(job.getUpdateDate());
-		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanType.FULL, job.getScanType());
 		Assert.assertEquals(ScanJob.Status.STARTING, job.getStatus());
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNull(job.getScanResult());
@@ -149,7 +149,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertNotNull(job.getCreationDate());
 		Assert.assertNotNull(job.getUpdateDate());
-		Assert.assertEquals(ScanType.FULL, job.getType());
+		Assert.assertEquals(ScanType.FULL, job.getScanType());
 		Assert.assertEquals(ScanJob.Status.FAILED, job.getStatus());
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNull(job.getScanResult());
