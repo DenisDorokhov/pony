@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.controller;
 
 import net.dorokhov.pony.web.domain.*;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import net.dorokhov.pony.web.service.ResponseBuilder;
 import net.dorokhov.pony.web.service.ScanServiceFacade;
@@ -45,7 +46,14 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanJobs/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) {
-		return responseBuilder.build(scanServiceFacade.getScanJobById(aId));
+
+		ScanJobDto job = scanServiceFacade.getScanJobById(aId);
+
+		if (job == null) {
+			throw new ObjectNotFoundException(aId, "scanJobNotFound", "Scan job [" + aId + "] could not be found.");
+		}
+
+		return responseBuilder.build(job);
 	}
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.POST)
@@ -61,7 +69,14 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanResults/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) {
-		return responseBuilder.build(scanServiceFacade.getScanResultById(aId));
+
+		ScanResultDto result = scanServiceFacade.getScanResultById(aId);
+
+		if (result == null) {
+			throw new ObjectNotFoundException(aId, "scanResultNotFound", "Scan result [" + aId + "] could not be found.");
+		}
+
+		return responseBuilder.build(result);
 	}
 
 	@RequestMapping(value = "/scanStatus", method = RequestMethod.GET)

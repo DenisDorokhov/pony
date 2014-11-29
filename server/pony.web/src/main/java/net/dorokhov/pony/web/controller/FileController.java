@@ -63,7 +63,7 @@ public class FileController {
 			}
 		}
 
-		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("File not found.", HttpStatus.NOT_FOUND);
 	}
 
 	@RequestMapping(value = "/audio/{id}", method = RequestMethod.GET)
@@ -86,6 +86,6 @@ public class FileController {
 			return new ModelAndView(renderer, model);
 		}
 
-		return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Audio not found.", HttpStatus.NOT_FOUND);
 	}
 }
