@@ -5,6 +5,7 @@ import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import net.dorokhov.pony.web.service.ResponseBuilder;
 import net.dorokhov.pony.web.service.ScanServiceFacade;
+import net.dorokhov.pony.web.service.SearchServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,8 @@ public class ApiController {
 	private InstallationServiceFacade installationServiceFacade;
 
 	private ScanServiceFacade scanServiceFacade;
+
+	private SearchServiceFacade searchServiceFacade;
 
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
@@ -33,6 +36,11 @@ public class ApiController {
 		scanServiceFacade = aScanServiceFacade;
 	}
 
+	@Autowired
+	public void setSearchServiceFacade(SearchServiceFacade aSearchServiceFacade) {
+		searchServiceFacade = aSearchServiceFacade;
+	}
+
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
 	public ResponseDto<InstallationDto> getInstallation() {
 		return responseBuilder.build(installationServiceFacade.getInstallation());
@@ -40,7 +48,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-															   @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
+														@RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
@@ -63,7 +71,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanResults", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-																	 @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
+															  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 
@@ -82,6 +90,11 @@ public class ApiController {
 	@RequestMapping(value = "/scanStatus", method = RequestMethod.GET)
 	public ResponseDto<ScanStatusDto> getScanStatus() {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public ResponseDto<SearchDto> search(@RequestParam("query") String aQuery) {
+		return responseBuilder.build(searchServiceFacade.search(aQuery));
 	}
 
 }

@@ -3,14 +3,25 @@ package net.dorokhov.pony.web.service;
 import net.dorokhov.pony.core.domain.*;
 import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.web.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.Serializable;
 
 @Service
 public class DtoConverter {
+
+	private final Logger log = LoggerFactory.getLogger(getClass());
+
+	public static interface ItemConverter<FromType, ToType extends Serializable> {
+		public ToType convert(FromType aItem);
+	}
 
 	public <EntityType, DtoType extends Serializable> ListDto<DtoType> pageToListDto(Page<EntityType> aPage, ItemConverter<EntityType, DtoType> aItemConverter) {
 
@@ -139,8 +150,137 @@ public class DtoConverter {
 		return dto;
 	}
 
-	public static interface ItemConverter<FromType, ToType extends Serializable> {
-		public ToType convert(FromType aItem);
+	public GenreDto genreToDto(Genre aGenre) {
+
+		GenreDto dto = new GenreDto();
+
+		dto.setId(aGenre.getId());
+		dto.setName(aGenre.getName());
+
+		StoredFile artwork = aGenre.getArtwork();
+
+		if (artwork != null) {
+			dto.setArtwork(artwork.getId());
+			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
+
+		return dto;
+	}
+
+	public ArtistDto artistToDto(Artist aArtist) {
+
+		ArtistDto dto = new ArtistDto();
+
+		dto.setId(aArtist.getId());
+		dto.setName(aArtist.getName());
+
+		StoredFile artwork = aArtist.getArtwork();
+
+		if (artwork != null) {
+			dto.setArtwork(artwork.getId());
+			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
+
+		return dto;
+	}
+
+	public AlbumDto albumToDto(Album aAlbum) {
+
+		AlbumDto dto = new AlbumDto();
+
+		dto.setId(aAlbum.getId());
+		dto.setName(aAlbum.getName());
+		dto.setYear(aAlbum.getYear());
+
+		dto.setArtist(aAlbum.getArtist().getId());
+		dto.setArtistName(aAlbum.getArtist().getName());
+
+		StoredFile artwork = aAlbum.getArtwork();
+
+		if (artwork != null) {
+			dto.setArtwork(artwork.getId());
+			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
+
+		return dto;
+	}
+
+	public SongDto songToDto(Song aSong) {
+
+		SongDto dto = new SongDto();
+
+		dto.setId(aSong.getId());
+		dto.setUrl(buildAudioUrl(aSong.getId()));
+		dto.setDuration(aSong.getDuration());
+		dto.setDiscNumber(aSong.getDiscNumber());
+		dto.setTrackNumber(aSong.getTrackNumber());
+		dto.setName(aSong.getName());
+
+		dto.setGenre(aSong.getGenre().getId());
+		dto.setGenreName(aSong.getGenre().getName());
+
+		dto.setArtist(aSong.getAlbum().getArtist().getId());
+		dto.setArtistName(aSong.getAlbum().getArtist().getName());
+
+		dto.setAlbum(aSong.getAlbum().getId());
+		dto.setAlbumName(aSong.getAlbum().getName());
+		dto.setAlbumArtistName(aSong.getAlbumArtistName());
+		dto.setAlbumYear(aSong.getAlbum().getYear());
+
+		StoredFile artwork = aSong.getArtwork();
+
+		if (artwork == null) {
+			artwork = aSong.getAlbum().getArtwork();
+		}
+
+		if (artwork != null) {
+			dto.setArtwork(artwork.getId());
+			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
+
+		return dto;
+	}
+
+	private String buildFileUrl(Long aId) {
+		return buildUrl(aId, "files");
+	}
+
+	private String buildAudioUrl(Long aId) {
+		return buildUrl(aId, "audio");
+	}
+
+	private String buildUrl(Long aId, String aCall) {
+
+		String url = null;
+
+		if (aId != null) {
+
+			HttpServletRequest request = getCurrentRequest();
+
+			if (request != null) {
+				url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() +
+						request.getContextPath() + "/" + aCall + "/" + aId;
+			}
+		}
+
+		return url;
+	}
+
+	private HttpServletRequest getCurrentRequest() {
+
+		HttpServletRequest request = null;
+
+		try {
+
+			ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+
+			request = attributes.getRequest();
+
+		} catch (Exception e) {
+			log.warn("could not get current request, is it a web application?");
+		}
+
+		return request;
 	}
 
 }
