@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = ApiController.class)
 @ResponseBody
 public class ApiControllerAdvice {
 
