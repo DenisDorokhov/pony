@@ -67,7 +67,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ScanJobDto getScanJobById(Long aId) {
+	public ScanJobDto getScanJob(Long aId) {
 
 		ScanJob job = scanJobService.getById(aId);
 
@@ -93,7 +93,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ScanResultDto getScanResultById(Long aId) {
+	public ScanResultDto getScanResult(Long aId) {
 
 		ScanResult result = scanService.getById(aId);
 

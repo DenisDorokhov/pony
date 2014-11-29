@@ -13,6 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 @Service
 public class DtoConverter {
@@ -171,15 +172,18 @@ public class DtoConverter {
 
 		ArtistDto dto = new ArtistDto();
 
-		dto.setId(aArtist.getId());
-		dto.setName(aArtist.getName());
+		initArtistDto(dto, aArtist);
 
-		StoredFile artwork = aArtist.getArtwork();
+		return dto;
+	}
 
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
-		}
+	public ArtistSongsDto artistToSongsDto(Artist aArtist, List<AlbumSongsDto> aAlbumsDto) {
+
+		ArtistSongsDto dto = new ArtistSongsDto();
+
+		initArtistDto(dto, aArtist);
+
+		dto.setAlbums(aAlbumsDto);
 
 		return dto;
 	}
@@ -188,19 +192,18 @@ public class DtoConverter {
 
 		AlbumDto dto = new AlbumDto();
 
-		dto.setId(aAlbum.getId());
-		dto.setName(aAlbum.getName());
-		dto.setYear(aAlbum.getYear());
+		initAlbumDto(dto, aAlbum);
 
-		dto.setArtist(aAlbum.getArtist().getId());
-		dto.setArtistName(aAlbum.getArtist().getName());
+		return dto;
+	}
 
-		StoredFile artwork = aAlbum.getArtwork();
+	public AlbumSongsDto albumToSongsDto(Album aAlbum, List<SongDto> aSongsDto) {
 
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(buildFileUrl(artwork.getId()));
-		}
+		AlbumSongsDto dto = new AlbumSongsDto();
+
+		initAlbumDto(dto, aAlbum);
+
+		dto.setSongs(aSongsDto);
 
 		return dto;
 	}
@@ -239,6 +242,36 @@ public class DtoConverter {
 		}
 
 		return dto;
+	}
+
+	private void initArtistDto(ArtistDto aDto, Artist aArtist) {
+
+		aDto.setId(aArtist.getId());
+		aDto.setName(aArtist.getName());
+
+		StoredFile artwork = aArtist.getArtwork();
+
+		if (artwork != null) {
+			aDto.setArtwork(artwork.getId());
+			aDto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
+	}
+
+	private void initAlbumDto(AlbumDto aDto, Album aAlbum) {
+
+		aDto.setId(aAlbum.getId());
+		aDto.setName(aAlbum.getName());
+		aDto.setYear(aAlbum.getYear());
+
+		aDto.setArtist(aAlbum.getArtist().getId());
+		aDto.setArtistName(aAlbum.getArtist().getName());
+
+		StoredFile artwork = aAlbum.getArtwork();
+
+		if (artwork != null) {
+			aDto.setArtwork(artwork.getId());
+			aDto.setArtworkUrl(buildFileUrl(artwork.getId()));
+		}
 	}
 
 	private String buildFileUrl(Long aId) {

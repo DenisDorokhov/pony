@@ -2,15 +2,15 @@ package net.dorokhov.pony.web.exception;
 
 public class ObjectNotFoundException extends RuntimeException {
 
-	private Long id;
+	private Object id;
 
 	private String errorCode;
 
-	public ObjectNotFoundException(Long aId) {
+	public ObjectNotFoundException(Object aId) {
 		this(aId, "objectNotFound", "Object [" + aId + "] could not be found.");
 	}
 
-	public ObjectNotFoundException(Long aId, String aErrorCode, String aMessage) {
+	public ObjectNotFoundException(Object aId, String aErrorCode, String aMessage) {
 
 		super(aMessage);
 
@@ -18,7 +18,7 @@ public class ObjectNotFoundException extends RuntimeException {
 		errorCode = aErrorCode;
 	}
 
-	public Long getId() {
+	public Object getId() {
 		return id;
 	}
 

@@ -12,11 +12,11 @@ public interface ScanServiceFacade {
 
 	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize);
 
-	public ScanJobDto getScanJobById(Long aId);
+	public ScanJobDto getScanJob(Long aId);
 
 	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize);
 
-	public ScanResultDto getScanResultById(Long aId);
+	public ScanResultDto getScanResult(Long aId);
 
 	public ScanStatusDto getScanStatus();
 

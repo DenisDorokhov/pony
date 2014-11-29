@@ -5,9 +5,11 @@ import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import net.dorokhov.pony.web.service.ResponseBuilder;
 import net.dorokhov.pony.web.service.ScanServiceFacade;
-import net.dorokhov.pony.web.service.SearchServiceFacade;
+import net.dorokhov.pony.web.service.SongServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api", produces = "application/json")
@@ -19,7 +21,7 @@ public class ApiController {
 
 	private ScanServiceFacade scanServiceFacade;
 
-	private SearchServiceFacade searchServiceFacade;
+	private SongServiceFacade songServiceFacade;
 
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
@@ -37,8 +39,8 @@ public class ApiController {
 	}
 
 	@Autowired
-	public void setSearchServiceFacade(SearchServiceFacade aSearchServiceFacade) {
-		searchServiceFacade = aSearchServiceFacade;
+	public void setSongServiceFacade(SongServiceFacade aSongServiceFacade) {
+		songServiceFacade = aSongServiceFacade;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -55,7 +57,7 @@ public class ApiController {
 	@RequestMapping(value = "/scanJobs/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) {
 
-		ScanJobDto job = scanServiceFacade.getScanJobById(aId);
+		ScanJobDto job = scanServiceFacade.getScanJob(aId);
 
 		if (job == null) {
 			throw new ObjectNotFoundException(aId, "scanJobNotFound", "Scan job [" + aId + "] could not be found.");
@@ -78,7 +80,7 @@ public class ApiController {
 	@RequestMapping(value = "/scanResults/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) {
 
-		ScanResultDto result = scanServiceFacade.getScanResultById(aId);
+		ScanResultDto result = scanServiceFacade.getScanResult(aId);
 
 		if (result == null) {
 			throw new ObjectNotFoundException(aId, "scanResultNotFound", "Scan result [" + aId + "] could not be found.");
@@ -92,9 +94,26 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}
 
+	@RequestMapping(value = "/artists", method = RequestMethod.GET)
+	public ResponseDto<List<ArtistDto>> getArtists() {
+		return responseBuilder.build(songServiceFacade.getArtists());
+	}
+
+	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
+	public ResponseDto<ArtistSongsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) {
+
+		ArtistSongsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
+
+		if (artist == null) {
+			throw new ObjectNotFoundException(aArtistIdOrName, "artistNotFound", "Artist [" + aArtistIdOrName + "] could not be found.");
+		}
+
+		return responseBuilder.build(artist);
+	}
+
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public ResponseDto<SearchDto> search(@RequestParam("query") String aQuery) {
-		return responseBuilder.build(searchServiceFacade.search(aQuery));
+		return responseBuilder.build(songServiceFacade.search(aQuery));
 	}
 
 }
