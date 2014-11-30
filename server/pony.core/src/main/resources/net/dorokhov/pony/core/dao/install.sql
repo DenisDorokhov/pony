@@ -5,7 +5,57 @@ CREATE TABLE installation (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	version VARCHAR(255) NOT NULL
+	version VARCHAR (255) NOT NULL
+);
+
+CREATE TABLE user (
+
+	id BIGINT IDENTITY,
+
+	creation_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
+
+	name VARCHAR (255) NOT NULL,
+
+	email VARCHAR (255) NOT NULL,
+	password VARCHAR (255) NOT NULL
+);
+
+CREATE INDEX index_user_login_password ON user(email, password);
+
+CREATE TABLE user_ticket (
+
+	id VARCHAR (255) NOT NULL,
+
+	creation_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
+
+	user_id BIGINT NOT NULL,
+
+	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE role (
+
+	id BIGINT IDENTITY,
+
+	creation_date TIMESTAMP NOT NULL,
+	update_date TIMESTAMP,
+
+	name VARCHAR (255) NOT NULL
+);
+
+CREATE INDEX index_role_name ON role(name);
+
+CREATE TABLE user_role (
+
+	user_id BIGINT NOT NULL,
+	role_id BIGINT NOT NULL,
+
+	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE log_message (
@@ -16,14 +66,14 @@ CREATE TABLE log_message (
 
 	type TINYINT NOT NULL,
 
-	code VARCHAR(255) NOT NULL,
+	code VARCHAR (255) NOT NULL,
 	text LONGVARCHAR,
 	details LONGVARCHAR
 );
 
-CREATE INDEX index_log_message_date ON log_message(date);
-CREATE INDEX index_log_message_type ON log_message(type);
-CREATE INDEX index_log_message_date_type ON log_message(date, type);
+CREATE INDEX index_log_message_date ON log_message (date);
+CREATE INDEX index_log_message_type ON log_message (type);
+CREATE INDEX index_log_message_date_type ON log_message (date, type);
 
 CREATE TABLE log_message_argument (
 
@@ -34,12 +84,12 @@ CREATE TABLE log_message_argument (
 
 	log_message_id BIGINT NOT NULL,
 
-	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (log_message_id) REFERENCES log_message (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE config (
 
-	id VARCHAR(255) NOT NULL,
+	id VARCHAR (255) NOT NULL,
 
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
@@ -55,7 +105,7 @@ CREATE TABLE scan_result (
 
 	date TIMESTAMP NOT NULL,
 
-	type VARCHAR(255) NOT NULL,
+	type VARCHAR (255) NOT NULL,
 
 	duration BIGINT NOT NULL,
 
@@ -90,7 +140,7 @@ CREATE TABLE scan_result (
 	deleted_artwork_count BIGINT NOT NULL
 );
 
-CREATE INDEX index_scan_result_date ON scan_result(date);
+CREATE INDEX index_scan_result_date ON scan_result (date);
 
 CREATE TABLE scan_job (
 
@@ -99,25 +149,25 @@ CREATE TABLE scan_job (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	type VARCHAR(255) NOT NULL,
-	status VARCHAR(255) NOT NULL,
+	type VARCHAR (255) NOT NULL,
+	status VARCHAR (255) NOT NULL,
 
 	log_message_id BIGINT,
 	scan_result_id BIGINT,
 
-	FOREIGN KEY (log_message_id) REFERENCES log_message(id) ON DELETE SET NULL ON UPDATE CASCADE,
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (log_message_id) REFERENCES log_message (id) ON DELETE SET NULL ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE INDEX index_scan_job_status ON scan_job(status);
+CREATE INDEX index_scan_job_status ON scan_job (status);
 
 CREATE TABLE scan_result_target_path (
 
 	scan_result_id BIGINT NOT NULL,
 
-	value VARCHAR(255) NOT NULL,
+	value VARCHAR (255) NOT NULL,
 
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE CASCADE ON UPDATE CASCADE,
 
 	PRIMARY KEY (scan_result_id, value)
 );
@@ -126,9 +176,9 @@ CREATE TABLE scan_result_failed_path (
 
 	scan_result_id BIGINT NOT NULL,
 
-	value VARCHAR(255) NOT NULL,
+	value VARCHAR (255) NOT NULL,
 
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE CASCADE ON UPDATE CASCADE,
 
 	PRIMARY KEY (scan_result_id, value)
 );
@@ -139,20 +189,20 @@ CREATE TABLE stored_file (
 
 	date TIMESTAMP NOT NULL,
 
-	name VARCHAR(255) NOT NULL,
-	mime_type VARCHAR(255) NOT NULL,
-	checksum VARCHAR(255) NOT NULL,
+	name VARCHAR (255) NOT NULL,
+	mime_type VARCHAR (255) NOT NULL,
+	checksum VARCHAR (255) NOT NULL,
 	size BIGINT NOT NULL,
-	tag VARCHAR(255),
-	path VARCHAR(255) NOT NULL,
+	tag VARCHAR (255),
+	path VARCHAR (255) NOT NULL,
 	user_data LONGVARCHAR,
 
 	UNIQUE (path),
 	UNIQUE (tag, checksum)
 );
 
-CREATE INDEX index_stored_file_checksum ON stored_file(checksum);
-CREATE INDEX index_stored_file_tag ON stored_file(tag);
+CREATE INDEX index_stored_file_checksum ON stored_file (checksum);
+CREATE INDEX index_stored_file_tag ON stored_file (tag);
 
 CREATE TABLE genre (
 
@@ -165,7 +215,7 @@ CREATE TABLE genre (
 
 	artwork_stored_file_id BIGINT,
 
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE INDEX index_genre_name ON genre(name);
@@ -177,11 +227,11 @@ CREATE TABLE artist (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255),
+	name VARCHAR (255),
 
 	artwork_stored_file_id BIGINT,
 
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE INDEX index_artist_name ON artist(name);
@@ -193,19 +243,19 @@ CREATE TABLE album (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255),
+	name VARCHAR (255),
 	year INT,
 
 	artwork_stored_file_id BIGINT,
 
 	artist_id BIGINT NOT NULL,
 
-	FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artist_id) REFERENCES artist (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE INDEX index_album_name_artist_id ON album(name, artist_id);
-CREATE INDEX index_album_artist_id_year_name ON album(artist_id, year, name);
+CREATE INDEX index_album_name_artist_id ON album (name, artist_id);
+CREATE INDEX index_album_artist_id_year_name ON album (artist_id, year, name);
 
 CREATE TABLE song (
 
@@ -214,9 +264,9 @@ CREATE TABLE song (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	path VARCHAR(255) NOT NULL,
-	format VARCHAR(255) NOT NULL,
-	mime_type VARCHAR(255) NOT NULL,
+	path VARCHAR (255) NOT NULL,
+	format VARCHAR (255) NOT NULL,
+	mime_type VARCHAR (255) NOT NULL,
 	size BIGINT NOT NULL,
 
 	duration INT NOT NULL,
@@ -228,11 +278,11 @@ CREATE TABLE song (
 	track_number INT,
 	track_count INT,
 
-	name VARCHAR(255),
-	genre_name VARCHAR(255),
-	artist_name VARCHAR(255),
-	album_artist_name VARCHAR(255),
-	album_name VARCHAR(255),
+	name VARCHAR (255),
+	genre_name VARCHAR (255),
+	artist_name VARCHAR (255),
+	album_artist_name VARCHAR (255),
+	album_name VARCHAR (255),
 
 	year INT,
 
@@ -241,13 +291,13 @@ CREATE TABLE song (
 	album_id BIGINT NOT NULL,
 	genre_id BIGINT NOT NULL,
 
-	FOREIGN KEY (album_id) REFERENCES album(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file(id) ON DELETE SET NULL ON UPDATE CASCADE,
+	FOREIGN KEY (album_id) REFERENCES album (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE,
 
 	UNIQUE (path)
 );
 
-CREATE INDEX index_song_track_number_name ON song(disc_number, track_number, name);
+CREATE INDEX index_song_track_number_name ON song (disc_number, track_number, name);
 
 INSERT INTO installation (creation_date, version) VALUES (NOW(), '1.0');

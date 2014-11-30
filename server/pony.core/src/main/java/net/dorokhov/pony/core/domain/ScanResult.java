@@ -85,7 +85,7 @@ public class ScanResult {
 
 	@Column(name="value")
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name="scan_result_target_path", joinColumns=@JoinColumn(name="scan_result_id"))
+	@CollectionTable(name="scan_result_target_path", joinColumns = @JoinColumn(name = "scan_result_id"))
 	public List<String> getTargetPaths() {
 		return targetPaths;
 	}
@@ -94,9 +94,9 @@ public class ScanResult {
 		targetPaths = aTargetFiles;
 	}
 
-	@Column(name="value")
+	@Column(name = "value")
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name="scan_result_failed_path", joinColumns=@JoinColumn(name="scan_result_id"))
+	@CollectionTable(name = "scan_result_failed_path", joinColumns = @JoinColumn(name = "scan_result_id"))
 	public List<String> getFailedPaths() {
 		return failedPaths;
 	}

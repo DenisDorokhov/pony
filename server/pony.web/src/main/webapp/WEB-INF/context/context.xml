@@ -3,9 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:task="http://www.springframework.org/schema/task"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
 
     <context:property-placeholder location="file:${user.home}/${storage.path}/pony.properties"
                                   ignore-unresolvable="true" ignore-resource-not-found="true"/>
@@ -15,6 +21,15 @@
 
     <task:annotation-driven/>
 
+    <security:http use-expressions="true"
+                   auto-config="false"
+                   create-session="stateless"
+                   entry-point-ref="unauthorizedEntryPoint"
+                   authentication-manager-ref="authenticationManager">
+        <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+    </security:http>
+
     <context:component-scan base-package="net.dorokhov.pony.web.service"/>
+    <context:component-scan base-package="net.dorokhov.pony.web.security"/>
 
 </beans>
