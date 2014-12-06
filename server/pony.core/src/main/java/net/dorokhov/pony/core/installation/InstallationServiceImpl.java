@@ -107,7 +107,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 					Config config = entry.getValue();
 
-					log.debug("Configuring option [" + config.getValue() + "]...");
+					log.debug("Configuring option [" + config.getId() + "]...");
 
 					configDao.save(config);
 				}

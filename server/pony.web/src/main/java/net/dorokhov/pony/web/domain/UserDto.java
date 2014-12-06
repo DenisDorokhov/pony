@@ -4,17 +4,13 @@ import java.io.Serializable;
 
 public class UserDto implements Serializable {
 
-	public static enum Role {
-		USER, ADMIN
-	}
-
 	private Long id;
 
 	private String name;
 
 	private String email;
 
-	private Role role;
+	private RoleDto role;
 
 	public Long getId() {
 		return id;
@@ -40,11 +36,11 @@ public class UserDto implements Serializable {
 		email = aEmail;
 	}
 
-	public Role getRole() {
+	public RoleDto getRole() {
 		return role;
 	}
 
-	public void setRole(Role aRole) {
+	public void setRole(RoleDto aRole) {
 		role = aRole;
 	}
 }

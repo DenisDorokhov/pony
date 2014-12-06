@@ -8,10 +8,11 @@ import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.security.UserTokenProvider;
 import net.dorokhov.pony.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -40,6 +41,11 @@ public class ApiController {
 	@Autowired
 	public void setUserTokenProvider(UserTokenProvider aUserTokenProvider) {
 		userTokenProvider = aUserTokenProvider;
+	}
+
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
 	}
 
 	@Autowired
@@ -73,7 +79,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('user')")
+	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<Void> logout(ServletRequest aRequest) {
 
 		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenProvider.getToken(aRequest)));
@@ -82,25 +88,25 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('user')")
+	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<UserDto> getCurrentUser() {
 		return responseBuilder.build(userServiceFacade.getAuthenticatedUser());
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
-	@PreAuthorize("hasRole('user')")
-	public ResponseDto<UserDto> saveUser(@RequestParam("user") UpdateCurrentUserCommand aCommand) {
+	@RolesAllowed(RoleDto.Values.USER)
+	public ResponseDto<UserDto> saveUser(@Valid @RequestParam("user") UpdateCurrentUserCommand aCommand) {
 		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
 
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('user')")
+	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<List<ArtistDto>> getArtists() {
 		return responseBuilder.build(songServiceFacade.getArtists());
 	}
 
 	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('user')")
+	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<ArtistSongsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) {
 
 		ArtistSongsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
@@ -113,44 +119,44 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('user')")
+	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<SearchDto> search(@RequestParam("query") String aQuery) {
 		return responseBuilder.build(songServiceFacade.search(aQuery));
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<List<UserDto>> getUsers() {
 		return responseBuilder.build(userServiceFacade.getAll());
 	}
 
 	@RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) {
 		return responseBuilder.build(userServiceFacade.getById(aId));
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('admin')")
-	public ResponseDto<UserDto> createUser(@RequestParam("user") CreateUserCommand aCommand) {
+	@RolesAllowed(RoleDto.Values.ADMIN)
+	public ResponseDto<UserDto> createUser(@Valid @RequestParam("user") CreateUserCommand aCommand) {
 		return responseBuilder.build(userServiceFacade.create(aCommand));
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.PUT)
-	@PreAuthorize("hasRole('admin')")
-	public ResponseDto<UserDto> updateUser(@RequestParam("user") UpdateUserCommand aCommand) {
+	@RolesAllowed(RoleDto.Values.ADMIN)
+	public ResponseDto<UserDto> updateUser(@Valid @RequestParam("user") UpdateUserCommand aCommand) {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 														@RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
 	@RequestMapping(value = "/scanJobs/{id}", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) {
 
 		ScanJobDto job = scanServiceFacade.getScanJob(aId);
@@ -163,20 +169,20 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.POST)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ScanJobDto> startScanJob() {
 		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
 	@RequestMapping(value = "/scanResults", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 															  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 
 	@RequestMapping(value = "/scanResults/{id}", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) {
 
 		ScanResultDto result = scanServiceFacade.getScanResult(aId);
@@ -189,7 +195,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/scanStatus", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('admin')")
+	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ScanStatusDto> getScanStatus() {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}

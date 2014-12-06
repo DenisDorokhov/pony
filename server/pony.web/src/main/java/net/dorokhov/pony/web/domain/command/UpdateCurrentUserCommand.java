@@ -1,5 +1,9 @@
 package net.dorokhov.pony.web.domain.command;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class UpdateCurrentUserCommand implements Serializable {
@@ -12,6 +16,8 @@ public class UpdateCurrentUserCommand implements Serializable {
 
 	private String newPassword;
 
+	@NotBlank
+	@Size(max = 255)
 	public String getName() {
 		return name;
 	}
@@ -20,6 +26,9 @@ public class UpdateCurrentUserCommand implements Serializable {
 		name = aName;
 	}
 
+	@NotBlank
+	@Email
+	@Size(max = 255)
 	public String getEmail() {
 		return email;
 	}
@@ -28,6 +37,7 @@ public class UpdateCurrentUserCommand implements Serializable {
 		email = aEmail;
 	}
 
+	@NotBlank
 	public String getOldPassword() {
 		return oldPassword;
 	}
@@ -36,6 +46,7 @@ public class UpdateCurrentUserCommand implements Serializable {
 		oldPassword = aOldPassword;
 	}
 
+	@Size(max = 255)
 	public String getNewPassword() {
 		return newPassword;
 	}

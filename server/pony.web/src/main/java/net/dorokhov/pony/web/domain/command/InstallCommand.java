@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.domain.command;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
@@ -17,6 +18,8 @@ public class InstallCommand implements Serializable {
 
 	private List<String> libraryFolders;
 
+	@NotBlank
+	@Size(max = 255)
 	public String getUserName() {
 		return userName;
 	}
@@ -26,6 +29,7 @@ public class InstallCommand implements Serializable {
 	}
 
 	@NotBlank
+	@Email
 	@Size(max = 255)
 	public String getUserEmail() {
 		return userEmail;

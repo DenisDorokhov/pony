@@ -11,6 +11,7 @@ import net.dorokhov.pony.core.user.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -66,6 +67,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Autowired
+	@Qualifier("authenticationManager")
 	public void setAuthenticationManager(AuthenticationManager aAuthenticationManager) {
 		authenticationManager = aAuthenticationManager;
 	}

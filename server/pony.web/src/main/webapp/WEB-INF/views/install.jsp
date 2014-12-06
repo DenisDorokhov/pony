@@ -105,7 +105,7 @@
 </head>
 <body>
 
-<spring:message code="install.namePlaceholder" var="fullNamePlaceholder" />
+<spring:message code="install.namePlaceholder" var="namePlaceholder" />
 <spring:message code="install.emailPlaceholder" var="emailPlaceholder"/>
 <spring:message code="install.passwordPlaceholder" var="passwordPlaceholder" />
 <spring:message code="install.folderPathPlaceholder" var="folderPathPlaceholder" />
@@ -141,19 +141,19 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="fullName"><spring:message code="install.name" /></label>
-                    <form:input id="fullName" path="fullName" type="text" class="form-control" placeholder="${fullNamePlaceholder}" />
-                    <form:errors path="fullName" />
+                    <label for="name"><spring:message code="install.name" /></label>
+                    <form:input id="name" path="userName" type="text" class="form-control" placeholder="${namePlaceholder}" />
+                    <form:errors path="userName" />
                 </div>
                 <div class="form-group">
                     <label for="email"><spring:message code="install.email" /></label>
-                    <form:input id="email" path="email" type="text" class="form-control" placeholder="${emailPlaceholder}" />
-                    <form:errors path="email" />
+                    <form:input id="email" path="userEmail" type="text" class="form-control" placeholder="${emailPlaceholder}" />
+                    <form:errors path="userEmail" />
                 </div>
                 <div class="form-group">
                     <label for="password"><spring:message code="install.password" /></label>
-                    <form:input id="password" path="password" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
-                    <form:errors path="password" />
+                    <form:input id="password" path="userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
+                    <form:errors path="userPassword" />
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-lg"><spring:message code="install.button" /></button>

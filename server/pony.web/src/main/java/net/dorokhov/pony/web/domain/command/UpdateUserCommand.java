@@ -1,6 +1,11 @@
 package net.dorokhov.pony.web.domain.command;
 
-import net.dorokhov.pony.web.domain.UserDto;
+import net.dorokhov.pony.web.domain.RoleDto;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class UpdateUserCommand {
 
@@ -12,8 +17,9 @@ public class UpdateUserCommand {
 
 	private String password;
 
-	private UserDto.Role role;
+	private RoleDto role;
 
+	@NotNull
 	public Long getId() {
 		return id;
 	}
@@ -22,6 +28,8 @@ public class UpdateUserCommand {
 		id = aId;
 	}
 
+	@NotBlank
+	@Size(max = 255)
 	public String getName() {
 		return name;
 	}
@@ -30,6 +38,9 @@ public class UpdateUserCommand {
 		name = aName;
 	}
 
+	@NotBlank
+	@Email
+	@Size(max = 255)
 	public String getEmail() {
 		return email;
 	}
@@ -38,6 +49,7 @@ public class UpdateUserCommand {
 		email = aEmail;
 	}
 
+	@Size(max = 255)
 	public String getPassword() {
 		return password;
 	}
@@ -46,11 +58,12 @@ public class UpdateUserCommand {
 		password = aPassword;
 	}
 
-	public UserDto.Role getRole() {
+	@NotNull
+	public RoleDto getRole() {
 		return role;
 	}
 
-	public void setRole(UserDto.Role aRole) {
+	public void setRole(RoleDto aRole) {
 		role = aRole;
 	}
 }

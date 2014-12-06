@@ -1,7 +1,11 @@
 package net.dorokhov.pony.web.domain.command;
 
-import net.dorokhov.pony.web.domain.UserDto;
+import net.dorokhov.pony.web.domain.RoleDto;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 public class CreateUserCommand implements Serializable {
@@ -12,8 +16,10 @@ public class CreateUserCommand implements Serializable {
 
 	private String password;
 
-	private UserDto.Role role;
+	private RoleDto role;
 
+	@NotBlank
+	@Size(max = 255)
 	public String getName() {
 		return name;
 	}
@@ -22,6 +28,9 @@ public class CreateUserCommand implements Serializable {
 		name = aName;
 	}
 
+	@NotBlank
+	@Email
+	@Size(max = 255)
 	public String getEmail() {
 		return email;
 	}
@@ -30,6 +39,8 @@ public class CreateUserCommand implements Serializable {
 		email = aEmail;
 	}
 
+	@NotBlank
+	@Size(max = 255)
 	public String getPassword() {
 		return password;
 	}
@@ -38,11 +49,12 @@ public class CreateUserCommand implements Serializable {
 		password = aPassword;
 	}
 
-	public UserDto.Role getRole() {
+	@NotNull
+	public RoleDto getRole() {
 		return role;
 	}
 
-	public void setRole(UserDto.Role aRole) {
+	public void setRole(RoleDto aRole) {
 		role = aRole;
 	}
 }

@@ -7,7 +7,7 @@ import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.web.domain.InstallationDto;
-import net.dorokhov.pony.web.domain.UserDto;
+import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.command.InstallCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,8 +63,8 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 		admin.setEmail(aCommand.getUserEmail());
 		admin.setPassword(aCommand.getUserPassword());
 
-		admin.getRoles().add(UserDto.Role.USER.toString());
-		admin.getRoles().add(UserDto.Role.ADMIN.toString());
+		admin.getRoles().add(RoleDto.Values.USER);
+		admin.getRoles().add(RoleDto.Values.ADMIN);
 
 		command.getUsers().add(admin);
 

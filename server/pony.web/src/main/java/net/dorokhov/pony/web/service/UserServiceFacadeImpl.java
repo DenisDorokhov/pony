@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
+import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.UserDto;
 import net.dorokhov.pony.web.domain.UserTokenDto;
 import net.dorokhov.pony.web.domain.command.CreateUserCommand;
@@ -116,19 +117,19 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		return dtoConverter.userToDto(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
 	}
 
-	private Set<String> dtoToRoles(UserDto.Role aDto) {
+	private Set<String> dtoToRoles(RoleDto aDto) {
 
 		Set<String> roles = new HashSet<>();
 
 		switch (aDto) {
 
 			case USER:
-				roles.add(UserDto.Role.USER.toString());
+				roles.add(RoleDto.Values.USER);
 				break;
 
 			case ADMIN:
-				roles.add(UserDto.Role.USER.toString());
-				roles.add(UserDto.Role.ADMIN.toString());
+				roles.add(RoleDto.Values.USER);
+				roles.add(RoleDto.Values.ADMIN);
 				break;
 		}
 
