@@ -2,13 +2,13 @@ package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.core.domain.Role;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
-import net.dorokhov.pony.web.domain.command.InstallCommand;
 import net.dorokhov.pony.web.domain.InstallationDto;
+import net.dorokhov.pony.web.domain.UserDto;
+import net.dorokhov.pony.web.domain.command.InstallCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,24 +57,14 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		command.getConfig().add(libraryPathsToConfig(aCommand.getLibraryFolders()));
 
-		Role userRole = new Role();
-
-		userRole.setName("user");
-
-		command.getRoles().add(userRole);
-
-		Role adminRole = new Role();
-
-		userRole.setName("admin");
-
-		command.getRoles().add(adminRole);
-
 		User admin = new User();
 
 		admin.setName(aCommand.getUserName());
 		admin.setEmail(aCommand.getUserEmail());
 		admin.setPassword(aCommand.getUserPassword());
-		admin.getRoles().add(adminRole);
+
+		admin.getRoles().add(UserDto.Role.USER.toString());
+		admin.getRoles().add(UserDto.Role.ADMIN.toString());
 
 		command.getUsers().add(admin);
 

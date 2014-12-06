@@ -1,6 +1,5 @@
 package net.dorokhov.pony.core.security;
 
-import net.dorokhov.pony.core.domain.Role;
 import net.dorokhov.pony.core.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -32,8 +31,8 @@ public class UserDetailsImpl implements UserDetails {
 
 		Set<GrantedAuthority> authorities = new HashSet<>();
 
-		for (Role role : getUser().getRoles()) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
+		for (String role : getUser().getRoles()) {
+			authorities.add(new SimpleGrantedAuthority(role));
 		}
 
 		return authorities;

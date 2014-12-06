@@ -1,23 +1,31 @@
 package net.dorokhov.pony.web.domain.command;
 
-import net.dorokhov.pony.web.domain.UserDto;
-
 import java.io.Serializable;
 
-public class SaveCurrentUserCommand implements Serializable {
+public class UpdateCurrentUserCommand implements Serializable {
 
-	private UserDto user;
+	private String name;
+
+	private String email;
 
 	private String oldPassword;
 
 	private String newPassword;
 
-	public UserDto getUser() {
-		return user;
+	public String getName() {
+		return name;
 	}
 
-	public void setUser(UserDto aUser) {
-		user = aUser;
+	public void setName(String aName) {
+		name = aName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String aEmail) {
+		email = aEmail;
 	}
 
 	public String getOldPassword() {

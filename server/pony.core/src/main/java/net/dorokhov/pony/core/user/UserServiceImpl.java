@@ -115,10 +115,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException {
 
-		if (aUser.getId() != null) {
-			throw new IllegalArgumentException("User identifier must not be null.");
-		}
-
 		User currentUser = userDao.findOne(aUser.getId());
 
 		if (currentUser == null) {
@@ -218,6 +214,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public User getAuthenticatedUser() throws NotAuthenticatedException {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -232,6 +229,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException, NotAuthorizedException, UserNotFoundException, UserExistsException {
 
 		User authenticatedUser = getAuthenticatedUser();

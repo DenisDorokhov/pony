@@ -1,14 +1,17 @@
 package net.dorokhov.pony.web.controller;
 
 import net.dorokhov.pony.web.domain.*;
-import net.dorokhov.pony.web.domain.command.SaveCurrentUserCommand;
-import net.dorokhov.pony.web.domain.command.SaveUserCommand;
+import net.dorokhov.pony.web.domain.command.CreateUserCommand;
+import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
+import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
+import net.dorokhov.pony.web.security.UserTokenProvider;
 import net.dorokhov.pony.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
 import java.util.List;
 
 @RestController
@@ -16,6 +19,10 @@ import java.util.List;
 public class ApiController {
 
 	private ResponseBuilder responseBuilder;
+
+	private UserTokenProvider userTokenProvider;
+
+	private DtoConverter dtoConverter;
 
 	private InstallationServiceFacade installationServiceFacade;
 
@@ -28,6 +35,11 @@ public class ApiController {
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
+	}
+
+	@Autowired
+	public void setUserTokenProvider(UserTokenProvider aUserTokenProvider) {
+		userTokenProvider = aUserTokenProvider;
 	}
 
 	@Autowired
@@ -60,6 +72,15 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.authenticate(aEmail, aPassword));
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	@PreAuthorize("hasRole('user')")
+	public ResponseDto<Void> logout(ServletRequest aRequest) {
+
+		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenProvider.getToken(aRequest)));
+
+		return responseBuilder.build();
+	}
+
 	@RequestMapping(value = "/currentUser", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('user')")
 	public ResponseDto<UserDto> getCurrentUser() {
@@ -68,8 +89,8 @@ public class ApiController {
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('user')")
-	public ResponseDto<UserDto> saveUser(@RequestParam("user") SaveCurrentUserCommand aSaveCurrentUserCommand) {
-		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aSaveCurrentUserCommand));
+	public ResponseDto<UserDto> saveUser(@RequestParam("user") UpdateCurrentUserCommand aCommand) {
+		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
 
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
@@ -111,14 +132,14 @@ public class ApiController {
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('admin')")
-	public ResponseDto<UserDto> createUser(@RequestParam("user") SaveUserCommand aSaveUserCommand) {
-		return responseBuilder.build(userServiceFacade.create(aSaveUserCommand));
+	public ResponseDto<UserDto> createUser(@RequestParam("user") CreateUserCommand aCommand) {
+		return responseBuilder.build(userServiceFacade.create(aCommand));
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('admin')")
-	public ResponseDto<UserDto> updateUser(@RequestParam("user") SaveUserCommand aSaveUserCommand) {
-		return responseBuilder.build(userServiceFacade.update(aSaveUserCommand));
+	public ResponseDto<UserDto> updateUser(@RequestParam("user") UpdateUserCommand aCommand) {
+		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.GET)

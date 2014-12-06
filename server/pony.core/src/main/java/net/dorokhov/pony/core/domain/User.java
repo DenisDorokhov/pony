@@ -4,8 +4,8 @@ import net.dorokhov.pony.core.domain.common.BaseEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -17,7 +17,7 @@ public class User extends BaseEntity<Long> {
 
 	private String password;
 
-	private List<Role> roles;
+	private Set<String> roles;
 
 	@Column(name = "name")
 	public String getName() {
@@ -48,20 +48,19 @@ public class User extends BaseEntity<Long> {
 		password = aPassword;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_role",
-			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	public List<Role> getRoles() {
+	@Column(name="value")
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(name="user_role", joinColumns = @JoinColumn(name = "user_id"))
+	public Set<String> getRoles() {
 
 		if (roles == null) {
-			roles = new ArrayList<>();
+			roles = new HashSet<>();
 		}
 
 		return roles;
 	}
 
-	public void setRoles(List<Role> aRoles) {
+	public void setRoles(Set<String> aRoles) {
 		roles = aRoles;
 	}
 

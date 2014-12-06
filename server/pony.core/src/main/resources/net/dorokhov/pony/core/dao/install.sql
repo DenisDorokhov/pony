@@ -37,25 +37,15 @@ CREATE TABLE user_ticket (
 	PRIMARY KEY (id)
 );
 
-CREATE TABLE role (
-
-	id BIGINT IDENTITY,
-
-	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP,
-
-	name VARCHAR (255) NOT NULL
-);
-
-CREATE INDEX index_role_name ON role(name);
-
 CREATE TABLE user_role (
 
 	user_id BIGINT NOT NULL,
-	role_id BIGINT NOT NULL,
+
+	value VARCHAR (255) NOT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE ON UPDATE CASCADE
+
+	PRIMARY KEY (user_id, value)
 );
 
 CREATE TABLE log_message (

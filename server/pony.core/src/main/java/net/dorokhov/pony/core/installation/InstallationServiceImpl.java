@@ -2,10 +2,8 @@ package net.dorokhov.pony.core.installation;
 
 import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.dao.InstallationDao;
-import net.dorokhov.pony.core.dao.RoleDao;
 import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.core.domain.Role;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
@@ -42,8 +40,6 @@ public class InstallationServiceImpl implements InstallationService {
 
 	private ConfigDao configDao;
 
-	private RoleDao roleDao;
-
 	private UserService userService;
 
 	private LogService logService;
@@ -61,11 +57,6 @@ public class InstallationServiceImpl implements InstallationService {
 	@Autowired
 	public void setConfigDao(ConfigDao aConfigDao) {
 		configDao = aConfigDao;
-	}
-
-	@Autowired
-	public void setRoleDao(RoleDao aRoleDao) {
-		roleDao = aRoleDao;
 	}
 
 	@Autowired
@@ -119,13 +110,6 @@ public class InstallationServiceImpl implements InstallationService {
 					log.debug("Configuring option [" + config.getValue() + "]...");
 
 					configDao.save(config);
-				}
-
-				for (Role role : aCommand.getRoles()) {
-
-					log.debug("Creating role [" + role.getName() + "]...");
-
-					roleDao.save(role);
 				}
 
 				for (User user : aCommand.getUsers()) {
