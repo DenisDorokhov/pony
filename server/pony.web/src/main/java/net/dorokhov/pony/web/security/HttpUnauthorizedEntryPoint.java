@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class UnauthorizedEntryPoint implements AuthenticationEntryPoint {
+public class HttpUnauthorizedEntryPoint implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest aRequest, HttpServletResponse aResponse, AuthenticationException aAuthException) throws IOException, ServletException {

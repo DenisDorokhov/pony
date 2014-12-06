@@ -244,6 +244,33 @@ public class DtoConverter {
 		return dto;
 	}
 
+	public UserDto userToDto(User aUser) {
+
+		UserDto dto = new UserDto();
+
+		dto.setId(aUser.getId());
+		dto.setName(aUser.getName());
+		dto.setEmail(aUser.getEmail());
+
+		// TODO: set role
+		//if (aUser.hasRole("admin")) {
+		//	dto.setRole("admin");
+		//} else if (aUser.hasRole("user")) {
+		//	dto.setRole("user");
+		//}
+
+		return dto;
+	}
+
+	public UserTokenDto userTokenToDto(UserToken aToken) {
+
+		UserTokenDto dto = new UserTokenDto();
+
+		dto.setId(aToken.getId());
+
+		return dto;
+	}
+
 	private void initArtistDto(ArtistDto aDto, Artist aArtist) {
 
 		aDto.setId(aArtist.getId());

@@ -2,11 +2,15 @@ package net.dorokhov.pony.core.installation;
 
 import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.dao.InstallationDao;
+import net.dorokhov.pony.core.dao.RoleDao;
 import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
+import net.dorokhov.pony.core.domain.Role;
+import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.logging.LogService;
+import net.dorokhov.pony.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,10 @@ public class InstallationServiceImpl implements InstallationService {
 
 	private ConfigDao configDao;
 
+	private RoleDao roleDao;
+
+	private UserService userService;
+
 	private LogService logService;
 
 	@Autowired
@@ -56,6 +64,16 @@ public class InstallationServiceImpl implements InstallationService {
 	}
 
 	@Autowired
+	public void setRoleDao(RoleDao aRoleDao) {
+		roleDao = aRoleDao;
+	}
+
+	@Autowired
+	public void setUserService(UserService aUserService) {
+		userService = aUserService;
+	}
+
+	@Autowired
 	public void setLogService(LogService aLogService) {
 		logService = aLogService;
 	}
@@ -68,7 +86,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public synchronized Installation install(InstallationCommand aCommand) throws AlreadyInstalledException {
+	public synchronized Installation install(final InstallationCommand aCommand) throws AlreadyInstalledException {
 
 		if (getInstallation() != null) {
 			throw new AlreadyInstalledException();
@@ -101,6 +119,20 @@ public class InstallationServiceImpl implements InstallationService {
 					log.debug("Configuring option [" + config.getValue() + "]...");
 
 					configDao.save(config);
+				}
+
+				for (Role role : aCommand.getRoles()) {
+
+					log.debug("Creating role [" + role.getName() + "]...");
+
+					roleDao.save(role);
+				}
+
+				for (User user : aCommand.getUsers()) {
+
+					log.debug("Creating user [" + user.getEmail() + "]...");
+
+					userService.create(user);
 				}
 
 				return installation;

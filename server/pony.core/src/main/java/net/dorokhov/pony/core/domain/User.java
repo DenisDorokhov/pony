@@ -1,47 +1,43 @@
 package net.dorokhov.pony.core.domain;
 
 import net.dorokhov.pony.core.domain.common.BaseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseEntity<Long> implements UserDetails {
+public class User extends BaseEntity<Long> {
 
-	private String fullName;
+	private String name;
 
-	private String username;
+	private String email;
 
 	private String password;
 
 	private List<Role> roles;
 
-	@Column(name = "full_name")
-	public String getFullName() {
-		return fullName;
+	@Column(name = "name")
+	public String getName() {
+		return name;
 	}
 
-	public void setFullName(String aName) {
-		fullName = aName;
+	public void setName(String aName) {
+		name = aName;
 	}
 
-	@Override
-	@Column(name = "username", unique = true)
+	@Column(name = "email", unique = true)
 	@NotNull
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUsername(String aLogin) {
-		username = aLogin;
+	public void setEmail(String aLogin) {
+		email = aLogin;
 	}
 
-	@Override
 	@Column(name = "password")
 	@NotNull
 	public String getPassword() {
@@ -69,40 +65,4 @@ public class User extends BaseEntity<Long> implements UserDetails {
 		roles = aRoles;
 	}
 
-	@Override
-	@Transient
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-
-		Set<GrantedAuthority> authorities = new HashSet<>();
-
-		for (Role role : getRoles()) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-		}
-
-		return authorities;
-	}
-
-	@Override
-	@Transient
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isEnabled() {
-		return true;
-	}
 }

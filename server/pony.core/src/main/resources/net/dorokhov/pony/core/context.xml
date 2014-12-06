@@ -54,16 +54,16 @@
 
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-
-    <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider user-service-ref="userServiceImpl">
-            <security:password-encoder ref="passwordEncoder" />
-        </security:authentication-provider>
-    </security:authentication-manager>
-
     <context:component-scan base-package="net.dorokhov.pony.core" />
 
     <jpa:repositories base-package="net.dorokhov.pony.core.dao" />
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider user-service-ref="userDetailsServiceImpl">
+            <security:password-encoder ref="passwordEncoder" />
+        </security:authentication-provider>
+    </security:authentication-manager>
 
 </beans>

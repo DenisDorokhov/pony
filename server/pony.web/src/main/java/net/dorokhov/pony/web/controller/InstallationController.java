@@ -1,30 +1,22 @@
 package net.dorokhov.pony.web.controller;
 
-import net.dorokhov.pony.web.domain.InstallationCommandDto;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
+import net.dorokhov.pony.web.domain.command.InstallCommand;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.Locale;
+import javax.validation.Valid;
 
 @Controller
 public class InstallationController {
 
-	private MessageSource messageSource;
-
 	private InstallationServiceFacade installationServiceFacade;
-
-	@Autowired
-	public void setMessageSource(MessageSource aMessageSource) {
-		messageSource = aMessageSource;
-	}
 
 	@Autowired
 	public void setInstallationServiceFacade(InstallationServiceFacade aInstallationServiceFacade) {
@@ -32,37 +24,27 @@ public class InstallationController {
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.GET)
-	public String showInstallation() {
+	public String showInstallation(Model aModel) {
+
+		aModel.addAttribute("installCommand", new InstallCommand());
+
 		return "install";
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.POST)
-	public String install(
-			@RequestParam("libraryFolder[]") String[] aLibraryFolders,
-			@RequestParam("adminLogin") String aAdminLogin,
-			@RequestParam("adminPassword") String aAdminPassword,
-			Model aModel, Locale aLocale) {
+	public String install(@Valid @ModelAttribute("installCommand") InstallCommand aInstallCommand, BindingResult aBindingResult) {
 
-		InstallationCommandDto command = new InstallationCommandDto();
-
-		command.setAdminLogin(aAdminLogin);
-		command.setAdminPassword(aAdminPassword);
-		command.setLibraryFolders(Arrays.asList(aLibraryFolders));
-
-		boolean success = true;
-
-		try {
-			installationServiceFacade.install(command);
-		} catch (AlreadyInstalledException e) {
-			success = true;
-		} catch (RuntimeException e) {
-
-			aModel.addAttribute("error", messageSource.getMessage("install.error", null, aLocale));
-
-			success = false;
+		if (!aBindingResult.hasErrors()) {
+			try {
+				installationServiceFacade.install(aInstallCommand);
+			} catch (AlreadyInstalledException e) {
+				// Ignore when already installed
+			} catch (RuntimeException e) {
+				aBindingResult.reject("install.error");
+			}
 		}
 
-		return success ? "redirect:/" : "install";
+		return !aBindingResult.hasErrors() ? "redirect:/" : "install";
 	}
 
 }

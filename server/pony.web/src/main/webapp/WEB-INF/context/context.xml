@@ -21,15 +21,15 @@
 
     <task:annotation-driven/>
 
+    <context:component-scan base-package="net.dorokhov.pony.web.service"/>
+    <context:component-scan base-package="net.dorokhov.pony.web.security"/>
+
     <security:http use-expressions="true"
                    auto-config="false"
                    create-session="stateless"
-                   entry-point-ref="unauthorizedEntryPoint"
+                   entry-point-ref="httpUnauthorizedEntryPoint"
                    authentication-manager-ref="authenticationManager">
         <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
     </security:http>
-
-    <context:component-scan base-package="net.dorokhov.pony.web.service"/>
-    <context:component-scan base-package="net.dorokhov.pony.web.security"/>
 
 </beans>

@@ -4,16 +4,16 @@ import java.io.Serializable;
 
 public class UserExistsException extends RuntimeException implements Serializable {
 
-	private String username;
+	private String email;
 
-	public UserExistsException(String aUsername) {
+	public UserExistsException(String aEmail) {
 
-		super("User [" + aUsername + "] already exists.");
+		super("User [" + aEmail + "] already exists.");
 
-		username = aUsername;
+		email = aEmail;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getEmail() {
+		return email;
 	}
 }

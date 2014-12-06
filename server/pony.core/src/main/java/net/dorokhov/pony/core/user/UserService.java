@@ -1,21 +1,30 @@
 package net.dorokhov.pony.core.user;
 
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.domain.UserTicket;
-import net.dorokhov.pony.core.user.exception.InvalidCredentialsException;
-import net.dorokhov.pony.core.user.exception.InvalidTicketException;
-import net.dorokhov.pony.core.user.exception.UserExistsException;
-import net.dorokhov.pony.core.user.exception.UserNotFoundException;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import net.dorokhov.pony.core.domain.UserToken;
+import net.dorokhov.pony.core.user.exception.*;
 
-public interface UserService extends UserDetailsService {
+import java.util.List;
 
-	public UserTicket authenticate(String aEmail, String aPassword) throws InvalidCredentialsException;
+public interface UserService {
 
-	public UserTicket validateTicket(String aId) throws InvalidTicketException;
+	public User getById(Long aId);
+
+	public List<User> getAll();
 
 	public User create(User aUser) throws UserExistsException;
-	public User update(User aUser, boolean aUpdatePassword) throws UserExistsException, UserNotFoundException;
+	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException;
+
+	public UserToken authenticate(String aEmail, String aPassword) throws InvalidCredentialsException;
+
+	public void authenticate(UserToken aToken) throws InvalidTokenException;
+
+	public void logout(UserToken aToken) throws InvalidTokenException;
+
+	public User getAuthenticatedUser() throws NotAuthenticatedException;
+
+	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
+			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException;
 
 	public void cleanTickets();
 }

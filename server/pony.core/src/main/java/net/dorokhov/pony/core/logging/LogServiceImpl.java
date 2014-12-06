@@ -66,7 +66,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage debug(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
-			throw new NullPointerException("Exception must not be null.");
+			throw new NullPointerException("Throwable must not be null.");
 		}
 
 		return debug(aLogger, aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
@@ -83,7 +83,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage debug(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
-			throw new NullPointerException("Message must not be null.");
+			throw new NullPointerException("Code must not be null.");
 		}
 
 		return doLogMessage(aLogger, LogMessage.Type.DEBUG, aCode, aText, aDetails, aArguments);
@@ -112,7 +112,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage info(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
-			throw new NullPointerException("Exception must not be null.");
+			throw new NullPointerException("Throwable must not be null.");
 		}
 
 		return info(aLogger, aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
@@ -129,7 +129,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage info(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
-			throw new NullPointerException("Message must not be null.");
+			throw new NullPointerException("Code must not be null.");
 		}
 
 		return doLogMessage(aLogger, LogMessage.Type.INFO, aCode, aText, aDetails, aArguments);
@@ -158,7 +158,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage warn(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
-			throw new NullPointerException("Exception must not be null.");
+			throw new NullPointerException("Throwable must not be null.");
 		}
 
 		return warn(aLogger, aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
@@ -175,7 +175,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage warn(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
-			throw new NullPointerException("Message must not be null.");
+			throw new NullPointerException("Code must not be null.");
 		}
 
 		return doLogMessage(aLogger, LogMessage.Type.WARN, aCode, aText, aDetails, aArguments);
@@ -204,7 +204,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage error(Logger aLogger, String aCode, String aText, Throwable aThrowable, List<String> aArguments) {
 
 		if (aThrowable == null) {
-			throw new NullPointerException("Exception must not be null.");
+			throw new NullPointerException("Throwable must not be null.");
 		}
 
 		return error(aLogger, aCode, aText, ExceptionUtils.getStackTrace(aThrowable).trim(), aArguments);
@@ -221,7 +221,7 @@ public class LogServiceImpl implements LogService {
 	public LogMessage error(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments) {
 
 		if (aCode == null) {
-			throw new NullPointerException("Message must not be null.");
+			throw new NullPointerException("Code must not be null.");
 		}
 
 		return doLogMessage(aLogger, LogMessage.Type.ERROR, aCode, aText, aDetails, aArguments);
