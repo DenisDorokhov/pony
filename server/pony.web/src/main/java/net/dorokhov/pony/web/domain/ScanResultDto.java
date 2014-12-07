@@ -2,11 +2,10 @@ package net.dorokhov.pony.web.domain;
 
 import net.dorokhov.pony.core.domain.ScanType;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class ScanResultDto implements Serializable {
+public class ScanResultDto {
 
 	private Long id;
 

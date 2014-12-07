@@ -3,8 +3,10 @@ package net.dorokhov.pony.web.service;
 import net.dorokhov.pony.core.domain.*;
 import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.web.domain.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -12,7 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,11 +22,18 @@ public class DtoConverter {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	public static interface ItemConverter<FromType, ToType extends Serializable> {
+	private String libraryFoldersSeparator;
+
+	public static interface ItemConverter<FromType, ToType> {
 		public ToType convert(FromType aItem);
 	}
 
-	public <EntityType, DtoType extends Serializable> ListDto<DtoType> pageToListDto(Page<EntityType> aPage, ItemConverter<EntityType, DtoType> aItemConverter) {
+	@Value("${libraryFoldersConfig.separator}")
+	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
+		libraryFoldersSeparator = aLibraryFoldersSeparator;
+	}
+
+	public <EntityType, DtoType> ListDto<DtoType> pageToListDto(Page<EntityType> aPage, ItemConverter<EntityType, DtoType> aItemConverter) {
 
 		ListDto<DtoType> dto = new ListDto<>();
 
@@ -268,6 +277,53 @@ public class DtoConverter {
 		dto.setId(aToken.getId());
 
 		return dto;
+	}
+
+	public ConfigDto configToDto(Iterable<Config> aConfig) {
+
+		ConfigDto dto = new ConfigDto();
+
+		for (Config config : aConfig) {
+			if (config.getId().equals(Config.AUTO_SCAN_INTERVAL)) {
+				dto.setAutoScanInterval(config.getInteger());
+			} else if (config.getId().equals(Config.LIBRARY_FOLDERS)) {
+				dto.setLibraryFolders(configToLibraryFolders(config.getValue()));
+			}
+		}
+
+		return dto;
+	}
+
+	public String libraryFoldersToConfig(List<String> aLibraryFolders) {
+
+		List<String> normalizedList = new ArrayList<>();
+
+		for (String path : aLibraryFolders) {
+
+			String normalizedPath = path.trim();
+
+			if (normalizedPath.length() > 0) {
+				normalizedList.add(normalizedPath);
+			}
+		}
+
+		return StringUtils.join(normalizedList, libraryFoldersSeparator);
+	}
+
+	public List<String> configToLibraryFolders(String aConfig) {
+
+		List<String> normalizedList = new ArrayList<>();
+
+		for (String path : aConfig.split(libraryFoldersSeparator)) {
+
+			String normalizedPath = path.trim();
+
+			if (normalizedPath.length() > 0) {
+				normalizedList.add(normalizedPath);
+			}
+		}
+
+		return normalizedList;
 	}
 
 	private void initArtistDto(ArtistDto aDto, Artist aArtist) {

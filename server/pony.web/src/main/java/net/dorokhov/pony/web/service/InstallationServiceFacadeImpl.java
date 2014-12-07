@@ -10,11 +10,8 @@ import net.dorokhov.pony.web.domain.InstallationDto;
 import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.command.InstallCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class InstallationServiceFacadeImpl implements InstallationServiceFacade {
@@ -22,8 +19,6 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 	private InstallationService installationService;
 
 	private DtoConverter dtoConverter;
-
-	private String libraryFoldersSeparator;
 
 	@Autowired
 	public void setInstallationService(InstallationService aInstallationService) {
@@ -33,11 +28,6 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 	@Autowired
 	public void setDtoConverter(DtoConverter aDtoConverter) {
 		dtoConverter = aDtoConverter;
-	}
-
-	@Value("${libraryFoldersConfig.separator}")
-	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
-		libraryFoldersSeparator = aLibraryFoldersSeparator;
 	}
 
 	@Override
@@ -55,7 +45,9 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		InstallationCommand command = new InstallationCommand();
 
-		command.getConfig().add(libraryPathsToConfig(aCommand.getLibraryFolders()));
+		String libraryFoldersConfig = dtoConverter.libraryFoldersToConfig(aCommand.getLibraryFolders());
+
+		command.getConfig().add(new Config(Config.LIBRARY_FOLDERS, libraryFoldersConfig));
 
 		User admin = new User();
 
@@ -69,24 +61,5 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 		command.getUsers().add(admin);
 
 		return dtoConverter.installationToDto(installationService.install(command));
-	}
-
-	private Config libraryPathsToConfig(List<String> aLibraryPaths) {
-
-		StringBuilder buf = new StringBuilder();
-
-		for (String path : aLibraryPaths) {
-
-			String normalizedPath = path.trim();
-
-			if (normalizedPath.length() > 0) {
-				if (buf.length() > 0) {
-					buf.append(libraryFoldersSeparator);
-				}
-				buf.append(normalizedPath);
-			}
-		}
-
-		return new Config(Config.LIBRARY_FOLDERS, buf.toString());
 	}
 }

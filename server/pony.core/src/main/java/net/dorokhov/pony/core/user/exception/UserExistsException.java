@@ -1,8 +1,6 @@
 package net.dorokhov.pony.core.user.exception;
 
-import java.io.Serializable;
-
-public class UserExistsException extends Exception implements Serializable {
+public class UserExistsException extends Exception {
 
 	private String email;
 

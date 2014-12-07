@@ -2,12 +2,11 @@ package net.dorokhov.pony.web.domain;
 
 import net.dorokhov.pony.core.domain.LogMessage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LogMessageDto implements Serializable {
+public class LogMessageDto {
 
 	private Long id;
 

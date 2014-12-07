@@ -1,10 +1,9 @@
 package net.dorokhov.pony.web.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlbumSongsDto extends AlbumDto implements Serializable {
+public class AlbumSongsDto extends AlbumDto {
 
 	private List<SongDto> songs;
 

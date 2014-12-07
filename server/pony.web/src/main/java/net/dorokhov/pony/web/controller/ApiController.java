@@ -35,6 +35,8 @@ public class ApiController {
 
 	private SongServiceFacade songServiceFacade;
 
+	private ConfigServiceFacade configServiceFacade;
+
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
@@ -68,6 +70,11 @@ public class ApiController {
 	@Autowired
 	public void setSongServiceFacade(SongServiceFacade aSongServiceFacade) {
 		songServiceFacade = aSongServiceFacade;
+	}
+
+	@Autowired
+	public void setConfigServiceFacade(ConfigServiceFacade aConfigServiceFacade) {
+		configServiceFacade = aConfigServiceFacade;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -202,6 +209,18 @@ public class ApiController {
 	@RolesAllowed(RoleDto.Values.ADMIN)
 	public ResponseDto<ScanStatusDto> getScanStatus() {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
+	}
+
+	@RequestMapping(value = "/config", method = RequestMethod.GET)
+	@RolesAllowed(RoleDto.Values.ADMIN)
+	public ResponseDto<ConfigDto> getConfig() {
+		return responseBuilder.build(configServiceFacade.get());
+	}
+
+	@RequestMapping(value = "/config", method = RequestMethod.PUT)
+	@RolesAllowed(RoleDto.Values.ADMIN)
+	public ResponseDto<ConfigDto> saveConfig(@Valid @RequestParam("config") ConfigDto aConfig) {
+		return responseBuilder.build(configServiceFacade.save(aConfig));
 	}
 
 }

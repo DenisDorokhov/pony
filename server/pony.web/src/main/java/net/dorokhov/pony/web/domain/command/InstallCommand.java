@@ -4,11 +4,10 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InstallCommand implements Serializable {
+public class InstallCommand {
 
 	private String userName;
 

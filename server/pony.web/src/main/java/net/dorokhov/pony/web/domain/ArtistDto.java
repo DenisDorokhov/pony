@@ -1,8 +1,6 @@
 package net.dorokhov.pony.web.domain;
 
-import java.io.Serializable;
-
-public class ArtistDto implements Serializable {
+public class ArtistDto {
 
 	private Long id;
 

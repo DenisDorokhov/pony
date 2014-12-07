@@ -1,10 +1,9 @@
 package net.dorokhov.pony.web.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseDto<T> implements Serializable {
+public class ResponseDto<T> {
 
 	private String version;
 

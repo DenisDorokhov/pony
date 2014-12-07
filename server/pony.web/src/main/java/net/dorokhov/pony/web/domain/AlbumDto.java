@@ -1,8 +1,6 @@
 package net.dorokhov.pony.web.domain;
 
-import java.io.Serializable;
-
-public class AlbumDto implements Serializable {
+public class AlbumDto {
 
 	private Long id;
 

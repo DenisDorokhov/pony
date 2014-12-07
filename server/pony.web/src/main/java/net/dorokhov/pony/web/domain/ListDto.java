@@ -1,10 +1,9 @@
 package net.dorokhov.pony.web.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListDto<T extends Serializable> implements Serializable {
+public class ListDto<T> {
 
 	private int pageNumber;
 

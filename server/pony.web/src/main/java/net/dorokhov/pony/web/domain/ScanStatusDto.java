@@ -2,11 +2,10 @@ package net.dorokhov.pony.web.domain;
 
 import net.dorokhov.pony.core.domain.ScanType;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScanStatusDto implements Serializable {
+public class ScanStatusDto {
 
 	private ScanType scanType;
 

@@ -3,10 +3,9 @@ package net.dorokhov.pony.web.domain;
 import net.dorokhov.pony.core.domain.ScanJob;
 import net.dorokhov.pony.core.domain.ScanType;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class ScanJobDto implements Serializable {
+public class ScanJobDto {
 
 	private Long id;
 
