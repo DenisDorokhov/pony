@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void logout(UserToken aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(passwordEncoder.encode(aToken.getId()));
+		UserTicket ticket = userTicketDao.findOne(aToken.getId());
 
 		if (ticket == null) {
 			throw new InvalidTokenException();
@@ -242,7 +242,7 @@ public class UserServiceImpl implements UserService {
 		if (!authenticatedUser.getId().equals(aUser.getId())) {
 			throw new NotAuthorizedException("Cannot update user which is not currently authenticated.");
 		}
-		if (!passwordEncoder.encode(aOldPassword).equals(authenticatedUser.getPassword())) {
+		if (!passwordEncoder.matches(aOldPassword, authenticatedUser.getPassword())) {
 			throw new InvalidCredentialsException();
 		}
 
