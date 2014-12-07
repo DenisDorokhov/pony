@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
 		UserTicket ticket = new UserTicket();
 
-		ticket.setId(passwordEncoder.encode(token.getId()));
+		ticket.setId(token.getId());
 		ticket.setUser(userDetails.getUser());
 
 		ticket = userTicketDao.save(ticket);
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void authenticate(UserToken aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(passwordEncoder.encode(aToken.getId()));
+		UserTicket ticket = userTicketDao.findOne(aToken.getId());
 
 		if (ticket == null) {
 			throw new InvalidTokenException();

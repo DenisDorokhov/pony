@@ -248,7 +248,15 @@ public class DtoConverter {
 
 		UserDto dto = new UserDto();
 
-		initUserDto(dto, aUser);
+		dto.setId(aUser.getId());
+		dto.setName(aUser.getName());
+		dto.setEmail(aUser.getEmail());
+
+		if (aUser.getRoles().contains(RoleDto.Values.ADMIN)) {
+			dto.setRole(RoleDto.ADMIN);
+		} else if (aUser.getRoles().contains(RoleDto.Values.USER)) {
+			dto.setRole(RoleDto.USER);
+		}
 
 		return dto;
 	}
@@ -290,12 +298,6 @@ public class DtoConverter {
 			aDto.setArtwork(artwork.getId());
 			aDto.setArtworkUrl(buildFileUrl(artwork.getId()));
 		}
-	}
-
-	private void initUserDto(UserDto aDto, User aUser) {
-		aDto.setId(aUser.getId());
-		aDto.setName(aUser.getName());
-		aDto.setEmail(aUser.getEmail());
 	}
 
 	private String buildFileUrl(Long aId) {
