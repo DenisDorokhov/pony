@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.dao;
 
-import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.common.SqlSplitter;
+import net.dorokhov.pony.core.domain.Installation;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +9,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.List;
 
 @Repository
 public class InstallationDaoImpl implements InstallationDao {
@@ -97,13 +96,15 @@ public class InstallationDaoImpl implements InstallationDao {
 			return null;
 		}
 
-		List<Installation> installationList = entityManager.createQuery("SELECT i FROM Installation i", Installation.class).getResultList();
+		Installation installation = null;
 
-		if (installationList.size() > 1) {
-			throw new NonUniqueResultException();
+		try {
+			installation = entityManager.createQuery("SELECT i FROM Installation i", Installation.class).getSingleResult();
+		} catch (NoResultException e) {
+			// No result means no installation.
 		}
 
-		return installationList.size() > 0 ? installationList.get(0) : null;
+		return installation;
 	}
 
 	private boolean hasInstallationTable() {

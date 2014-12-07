@@ -25,10 +25,10 @@ public class StoredFileSaveCommand {
 	public StoredFileSaveCommand(Type aType, File aFile) {
 
 		if (aType == null) {
-			throw new NullPointerException();
+			throw new IllegalArgumentException("Type must not be null.");
 		}
 		if (aFile == null) {
-			throw new NullPointerException();
+			throw new IllegalArgumentException("File must not be null.");
 		}
 
 		type = aType;

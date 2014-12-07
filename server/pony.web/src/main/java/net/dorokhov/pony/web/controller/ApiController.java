@@ -1,5 +1,7 @@
 package net.dorokhov.pony.web.controller;
 
+import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
+import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.*;
 import net.dorokhov.pony.web.domain.command.CreateUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
@@ -74,13 +76,13 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseDto<UserTokenDto> authenticate(@RequestParam("email") String aEmail, @RequestParam("password") String aPassword) {
+	public ResponseDto<UserTokenDto> authenticate(@RequestParam("email") String aEmail, @RequestParam("password") String aPassword) throws InvalidCredentialsException {
 		return responseBuilder.build(userServiceFacade.authenticate(aEmail, aPassword));
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	@RolesAllowed(RoleDto.Values.USER)
-	public ResponseDto<Void> logout(ServletRequest aRequest) {
+	public ResponseDto<Void> logout(ServletRequest aRequest) throws InvalidTokenException {
 
 		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenProvider.getToken(aRequest)));
 
@@ -89,13 +91,15 @@ public class ApiController {
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.GET)
 	@RolesAllowed(RoleDto.Values.USER)
-	public ResponseDto<UserDto> getCurrentUser() {
+	public ResponseDto<UserDto> getCurrentUser() throws NotAuthenticatedException {
 		return responseBuilder.build(userServiceFacade.getAuthenticatedUser());
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
 	@RolesAllowed(RoleDto.Values.USER)
-	public ResponseDto<UserDto> saveUser(@Valid @RequestParam("user") UpdateCurrentUserCommand aCommand) {
+	public ResponseDto<UserDto> saveUser(@Valid @RequestParam("user") UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
+			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException {
+
 		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
 
@@ -107,7 +111,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
 	@RolesAllowed(RoleDto.Values.USER)
-	public ResponseDto<ArtistSongsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) {
+	public ResponseDto<ArtistSongsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
 
 		ArtistSongsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
 
@@ -138,13 +142,13 @@ public class ApiController {
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	@RolesAllowed(RoleDto.Values.ADMIN)
-	public ResponseDto<UserDto> createUser(@Valid @RequestParam("user") CreateUserCommand aCommand) {
+	public ResponseDto<UserDto> createUser(@Valid @RequestParam("user") CreateUserCommand aCommand) throws UserExistsException {
 		return responseBuilder.build(userServiceFacade.create(aCommand));
 	}
 
 	@RequestMapping(value = "/users", method = RequestMethod.PUT)
 	@RolesAllowed(RoleDto.Values.ADMIN)
-	public ResponseDto<UserDto> updateUser(@Valid @RequestParam("user") UpdateUserCommand aCommand) {
+	public ResponseDto<UserDto> updateUser(@Valid @RequestParam("user") UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 
@@ -157,7 +161,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanJobs/{id}", method = RequestMethod.GET)
 	@RolesAllowed(RoleDto.Values.ADMIN)
-	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) {
+	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) throws ObjectNotFoundException {
 
 		ScanJobDto job = scanServiceFacade.getScanJob(aId);
 
@@ -170,7 +174,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanJobs", method = RequestMethod.POST)
 	@RolesAllowed(RoleDto.Values.ADMIN)
-	public ResponseDto<ScanJobDto> startScanJob() {
+	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
 		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
@@ -183,7 +187,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/scanResults/{id}", method = RequestMethod.GET)
 	@RolesAllowed(RoleDto.Values.ADMIN)
-	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) {
+	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) throws ObjectNotFoundException {
 
 		ScanResultDto result = scanServiceFacade.getScanResult(aId);
 

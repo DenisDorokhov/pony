@@ -232,7 +232,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException, NotAuthorizedException, UserNotFoundException, UserExistsException {
+	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
+			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException {
 
 		User authenticatedUser = getAuthenticatedUser();
 

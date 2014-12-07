@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.library.exception;
 
 import java.io.File;
 
-public class NotSongException extends RuntimeException {
+public class NotSongException extends Exception {
 
 	private File file;
 

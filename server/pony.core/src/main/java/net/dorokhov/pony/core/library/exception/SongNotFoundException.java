@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.library.exception;
 
-public class SongNotFoundException extends RuntimeException {
+public class SongNotFoundException extends Exception {
 
 	private Long songId;
 

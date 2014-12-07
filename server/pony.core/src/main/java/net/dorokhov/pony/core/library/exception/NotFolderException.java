@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.library.exception;
 
 import java.io.File;
 
-public class NotFolderException extends RuntimeException {
+public class NotFolderException extends Exception {
 
 	private File file;
 

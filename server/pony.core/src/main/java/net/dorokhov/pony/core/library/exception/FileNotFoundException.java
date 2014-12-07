@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.library.exception;
 
 import java.io.File;
 
-public class FileNotFoundException extends RuntimeException {
+public class FileNotFoundException extends Exception {
 
 	private File file;
 

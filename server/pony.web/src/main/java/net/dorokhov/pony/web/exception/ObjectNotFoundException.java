@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.exception;
 
-public class ObjectNotFoundException extends RuntimeException {
+public class ObjectNotFoundException extends Exception {
 
 	private Object id;
 

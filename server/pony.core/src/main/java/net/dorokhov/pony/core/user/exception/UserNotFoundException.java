@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.user.exception;
 
 import java.io.Serializable;
 
-public class UserNotFoundException extends RuntimeException implements Serializable {
+public class UserNotFoundException extends Exception implements Serializable {
 
 	private Long id;
 

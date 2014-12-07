@@ -275,7 +275,11 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				log.info("Starting automatic scan...");
 
-				doCreateScanJob(libraryFiles);
+				try {
+					doCreateScanJob(libraryFiles);
+				} catch (LibraryNotDefinedException e) {
+					log.warn("Library is not defined.");
+				}
 			}
 		}
 	}

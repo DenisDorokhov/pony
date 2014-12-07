@@ -288,7 +288,7 @@ public class ScanServiceImpl implements ScanService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public ScanResult edit(List<ScanEditCommand> aCommands) throws ConcurrentScanException, FileNotFoundException, NotSongException {
+	public ScanResult edit(List<ScanEditCommand> aCommands) throws SongNotFoundException, ConcurrentScanException, FileNotFoundException, NotSongException {
 
 		final List<File> targetFiles = new ArrayList<>();
 		final List<String> targetPaths = new ArrayList<>();

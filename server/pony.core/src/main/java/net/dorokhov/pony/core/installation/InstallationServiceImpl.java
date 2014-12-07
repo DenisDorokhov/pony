@@ -116,7 +116,11 @@ public class InstallationServiceImpl implements InstallationService {
 
 					log.debug("Creating user [" + user.getEmail() + "]...");
 
-					userService.create(user);
+					try {
+						userService.create(user);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 				}
 
 				return installation;
