@@ -25,5 +25,5 @@ public interface UserServiceFacade {
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException;
 
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException;
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException;
 }

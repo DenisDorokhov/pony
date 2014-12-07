@@ -1,9 +1,11 @@
 package net.dorokhov.pony.core.user.exception;
 
-public class NotAuthenticatedException extends Exception {
+import java.io.Serializable;
+
+public class NotAuthenticatedException extends Exception implements Serializable {
 
 	public NotAuthenticatedException() {
-		super("Authenticated user could not be found.");
+		super("User is not authenticated.");
 	}
 
 }

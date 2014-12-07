@@ -1,5 +1,9 @@
 package net.dorokhov.pony.web.controller;
 
+import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
+import net.dorokhov.pony.core.user.exception.InvalidCredentialsException;
+import net.dorokhov.pony.core.user.exception.InvalidPasswordException;
+import net.dorokhov.pony.core.user.exception.UserNotFoundException;
 import net.dorokhov.pony.web.domain.ErrorDto;
 import net.dorokhov.pony.web.domain.ResponseDto;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
@@ -8,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 @ControllerAdvice(assignableTypes = ApiController.class)
@@ -28,21 +34,71 @@ public class ApiControllerAdvice {
 		responseBuilder = aResponseBuilder;
 	}
 
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseDto handleUnexpectedError(Exception aException) {
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseDto onAccessDeniedError(AccessDeniedException aException, HttpServletRequest aRequest) {
 
-		log.error("Unexpected error occurred.", aException);
+		log.warn("Access denied to [" + aRequest.getRequestURL().toString() + "].");
 
-		return responseBuilder.build(new ErrorDto("errorUnexpected", "Unexpected error occurred."));
+		return responseBuilder.build(new ErrorDto("errorAccessDenied", aException.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidCredentialsException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseDto onInvalidCredentialsException(InvalidCredentialsException aException) {
+
+		log.warn("Credentials are invalid.");
+
+		return responseBuilder.build(new ErrorDto("errorInvalidCredentials", aException.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidPasswordException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseDto onInvalidPasswordException(InvalidPasswordException aException) {
+
+		log.warn("Password is invalid.");
+
+		return responseBuilder.build(new ErrorDto("errorInvalidPassword", aException.getMessage()));
 	}
 
 	@ExceptionHandler(ObjectNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ResponseDto handleNotFoundError(ObjectNotFoundException aException) {
+	public ResponseDto onObjectNotFoundError(ObjectNotFoundException aException) {
 
 		log.debug("Object could not found.", aException);
 
 		return responseBuilder.build(new ErrorDto(aException.getErrorCode(), aException.getMessage(), Arrays.asList(aException.getId().toString())));
+	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onUserNotFoundError(UserNotFoundException aException) {
+
+		log.warn("User not found.", aException);
+
+		String userId = null;
+		if (aException.getId() != null) {
+			userId = aException.getId().toString();
+		}
+
+		return responseBuilder.build(new ErrorDto("errorUserNotFound", aException.getMessage(), Arrays.asList(userId)));
+	}
+
+	@ExceptionHandler(LibraryNotDefinedException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseDto onLibraryNotDefinedError(LibraryNotDefinedException aException) {
+
+		log.warn("Library is not defined.", aException);
+
+		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseDto onUnexpectedError(Exception aException) {
+
+		log.error("Unexpected error occurred.", aException);
+
+		return responseBuilder.build(new ErrorDto("errorUnexpected", "Unexpected error occurred."));
 	}
 }

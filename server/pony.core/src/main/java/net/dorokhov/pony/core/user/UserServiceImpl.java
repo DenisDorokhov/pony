@@ -233,7 +233,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException {
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
 
 		User authenticatedUser = getAuthenticatedUser();
 
@@ -244,7 +244,7 @@ public class UserServiceImpl implements UserService {
 			throw new NotAuthorizedException("Cannot update user which is not currently authenticated.");
 		}
 		if (!passwordEncoder.matches(aOldPassword, authenticatedUser.getPassword())) {
-			throw new InvalidCredentialsException();
+			throw new InvalidPasswordException();
 		}
 
 		return update(aUser, aNewPassword);

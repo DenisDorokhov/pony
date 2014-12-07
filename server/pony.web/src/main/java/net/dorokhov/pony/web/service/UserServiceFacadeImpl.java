@@ -107,7 +107,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	@Override
 	@Transactional
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException {
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
 
 		User user = userService.getById(userService.getAuthenticatedUser().getId());
 

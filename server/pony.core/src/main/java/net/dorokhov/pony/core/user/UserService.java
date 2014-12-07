@@ -24,7 +24,7 @@ public interface UserService {
 	public User getAuthenticatedUser() throws NotAuthenticatedException;
 
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidCredentialsException, UserNotFoundException, UserExistsException;
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException;
 
 	public void cleanTickets();
 }
