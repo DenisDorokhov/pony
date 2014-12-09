@@ -4,8 +4,8 @@ import net.dorokhov.pony.core.domain.UserToken;
 
 import javax.servlet.ServletRequest;
 
-public interface UserTokenProvider {
+public interface UserTokenReader {
 
-	public UserToken getToken(ServletRequest aRequest);
+	public UserToken readToken(ServletRequest aRequest);
 
 }

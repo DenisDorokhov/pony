@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AbstractIntegrationCase {
 
@@ -43,6 +44,8 @@ public class AbstractIntegrationCase {
 
 	@After
 	public void baseTearDown() throws Exception {
+
+		SecurityContextHolder.clearContext();
 
 		if (installationService != null && installationService.getInstallation() != null) {
 

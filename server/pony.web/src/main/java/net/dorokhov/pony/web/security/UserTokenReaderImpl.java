@@ -8,10 +8,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 @Service
-public class UserTokenProviderImpl implements UserTokenProvider {
+public class UserTokenReaderImpl implements UserTokenReader {
 
 	@Override
-	public UserToken getToken(ServletRequest aRequest) {
+	public UserToken readToken(ServletRequest aRequest) {
 
 		if (aRequest instanceof HttpServletRequest) {
 

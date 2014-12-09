@@ -24,10 +24,12 @@
     <context:component-scan base-package="net.dorokhov.pony.web.service"/>
     <context:component-scan base-package="net.dorokhov.pony.web.security"/>
 
+    <bean id="securityEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+
     <security:http use-expressions="true"
                    auto-config="false"
                    create-session="stateless"
-                   entry-point-ref="httpUnauthorizedEntryPoint"
+                   entry-point-ref="securityEntryPoint"
                    authentication-manager-ref="authenticationManager">
         <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
     </security:http>

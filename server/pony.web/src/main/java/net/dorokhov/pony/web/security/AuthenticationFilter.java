@@ -22,15 +22,15 @@ public class AuthenticationFilter extends GenericFilterBean {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	private UserTokenProvider userTokenProvider;
+	private UserTokenReader userTokenReader;
 
 	private UserService userService;
 
 	private InstallationService installationService;
 
 	@Autowired
-	public void setUserTokenProvider(UserTokenProvider aUserTokenProvider) {
-		userTokenProvider = aUserTokenProvider;
+	public void setUserTokenReader(UserTokenReader aUserTokenReader) {
+		userTokenReader = aUserTokenReader;
 	}
 
 	@Autowired
@@ -47,13 +47,13 @@ public class AuthenticationFilter extends GenericFilterBean {
 	@Transactional
 	public void doFilter(ServletRequest aServletRequest, ServletResponse aServletResponse, FilterChain aFilterChain) throws IOException, ServletException {
 
-		UserToken token = userTokenProvider.getToken(aServletRequest);
+		UserToken token = userTokenReader.readToken(aServletRequest);
 
 		if (token != null && installationService.getInstallation() != null) {
 			try {
 				userService.authenticate(token);
 			} catch (InvalidTokenException e) {
-				log.info("Ticket [" + token + "] is invalid.");
+				log.info("Token [" + token + "] is invalid.");
 			}
 		}
 

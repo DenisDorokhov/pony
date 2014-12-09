@@ -1,6 +1,7 @@
 package net.dorokhov.pony.core.domain;
 
 import net.dorokhov.pony.core.domain.common.BaseEntity;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -29,6 +30,7 @@ public class User extends BaseEntity<Long> {
 	}
 
 	@Column(name = "email", unique = true)
+	@Email
 	@NotNull
 	public String getEmail() {
 		return email;
@@ -49,7 +51,7 @@ public class User extends BaseEntity<Long> {
 	}
 
 	@Column(name="value")
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name="user_role", joinColumns = @JoinColumn(name = "user_id"))
 	public Set<String> getRoles() {
 
@@ -64,4 +66,12 @@ public class User extends BaseEntity<Long> {
 		roles = aRoles;
 	}
 
+	@Override
+	public String toString() {
+		return "User{" +
+				"name='" + name + '\'' +
+				", email='" + email + '\'' +
+				", roles=" + roles +
+				'}';
+	}
 }

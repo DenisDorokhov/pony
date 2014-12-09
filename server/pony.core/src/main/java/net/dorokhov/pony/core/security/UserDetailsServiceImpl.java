@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public UserDetails loadUserByUsername(String aUsername) throws UsernameNotFoundException {
 
 		User user = userDao.findByEmail(aUsername);

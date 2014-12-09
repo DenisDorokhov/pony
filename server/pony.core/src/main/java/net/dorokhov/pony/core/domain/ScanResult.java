@@ -84,7 +84,7 @@ public class ScanResult {
 	}
 
 	@Column(name="value")
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name="scan_result_target_path", joinColumns = @JoinColumn(name = "scan_result_id"))
 	public List<String> getTargetPaths() {
 		return targetPaths;
@@ -95,7 +95,7 @@ public class ScanResult {
 	}
 
 	@Column(name = "value")
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "scan_result_failed_path", joinColumns = @JoinColumn(name = "scan_result_id"))
 	public List<String> getFailedPaths() {
 		return failedPaths;

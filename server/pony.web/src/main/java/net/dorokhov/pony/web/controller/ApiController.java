@@ -7,7 +7,7 @@ import net.dorokhov.pony.web.domain.command.CreateUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
-import net.dorokhov.pony.web.security.UserTokenProvider;
+import net.dorokhov.pony.web.security.UserTokenReader;
 import net.dorokhov.pony.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class ApiController {
 
 	private ResponseBuilder responseBuilder;
 
-	private UserTokenProvider userTokenProvider;
+	private UserTokenReader userTokenReader;
 
 	private DtoConverter dtoConverter;
 
@@ -43,8 +43,8 @@ public class ApiController {
 	}
 
 	@Autowired
-	public void setUserTokenProvider(UserTokenProvider aUserTokenProvider) {
-		userTokenProvider = aUserTokenProvider;
+	public void setUserTokenReader(UserTokenReader aUserTokenReader) {
+		userTokenReader = aUserTokenReader;
 	}
 
 	@Autowired
@@ -91,7 +91,7 @@ public class ApiController {
 	@RolesAllowed(RoleDto.Values.USER)
 	public ResponseDto<Void> logout(ServletRequest aRequest) throws InvalidTokenException {
 
-		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenProvider.getToken(aRequest)));
+		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenReader.readToken(aRequest)));
 
 		return responseBuilder.build();
 	}

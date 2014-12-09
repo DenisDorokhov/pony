@@ -117,6 +117,10 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException {
 
+		if (aUser.getId() == null) {
+			throw new IllegalArgumentException("User identifier must be null.");
+		}
+
 		User currentUser = userDao.findOne(aUser.getId());
 
 		if (currentUser == null) {
@@ -135,7 +139,27 @@ public class UserServiceImpl implements UserService {
 			aUser.setPassword(existingUser.getPassword());
 		}
 
-		return userDao.save(aUser);
+		User updatedUser = userDao.save(aUser);
+
+		User authenticatedUser = null;
+		try {
+			authenticatedUser = getAuthenticatedUser();
+		} catch (NotAuthenticatedException e) {
+			// Updated user is not authenticated
+		}
+
+		if (authenticatedUser != null) {
+			if (updatedUser.getId().equals(authenticatedUser.getId())) {
+
+				UserDetailsImpl userDetails = new UserDetailsImpl(updatedUser);
+
+				Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+				SecurityContextHolder.getContext().setAuthentication(token);
+			}
+		}
+
+		return updatedUser;
 	}
 
 	@Override
@@ -237,9 +261,6 @@ public class UserServiceImpl implements UserService {
 
 		User authenticatedUser = getAuthenticatedUser();
 
-		if (authenticatedUser == null) {
-			throw new NotAuthenticatedException();
-		}
 		if (!authenticatedUser.getId().equals(aUser.getId())) {
 			throw new NotAuthorizedException("Cannot update user which is not currently authenticated.");
 		}
