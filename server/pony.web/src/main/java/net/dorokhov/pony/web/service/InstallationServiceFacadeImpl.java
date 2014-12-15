@@ -55,8 +55,8 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 		admin.setEmail(aCommand.getUserEmail());
 		admin.setPassword(aCommand.getUserPassword());
 
-		admin.getRoles().add(RoleDto.Values.USER);
-		admin.getRoles().add(RoleDto.Values.ADMIN);
+		admin.getRoles().add(RoleDto.Strings.USER);
+		admin.getRoles().add(RoleDto.Strings.ADMIN);
 
 		command.getUsers().add(admin);
 

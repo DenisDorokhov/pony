@@ -261,9 +261,9 @@ public class DtoConverter {
 		dto.setName(aUser.getName());
 		dto.setEmail(aUser.getEmail());
 
-		if (aUser.getRoles().contains(RoleDto.Values.ADMIN)) {
+		if (aUser.getRoles().contains(RoleDto.Strings.ADMIN)) {
 			dto.setRole(RoleDto.ADMIN);
-		} else if (aUser.getRoles().contains(RoleDto.Values.USER)) {
+		} else if (aUser.getRoles().contains(RoleDto.Strings.USER)) {
 			dto.setRole(RoleDto.USER);
 		}
 

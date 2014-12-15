@@ -41,7 +41,7 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
-	@RolesAllowed(RoleDto.Values.USER)
+	@RolesAllowed(RoleDto.Strings.USER)
 	public Object getStoredFile(@PathVariable("id") Long aStoredFileId) throws FileNotFoundException {
 
 		StoredFile storedFile = storedFileService.getById(aStoredFileId);
@@ -70,7 +70,7 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/audio/{id}", method = RequestMethod.GET)
-	@RolesAllowed(RoleDto.Values.USER)
+	@RolesAllowed(RoleDto.Strings.USER)
 	public Object getSongFile(@PathVariable("id") Long aSongId) throws FileNotFoundException {
 
 		Song song = songDao.findOne(aSongId);

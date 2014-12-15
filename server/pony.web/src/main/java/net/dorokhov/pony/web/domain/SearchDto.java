@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SearchDto {
 
-	private String query;
+	private SearchQueryDto query;
 
 	private List<GenreDto> genres;
 
@@ -15,11 +15,11 @@ public class SearchDto {
 
 	private List<SongDto> songs;
 
-	public String getQuery() {
+	public SearchQueryDto getQuery() {
 		return query;
 	}
 
-	public void setQuery(String aQuery) {
+	public void setQuery(SearchQueryDto aQuery) {
 		query = aQuery;
 	}
 

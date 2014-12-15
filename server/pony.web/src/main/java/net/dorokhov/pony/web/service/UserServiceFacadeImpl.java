@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
+import net.dorokhov.pony.web.domain.CredentialsDto;
 import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.UserDto;
 import net.dorokhov.pony.web.domain.UserTokenDto;
@@ -88,8 +89,8 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserTokenDto authenticate(String aEmail, String aPassword) throws InvalidCredentialsException {
-		return dtoConverter.userTokenToDto(userService.authenticate(aEmail, aPassword));
+	public UserTokenDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
+		return dtoConverter.userTokenToDto(userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword()));
 	}
 
 	@Override
@@ -124,12 +125,12 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		switch (aDto) {
 
 			case USER:
-				roles.add(RoleDto.Values.USER);
+				roles.add(RoleDto.Strings.USER);
 				break;
 
 			case ADMIN:
-				roles.add(RoleDto.Values.USER);
-				roles.add(RoleDto.Values.ADMIN);
+				roles.add(RoleDto.Strings.USER);
+				roles.add(RoleDto.Strings.ADMIN);
 				break;
 		}
 

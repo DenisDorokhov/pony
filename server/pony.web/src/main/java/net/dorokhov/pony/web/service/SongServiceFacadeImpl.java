@@ -96,12 +96,12 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public SearchDto search(String aQuery) {
+	public SearchDto search(SearchQueryDto aQuery) {
 
-		List<Genre> genreList = searchService.searchGenres(aQuery, MAX_SEARCH_RESULTS);
-		List<Artist> artistList = searchService.searchArtists(aQuery, MAX_SEARCH_RESULTS);
-		List<Album> albumList = searchService.searchAlbums(aQuery, MAX_SEARCH_RESULTS);
-		List<Song> songList = searchService.searchSongs(aQuery, MAX_SEARCH_RESULTS);
+		List<Genre> genreList = searchService.searchGenres(aQuery.getText(), MAX_SEARCH_RESULTS);
+		List<Artist> artistList = searchService.searchArtists(aQuery.getText(), MAX_SEARCH_RESULTS);
+		List<Album> albumList = searchService.searchAlbums(aQuery.getText(), MAX_SEARCH_RESULTS);
+		List<Song> songList = searchService.searchSongs(aQuery.getText(), MAX_SEARCH_RESULTS);
 
 		SearchDto dto = new SearchDto();
 
