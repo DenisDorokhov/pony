@@ -85,6 +85,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public User getByEmail(String aEmail) {
+		return userDao.findByEmail(aEmail);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public List<User> getAll() {
 
 		List<User> userList = new ArrayList<>();
@@ -104,7 +110,7 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("User identifier must be null.");
 		}
 
-		if (userDao.findByEmail(aUser.getEmail()) != null) {
+		if (getByEmail(aUser.getEmail()) != null) {
 			throw new UserExistsException(aUser.getEmail());
 		}
 
@@ -127,7 +133,7 @@ public class UserServiceImpl implements UserService {
 			throw new UserNotFoundException(aUser.getId());
 		}
 
-		User existingUser = userDao.findByEmail(aUser.getEmail());
+		User existingUser = getByEmail(aUser.getEmail());
 
 		if (!existingUser.getId().equals(aUser.getId())) {
 			throw new UserExistsException(aUser.getEmail());

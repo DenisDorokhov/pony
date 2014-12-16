@@ -14,14 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @ControllerAdvice(assignableTypes = ApiController.class)
 @ResponseBody
@@ -86,11 +90,35 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(new ErrorDto("errorUserNotFound", aException.getMessage(), Arrays.asList(userId)));
 	}
 
+	@ExceptionHandler(LibraryNotDefinedException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseDto onLibraryNotDefinedError(LibraryNotDefinedException aException) {
+
+		log.warn("Library is not defined.");
+
+		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onValidationError(MethodArgumentNotValidException aException) {
+
+		log.debug(aException.getMessage());
+
+		List<ErrorDto> errorList = new ArrayList<>();
+
+		for (FieldError fieldError : aException.getBindingResult().getFieldErrors()) {
+			errorList.add(new ErrorDto("errorValidation." + fieldError.getCode(), fieldError.getDefaultMessage(), fieldError.getField()));
+		}
+
+		return responseBuilder.build(errorList);
+	}
+
 	@ExceptionHandler(HttpMediaTypeException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onContentTypeNotSupported(HttpMediaTypeException aException) {
 
-		log.warn(aException.getMessage());
+		log.debug(aException.getMessage());
 
 		return responseBuilder.build(new ErrorDto("errorInvalidContentType", "Invalid content type."));
 	}
@@ -99,18 +127,9 @@ public class ApiControllerAdvice {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onMessageNotReadableError(HttpMessageNotReadableException aException) {
 
-		log.warn(aException.getMessage());
+		log.debug(aException.getMessage());
 
 		return responseBuilder.build(new ErrorDto("errorInvalidRequest", "Invalid request."));
-	}
-
-	@ExceptionHandler(LibraryNotDefinedException.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseDto onLibraryNotDefinedError(LibraryNotDefinedException aException) {
-
-		log.warn("Library is not defined.");
-
-		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
 	}
 
 	@ExceptionHandler(Exception.class)

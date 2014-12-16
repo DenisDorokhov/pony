@@ -118,6 +118,41 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		return dtoConverter.userToDto(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
 	}
 
+	@Override
+	public boolean validateEmail(CreateUserCommand aCommand) {
+		return validateEmail(null, aCommand.getEmail());
+	}
+
+	@Override
+	public boolean validateEmail(UpdateUserCommand aCommand) {
+		return validateEmail(userService.getById(aCommand.getId()), aCommand.getEmail());
+	}
+
+	@Override
+	public boolean validateEmail(UpdateCurrentUserCommand aCommand) {
+
+		User user = null;
+
+		try {
+			user = userService.getAuthenticatedUser();
+		} catch (NotAuthenticatedException e) {
+			// User is not authenticated
+		}
+
+		return validateEmail(user, aCommand.getEmail());
+	}
+
+	private boolean validateEmail(User aUser, String aEmail) {
+
+		User existingUser = userService.getByEmail(aEmail);
+
+		if (aUser != null) {
+			return (existingUser == null || !existingUser.getId().equals(aUser.getId()));
+		} else {
+			return (existingUser == null);
+		}
+	}
+
 	private Set<String> dtoToRoles(RoleDto aDto) {
 
 		Set<String> roles = new HashSet<>();

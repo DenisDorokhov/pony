@@ -31,6 +31,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		checkUser(user, 1);
 		checkUser(userService.getById(user.getId()), 1);
+		checkUser(userService.getByEmail("test1@test.com"), 1);
 
 		isExceptionThrown = false;
 

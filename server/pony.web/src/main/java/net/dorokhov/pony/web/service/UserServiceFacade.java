@@ -27,4 +27,8 @@ public interface UserServiceFacade {
 
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException;
+
+	public boolean validateEmail(CreateUserCommand aCommand);
+	public boolean validateEmail(UpdateUserCommand aCommand);
+	public boolean validateEmail(UpdateCurrentUserCommand aCommand);
 }

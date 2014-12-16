@@ -9,6 +9,7 @@ import java.util.List;
 public interface UserService {
 
 	public User getById(Long aId);
+	public User getByEmail(String aEmail);
 
 	public List<User> getAll();
 

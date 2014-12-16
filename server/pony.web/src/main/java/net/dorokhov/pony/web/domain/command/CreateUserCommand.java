@@ -1,12 +1,14 @@
 package net.dorokhov.pony.web.domain.command;
 
 import net.dorokhov.pony.web.domain.RoleDto;
+import net.dorokhov.pony.web.validation.UniqueUserEmail;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@UniqueUserEmail
 public class CreateUserCommand {
 
 	private String name;
