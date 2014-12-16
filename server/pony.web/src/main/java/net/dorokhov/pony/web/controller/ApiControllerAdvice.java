@@ -12,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,30 +67,48 @@ public class ApiControllerAdvice {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ResponseDto onObjectNotFoundError(ObjectNotFoundException aException) {
 
-		log.debug("Object could not found.", aException);
+		log.debug(aException.getMessage());
 
-		return responseBuilder.build(new ErrorDto(aException.getErrorCode(), aException.getMessage(), Arrays.asList(aException.getId().toString())));
+		return responseBuilder.build(new ErrorDto(aException.getErrorCode(), aException.getMessage(), Arrays.asList(aException.getObjectId().toString())));
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onUserNotFoundError(UserNotFoundException aException) {
 
-		log.warn("User not found.", aException);
+		log.warn(aException.getMessage());
 
 		String userId = null;
-		if (aException.getId() != null) {
-			userId = aException.getId().toString();
+		if (aException.getUserId() != null) {
+			userId = aException.getUserId().toString();
 		}
 
 		return responseBuilder.build(new ErrorDto("errorUserNotFound", aException.getMessage(), Arrays.asList(userId)));
+	}
+
+	@ExceptionHandler(HttpMediaTypeException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onContentTypeNotSupported(HttpMediaTypeException aException) {
+
+		log.warn(aException.getMessage());
+
+		return responseBuilder.build(new ErrorDto("errorInvalidContentType", "Invalid content type."));
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onMessageNotReadableError(HttpMessageNotReadableException aException) {
+
+		log.warn(aException.getMessage());
+
+		return responseBuilder.build(new ErrorDto("errorInvalidRequest", "Invalid request."));
 	}
 
 	@ExceptionHandler(LibraryNotDefinedException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ResponseDto onLibraryNotDefinedError(LibraryNotDefinedException aException) {
 
-		log.warn("Library is not defined.", aException);
+		log.warn("Library is not defined.");
 
 		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
 	}
