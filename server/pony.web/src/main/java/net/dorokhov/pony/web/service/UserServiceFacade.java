@@ -18,6 +18,8 @@ public interface UserServiceFacade {
 	public UserDto create(CreateUserCommand aCommand) throws UserExistsException;
 	public UserDto update(UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException;
 
+	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException;
+
 	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
 
 	public void logout(String aToken) throws InvalidTokenException;

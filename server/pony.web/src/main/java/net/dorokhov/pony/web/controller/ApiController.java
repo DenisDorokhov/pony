@@ -131,6 +131,14 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.getById(aId));
 	}
 
+	@RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+	public ResponseDto<Void> deleteUser(@PathVariable("id") Long aId) throws UserNotFoundException, UserSelfDeletionException {
+
+		userServiceFacade.delete(aId);
+
+		return responseBuilder.build();
+	}
+
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	public ResponseDto<UserDto> createUser(@Valid @RequestBody CreateUserCommand aCommand) throws UserExistsException {
 		return responseBuilder.build(userServiceFacade.create(aCommand));

@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.InvalidCredentialsException;
 import net.dorokhov.pony.core.user.exception.InvalidPasswordException;
 import net.dorokhov.pony.core.user.exception.UserNotFoundException;
+import net.dorokhov.pony.core.user.exception.UserSelfDeletionException;
 import net.dorokhov.pony.web.domain.ErrorDto;
 import net.dorokhov.pony.web.domain.ResponseDto;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
@@ -77,6 +78,20 @@ public class ApiControllerAdvice {
 		}
 
 		return responseBuilder.build(new ErrorDto("errorUserNotFound", aException.getMessage(), Arrays.asList(userId)));
+	}
+
+	@ExceptionHandler(UserSelfDeletionException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onUserSelfDeletionError(UserSelfDeletionException aException) {
+
+		log.debug(aException.getMessage());
+
+		String userId = null;
+		if (aException.getUserId() != null) {
+			userId = aException.getUserId().toString();
+		}
+
+		return responseBuilder.build(new ErrorDto("errorUserSelfDeletion", aException.getMessage(), Arrays.asList(userId)));
 	}
 
 	@ExceptionHandler(LibraryNotDefinedException.class)

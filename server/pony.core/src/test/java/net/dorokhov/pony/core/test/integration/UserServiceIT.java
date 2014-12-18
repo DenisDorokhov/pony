@@ -32,6 +32,8 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		checkUser(userService.getById(user.getId()), 1);
 		checkUser(userService.getByEmail("test1@test.com"), 1);
 
+		Long userToDelete = user.getId();
+
 		isExceptionThrown = false;
 
 		try {
@@ -109,6 +111,10 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		}
 
 		Assert.assertTrue(isExceptionThrown);
+
+		userService.delete(userToDelete);
+
+		Assert.assertNull(userService.getById(userToDelete));
 	}
 
 	@Test
@@ -134,6 +140,16 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		user = userService.updateAuthenticatedUser(user, "password1", "password2");
 		user = userService.updateAuthenticatedUser(user, "password2", null);
+
+		isExceptionThrown = false;
+
+		try {
+			userService.delete(user.getId());
+		} catch (UserSelfDeletionException e) {
+			isExceptionThrown = true;
+		}
+
+		Assert.assertTrue(isExceptionThrown);
 
 		isExceptionThrown = false;
 

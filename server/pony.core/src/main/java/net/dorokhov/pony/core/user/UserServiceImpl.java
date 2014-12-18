@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			authenticatedUser = getAuthenticatedUser();
 		} catch (NotAuthenticatedException e) {
-			// Updated user is not authenticated
+			// User is not authenticated
 		}
 
 		if (authenticatedUser != null) {
@@ -173,6 +173,33 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return updatedUser;
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException {
+
+		User currentUser = userDao.findOne(aId);
+
+		if (currentUser == null) {
+			throw new UserNotFoundException(aId);
+		}
+
+		User authenticatedUser = null;
+		try {
+			authenticatedUser = getAuthenticatedUser();
+		} catch (NotAuthenticatedException e) {
+			// User is not authenticated
+		}
+
+		if (authenticatedUser != null) {
+			if (currentUser.getId().equals(authenticatedUser.getId())) {
+				throw new UserSelfDeletionException(aId);
+			}
+		}
+
+		userTicketDao.deleteByUserId(aId);
+		userDao.delete(aId);
 	}
 
 	@Override

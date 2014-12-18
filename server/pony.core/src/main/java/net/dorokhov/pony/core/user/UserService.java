@@ -15,6 +15,8 @@ public interface UserService {
 	public User create(User aUser) throws UserExistsException;
 	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException;
 
+	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException;
+
 	public String authenticate(String aEmail, String aPassword) throws InvalidCredentialsException;
 
 	public void authenticate(String aToken) throws InvalidTokenException;

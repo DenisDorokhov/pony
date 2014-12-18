@@ -87,6 +87,12 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
+	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException {
+		userService.delete(aId);
+	}
+
+	@Override
+	@Transactional
 	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
 		return userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword());
 	}
