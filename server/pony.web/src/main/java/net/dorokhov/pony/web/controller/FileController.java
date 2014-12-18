@@ -5,7 +5,6 @@ import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.web.common.StreamingViewRenderer;
-import net.dorokhov.pony.web.domain.RoleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,7 +39,6 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
-	@RolesAllowed(RoleDto.Strings.USER)
 	public Object getStoredFile(@PathVariable("id") Long aStoredFileId) throws FileNotFoundException {
 
 		StoredFile storedFile = storedFileService.getById(aStoredFileId);
@@ -70,7 +67,6 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/audio/{id}", method = RequestMethod.GET)
-	@RolesAllowed(RoleDto.Strings.USER)
 	public Object getSongFile(@PathVariable("id") Long aSongId) throws FileNotFoundException {
 
 		Song song = songDao.findOne(aSongId);

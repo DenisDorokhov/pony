@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,15 +36,6 @@ public class ApiControllerAdvice {
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
-	}
-
-	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ResponseDto onAccessDeniedError(AccessDeniedException aException, HttpServletRequest aRequest) {
-
-		log.warn("Access denied to [" + aRequest.getRequestURL().toString() + "].");
-
-		return responseBuilder.build(new ErrorDto("errorAccessDenied", aException.getMessage()));
 	}
 
 	@ExceptionHandler(InvalidCredentialsException.class)
@@ -102,8 +91,6 @@ public class ApiControllerAdvice {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onValidationError(MethodArgumentNotValidException aException) {
-
-		log.debug(aException.getMessage());
 
 		List<ErrorDto> errorList = new ArrayList<>();
 

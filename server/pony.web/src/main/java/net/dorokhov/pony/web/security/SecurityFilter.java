@@ -18,7 +18,7 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 @Component
-public class AuthenticationFilter extends GenericFilterBean {
+public class SecurityFilter extends GenericFilterBean {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 

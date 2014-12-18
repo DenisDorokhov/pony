@@ -24,14 +24,34 @@
     <context:component-scan base-package="net.dorokhov.pony.web.service"/>
     <context:component-scan base-package="net.dorokhov.pony.web.security"/>
 
-    <bean id="securityEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
-
     <security:http use-expressions="true"
                    auto-config="false"
                    create-session="stateless"
                    entry-point-ref="securityEntryPoint"
                    authentication-manager-ref="authenticationManager">
-        <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
+
+        <security:custom-filter ref="securityFilter" position="FORM_LOGIN_FILTER" />
+
+        <security:intercept-url pattern="/" access="permitAll" />
+        <security:intercept-url pattern="/install" access="permitAll" />
+
+        <security:intercept-url pattern="/css/**" access="permitAll" />
+        <security:intercept-url pattern="/js/**" access="permitAll" />
+
+        <security:intercept-url pattern="/api/installation" access="permitAll" />
+        <security:intercept-url pattern="/api/authenticate" access="permitAll" />
+
+        <security:intercept-url pattern="/api/users" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/users/**" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/scanJobs" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/scanJobs/**" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/scanResults" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/scanResults/**" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/scanStatus" access="hasRole('ADMIN')" />
+        <security:intercept-url pattern="/api/config" access="hasRole('ADMIN')" />
+
+        <security:intercept-url pattern="/**" access="hasRole('USER')" />
+
     </security:http>
 
 </beans>
