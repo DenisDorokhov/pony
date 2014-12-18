@@ -116,7 +116,7 @@ public class ApiController {
 		return responseBuilder.build(artist);
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
 	public ResponseDto<SearchDto> search(@Valid @RequestBody SearchQueryDto aQuery) {
 		return responseBuilder.build(songServiceFacade.search(aQuery));
 	}

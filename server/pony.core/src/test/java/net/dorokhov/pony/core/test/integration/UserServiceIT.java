@@ -178,6 +178,10 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		}
 
 		Assert.assertTrue(isExceptionThrown);
+
+		userService.authenticate("DEBUG");
+
+		Assert.assertNotNull(userService.getAuthenticatedUser());
 	}
 
 	@Test

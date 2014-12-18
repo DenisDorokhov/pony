@@ -7,11 +7,15 @@ import net.dorokhov.pony.core.domain.UserTicket;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,6 +45,8 @@ public class UserServiceImpl implements UserService {
 	private AuthenticationManager authenticationManager;
 
 	private int ticketLifetime;
+
+	private String debugToken;
 
 	@Autowired
 	public void setUserDao(UserDao aUserDao) {
@@ -71,9 +74,14 @@ public class UserServiceImpl implements UserService {
 		authenticationManager = aAuthenticationManager;
 	}
 
-	@Value("${ticket.lifetime}")
+	@Value("${user.ticketLifetime}")
 	public void setTicketLifetime(int aTicketLifetime) {
 		ticketLifetime = aTicketLifetime;
+	}
+
+	@Value("${user.debugToken}")
+	public void setDebugToken(String aDebugToken) {
+		debugToken = aDebugToken;
 	}
 
 	@Override
@@ -201,26 +209,42 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void authenticate(String aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(aToken);
+		User user;
 
-		if (ticket == null) {
-			throw new InvalidTokenException();
+		if (!StringUtils.isBlank(debugToken) && Objects.equals(aToken, debugToken)) {
+
+			Page<User> page = userDao.findAll(new PageRequest(0, 1, new Sort("id")));
+			if (page.getNumberOfElements() > 0) {
+				user = page.getContent().get(0);
+			} else {
+				throw new RuntimeException("No users found in the database.");
+			}
+
+		} else {
+
+			UserTicket ticket = userTicketDao.findOne(aToken);
+
+			if (ticket == null) {
+				throw new InvalidTokenException();
+			}
+
+			Date ticketDate = ticket.getUpdateDate();
+			if (ticketDate == null) {
+				ticketDate = ticket.getCreationDate();
+			}
+
+			long ticketAge = (new Date().getTime() - ticketDate.getTime()) / 1000;
+
+			if (ticketAge > ticketLifetime) {
+				throw new InvalidTokenException();
+			}
+
+			ticket = userTicketDao.save(ticket);
+
+			user = ticket.getUser();
 		}
 
-		Date ticketDate = ticket.getUpdateDate();
-		if (ticketDate == null) {
-			ticketDate = ticket.getCreationDate();
-		}
-
-		long ticketAge = (new Date().getTime() - ticketDate.getTime()) / 1000;
-
-		if (ticketAge > ticketLifetime) {
-			throw new InvalidTokenException();
-		}
-
-		ticket = userTicketDao.save(ticket);
-
-		UserDetailsImpl userDetails = new UserDetailsImpl(ticket.getUser());
+		UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
 		Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
