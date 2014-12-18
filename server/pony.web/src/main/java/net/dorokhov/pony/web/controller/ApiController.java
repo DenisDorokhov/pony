@@ -24,8 +24,6 @@ public class ApiController {
 
 	private UserTokenReader userTokenReader;
 
-	private DtoConverter dtoConverter;
-
 	private InstallationServiceFacade installationServiceFacade;
 
 	private UserServiceFacade userServiceFacade;
@@ -44,11 +42,6 @@ public class ApiController {
 	@Autowired
 	public void setUserTokenReader(UserTokenReader aUserTokenReader) {
 		userTokenReader = aUserTokenReader;
-	}
-
-	@Autowired
-	public void setDtoConverter(DtoConverter aDtoConverter) {
-		dtoConverter = aDtoConverter;
 	}
 
 	@Autowired
@@ -82,14 +75,14 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseDto<UserTokenDto> authenticate(@Valid @RequestBody CredentialsDto aCredentials) throws InvalidCredentialsException {
+	public ResponseDto<String> authenticate(@Valid @RequestBody CredentialsDto aCredentials) throws InvalidCredentialsException {
 		return responseBuilder.build(userServiceFacade.authenticate(aCredentials));
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public ResponseDto<Void> logout(ServletRequest aRequest) throws InvalidTokenException {
 
-		userServiceFacade.logout(dtoConverter.userTokenToDto(userTokenReader.readToken(aRequest)));
+		userServiceFacade.logout(userTokenReader.readToken(aRequest));
 
 		return responseBuilder.build();
 	}

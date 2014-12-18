@@ -1,13 +1,11 @@
 package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.CredentialsDto;
 import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.UserDto;
-import net.dorokhov.pony.web.domain.UserTokenDto;
 import net.dorokhov.pony.web.domain.command.CreateUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
@@ -89,14 +87,14 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserTokenDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
-		return dtoConverter.userTokenToDto(userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword()));
+	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
+		return userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword());
 	}
 
 	@Override
 	@Transactional
-	public void logout(UserTokenDto aToken) throws InvalidTokenException {
-		userService.logout(new UserToken(aToken.getId()));
+	public void logout(String aToken) throws InvalidTokenException {
+		userService.logout(aToken);
 	}
 
 	@Override

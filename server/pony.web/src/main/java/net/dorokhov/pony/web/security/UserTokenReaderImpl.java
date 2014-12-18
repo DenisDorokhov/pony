@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.security;
 
-import net.dorokhov.pony.core.domain.UserToken;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -11,16 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 public class UserTokenReaderImpl implements UserTokenReader {
 
 	@Override
-	public UserToken readToken(ServletRequest aRequest) {
+	public String readToken(ServletRequest aRequest) {
 
 		if (aRequest instanceof HttpServletRequest) {
 
 			HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
 
-			String token = httpRequest.getHeader("X-Auth-Token");
+			String token;
 
+			token = httpRequest.getHeader("X-Auth-Token");
 			if (!StringUtils.isBlank(token)) {
-				return new UserToken(token);
+				return token;
+			}
+
+			token = httpRequest.getParameter("x_auth_token");
+			if (!StringUtils.isBlank(token)) {
+				return token;
 			}
 		}
 

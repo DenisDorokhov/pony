@@ -3,7 +3,6 @@ package net.dorokhov.pony.web.service;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.CredentialsDto;
 import net.dorokhov.pony.web.domain.UserDto;
-import net.dorokhov.pony.web.domain.UserTokenDto;
 import net.dorokhov.pony.web.domain.command.CreateUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
@@ -19,9 +18,9 @@ public interface UserServiceFacade {
 	public UserDto create(CreateUserCommand aCommand) throws UserExistsException;
 	public UserDto update(UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException;
 
-	public UserTokenDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
+	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
 
-	public void logout(UserTokenDto aToken) throws InvalidTokenException;
+	public void logout(String aToken) throws InvalidTokenException;
 
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException;
 

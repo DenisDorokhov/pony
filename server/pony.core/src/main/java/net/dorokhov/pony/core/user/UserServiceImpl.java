@@ -4,7 +4,6 @@ import net.dorokhov.pony.core.dao.UserDao;
 import net.dorokhov.pony.core.dao.UserTicketDao;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.domain.UserTicket;
-import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
@@ -170,7 +169,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserToken authenticate(String aEmail, String aPassword) throws InvalidCredentialsException {
+	public String authenticate(String aEmail, String aPassword) throws InvalidCredentialsException {
 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(aEmail, aPassword);
 
@@ -182,11 +181,11 @@ public class UserServiceImpl implements UserService {
 
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-		UserToken token = new UserToken(UUID.randomUUID().toString());
+		String token = UUID.randomUUID().toString();
 
 		UserTicket ticket = new UserTicket();
 
-		ticket.setId(token.getId());
+		ticket.setId(token);
 		ticket.setUser(userDetails.getUser());
 
 		ticket = userTicketDao.save(ticket);
@@ -200,9 +199,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void authenticate(UserToken aToken) throws InvalidTokenException {
+	public void authenticate(String aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(aToken.getId());
+		UserTicket ticket = userTicketDao.findOne(aToken);
 
 		if (ticket == null) {
 			throw new InvalidTokenException();
@@ -230,9 +229,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void logout(UserToken aToken) throws InvalidTokenException {
+	public void logout(String aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(aToken.getId());
+		UserTicket ticket = userTicketDao.findOne(aToken);
 
 		if (ticket == null) {
 			throw new InvalidTokenException();

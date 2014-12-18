@@ -2,7 +2,6 @@ package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.dao.UserTicketDao;
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
@@ -119,7 +118,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		UserToken token = userService.authenticate("test1@test.com", "password1");
+		String token = userService.authenticate("test1@test.com", "password1");
 
 		userService.authenticate(token);
 
@@ -209,7 +208,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		isExceptionThrown = false;
 
 		try {
-			userService.authenticate(new UserToken("invalidToken"));
+			userService.authenticate("invalidToken");
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}
@@ -219,7 +218,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		isExceptionThrown = false;
 
 		try {
-			userService.logout(new UserToken("invalidToken"));
+			userService.logout("invalidToken");
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}
@@ -228,7 +227,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		UserToken token = userService.authenticate("test1@test.com", "password1");
+		String token = userService.authenticate("test1@test.com", "password1");
 
 		userService.authenticate(token);
 		userService.authenticate(token);
@@ -253,8 +252,8 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		UserToken token1 = userService.authenticate("test1@test.com", "password1");
-		UserToken token2 = userService.authenticate("test1@test.com", "password1");
+		String token1 = userService.authenticate("test1@test.com", "password1");
+		String token2 = userService.authenticate("test1@test.com", "password1");
 
 		Thread.sleep(6000);
 

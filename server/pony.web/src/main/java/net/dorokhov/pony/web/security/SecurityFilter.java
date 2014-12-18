@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.security;
 
-import net.dorokhov.pony.core.domain.UserToken;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.InvalidTokenException;
@@ -47,7 +46,7 @@ public class SecurityFilter extends GenericFilterBean {
 	@Transactional
 	public void doFilter(ServletRequest aServletRequest, ServletResponse aServletResponse, FilterChain aFilterChain) throws IOException, ServletException {
 
-		UserToken token = userTokenReader.readToken(aServletRequest);
+		String token = userTokenReader.readToken(aServletRequest);
 
 		if (token != null && installationService.getInstallation() != null) {
 			try {

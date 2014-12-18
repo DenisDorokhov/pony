@@ -270,15 +270,6 @@ public class DtoConverter {
 		return dto;
 	}
 
-	public UserTokenDto userTokenToDto(UserToken aToken) {
-
-		UserTokenDto dto = new UserTokenDto();
-
-		dto.setId(aToken.getId());
-
-		return dto;
-	}
-
 	public ConfigDto configToDto(Iterable<Config> aConfig) {
 
 		ConfigDto dto = new ConfigDto();
