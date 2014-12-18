@@ -25,17 +25,23 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
 	private ResponseBuilder responseBuilder;
 
+	private String jsonResponsePathPrefix;
+
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
 	}
 
+	public void setJsonResponsePathPrefix(String aJsonResponsePathPrefix) {
+		jsonResponsePathPrefix = aJsonResponsePathPrefix;
+	}
+
 	@Override
 	public void commence(HttpServletRequest aRequest, HttpServletResponse aResponse, AuthenticationException aException) throws IOException, ServletException {
 
-		log.warn("Access denied to [" + aRequest.getRequestURL().toString() + "].");
+		log.warn("Access denied to [" + aRequest.getServletPath() + "].");
 
-		if (aRequest.getServletPath().startsWith("/api/")) {
+		if (jsonResponsePathPrefix != null && aRequest.getServletPath().startsWith(jsonResponsePathPrefix)) {
 
 			ResponseDto error = responseBuilder.build(new ErrorDto("errorAccessDenied", aException.getMessage()));
 
