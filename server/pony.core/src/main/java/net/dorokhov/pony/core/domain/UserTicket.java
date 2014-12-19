@@ -16,6 +16,8 @@ public class UserTicket implements AbstractEntity<String> {
 
 	private Date updateDate;
 
+	private String secret;
+
 	private User user;
 
 	@Override
@@ -53,6 +55,16 @@ public class UserTicket implements AbstractEntity<String> {
 	@Override
 	public void setUpdateDate(Date aUpdateDate) {
 		updateDate = aUpdateDate;
+	}
+
+	@Column(name = "secret")
+	@NotNull
+	public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(String aSecret) {
+		secret = aSecret;
 	}
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)

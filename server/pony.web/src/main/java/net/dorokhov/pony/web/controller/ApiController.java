@@ -95,7 +95,6 @@ public class ApiController {
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
 	public ResponseDto<UserDto> updateCurrentUser(@Valid @RequestBody UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
-
 		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
 

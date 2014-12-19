@@ -27,6 +27,8 @@ CREATE TABLE user_ticket (
 
 	id VARCHAR (255) NOT NULL,
 
+	secret LONGVARCHAR NOT NULL,
+
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 

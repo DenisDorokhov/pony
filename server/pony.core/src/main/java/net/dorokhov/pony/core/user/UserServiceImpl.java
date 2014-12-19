@@ -7,6 +7,7 @@ import net.dorokhov.pony.core.domain.UserTicket;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 @Service
@@ -216,11 +218,12 @@ public class UserServiceImpl implements UserService {
 
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-		String token = UUID.randomUUID().toString();
+		Token token = new Token();
 
 		UserTicket ticket = new UserTicket();
 
-		ticket.setId(token);
+		ticket.setId(token.getTicketId());
+		ticket.setSecret(passwordEncoder.encode(token.getTicketSecret()));
 		ticket.setUser(userDetails.getUser());
 
 		ticket = userTicketDao.save(ticket);
@@ -229,7 +232,7 @@ public class UserServiceImpl implements UserService {
 
 		log.info("User [" + ticket.getUser().getEmail() + "] has authenticated.");
 
-		return token;
+		return token.toString();
 	}
 
 	@Override
@@ -249,11 +252,7 @@ public class UserServiceImpl implements UserService {
 
 		} else {
 
-			UserTicket ticket = userTicketDao.findOne(aToken);
-
-			if (ticket == null) {
-				throw new InvalidTokenException();
-			}
+			UserTicket ticket = getTicketByToken(aToken);
 
 			Date ticketDate = ticket.getUpdateDate();
 			if (ticketDate == null) {
@@ -282,11 +281,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void logout(String aToken) throws InvalidTokenException {
 
-		UserTicket ticket = userTicketDao.findOne(aToken);
-
-		if (ticket == null) {
-			throw new InvalidTokenException();
-		}
+		UserTicket ticket = getTicketByToken(aToken);
 
 		userTicketDao.delete(ticket);
 
@@ -339,6 +334,63 @@ public class UserServiceImpl implements UserService {
 
 			userTicketDao.deleteByUpdateDateNullAndCreationDateLessThan(maxDate);
 			userTicketDao.deleteByUpdateDateNotNullAndUpdateDateLessThan(maxDate);
+		}
+	}
+
+	private UserTicket getTicketByToken(String aToken) throws InvalidTokenException {
+
+		Token token;
+
+		try {
+			token = Token.valueOf(aToken);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidTokenException();
+		}
+
+		UserTicket ticket = userTicketDao.findOne(token.getTicketId());
+
+		if (ticket == null || !passwordEncoder.matches(ticket.getSecret(), passwordEncoder.encode(ticket.getSecret()))) {
+			throw new InvalidTokenException();
+		}
+
+		return ticket;
+	}
+
+	private static class Token {
+
+		private String ticketId;
+
+		private String ticketSecret;
+
+		public Token() {
+			ticketId = UUID.randomUUID().toString().replaceAll("-", "");
+			ticketSecret = RandomStringUtils.random(64, 33, 126, false, false, null, new SecureRandom());
+		}
+
+		public Token(String aTicketId, String aTicketSecret) {
+			ticketId = aTicketId;
+			ticketSecret = aTicketSecret;
+		}
+
+		public String getTicketId() {
+			return ticketId;
+		}
+
+		public String getTicketSecret() {
+			return ticketSecret;
+		}
+
+		public String toString() {
+			return ticketId + ticketSecret;
+		}
+
+		public static Token valueOf(String aString) throws IllegalArgumentException {
+
+			if (aString == null || aString.length() < 32) {
+				throw new IllegalArgumentException();
+			}
+
+			return new Token(aString.substring(0, 32), aString.substring(32));
 		}
 	}
 }
