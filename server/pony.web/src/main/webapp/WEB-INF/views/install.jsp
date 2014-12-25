@@ -1,9 +1,8 @@
+<%--suppress XmlDuplicatedId --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-
-<%--@elvariable id="error" type="java.lang.String"--%>
 
 <!DOCTYPE html>
 <html>
@@ -115,7 +114,7 @@
 
         <h1><spring:message code="install.header" /></h1>
 
-        <c:if test="${error != null}"><div class="alert alert-danger" role="alert">${error}</div></c:if>
+        <form:errors path="installCommand" />
 
         <p><spring:message code="install.description" /></p>
 
@@ -141,19 +140,19 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="name"><spring:message code="install.name" /></label>
-                    <form:input id="name" path="userName" type="text" class="form-control" placeholder="${namePlaceholder}" />
-                    <form:errors path="userName" />
+                    <label for="userName"><spring:message code="install.name" /></label>
+                    <form:input id="userName" path="installCommand.userName" type="text" class="form-control" placeholder="${namePlaceholder}" />
+                    <form:errors path="installCommand.userName" />
                 </div>
                 <div class="form-group">
-                    <label for="email"><spring:message code="install.email" /></label>
-                    <form:input id="email" path="userEmail" type="text" class="form-control" placeholder="${emailPlaceholder}" />
-                    <form:errors path="userEmail" />
+                    <label for="userEmail"><spring:message code="install.email" /></label>
+                    <form:input id="userEmail" path="installCommand.userEmail" type="text" class="form-control" placeholder="${emailPlaceholder}" />
+                    <form:errors path="installCommand.userEmail" />
                 </div>
                 <div class="form-group">
-                    <label for="password"><spring:message code="install.password" /></label>
-                    <form:input id="password" path="userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
-                    <form:errors path="userPassword" />
+                    <label for="userPassword"><spring:message code="install.password" /></label>
+                    <form:input id="userPassword" path="installCommand.userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
+                    <form:errors path="installCommand.userPassword" />
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-lg"><spring:message code="install.button" /></button>
