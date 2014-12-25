@@ -47,4 +47,5 @@ public class InstallationCommand {
 	public void setUsers(List<User> aUsers) {
 		users = aUsers;
 	}
+
 }

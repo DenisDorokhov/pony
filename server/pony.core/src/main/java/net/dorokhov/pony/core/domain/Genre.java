@@ -69,4 +69,5 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 				", name='" + name + '\'' +
 				'}';
 	}
+
 }

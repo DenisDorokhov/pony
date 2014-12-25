@@ -101,4 +101,5 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		return status != null ? ScanStatusDto.valueOf(status) : null;
 	}
+
 }

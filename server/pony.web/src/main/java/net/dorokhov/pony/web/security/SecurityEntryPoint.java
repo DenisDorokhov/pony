@@ -53,4 +53,5 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 			aResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 	}
+
 }

@@ -168,4 +168,5 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 		return roles;
 	}
+
 }

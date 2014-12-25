@@ -32,4 +32,5 @@ public class ScanEditCommand {
 	public void setSongData(SongDataWritable aSongData) {
 		songData = aSongData;
 	}
+
 }

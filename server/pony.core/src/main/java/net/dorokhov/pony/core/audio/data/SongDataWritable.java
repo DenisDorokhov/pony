@@ -186,4 +186,5 @@ public class SongDataWritable extends SongDataAbstract {
 				", artwork='" + (artwork != null ? artwork.getAbsolutePath() : null) + "'" +
 				'}';
 	}
+
 }

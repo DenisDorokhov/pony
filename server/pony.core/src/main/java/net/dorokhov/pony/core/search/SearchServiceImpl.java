@@ -162,4 +162,5 @@ public class SearchServiceImpl implements SearchService {
 	private Session getSession() {
 		return (Session)entityManager.getDelegate();
 	}
+
 }

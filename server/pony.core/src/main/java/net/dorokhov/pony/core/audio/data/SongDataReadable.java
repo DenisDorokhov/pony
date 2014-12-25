@@ -134,5 +134,7 @@ public class SongDataReadable extends SongDataAbstract {
 					", checksum='" + checksum + '\'' +
 					'}';
 		}
+
 	}
+
 }

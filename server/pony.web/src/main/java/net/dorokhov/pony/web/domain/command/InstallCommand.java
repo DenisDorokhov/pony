@@ -60,4 +60,5 @@ public class InstallCommand {
 	public void setLibraryFolders(List<String> aLibraryFolders) {
 		libraryFolders = aLibraryFolders;
 	}
+
 }

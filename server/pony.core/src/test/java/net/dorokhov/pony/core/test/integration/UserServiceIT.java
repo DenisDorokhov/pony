@@ -328,4 +328,5 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		return user;
 	}
+
 }

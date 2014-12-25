@@ -92,4 +92,5 @@ public class StoredFileSaveCommand {
 				", file=" + file.getAbsolutePath() +
 				'}';
 	}
+
 }

@@ -183,4 +183,5 @@ public class SimpleImageInfo {
 	public String toString() {
 		return "MIME Type : " + mimeType + "\t Width : " + width + "\t Height : " + height;
 	}
+
 }

@@ -60,4 +60,5 @@ public class LogMessageArgument {
 	public String toString() {
 		return value;
 	}
+
 }

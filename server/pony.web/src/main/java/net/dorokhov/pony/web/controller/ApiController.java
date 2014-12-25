@@ -203,4 +203,5 @@ public class ApiController {
 	public ResponseDto<ConfigDto> saveConfig(@Valid @RequestBody ConfigDto aConfig) {
 		return responseBuilder.build(configServiceFacade.save(aConfig));
 	}
+
 }

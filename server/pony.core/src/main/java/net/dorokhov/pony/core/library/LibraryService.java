@@ -24,4 +24,5 @@ public interface LibraryService {
 		public void onProgress(double aProgress);
 
 	}
+
 }

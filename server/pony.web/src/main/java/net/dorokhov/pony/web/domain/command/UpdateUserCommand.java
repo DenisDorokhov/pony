@@ -68,4 +68,5 @@ public class UpdateUserCommand {
 	public void setRole(RoleDto aRole) {
 		role = aRole;
 	}
+
 }

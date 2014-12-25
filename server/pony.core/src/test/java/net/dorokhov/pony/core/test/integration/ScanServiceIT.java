@@ -190,4 +190,5 @@ public class ScanServiceIT extends AbstractIntegrationCase {
 		didCallFinish = false;
 		didCallFail = false;
 	}
+
 }

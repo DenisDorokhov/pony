@@ -142,4 +142,5 @@ public class ApiControllerAdvice {
 
 		return responseBuilder.build(new ErrorDto("errorUnexpected", "Unexpected error occurred."));
 	}
+
 }

@@ -280,4 +280,5 @@ public class LogServiceImpl implements LogService {
 
 		return logMessageDao.save(message);
 	}
+
 }

@@ -74,4 +74,5 @@ public class User extends BaseEntity<Long> {
 				", roles=" + roles +
 				'}';
 	}
+
 }

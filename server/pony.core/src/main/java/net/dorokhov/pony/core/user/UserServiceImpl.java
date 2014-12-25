@@ -393,4 +393,5 @@ public class UserServiceImpl implements UserService {
 			return new Token(aString.substring(0, 32), aString.substring(32));
 		}
 	}
+
 }

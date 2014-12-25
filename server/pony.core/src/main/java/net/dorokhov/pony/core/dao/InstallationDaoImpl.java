@@ -148,4 +148,5 @@ public class InstallationDaoImpl implements InstallationDao {
 
 		return IOUtils.toString(inputStream, "UTF-8");
 	}
+
 }

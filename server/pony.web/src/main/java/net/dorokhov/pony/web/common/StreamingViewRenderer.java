@@ -367,4 +367,5 @@ public class StreamingViewRenderer extends AbstractView {
 		public static final String FILENAME = "filename";
 		public static final String LAST_MODIFIED = "lastModified";
 	}
+
 }

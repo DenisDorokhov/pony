@@ -74,4 +74,5 @@ public class ThumbnailServiceImpl implements ThumbnailService {
 		Thumbnails.of(new FileInputStream(aImage)).size(imageWidth, imageHeight).outputQuality(getImageQuality()).
 				toOutputStream(new FileOutputStream(aOutFile)); // using toOutputStream instead of toFile to preserve original image format
 	}
+
 }

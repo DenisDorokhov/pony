@@ -14,4 +14,5 @@ public class UserNotFoundException extends Exception {
 	public Long getUserId() {
 		return userId;
 	}
+
 }

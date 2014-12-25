@@ -71,4 +71,5 @@ public class ErrorDto {
 	public void setArguments(List<String> aArguments) {
 		arguments = aArguments;
 	}
+
 }

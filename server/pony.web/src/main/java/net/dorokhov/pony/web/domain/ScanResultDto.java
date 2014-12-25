@@ -319,4 +319,5 @@ public class ScanResultDto {
 
 		return dto;
 	}
+
 }

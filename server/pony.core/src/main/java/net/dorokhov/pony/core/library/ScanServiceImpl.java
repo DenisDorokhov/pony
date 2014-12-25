@@ -789,5 +789,7 @@ public class ScanServiceImpl implements ScanService {
 
 			return null;
 		}
+
 	}
+
 }

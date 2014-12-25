@@ -55,4 +55,5 @@ public class UpdateCurrentUserCommand {
 	public void setNewPassword(String aNewPassword) {
 		newPassword = aNewPassword;
 	}
+
 }

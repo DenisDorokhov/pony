@@ -68,4 +68,5 @@ public class ResponseBuilder {
 
 		return installation != null ? installation.getVersion() : null;
 	}
+
 }

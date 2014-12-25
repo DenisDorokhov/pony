@@ -62,4 +62,5 @@ public class ArtistDto {
 
 		return dto;
 	}
+
 }

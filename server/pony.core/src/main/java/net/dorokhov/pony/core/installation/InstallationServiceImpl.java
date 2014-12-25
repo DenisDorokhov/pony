@@ -141,4 +141,5 @@ public class InstallationServiceImpl implements InstallationService {
 
 		return configMap;
 	}
+
 }

@@ -16,4 +16,5 @@ public class NotFolderException extends Exception {
 	public File getFile() {
 		return file;
 	}
+
 }

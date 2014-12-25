@@ -82,4 +82,5 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 				", name='" + name + '\'' +
 				'}';
 	}
+
 }

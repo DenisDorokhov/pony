@@ -14,4 +14,5 @@ public class UserExistsException extends Exception {
 	public String getEmail() {
 		return email;
 	}
+
 }

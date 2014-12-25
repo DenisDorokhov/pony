@@ -82,4 +82,5 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		aContext.disableDefaultConstraintViolation();
 		aContext.buildConstraintViolationWithTemplate(aContext.getDefaultConstraintMessageTemplate()).addPropertyNode(aField).addConstraintViolation();
 	}
+
 }

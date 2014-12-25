@@ -74,4 +74,5 @@ public class SearchDto {
 	public void setSongs(List<SongDto> aSongs) {
 		songs = aSongs;
 	}
+
 }

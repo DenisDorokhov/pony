@@ -28,5 +28,7 @@ public interface ScanJobService {
 		public void onJobCreation(ScanJob aJob);
 
 		public void onJobUpdate(ScanJob aJob);
+
 	}
+
 }

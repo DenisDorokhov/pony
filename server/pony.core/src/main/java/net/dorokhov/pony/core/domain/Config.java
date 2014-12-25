@@ -162,4 +162,5 @@ public class Config implements AbstractEntity<String> {
 				", value='" + value + '\'' +
 				'}';
 	}
+
 }

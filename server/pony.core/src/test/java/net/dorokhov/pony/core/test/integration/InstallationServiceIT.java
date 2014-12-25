@@ -106,4 +106,5 @@ public class InstallationServiceIT {
 		Assert.assertNull(aInstallation.getUpdateDate());
 		Assert.assertNotNull(aInstallation.getVersion());
 	}
+
 }

@@ -155,4 +155,5 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 		Assert.assertNotNull(job.getLogMessage());
 		Assert.assertNull(job.getScanResult());
 	}
+
 }

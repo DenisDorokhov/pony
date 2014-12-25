@@ -109,4 +109,5 @@ public class UserTicket implements AbstractEntity<String> {
 
 		return false;
 	}
+
 }

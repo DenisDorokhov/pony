@@ -110,4 +110,5 @@ public class Album extends BaseEntity<Long> implements Comparable<Album> {
 				", name='" + name + '\'' +
 				'}';
 	}
+
 }

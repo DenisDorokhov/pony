@@ -14,4 +14,5 @@ public class SearchQueryDto {
 	public void setText(String aText) {
 		text = aText;
 	}
+
 }

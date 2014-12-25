@@ -30,4 +30,5 @@ public class Installation extends BaseEntity<Long> {
 				", version='" + version + '\'' +
 				'}';
 	}
+
 }

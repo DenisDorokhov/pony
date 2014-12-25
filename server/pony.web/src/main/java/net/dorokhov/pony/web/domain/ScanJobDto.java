@@ -96,4 +96,5 @@ public class ScanJobDto {
 
 		return dto;
 	}
+
 }

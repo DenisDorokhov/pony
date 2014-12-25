@@ -31,4 +31,5 @@ public class ConfigDto {
 	public void setLibraryFolders(List<String> aLibraryFolders) {
 		libraryFolders = aLibraryFolders;
 	}
+
 }

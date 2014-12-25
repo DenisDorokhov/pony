@@ -25,4 +25,5 @@ public class CredentialsDto {
 	public void setPassword(String aPassword) {
 		password = aPassword;
 	}
+
 }

@@ -27,4 +27,5 @@ public class SearchAnalyzer extends ReusableAnalyzerBase {
 
 		return new TokenStreamComponents(src, filter);
 	}
+
 }

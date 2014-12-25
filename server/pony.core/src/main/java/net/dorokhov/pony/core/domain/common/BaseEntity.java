@@ -75,4 +75,5 @@ public abstract class BaseEntity<T extends Serializable> implements AbstractEnti
 
 		return false;
 	}
+
 }

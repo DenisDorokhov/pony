@@ -49,4 +49,5 @@ public class ResponseDto<T> {
 	public void setData(T aData) {
 		data = aData;
 	}
+
 }

@@ -869,4 +869,5 @@ public class LibraryServiceImpl implements LibraryService {
 			deleteArtwork(aArtwork.getId());
 		}
 	}
+
 }

@@ -198,4 +198,5 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		return null;
 	}
+
 }

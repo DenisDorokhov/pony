@@ -277,4 +277,5 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 		return result;
 	}
+
 }

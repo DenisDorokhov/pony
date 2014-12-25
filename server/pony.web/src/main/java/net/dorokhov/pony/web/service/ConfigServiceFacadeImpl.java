@@ -54,4 +54,5 @@ public class ConfigServiceFacadeImpl implements ConfigServiceFacade {
 
 		return get();
 	}
+
 }

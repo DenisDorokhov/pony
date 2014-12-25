@@ -144,4 +144,5 @@ public class LogMessage {
 				", arguments=" + arguments +
 				'}';
 	}
+
 }

@@ -397,4 +397,5 @@ public class ScanResult {
 				", deletedArtworkCount=" + deletedArtworkCount +
 				'}';
 	}
+
 }

@@ -192,4 +192,5 @@ public class SqlSplitter {
 
 		return aSource.replaceAll(sqlCommentsRegExp, "$1");
 	}
+
 }

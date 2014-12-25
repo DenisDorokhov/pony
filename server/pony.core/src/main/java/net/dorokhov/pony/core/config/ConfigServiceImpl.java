@@ -90,4 +90,5 @@ public class ConfigServiceImpl implements ConfigService {
 
 		configDao.save(config);
 	}
+
 }

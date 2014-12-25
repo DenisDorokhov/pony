@@ -58,4 +58,5 @@ public class CreateUserCommand {
 	public void setRole(RoleDto aRole) {
 		role = aRole;
 	}
+
 }

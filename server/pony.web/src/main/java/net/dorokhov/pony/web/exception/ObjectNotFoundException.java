@@ -25,4 +25,5 @@ public class ObjectNotFoundException extends Exception {
 	public String getErrorCode() {
 		return errorCode;
 	}
+
 }

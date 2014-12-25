@@ -155,4 +155,5 @@ public class LogServiceIT extends AbstractIntegrationCase {
 			Assert.assertEquals(aMessage.getId(), argument.getLogMessage().getId());
 		}
 	}
+
 }

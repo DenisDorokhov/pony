@@ -101,4 +101,5 @@ public abstract class SongDataAbstract {
 	public void setGenre(String aGenre) {
 		genre = aGenre;
 	}
+
 }

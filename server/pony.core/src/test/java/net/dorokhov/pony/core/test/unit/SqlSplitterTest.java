@@ -38,4 +38,5 @@ public class SqlSplitterTest {
 
 		Assert.assertArrayEquals(expectedResult.toArray(), result.toArray());
 	}
+
 }
