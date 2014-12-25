@@ -1,7 +1,9 @@
 package net.dorokhov.pony.web.domain;
 
 import net.dorokhov.pony.core.domain.ScanType;
+import net.dorokhov.pony.core.library.ScanService;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,5 +72,22 @@ public class ScanStatusDto {
 
 	public void setProgress(double aProgress) {
 		progress = aProgress;
+	}
+
+	public static ScanStatusDto valueOf(ScanService.Status aScanStatus) {
+
+		ScanStatusDto dto = new ScanStatusDto();
+
+		dto.setScanType(aScanStatus.getScanType());
+		dto.setStep(aScanStatus.getStep());
+		dto.setTotalSteps(aScanStatus.getTotalSteps());
+		dto.setStepCode(aScanStatus.getStepCode());
+		dto.setProgress(aScanStatus.getProgress());
+
+		for (File file : aScanStatus.getFiles()) {
+			dto.getFiles().add(file.getAbsolutePath());
+		}
+
+		return dto;
 	}
 }

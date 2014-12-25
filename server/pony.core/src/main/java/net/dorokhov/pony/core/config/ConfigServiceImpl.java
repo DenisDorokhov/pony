@@ -4,7 +4,6 @@ import net.dorokhov.pony.core.dao.ConfigDao;
 import net.dorokhov.pony.core.domain.Config;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -15,20 +14,15 @@ import java.util.List;
 public class ConfigServiceImpl implements ConfigService {
 
 	public static final String CONFIG_AUTO_SCAN_INTERVAL = "autoScanInterval";
+
 	public static final String CONFIG_LIBRARY_FOLDERS = "libraryFolders";
+	public static final String CONFIG_LIBRARY_FOLDERS_SEPARATOR = ":";
 
 	private ConfigDao configDao;
-
-	private String libraryFoldersSeparator;
 
 	@Autowired
 	public void setConfigDao(ConfigDao aConfigDao) {
 		configDao = aConfigDao;
-	}
-
-	@Value("${libraryFoldersConfig.separator}")
-	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
-		libraryFoldersSeparator = aLibraryFoldersSeparator;
 	}
 
 	@Override
@@ -60,7 +54,7 @@ public class ConfigServiceImpl implements ConfigService {
 		List<File> fileList = new ArrayList<>();
 
 		if (config != null && config.getValue() != null) {
-			for (String path : config.getValue().split(libraryFoldersSeparator)) {
+			for (String path : config.getValue().split(CONFIG_LIBRARY_FOLDERS_SEPARATOR)) {
 
 				String normalizedPath = path.trim();
 
@@ -82,7 +76,7 @@ public class ConfigServiceImpl implements ConfigService {
 			pathList.add(file.getAbsolutePath());
 		}
 
-		String stringValue = StringUtils.join(pathList, libraryFoldersSeparator);
+		String stringValue = StringUtils.join(pathList, CONFIG_LIBRARY_FOLDERS_SEPARATOR);
 		if (stringValue.length() == 0) {
 			stringValue = null;
 		}

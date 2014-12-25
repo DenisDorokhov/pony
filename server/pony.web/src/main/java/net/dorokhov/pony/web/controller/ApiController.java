@@ -104,9 +104,9 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
-	public ResponseDto<ArtistSongsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
+	public ResponseDto<ArtistAlbumsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
 
-		ArtistSongsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
+		ArtistAlbumsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
 
 		if (artist == null) {
 			throw new ObjectNotFoundException(aArtistIdOrName, "artistNotFound", "Artist [" + aArtistIdOrName + "] could not be found.");

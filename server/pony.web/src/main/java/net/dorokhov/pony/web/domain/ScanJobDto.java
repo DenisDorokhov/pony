@@ -76,4 +76,24 @@ public class ScanJobDto {
 	public void setScanResult(ScanResultDto aScanResult) {
 		scanResult = aScanResult;
 	}
+
+	public static ScanJobDto valueOf(ScanJob aScanJob) {
+
+		ScanJobDto dto = new ScanJobDto();
+
+		dto.setId(aScanJob.getId());
+		dto.setCreationDate(aScanJob.getCreationDate());
+		dto.setUpdateDate(aScanJob.getUpdateDate());
+		dto.setScanType(aScanJob.getScanType());
+		dto.setStatus(aScanJob.getStatus());
+
+		if (aScanJob.getLogMessage() != null) {
+			dto.setLogMessage(LogMessageDto.valueOf(aScanJob.getLogMessage()));
+		}
+		if (aScanJob.getScanResult() != null) {
+			dto.setScanResult(ScanResultDto.valueOf(aScanJob.getScanResult()));
+		}
+
+		return dto;
+	}
 }

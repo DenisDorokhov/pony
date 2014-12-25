@@ -25,8 +25,6 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	private ScanService scanService;
 
-	private DtoConverter dtoConverter;
-
 	@Autowired
 	public void setScanJobService(ScanJobService aScanJobService) {
 		scanJobService = aScanJobService;
@@ -37,15 +35,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		scanService = aScanService;
 	}
 
-	@Autowired
-	public void setDtoConverter(DtoConverter aDtoConverter) {
-		dtoConverter = aDtoConverter;
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public ScanJobDto startScanJob() throws LibraryNotDefinedException {
-		return dtoConverter.scanJobToDto(scanJobService.startScanJob());
+		return ScanJobDto.valueOf(scanJobService.startScanJob());
 	}
 
 	@Override
@@ -57,10 +50,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "updateDate"));
 
-		return dtoConverter.pageToListDto(page, new DtoConverter.ItemConverter<ScanJob, ScanJobDto>() {
+		return ListDto.valueOf(page, new ListDto.ContentConverter<ScanJob, ScanJobDto>() {
 			@Override
 			public ScanJobDto convert(ScanJob aItem) {
-				return dtoConverter.scanJobToDto(aItem);
+				return ScanJobDto.valueOf(aItem);
 			}
 		});
 	}
@@ -71,7 +64,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		ScanJob job = scanJobService.getById(aId);
 
-		return job != null ? dtoConverter.scanJobToDto(job) : null;
+		return job != null ? ScanJobDto.valueOf(job) : null;
 	}
 
 	@Override
@@ -83,10 +76,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanResult> page = scanService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));
 
-		return dtoConverter.pageToListDto(page, new DtoConverter.ItemConverter<ScanResult, ScanResultDto>() {
+		return ListDto.valueOf(page, new ListDto.ContentConverter<ScanResult, ScanResultDto>() {
 			@Override
 			public ScanResultDto convert(ScanResult aItem) {
-				return dtoConverter.scanResultToDto(aItem);
+				return ScanResultDto.valueOf(aItem);
 			}
 		});
 	}
@@ -97,7 +90,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		ScanResult result = scanService.getById(aId);
 
-		return result != null ? dtoConverter.scanResultToDto(result) : null;
+		return result != null ? ScanResultDto.valueOf(result) : null;
 	}
 
 	@Override
@@ -106,6 +99,6 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		ScanService.Status status = scanService.getStatus();
 
-		return status != null ? dtoConverter.scanStatusToDto(status) : null;
+		return status != null ? ScanStatusDto.valueOf(status) : null;
 	}
 }

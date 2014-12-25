@@ -1,9 +1,15 @@
 package net.dorokhov.pony.web.domain;
 
+import org.springframework.data.domain.Page;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListDto<T> {
+
+	public static interface ContentConverter<EntityType, DtoType> {
+		public DtoType convert(EntityType aItem);
+	}
 
 	private int pageNumber;
 
@@ -59,4 +65,21 @@ public class ListDto<T> {
 	public void setContent(List<T> aContent) {
 		content = aContent;
 	}
+
+	public static <EntityType, DtoType> ListDto<DtoType> valueOf(Page<EntityType> aPage, ContentConverter<EntityType, DtoType> aItemConverter) {
+
+		ListDto<DtoType> dto = new ListDto<>();
+
+		dto.setPageNumber(aPage.getNumber());
+		dto.setPageSize(aPage.getSize());
+		dto.setTotalPages(aPage.getTotalPages());
+		dto.setTotalElements(aPage.getTotalElements());
+
+		for (EntityType item : aPage.getContent()) {
+			dto.getContent().add(aItemConverter.convert(item));
+		}
+
+		return dto;
+	}
+
 }

@@ -3,9 +3,19 @@ package net.dorokhov.pony.web.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AlbumSongsDto extends AlbumDto {
+public class AlbumSongsDto {
+
+	private AlbumDto album;
 
 	private List<SongDto> songs;
+
+	public AlbumDto getAlbum() {
+		return album;
+	}
+
+	public void setAlbum(AlbumDto aAlbum) {
+		album = aAlbum;
+	}
 
 	public List<SongDto> getSongs() {
 
@@ -19,4 +29,5 @@ public class AlbumSongsDto extends AlbumDto {
 	public void setSongs(List<SongDto> aSongs) {
 		songs = aSongs;
 	}
+
 }

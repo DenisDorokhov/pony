@@ -30,8 +30,6 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	private SearchService searchService;
 
-	private DtoConverter dtoConverter;
-
 	@Autowired
 	public void setArtistDao(ArtistDao aArtistDao) {
 		artistDao = aArtistDao;
@@ -47,11 +45,6 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 		searchService = aSearchService;
 	}
 
-	@Autowired
-	public void setDtoConverter(DtoConverter aDtoConverter) {
-		dtoConverter = aDtoConverter;
-	}
-
 	@Override
 	public List<ArtistDto> getArtists() {
 
@@ -62,14 +55,14 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 		List<ArtistDto> dto = new ArrayList<>();
 
 		for (Artist artist : artistList) {
-			dto.add(dtoConverter.artistToDto(artist));
+			dto.add(ArtistDto.valueOf(artist));
 		}
 
 		return dto;
 	}
 
 	@Override
-	public ArtistSongsDto getArtistSongs(String aArtistIdOrName) {
+	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) {
 
 		Artist artist = null;
 
@@ -88,7 +81,12 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 			Collections.sort(songList);
 
-			return dtoConverter.artistToSongsDto(artist, songListToDto(songList));
+			ArtistAlbumsDto dto = new ArtistAlbumsDto();
+
+			dto.setArtist(ArtistDto.valueOf(artist));
+			dto.setAlbums(songListToDto(songList));
+
+			return dto;
 		}
 
 		return null;
@@ -108,16 +106,16 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 		dto.setQuery(aQuery);
 
 		for (Genre genre : genreList) {
-			dto.getGenres().add(dtoConverter.genreToDto(genre));
+			dto.getGenres().add(GenreDto.valueOf(genre));
 		}
 		for (Artist artist : artistList) {
-			dto.getArtists().add(dtoConverter.artistToDto(artist));
+			dto.getArtists().add(ArtistDto.valueOf(artist));
 		}
 		for (Album album : albumList) {
-			dto.getAlbums().add(dtoConverter.albumToDto(album));
+			dto.getAlbums().add(AlbumDto.valueOf(album));
 		}
 		for (Song song : songList) {
-			dto.getSongs().add(dtoConverter.songToDto(song));
+			dto.getSongs().add(SongDto.valueOf(song));
 		}
 
 		return dto;
@@ -131,14 +129,15 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 		for (Song song : aSongList) {
 
-			if (currentDto == null || !currentDto.getId().equals(song.getAlbum().getId())) {
+			if (currentDto == null || !currentDto.getAlbum().getId().equals(song.getAlbum().getId())) {
 
-				currentDto = dtoConverter.albumToSongsDto(song.getAlbum(), new ArrayList<SongDto>());
+				currentDto = new AlbumSongsDto();
+				currentDto.setAlbum(AlbumDto.valueOf(song.getAlbum()));
 
 				result.add(currentDto);
 			}
 
-			currentDto.getSongs().add(dtoConverter.songToDto(song));
+			currentDto.getSongs().add(SongDto.valueOf(song));
 		}
 
 		return result;

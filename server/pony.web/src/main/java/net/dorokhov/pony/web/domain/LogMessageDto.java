@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.domain;
 
 import net.dorokhov.pony.core.domain.LogMessage;
+import net.dorokhov.pony.core.domain.LogMessageArgument;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,5 +82,23 @@ public class LogMessageDto {
 
 	public void setArguments(List<String> aArguments) {
 		arguments = aArguments;
+	}
+
+	public static LogMessageDto valueOf(LogMessage aLogMessage) {
+
+		LogMessageDto dto = new LogMessageDto();
+
+		dto.setId(aLogMessage.getId());
+		dto.setDate(aLogMessage.getDate());
+		dto.setType(aLogMessage.getType());
+		dto.setCode(aLogMessage.getCode());
+		dto.setText(aLogMessage.getText());
+		dto.setDetails(aLogMessage.getDetails());
+
+		for (LogMessageArgument argument : aLogMessage.getArguments()) {
+			dto.getArguments().add(argument.getValue());
+		}
+
+		return dto;
 	}
 }

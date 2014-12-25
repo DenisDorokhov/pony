@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.domain;
 
+import net.dorokhov.pony.core.domain.ScanResult;
 import net.dorokhov.pony.core.domain.ScanType;
 
 import java.util.Date;
@@ -270,5 +271,52 @@ public class ScanResultDto {
 
 	public void setDeletedArtworkCount(Long aDeletedArtworkCount) {
 		deletedArtworkCount = aDeletedArtworkCount;
+	}
+
+	public static ScanResultDto valueOf(ScanResult aScanResult) {
+
+		ScanResultDto dto = new ScanResultDto();
+
+		dto.setId(aScanResult.getId());
+
+		dto.setDate(aScanResult.getDate());
+		dto.setScanType(aScanResult.getScanType());
+
+		dto.setTargetPaths(aScanResult.getTargetPaths());
+		dto.setFailedPaths(aScanResult.getFailedPaths());
+
+		dto.setDuration(aScanResult.getDuration());
+
+		dto.setSongSize(aScanResult.getSongSize());
+		dto.setArtworkSize(aScanResult.getArtworkSize());
+
+		dto.setGenreCount(aScanResult.getGenreCount());
+		dto.setArtistCount(aScanResult.getArtistCount());
+		dto.setAlbumCount(aScanResult.getAlbumCount());
+		dto.setSongCount(aScanResult.getSongCount());
+		dto.setArtworkCount(aScanResult.getArtworkCount());
+
+		dto.setProcessedSongCount(aScanResult.getProcessedSongCount());
+
+		dto.setCreatedArtistCount(aScanResult.getCreatedArtistCount());
+		dto.setUpdatedArtistCount(aScanResult.getUpdatedArtistCount());
+		dto.setDeletedArtistCount(aScanResult.getDeletedArtistCount());
+
+		dto.setCreatedAlbumCount(aScanResult.getCreatedAlbumCount());
+		dto.setUpdatedAlbumCount(aScanResult.getUpdatedAlbumCount());
+		dto.setDeletedAlbumCount(aScanResult.getDeletedAlbumCount());
+
+		dto.setCreatedGenreCount(aScanResult.getCreatedGenreCount());
+		dto.setUpdatedGenreCount(aScanResult.getUpdatedGenreCount());
+		dto.setDeletedGenreCount(aScanResult.getDeletedGenreCount());
+
+		dto.setCreatedSongCount(aScanResult.getCreatedSongCount());
+		dto.setUpdatedSongCount(aScanResult.getUpdatedSongCount());
+		dto.setDeletedSongCount(aScanResult.getDeletedSongCount());
+
+		dto.setCreatedArtworkCount(aScanResult.getCreatedArtworkCount());
+		dto.setDeletedArtworkCount(aScanResult.getDeletedArtworkCount());
+
+		return dto;
 	}
 }

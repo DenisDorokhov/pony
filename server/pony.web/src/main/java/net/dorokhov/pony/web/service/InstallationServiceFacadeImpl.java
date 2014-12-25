@@ -21,16 +21,9 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 	private InstallationService installationService;
 
-	private DtoConverter dtoConverter;
-
 	@Autowired
 	public void setInstallationService(InstallationService aInstallationService) {
 		installationService = aInstallationService;
-	}
-
-	@Autowired
-	public void setDtoConverter(DtoConverter aDtoConverter) {
-		dtoConverter = aDtoConverter;
 	}
 
 	@Override
@@ -39,7 +32,7 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		Installation installation = installationService.getInstallation();
 
-		return installation != null ? dtoConverter.installationToDto(installation) : null;
+		return installation != null ? InstallationDto.valueOf(installation) : null;
 	}
 
 	@Override
@@ -65,11 +58,11 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 		admin.setEmail(aCommand.getUserEmail());
 		admin.setPassword(aCommand.getUserPassword());
 
-		admin.getRoles().add(RoleDto.Strings.USER);
-		admin.getRoles().add(RoleDto.Strings.ADMIN);
+		admin.getRoles().add(RoleDto.USER.toString());
+		admin.getRoles().add(RoleDto.ADMIN.toString());
 
 		command.getUsers().add(admin);
 
-		return dtoConverter.installationToDto(installationService.install(command));
+		return InstallationDto.valueOf(installationService.install(command));
 	}
 }

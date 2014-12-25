@@ -23,22 +23,15 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	private UserService userService;
 
-	private DtoConverter dtoConverter;
-
 	@Autowired
 	public void setUserService(UserService aUserService) {
 		userService = aUserService;
 	}
 
-	@Autowired
-	public void setDtoConverter(DtoConverter aDtoConverter) {
-		dtoConverter = aDtoConverter;
-	}
-
 	@Override
 	@Transactional(readOnly = true)
 	public UserDto getById(Long aId) {
-		return dtoConverter.userToDto(userService.getById(aId));
+		return UserDto.valueOf(userService.getById(aId));
 	}
 
 	@Override
@@ -48,7 +41,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		List<UserDto> dto = new ArrayList<>();
 
 		for (User user : userService.getAll()) {
-			dto.add(dtoConverter.userToDto(user));
+			dto.add(UserDto.valueOf(user));
 		}
 
 		return dto;
@@ -65,7 +58,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setPassword(aCommand.getPassword());
 		user.setRoles(dtoToRoles(aCommand.getRole()));
 
-		return dtoConverter.userToDto(userService.create(user));
+		return UserDto.valueOf(userService.create(user));
 	}
 
 	@Override
@@ -82,7 +75,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setEmail(aCommand.getEmail());
 		user.setRoles(dtoToRoles(aCommand.getRole()));
 
-		return dtoConverter.userToDto(userService.update(user, aCommand.getPassword()));
+		return UserDto.valueOf(userService.update(user, aCommand.getPassword()));
 	}
 
 	@Override
@@ -106,7 +99,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException {
-		return dtoConverter.userToDto(userService.getAuthenticatedUser());
+		return UserDto.valueOf(userService.getAuthenticatedUser());
 	}
 
 	@Override
@@ -119,7 +112,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setName(aCommand.getName());
 		user.setEmail(aCommand.getEmail());
 
-		return dtoConverter.userToDto(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
+		return UserDto.valueOf(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
 	}
 
 	@Override
@@ -164,12 +157,12 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		switch (aDto) {
 
 			case USER:
-				roles.add(RoleDto.Strings.USER);
+				roles.add(RoleDto.USER.toString());
 				break;
 
 			case ADMIN:
-				roles.add(RoleDto.Strings.USER);
-				roles.add(RoleDto.Strings.ADMIN);
+				roles.add(RoleDto.USER.toString());
+				roles.add(RoleDto.ADMIN.toString());
 				break;
 		}
 
