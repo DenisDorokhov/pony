@@ -1,7 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.dao.ConfigDao;
-import net.dorokhov.pony.core.domain.Config;
+import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.installation.InstallationCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
@@ -14,6 +13,7 @@ import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class InstallationServiceIT {
@@ -22,7 +22,7 @@ public class InstallationServiceIT {
 
 	private InstallationService installationService;
 
-	private ConfigDao configDao;
+	private ConfigService configService;
 
 	@Before
 	public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class InstallationServiceIT {
 		context = new ClassPathXmlApplicationContext("context.xml");
 
 		installationService = context.getBean(InstallationService.class);
-		configDao = context.getBean(ConfigDao.class);
+		configService = context.getBean(ConfigService.class);
 
 		restore();
 	}
@@ -56,8 +56,6 @@ public class InstallationServiceIT {
 
 		checkInstallation(installationService.install(defaultCommand));
 		checkInstallation(installationService.getInstallation());
-
-		Assert.assertNotNull(configDao.findOne(Config.AUTO_SCAN_INTERVAL));
 
 		isExceptionThrown = false;
 
@@ -85,14 +83,15 @@ public class InstallationServiceIT {
 
 		InstallationCommand testCommand = new InstallationCommand();
 
-		testCommand.setConfig(Arrays.asList(new Config(Config.AUTO_SCAN_INTERVAL, 1000), new Config("testId", "testValue")));
+		testCommand.setAutoScanInterval(1000);
+		testCommand.setLibraryFolders(Arrays.asList(new File("/folder1"), new File("/folder2")));
 
 		installationService.install(testCommand);
 
 		checkInstallation(installationService.getInstallation());
 
-		Assert.assertEquals(1000, configDao.findOne(Config.AUTO_SCAN_INTERVAL).getInteger());
-		Assert.assertEquals("testValue", configDao.findOne("testId").getValue());
+		Assert.assertEquals(Integer.valueOf(1000), configService.getAutoScanInterval());
+		Assert.assertEquals(Arrays.asList(new File("/folder1"), new File("/folder2")), configService.fetchLibraryFolders());
 	}
 
 	private void restore() throws Exception {

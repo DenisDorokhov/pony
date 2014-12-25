@@ -1,16 +1,18 @@
 package net.dorokhov.pony.core.library;
 
 import net.dorokhov.pony.core.common.PageProcessor;
-import net.dorokhov.pony.core.dao.ConfigDao;
+import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.dao.ScanJobDao;
-import net.dorokhov.pony.core.domain.*;
+import net.dorokhov.pony.core.domain.LogMessage;
+import net.dorokhov.pony.core.domain.ScanJob;
+import net.dorokhov.pony.core.domain.ScanResult;
+import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.logging.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,15 +52,13 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	private ScanJobDao scanJobDao;
 
-	private ConfigDao configDao;
+	private ConfigService configService;
 
 	private InstallationService installationService;
 
 	private ScanService scanService;
 
 	private LogService logService;
-
-	private String libraryFoldersSeparator;
 
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
@@ -71,8 +71,8 @@ public class ScanJobServiceImpl implements ScanJobService {
 	}
 
 	@Autowired
-	public void setConfigDao(ConfigDao aConfigDao) {
-		configDao = aConfigDao;
+	public void setConfigService(ConfigService aConfigService) {
+		configService = aConfigService;
 	}
 
 	@Autowired
@@ -88,11 +88,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Autowired
 	public void setLogService(LogService aLogService) {
 		logService = aLogService;
-	}
-
-	@Value("${libraryFoldersConfig.separator}")
-	public void setLibraryFoldersSeparator(String aLibraryFoldersSeparator) {
-		libraryFoldersSeparator = aLibraryFoldersSeparator;
 	}
 
 	@Override
@@ -126,7 +121,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public ScanJob startScanJob() throws LibraryNotDefinedException {
-		return doCreateScanJob(getLibraryFolders());
+		return doCreateScanJob(configService.fetchLibraryFolders());
 	}
 
 	@Override
@@ -228,15 +223,15 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 			boolean shouldScan = false;
 
-			List<File> libraryFiles = getLibraryFolders();
+			List<File> libraryFolders = configService.fetchLibraryFolders();
 
-			if (libraryFiles.size() > 0) {
+			if (libraryFolders.size() > 0) {
 
 				if (scanService.getStatus() == null) {
 
-					Config config = configDao.findOne(Config.AUTO_SCAN_INTERVAL);
+					Integer autoScanInterval = configService.getAutoScanInterval();
 
-					if (config != null && config.getValue() != null) {
+					if (autoScanInterval != null) {
 
 						Page<ScanResult> page = scanService.getAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
 
@@ -246,7 +241,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 							long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
 
-							if (secondsSinceLastScan >= config.getLong()) {
+							if (secondsSinceLastScan >= autoScanInterval) {
 								shouldScan = true;
 							} else {
 								log.debug("Too early for automatic scan.");
@@ -276,7 +271,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 				log.info("Starting automatic scan...");
 
 				try {
-					doCreateScanJob(libraryFiles);
+					doCreateScanJob(libraryFolders);
 				} catch (LibraryNotDefinedException e) {
 					log.warn("Library is not defined.");
 				}
@@ -455,26 +450,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 				return scanJobDao.save(job);
 			}
 		}));
-	}
-
-	private List<File> getLibraryFolders() {
-
-		List<File> result = new ArrayList<>();
-
-		Config config = configDao.findOne(Config.LIBRARY_FOLDERS);
-
-		if (config != null && config.getValue() != null) {
-			for (String path : config.getValue().split(libraryFoldersSeparator)) {
-
-				path = path.trim();
-
-				if (path.length() > 0) {
-					result.add(new File(path));
-				}
-			}
-		}
-
-		return result;
 	}
 
 	private void propagateUpdate(ScanJob aJob) {

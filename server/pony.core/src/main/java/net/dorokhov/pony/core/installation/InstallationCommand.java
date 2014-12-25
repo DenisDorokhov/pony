@@ -1,28 +1,38 @@
 package net.dorokhov.pony.core.installation;
 
-import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.User;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InstallationCommand {
 
-	private List<Config> config;
+	private Integer autoScanInterval;
+
+	private List<File> libraryFolders;
 
 	private List<User> users;
 
-	public List<Config> getConfig() {
-
-		if (config == null) {
-			config = new ArrayList<>();
-		}
-
-		return config;
+	public Integer getAutoScanInterval() {
+		return autoScanInterval;
 	}
 
-	public void setConfig(List<Config> aConfig) {
-		config = aConfig;
+	public void setAutoScanInterval(Integer aAutoScanInterval) {
+		autoScanInterval = aAutoScanInterval;
+	}
+
+	public List<File> getLibraryFolders() {
+
+		if (libraryFolders == null) {
+			libraryFolders = new ArrayList<>();
+		}
+
+		return libraryFolders;
+	}
+
+	public void setLibraryFolders(List<File> aLibraryFolders) {
+		libraryFolders = aLibraryFolders;
 	}
 
 	public List<User> getUsers() {

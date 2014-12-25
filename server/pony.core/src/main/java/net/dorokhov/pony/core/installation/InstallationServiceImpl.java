@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.installation;
 
-import net.dorokhov.pony.core.dao.ConfigDao;
+import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.dao.InstallationDao;
 import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
@@ -25,12 +25,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class InstallationServiceImpl implements InstallationService {
-
-	private static final int CONFIG_AUTO_SCAN_INTERVAL = 86400;
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -38,7 +35,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	private InstallationDao installationDao;
 
-	private ConfigDao configDao;
+	private ConfigService configService;
 
 	private UserService userService;
 
@@ -55,8 +52,8 @@ public class InstallationServiceImpl implements InstallationService {
 	}
 
 	@Autowired
-	public void setConfigDao(ConfigDao aConfigDao) {
-		configDao = aConfigDao;
+	public void setConfigService(ConfigService aConfigService) {
+		configService = aConfigService;
 	}
 
 	@Autowired
@@ -85,32 +82,14 @@ public class InstallationServiceImpl implements InstallationService {
 
 		log.info("Installing...");
 
-		final HashMap<String, Config> configMap = configsToMap(aCommand.getConfig());
-
-		if (configMap.get(Config.AUTO_SCAN_INTERVAL) == null) {
-
-			Config config = new Config();
-
-			config.setId(Config.AUTO_SCAN_INTERVAL);
-			config.setInteger(CONFIG_AUTO_SCAN_INTERVAL);
-
-			configMap.put(Config.AUTO_SCAN_INTERVAL, config);
-		}
-
 		Installation installation = transactionTemplate.execute(new TransactionCallback<Installation>() {
 			@Override
 			public Installation doInTransaction(TransactionStatus status) {
 
 				Installation installation = installationDao.install();
 
-				for (Map.Entry<String, Config> entry : configMap.entrySet()) {
-
-					Config config = entry.getValue();
-
-					log.debug("Configuring option [" + config.getId() + "]...");
-
-					configDao.save(config);
-				}
+				configService.saveLibraryFolders(aCommand.getLibraryFolders());
+				configService.saveAutoScanInterval(aCommand.getAutoScanInterval());
 
 				for (User user : aCommand.getUsers()) {
 

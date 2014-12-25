@@ -3,7 +3,6 @@ package net.dorokhov.pony.web.service;
 import net.dorokhov.pony.core.domain.*;
 import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.web.domain.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -268,53 +266,6 @@ public class DtoConverter {
 		}
 
 		return dto;
-	}
-
-	public ConfigDto configToDto(Iterable<Config> aConfig) {
-
-		ConfigDto dto = new ConfigDto();
-
-		for (Config config : aConfig) {
-			if (config.getId().equals(Config.AUTO_SCAN_INTERVAL)) {
-				dto.setAutoScanInterval(config.getInteger());
-			} else if (config.getId().equals(Config.LIBRARY_FOLDERS)) {
-				dto.setLibraryFolders(configToLibraryFolders(config.getValue()));
-			}
-		}
-
-		return dto;
-	}
-
-	public String libraryFoldersToConfig(List<String> aLibraryFolders) {
-
-		List<String> normalizedList = new ArrayList<>();
-
-		for (String path : aLibraryFolders) {
-
-			String normalizedPath = path.trim();
-
-			if (normalizedPath.length() > 0) {
-				normalizedList.add(normalizedPath);
-			}
-		}
-
-		return StringUtils.join(normalizedList, libraryFoldersSeparator);
-	}
-
-	public List<String> configToLibraryFolders(String aConfig) {
-
-		List<String> normalizedList = new ArrayList<>();
-
-		for (String path : aConfig.split(libraryFoldersSeparator)) {
-
-			String normalizedPath = path.trim();
-
-			if (normalizedPath.length() > 0) {
-				normalizedList.add(normalizedPath);
-			}
-		}
-
-		return normalizedList;
 	}
 
 	private void initArtistDto(ArtistDto aDto, Artist aArtist) {

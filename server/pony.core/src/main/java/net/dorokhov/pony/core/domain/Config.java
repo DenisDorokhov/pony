@@ -9,9 +9,6 @@ import java.util.Date;
 @Table(name = "config")
 public class Config implements AbstractEntity<String> {
 
-	public static final String AUTO_SCAN_INTERVAL = "autoScanInterval";
-	public static final String LIBRARY_FOLDERS = "libraryFolders";
-
 	private String id;
 
 	private Date creationDate;
@@ -22,6 +19,10 @@ public class Config implements AbstractEntity<String> {
 
 	public Config() {
 		this(null, null);
+	}
+
+	public Config(String aId) {
+		this(aId, null);
 	}
 
 	public Config(String aId, String aValue) {
@@ -97,39 +98,39 @@ public class Config implements AbstractEntity<String> {
 	}
 
 	@Transient
-	public long getLong() {
-		return Long.valueOf(value);
+	public Long getLong() {
+		return value != null ? Long.valueOf(value) : null;
 	}
 
-	public void setLong(long aValue) {
-		value = String.valueOf(aValue);
-	}
-
-	@Transient
-	public int getInteger() {
-		return Integer.valueOf(value);
-	}
-
-	public void setInteger(int aValue) {
-		value = String.valueOf(aValue);
+	public void setLong(Long aValue) {
+		value = aValue != null ? String.valueOf(aValue) : null;
 	}
 
 	@Transient
-	public double getDouble() {
-		return Double.valueOf(value);
+	public Integer getInteger() {
+		return value != null ? Integer.valueOf(value) : null;
 	}
 
-	public void setDouble(double aValue) {
-		value = String.valueOf(aValue);
+	public void setInteger(Integer aValue) {
+		value = aValue != null ? String.valueOf(aValue) : null;
 	}
 
 	@Transient
-	public boolean getBoolean() {
-		return Boolean.valueOf(value);
+	public Double getDouble() {
+		return value != null ? Double.valueOf(value) : null;
 	}
 
-	public void setBoolean(boolean aValue) {
-		value = Boolean.toString(aValue);
+	public void setDouble(Double aValue) {
+		value = aValue != null ? String.valueOf(aValue) : null;
+	}
+
+	@Transient
+	public Boolean getBoolean() {
+		return value != null ? Boolean.valueOf(value) : null;
+	}
+
+	public void setBoolean(Boolean aValue) {
+		value = aValue != null ? String.valueOf(aValue) : null;
 	}
 
 	@Override

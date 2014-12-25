@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.service;
 
-import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.InstallationCommand;
@@ -13,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+
 @Service
 public class InstallationServiceFacadeImpl implements InstallationServiceFacade {
+
+	private static final int AUTO_SCAN_INTERVAL = 86400;
 
 	private InstallationService installationService;
 
@@ -45,9 +48,16 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		InstallationCommand command = new InstallationCommand();
 
-		String libraryFoldersConfig = dtoConverter.libraryFoldersToConfig(aCommand.getLibraryFolders());
+		command.setAutoScanInterval(AUTO_SCAN_INTERVAL);
 
-		command.getConfig().add(new Config(Config.LIBRARY_FOLDERS, libraryFoldersConfig));
+		for (String path : aCommand.getLibraryFolders()) {
+
+			String normalizedPath = path.trim();
+
+			if (normalizedPath.length() > 0) {
+				command.getLibraryFolders().add(new File(normalizedPath));
+			}
+		}
 
 		User admin = new User();
 

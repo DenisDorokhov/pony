@@ -1,7 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.dao.ConfigDao;
-import net.dorokhov.pony.core.domain.Config;
+import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.domain.ScanJob;
 import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.ScanJobService;
@@ -13,6 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.util.Arrays;
+
 public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 	private static final String TEST_FOLDER_PATH = "data/library";
@@ -21,7 +23,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 
 	private ScanJobService scanJobService;
 
-	private ConfigDao configDao;
+	private ConfigService configService;
 
 	private ScanJobService.Delegate delegate;
 
@@ -31,9 +33,8 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 	@Before
 	public void setUp() throws Exception {
 
-		configDao = context.getBean(ConfigDao.class);
-
 		scanJobService = context.getBean(ScanJobService.class);
+		configService = context.getBean(ConfigService.class);
 
 		delegate = new ScanJobService.Delegate() {
 			@Override
@@ -86,7 +87,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 	@Test
 	public void testSuccessfulScanJob() throws Exception {
 
-		configDao.save(new Config(Config.LIBRARY_FOLDERS, new ClassPathResource(TEST_FOLDER_PATH).getFile().getAbsolutePath()));
+		configService.saveLibraryFolders(Arrays.asList(new ClassPathResource(TEST_FOLDER_PATH).getFile()));
 
 		ScanJob job;
 
@@ -122,7 +123,7 @@ public class ScanJobServiceIT extends AbstractIntegrationCase {
 	@Test
 	public void testFailedScanJob() throws Exception {
 
-		configDao.save(new Config(Config.LIBRARY_FOLDERS, "/notExistingFile"));
+		configService.saveLibraryFolders(Arrays.asList(new File("/notExistingFile")));
 
 		ScanJob job;
 
