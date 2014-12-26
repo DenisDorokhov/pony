@@ -1,9 +1,11 @@
 package net.dorokhov.pony.web.validation;
 
+import net.dorokhov.pony.core.domain.User;
+import net.dorokhov.pony.core.user.UserService;
+import net.dorokhov.pony.core.user.exception.NotAuthenticatedException;
 import net.dorokhov.pony.web.domain.command.CreateUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
-import net.dorokhov.pony.web.service.UserServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,11 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
-	private UserServiceFacade userServiceFacade;
+	private UserService userService;
 
 	@Autowired
-	public void setUserServiceFacade(UserServiceFacade aUserServiceFacade) {
-		userServiceFacade = aUserServiceFacade;
+	public void setUserService(UserService aUserService) {
+		userService = aUserService;
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
 	private boolean validateCreateUserCommand(CreateUserCommand aCommand, ConstraintValidatorContext aContext) {
 
-		if (!userServiceFacade.validateEmail(aCommand)) {
+		if (!isEmailUnique(aCommand)) {
 
 			addFieldError("email", aContext);
 
@@ -56,7 +58,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
 	private boolean validateUpdateUserCommand(UpdateUserCommand aCommand, ConstraintValidatorContext aContext) {
 
-		if (!userServiceFacade.validateEmail(aCommand)) {
+		if (!isEmailUnique(aCommand)) {
 
 			addFieldError("email", aContext);
 
@@ -68,7 +70,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
 	private boolean validateUpdateCurrentUserCommand(UpdateCurrentUserCommand aCommand, ConstraintValidatorContext aContext) {
 
-		if (!userServiceFacade.validateEmail(aCommand)) {
+		if (!isEmailUnique(aCommand)) {
 
 			addFieldError("email", aContext);
 
@@ -76,6 +78,38 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		}
 
 		return true;
+	}
+
+	private boolean isEmailUnique(CreateUserCommand aCommand) {
+		return validateEmail(null, aCommand.getEmail());
+	}
+
+	private boolean isEmailUnique(UpdateUserCommand aCommand) {
+		return validateEmail(userService.getById(aCommand.getId()), aCommand.getEmail());
+	}
+
+	private boolean isEmailUnique(UpdateCurrentUserCommand aCommand) {
+
+		User user = null;
+
+		try {
+			user = userService.getAuthenticatedUser();
+		} catch (NotAuthenticatedException e) {
+			// User is not authenticated
+		}
+
+		return validateEmail(user, aCommand.getEmail());
+	}
+
+	private boolean validateEmail(User aUser, String aEmail) {
+
+		User existingUser = userService.getByEmail(aEmail != null ? aEmail.trim() : null);
+
+		if (aUser != null) {
+			return (existingUser == null || !existingUser.getId().equals(aUser.getId()));
+		} else {
+			return (existingUser == null);
+		}
 	}
 
 	private void addFieldError(String aField, ConstraintValidatorContext aContext) {
