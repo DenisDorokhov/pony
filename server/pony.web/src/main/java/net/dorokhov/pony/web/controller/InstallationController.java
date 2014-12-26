@@ -24,9 +24,13 @@ public class InstallationController {
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.GET)
-	public String showInstallation(Model aModel) {
+	public String install(Model aModel) {
 
-		aModel.addAttribute("installCommand", new InstallCommand());
+		InstallCommand command = new InstallCommand();
+
+		command.getLibraryFolders().add("");
+
+		aModel.addAttribute("installCommand", command);
 
 		return "install";
 	}

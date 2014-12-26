@@ -19,88 +19,69 @@
     <script>
         (function() {
 
-            var lastFolderId = <c:out value="${fn:length(installCommand.libraryFolders)}" />;
-            var folderPathPlaceholder = "<spring:message code="install.folderPathPlaceholder" />";
+            function InstallationGui() {
 
-            function addLibraryFolder() {
+                this.libraryFolderContainer = $('#libraryFolderContainer');
 
-                var folderId = 'libraryFolder_' + lastFolderId;
+                this.lastFolderId = this.libraryFolderContainer.children().length;
 
-                var $folderInput = $('<div class="input-group">' +
-                        '<input type="text" class="form-control">' +
-                        '<span class="input-group-btn">' +
-                        '<button type="button" class="btn btn-default add">' +
-                        '<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>' +
-                        '</button>' +
-                        '<button type="button" class="btn btn-default remove">' +
-                        '<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>' +
-                        '</button>' +
-                        '</span>' +
-                        '</div>');
-
-                $folderInput.attr('id', folderId);
-                $folderInput.find('input').attr('placeholder', folderPathPlaceholder);
-
-                $folderInput.find('button.add').click(function() {
-                    addLibraryFolder();
-                });
-                $folderInput.find('button.remove').click(function() {
-                    removeLibraryFolder(folderId);
-                });
-
-                $('#libraryFolderContainer').append($folderInput);
-
-                enableDisableLibraryFolderRemoval();
-                initInputNames();
-
-                lastFolderId++;
+                this._refreshLibraryFolderControls();
             }
 
-            function removeLibraryFolder(folderId) {
+            InstallationGui.prototype.addLibraryFolder = function() {
 
-                $('#' + folderId).remove();
+                var $item = this.libraryFolderContainer.children().eq(0).clone();
 
-                enableDisableLibraryFolderRemoval();
-                initInputNames();
-            }
+                this.libraryFolderContainer.append($item);
 
-            function enableDisableLibraryFolderRemoval() {
+                var $itemInput = $item.find('input');
 
-                var $container = $('#libraryFolderContainer');
+                $itemInput.val('');
+                $itemInput.focus();
 
-                if ($container.children().length > 1) {
-                    $container.find('button.remove').removeAttr('disabled');
+                this._refreshLibraryFolderControls();
+
+                this.lastFolderId++;
+            };
+
+            InstallationGui.prototype.removeLibraryFolder = function(index) {
+
+                this.libraryFolderContainer.children().eq(index).remove();
+
+                this._refreshLibraryFolderControls();
+            };
+
+            InstallationGui.prototype._refreshLibraryFolderControls = function() {
+
+                if (this.libraryFolderContainer.children().length > 1) {
+                    this.libraryFolderContainer.find('button.remove').removeAttr('disabled');
                 } else {
-                    $container.find('button.remove').attr('disabled', '');
+                    this.libraryFolderContainer.find('button.remove').attr('disabled', '');
                 }
-            }
 
-            function initInputNames() {
-                $('#libraryFolderContainer').children().each(function(index) {
-                    $(this).find('input').attr('name', 'libraryFolders[' + index + ']')
+                var self = this;
+
+                this.libraryFolderContainer.children().each(function(index) {
+
+                    var $folderInput = $(this);
+
+                    $folderInput.find('input').attr('name', 'libraryFolders[' + index + ']');
+
+                    $folderInput.find('button.add').off('click').click(function() {
+                        self.addLibraryFolder();
+                    });
+                    $folderInput.find('button.remove').off('click').click(function() {
+                        self.removeLibraryFolder($folderInput.index());
+                    });
                 });
-            }
+            };
+
+            var installationGui = null;
 
             $(document).ready(function() {
-
-                var $folders = $('#libraryFolderContainer').children();
-
-                if ($folders.length == 0) {
-                    addLibraryFolder();
-                } else {
-                    $folders.each(function() {
-
-                        var $folderInput = $(this);
-
-                        $folderInput.find('button.add').click(function() {
-                            addLibraryFolder();
-                        });
-                        $folderInput.find('button.remove').click(function() {
-                            removeLibraryFolder($folderInput.attr('id'));
-                        });
-                    });
-                }
+                installationGui = new InstallationGui();
             });
+
         })();
     </script>
 
@@ -123,27 +104,24 @@
 
             <form:errors cssClass="alert alert-danger" role="alert" element="div" />
 
-            <spring:bind path="libraryFolders">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="control-label"><spring:message code="install.libraryFolders" /></label>
-                    <div id="libraryFolderContainer">
-                        <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="status">
-                            <div id="libraryFolders_${status.index}" class="input-group">
-                                <form:input path="libraryFolders[${status.index}]" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default add">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default remove">
-                                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                    </button>
-                                </span>
-                                <form:errors path="libraryFolders[${status.index}]" cssClass="help-block" />
-                            </div>
-                        </c:forEach>
-                    </div>
+            <div class="form-group">
+                <label class="control-label"><spring:message code="install.libraryFolders" /></label>
+                <div id="libraryFolderContainer">
+                    <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="status">
+                        <div class="input-group">
+                            <form:input path="libraryFolders[${status.index}]" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default add">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="btn btn-default remove">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </c:forEach>
                 </div>
-            </spring:bind>
+            </div>
             <spring:bind path="userName">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
                     <label class="control-label" for="userName"><spring:message code="install.name" /></label>
