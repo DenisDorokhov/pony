@@ -34,6 +34,8 @@ public class ApiController {
 
 	private ConfigServiceFacade configServiceFacade;
 
+	private LogServiceFacade logServiceFacade;
+
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
@@ -67,6 +69,11 @@ public class ApiController {
 	@Autowired
 	public void setConfigServiceFacade(ConfigServiceFacade aConfigServiceFacade) {
 		configServiceFacade = aConfigServiceFacade;
+	}
+
+	@Autowired
+	public void setLogServiceFacade(LogServiceFacade aLogServiceFacade) {
+		logServiceFacade = aLogServiceFacade;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -120,17 +127,17 @@ public class ApiController {
 		return responseBuilder.build(songServiceFacade.search(aQuery));
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
 	public ResponseDto<List<UserDto>> getUsers() {
 		return responseBuilder.build(userServiceFacade.getAll());
 	}
 
-	@RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.GET)
 	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) {
 		return responseBuilder.build(userServiceFacade.getById(aId));
 	}
 
-	@RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.DELETE)
 	public ResponseDto<Void> deleteUser(@PathVariable("id") Long aId) throws UserNotFoundException, UserSelfDeletionException {
 
 		userServiceFacade.delete(aId);
@@ -138,23 +145,23 @@ public class ApiController {
 		return responseBuilder.build();
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/users", method = RequestMethod.POST)
 	public ResponseDto<UserDto> createUser(@Valid @RequestBody CreateUserCommand aCommand) throws UserExistsException {
 		return responseBuilder.build(userServiceFacade.create(aCommand));
 	}
 
-	@RequestMapping(value = "/users", method = RequestMethod.PUT)
+	@RequestMapping(value = "/admin/users", method = RequestMethod.PUT)
 	public ResponseDto<UserDto> updateUser(@Valid @RequestBody UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 
-	@RequestMapping(value = "/scanJobs", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 														@RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
-	@RequestMapping(value = "/scanJobs/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/scanJobs/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) throws ObjectNotFoundException {
 
 		ScanJobDto job = scanServiceFacade.getScanJob(aId);
@@ -166,18 +173,18 @@ public class ApiController {
 		return responseBuilder.build(job);
 	}
 
-	@RequestMapping(value = "/scanJobs", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.POST)
 	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
 		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
-	@RequestMapping(value = "/scanResults", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 															  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 
-	@RequestMapping(value = "/scanResults/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/scanResults/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) throws ObjectNotFoundException {
 
 		ScanResultDto result = scanServiceFacade.getScanResult(aId);
@@ -189,19 +196,26 @@ public class ApiController {
 		return responseBuilder.build(result);
 	}
 
-	@RequestMapping(value = "/scanStatus", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/scanStatus", method = RequestMethod.GET)
 	public ResponseDto<ScanStatusDto> getScanStatus() {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}
 
-	@RequestMapping(value = "/config", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/config", method = RequestMethod.GET)
 	public ResponseDto<ConfigDto> getConfig() {
 		return responseBuilder.build(configServiceFacade.get());
 	}
 
-	@RequestMapping(value = "/config", method = RequestMethod.PUT)
+	@RequestMapping(value = "/admin/config", method = RequestMethod.PUT)
 	public ResponseDto<ConfigDto> saveConfig(@Valid @RequestBody ConfigDto aConfig) {
 		return responseBuilder.build(configServiceFacade.save(aConfig));
+	}
+
+	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
+	public ResponseDto<ListDto<LogMessageDto>> getLog(@Valid @RequestBody LogQueryDto aQuery,
+													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+													  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
+		return responseBuilder.build(logServiceFacade.getByQuery(aQuery, aPageNumber, aPageSize));
 	}
 
 }
