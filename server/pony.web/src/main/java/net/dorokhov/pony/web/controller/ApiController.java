@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.controller;
 
+import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.*;
@@ -10,10 +11,12 @@ import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.security.UserTokenReader;
 import net.dorokhov.pony.web.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -122,9 +125,14 @@ public class ApiController {
 		return responseBuilder.build(artist);
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public ResponseDto<SearchDto> search(@Valid @RequestBody SearchQueryDto aQuery) {
-		return responseBuilder.build(songServiceFacade.search(aQuery));
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public ResponseDto<SearchDto> search(@RequestParam("text") String aText) {
+
+		SearchQueryDto query = new SearchQueryDto();
+
+		query.setText(aText);
+
+		return responseBuilder.build(songServiceFacade.search(query));
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
@@ -157,7 +165,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-														@RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
+														@RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
@@ -180,7 +188,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-															  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
+															  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 
@@ -212,10 +220,19 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
-	public ResponseDto<ListDto<LogMessageDto>> getLog(@Valid @RequestBody LogQueryDto aQuery,
+	public ResponseDto<ListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessage.Type aType,
+													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
+													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
 													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-													  @RequestParam(value = "pageSize", defaultValue = "10") int aPageSize) {
-		return responseBuilder.build(logServiceFacade.getByQuery(aQuery, aPageNumber, aPageSize));
+													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+
+		LogQueryDto query = new LogQueryDto();
+
+		query.setType(aType);
+		query.setMinDate(aMinDate);
+		query.setMaxDate(aMaxDate);
+
+		return responseBuilder.build(logServiceFacade.getByQuery(query, aPageNumber, aPageSize));
 	}
 
 }

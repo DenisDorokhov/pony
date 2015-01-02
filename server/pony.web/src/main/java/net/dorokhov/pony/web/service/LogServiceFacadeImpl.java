@@ -7,12 +7,15 @@ import net.dorokhov.pony.web.domain.LogMessageDto;
 import net.dorokhov.pony.web.domain.LogQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
 public class LogServiceFacadeImpl implements LogServiceFacade {
+
+	private static final int MAX_PAGE_SIZE = 100;
 
 	private LogService logService;
 
@@ -31,20 +34,24 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 
 		Date minDate = aQuery.getMinDate();
 		if (minDate == null) {
-			minDate = new Date(Long.MIN_VALUE);
+			minDate = new Date(0);
 		}
 
 		Date maxDate = aQuery.getMaxDate();
 		if (maxDate == null) {
-			maxDate = new Date(Long.MAX_VALUE);
+			maxDate = new Date();
 		}
 
-		return ListDto.valueOf(logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize)), new ListDto.ContentConverter<LogMessage, LogMessageDto>() {
-			@Override
-			public LogMessageDto convert(LogMessage aItem) {
-				return LogMessageDto.valueOf(aItem);
-			}
-		});
+		aPageNumber = Math.max(aPageNumber, 0);
+		aPageSize = Math.min(aPageSize, MAX_PAGE_SIZE);
+
+		return ListDto.valueOf(logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date")),
+				new ListDto.ContentConverter<LogMessage, LogMessageDto>() {
+					@Override
+					public LogMessageDto convert(LogMessage aItem) {
+						return LogMessageDto.valueOf(aItem);
+					}
+				});
 	}
 
 }

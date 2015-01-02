@@ -698,8 +698,8 @@ public class LibraryServiceImpl implements LibraryService {
 				try {
 					saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
 				} catch (Exception e) {
-					logService.warn(log, "libraryService.couldNotStoreEmbeddedArtwork", "Could not store embedded artwork " + aSongData.getArtwork() + ".",
-							e, Arrays.asList(aSongData.getArtwork().toString()));
+					logService.warn(log, "libraryService.couldNotStoreEmbeddedArtwork", "Could not store embedded artwork of " + aSongData.toString() + ".",
+							e, Arrays.asList(aSongData.toString()));
 				}
 
 				if (saveCommand != null) {
