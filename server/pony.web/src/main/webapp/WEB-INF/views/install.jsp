@@ -103,45 +103,37 @@
 
         <p><spring:message code="install.description" /></p>
 
-        <c:set var="libraryFoldersHaveErrors" value="false" />
-        <spring:hasBindErrors name="installCommand">
-            <c:forEach var="error" items="${errors.allErrors}">
-                <%--suppress ELValidationInJSP --%>
-                <c:if test="${fn:startsWith(error.field, 'libraryFolders')}">
-                    <c:set var="libraryFoldersHaveErrors" value="true" />
-                </c:if>
-            </c:forEach>
-        </spring:hasBindErrors>
-
         <form:form role="form" method="post" commandName="installCommand">
 
             <form:errors cssClass="alert alert-danger" role="alert" element="div" />
 
-            <div class="form-group">
-                <div class="${libraryFoldersHaveErrors ? 'has-error' : ''}">
-                    <label class="control-label"><spring:message code="install.libraryFolders" /></label>
-                </div>
-                <div id="libraryFolderContainer">
-                    <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="loopStatus">
-                        <spring:bind path="libraryFolders[${loopStatus.index}].path">
-                            <div class="${status.error ? 'has-error' : ''}">
-                                <div class="input-group">
-                                    <form:input path="libraryFolders[${loopStatus.index}].path" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default add">
-                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-default remove">
-                                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                        </button>
-                                    </span>
+            <spring:bind path="installCommand.libraryFolders[*">
+                <div class="form-group">
+                    <div class="${status.error ? 'has-error' : ''}">
+                        <label class="control-label"><spring:message code="install.libraryFolders" /></label>
+                    </div>
+                    <div id="libraryFolderContainer">
+                        <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="loopStatus">
+                            <spring:bind path="libraryFolders[${loopStatus.index}].path">
+                                <div class="${status.error ? 'has-error' : ''}">
+                                    <div class="input-group">
+                                        <form:input path="libraryFolders[${loopStatus.index}].path" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default add">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-default remove">
+                                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <form:errors path="libraryFolders[${loopStatus.index}].path" cssClass="help-block" />
                                 </div>
-                                <form:errors path="libraryFolders[${loopStatus.index}].path" cssClass="help-block" />
-                            </div>
-                        </spring:bind>
-                    </c:forEach>
+                            </spring:bind>
+                        </c:forEach>
+                    </div>
                 </div>
-            </div>
+            </spring:bind>
             <spring:bind path="userName">
                 <div class="form-group ${status.error ? 'has-error' : ''}">
                     <label class="control-label" for="userName"><spring:message code="install.name" /></label>
