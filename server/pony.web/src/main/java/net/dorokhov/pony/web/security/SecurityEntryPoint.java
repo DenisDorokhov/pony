@@ -43,7 +43,7 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
 		if (jsonResponsePathPrefix != null && aRequest.getServletPath().startsWith(jsonResponsePathPrefix)) {
 
-			ResponseDto error = responseBuilder.build(new ErrorDto("errorAccessDenied", aException.getMessage()));
+			ResponseDto error = responseBuilder.build(new ErrorDto("errorAccessDenied", "Access denied."));
 
 			aResponse.setContentType("application/json");
 			aResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

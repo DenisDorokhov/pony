@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -43,17 +42,20 @@ public class SecurityFilter extends GenericFilterBean {
 	}
 
 	@Override
-	@Transactional
 	public void doFilter(ServletRequest aServletRequest, ServletResponse aServletResponse, FilterChain aFilterChain) throws IOException, ServletException {
 
 		String token = userTokenReader.readToken(aServletRequest);
 
-		if (token != null && installationService.getInstallation() != null) {
-			try {
-				userService.authenticate(token);
-			} catch (InvalidTokenException e) {
-				log.info("Token [" + token + "] is invalid.");
+		try {
+			if (token != null && installationService.getInstallation() != null) {
+				try {
+					userService.authenticate(token);
+				} catch (InvalidTokenException e) {
+					log.info("Token [" + token + "] is invalid.");
+				}
 			}
+		} catch (Throwable e) {
+			log.info("Could not authenticate.", e);
 		}
 
 		aFilterChain.doFilter(aServletRequest, aServletResponse);
