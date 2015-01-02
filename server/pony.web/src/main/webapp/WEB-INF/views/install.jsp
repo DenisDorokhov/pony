@@ -34,6 +34,9 @@
 
                 this.libraryFolderContainer.append($item);
 
+                $item.removeClass('has-error');
+                $item.find('.help-block').remove();
+
                 var $itemInput = $item.find('input');
 
                 $itemInput.val('');
@@ -65,7 +68,7 @@
 
                     var $folderInput = $(this);
 
-                    $folderInput.find('input').attr('name', 'libraryFolders[' + index + ']');
+                    $folderInput.find('input').attr('name', 'libraryFolders[' + index + '].path');
 
                     $folderInput.find('button.add').off('click').click(function() {
                         self.addLibraryFolder();
@@ -100,25 +103,42 @@
 
         <p><spring:message code="install.description" /></p>
 
+        <c:set var="libraryFoldersHaveErrors" value="false" />
+        <spring:hasBindErrors name="installCommand">
+            <c:forEach var="error" items="${errors.allErrors}">
+                <%--suppress ELValidationInJSP --%>
+                <c:if test="${fn:startsWith(error.field, 'libraryFolders')}">
+                    <c:set var="libraryFoldersHaveErrors" value="true" />
+                </c:if>
+            </c:forEach>
+        </spring:hasBindErrors>
+
         <form:form role="form" method="post" commandName="installCommand">
 
             <form:errors cssClass="alert alert-danger" role="alert" element="div" />
 
             <div class="form-group">
-                <label class="control-label"><spring:message code="install.libraryFolders" /></label>
+                <div class="${libraryFoldersHaveErrors ? 'has-error' : ''}">
+                    <label class="control-label"><spring:message code="install.libraryFolders" /></label>
+                </div>
                 <div id="libraryFolderContainer">
-                    <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="status">
-                        <div class="input-group">
-                            <form:input path="libraryFolders[${status.index}]" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default add">
-                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-default remove">
-                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                </button>
-                            </span>
-                        </div>
+                    <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="loopStatus">
+                        <spring:bind path="libraryFolders[${loopStatus.index}].path">
+                            <div class="${status.error ? 'has-error' : ''}">
+                                <div class="input-group">
+                                    <form:input path="libraryFolders[${loopStatus.index}].path" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default add">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default remove">
+                                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                                <form:errors path="libraryFolders[${loopStatus.index}].path" cssClass="help-block" />
+                            </div>
+                        </spring:bind>
                     </c:forEach>
                 </div>
             </div>

@@ -28,7 +28,7 @@ public class InstallationController {
 
 		InstallCommand command = new InstallCommand();
 
-		command.getLibraryFolders().add("");
+		command.getLibraryFolders().add(new InstallCommand.LibraryFolder());
 
 		aModel.addAttribute("installCommand", command);
 

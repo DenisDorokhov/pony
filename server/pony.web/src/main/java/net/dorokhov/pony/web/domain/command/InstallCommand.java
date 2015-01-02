@@ -1,8 +1,10 @@
 package net.dorokhov.pony.web.domain.command;
 
+import net.dorokhov.pony.web.validation.FolderExists;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ public class InstallCommand {
 
 	private String userPassword;
 
-	private List<String> libraryFolders;
+	private List<LibraryFolder> libraryFolders;
 
 	@NotBlank
 	@Size(max = 255)
@@ -48,7 +50,8 @@ public class InstallCommand {
 		userPassword = aUserPassword;
 	}
 
-	public List<String> getLibraryFolders() {
+	@Valid
+	public List<LibraryFolder> getLibraryFolders() {
 
 		if (libraryFolders == null) {
 			libraryFolders = new ArrayList<>();
@@ -57,8 +60,22 @@ public class InstallCommand {
 		return libraryFolders;
 	}
 
-	public void setLibraryFolders(List<String> aLibraryFolders) {
+	public void setLibraryFolders(List<LibraryFolder> aLibraryFolders) {
 		libraryFolders = aLibraryFolders;
+	}
+
+	public static class LibraryFolder {
+
+		private String path;
+
+		@FolderExists
+		public String getPath() {
+			return path;
+		}
+
+		public void setPath(String aPath) {
+			path = aPath;
+		}
 	}
 
 }

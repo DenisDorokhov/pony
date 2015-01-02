@@ -43,9 +43,9 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		command.setAutoScanInterval(AUTO_SCAN_INTERVAL);
 
-		for (String path : aCommand.getLibraryFolders()) {
+		for (InstallCommand.LibraryFolder folder : aCommand.getLibraryFolders()) {
 
-			String normalizedPath = path.trim();
+			String normalizedPath = folder.getPath().trim();
 
 			if (normalizedPath.length() > 0) {
 				command.getLibraryFolders().add(new File(normalizedPath));
