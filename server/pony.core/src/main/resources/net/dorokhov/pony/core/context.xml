@@ -19,8 +19,6 @@
 
     <bean class="org.slf4j.bridge.SLF4JBridgeHandler" init-method="install" depends-on="slf4JBridgeHandler"/>
 
-    <bean id="validatorFactory" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
         <property name="url" value="jdbc:hsqldb:file:${user.home}/${storage.path}/db/pony;hsqldb.tx=mvcc" />
@@ -41,7 +39,6 @@
         <property name="jpaPropertyMap">
             <map>
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
-                <entry key="javax.persistence.validation.factory" value-ref="validatorFactory" />
                 <entry key="hibernate.search.default.directory_provider" value="filesystem"/>
                 <entry key="hibernate.search.default.indexBase" value="${user.home}/${storage.path}/index"/>
             </map>

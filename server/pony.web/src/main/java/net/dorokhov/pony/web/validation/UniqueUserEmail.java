@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = UniqueUserEmailValidator.class)
 public @interface UniqueUserEmail {
 
-	String message() default "User with this email already exists.";
+	String message() default "{net.dorokhov.pony.web.validation.UniqueUserEmail.message}";
 
 	Class<?>[] groups() default {};
 
