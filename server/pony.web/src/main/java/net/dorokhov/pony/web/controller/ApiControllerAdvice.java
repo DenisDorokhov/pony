@@ -110,7 +110,23 @@ public class ApiControllerAdvice {
 		List<ErrorDto> errorList = new ArrayList<>();
 
 		for (FieldError fieldError : aException.getBindingResult().getFieldErrors()) {
-			errorList.add(new ErrorDto("errorValidation." + fieldError.getCode(), fieldError.getDefaultMessage(), fieldError.getField()));
+
+			List<String> errorArguments = new ArrayList<>();
+			for (Object argument : fieldError.getArguments()) {
+				if (argument instanceof Byte
+						|| argument instanceof Short
+						|| argument instanceof Integer
+						|| argument instanceof Long
+						|| argument instanceof Float
+						|| argument instanceof Double
+						|| argument instanceof Character
+						|| argument instanceof Boolean
+						|| argument instanceof String) {
+					errorArguments.add(argument.toString());
+				}
+			}
+
+			errorList.add(new ErrorDto("errorValidation." + fieldError.getCode(), fieldError.getDefaultMessage(), fieldError.getField(), errorArguments));
 		}
 
 		return responseBuilder.build(errorList);
@@ -134,9 +150,9 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(new ErrorDto("errorInvalidRequest", "Invalid request."));
 	}
 
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler(Throwable.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseDto onUnexpectedError(Exception aException) {
+	public ResponseDto onUnexpectedError(Throwable aException) {
 
 		log.error("Unexpected error occurred.", aException);
 
