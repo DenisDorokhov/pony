@@ -11,7 +11,6 @@ import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.ResponseBuilder;
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(InvalidCredentialsException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ResponseDto onInvalidCredentialsException(InvalidCredentialsException aException) {
+	public ResponseDto onInvalidCredentials(InvalidCredentialsException aException) {
 
 		log.warn("Credentials are invalid.");
 
@@ -54,7 +54,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(InvalidPasswordException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ResponseDto onInvalidPasswordException(InvalidPasswordException aException) {
+	public ResponseDto onInvalidPassword(InvalidPasswordException aException) {
 
 		log.warn("Password is invalid.");
 
@@ -63,7 +63,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(ObjectNotFoundException.class)
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public ResponseDto onObjectNotFoundError(ObjectNotFoundException aException) {
+	public ResponseDto onObjectNotFound(ObjectNotFoundException aException) {
 
 		log.debug(aException.getMessage());
 
@@ -72,7 +72,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(UserNotFoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onUserNotFoundError(UserNotFoundException aException) {
+	public ResponseDto onUserNotFound(UserNotFoundException aException) {
 
 		log.warn(aException.getMessage());
 
@@ -86,7 +86,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(UserSelfDeletionException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onUserSelfDeletionError(UserSelfDeletionException aException) {
+	public ResponseDto onUserSelfDeletion(UserSelfDeletionException aException) {
 
 		log.debug(aException.getMessage());
 
@@ -100,7 +100,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(LibraryNotDefinedException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseDto onLibraryNotDefinedError(LibraryNotDefinedException aException) {
+	public ResponseDto onLibraryNotDefined(LibraryNotDefinedException aException) {
 
 		log.warn("Library is not defined.");
 
@@ -115,7 +115,7 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(ArtworkUploadNotFoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onArtworkUploadNotFoundError(ArtworkUploadNotFoundException aException) {
+	public ResponseDto onArtworkUploadNotFound(ArtworkUploadNotFoundException aException) {
 
 		String artworkUploadId = null;
 		if (aException.getObjectId() != null) {
@@ -155,15 +155,6 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(errorList);
 	}
 
-	@ExceptionHandler(NotImplementedException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onNotImplementedError(NotImplementedException aException) {
-
-		log.warn(aException.getMessage(), aException);
-
-		return responseBuilder.build(new ErrorDto("errorNotImplemented", aException.getMessage()));
-	}
-
 	@ExceptionHandler(HttpMediaTypeException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onContentTypeNotSupported(HttpMediaTypeException aException) {
@@ -175,11 +166,20 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onMessageNotReadableError(Exception aException) {
+	public ResponseDto onMessageNotReadable(Exception aException) {
 
 		log.debug(aException.getMessage());
 
 		return responseBuilder.build(new ErrorDto("errorInvalidRequest", "Invalid request."));
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onMaxUploadSizeExceeded(MaxUploadSizeExceededException aException) {
+
+		log.warn(aException.getMessage());
+
+		return responseBuilder.build(new ErrorDto("errorMaxUploadSizeExceeded", aException.getMessage()));
 	}
 
 	@ExceptionHandler(Throwable.class)

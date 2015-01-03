@@ -17,11 +17,12 @@
 
 	<logger name="org.jaudiotagger" level="ERROR" />
 	<logger name="org.hibernate" level="ERROR" />
+	<!-- logger name="org.hibernate.SQL" level="DEBUG" /-->
+	<logger name="org.springframework.web" level="INFO" />
+	<logger name="org.springframework.web.multipart.commons.CommonsMultipartResolver" level="ERROR" />
 	<logger name="net.dorokhov.pony" level="DEBUG" />
 	<logger name="net.dorokhov.pony.core.service.common.SongDataReaderImpl" level="INFO" />
 	<logger name="net.dorokhov.pony.web.server.service.impl.LibraryServiceFacadeImpl" level="INFO" />
-	<logger name="org.springframework.web" level="INFO" />
-	<!-- logger name="org.hibernate.SQL" level="DEBUG" /-->
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
