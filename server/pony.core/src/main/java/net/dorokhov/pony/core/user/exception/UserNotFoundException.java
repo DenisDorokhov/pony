@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.user.exception;
 
 public class UserNotFoundException extends Exception {
 
-	private Long userId;
+	private final Long userId;
 
 	public UserNotFoundException(Long aUserId) {
 

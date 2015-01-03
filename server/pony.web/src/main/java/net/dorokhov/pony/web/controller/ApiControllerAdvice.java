@@ -7,6 +7,8 @@ import net.dorokhov.pony.core.user.exception.UserNotFoundException;
 import net.dorokhov.pony.core.user.exception.UserSelfDeletionException;
 import net.dorokhov.pony.web.domain.ErrorDto;
 import net.dorokhov.pony.web.domain.ResponseDto;
+import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
+import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.ResponseBuilder;
 import org.apache.commons.lang3.NotImplementedException;
@@ -102,6 +104,24 @@ public class ApiControllerAdvice {
 		log.warn("Library is not defined.");
 
 		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
+	}
+
+	@ExceptionHandler(ArtworkUploadFormatException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onArtworkUploadFormatError(ArtworkUploadFormatException aException) {
+		return responseBuilder.build(new ErrorDto("errorArtworkUploadFormat", aException.getMessage()));
+	}
+
+	@ExceptionHandler(ArtworkUploadNotFoundException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onArtworkUploadNotFoundError(ArtworkUploadNotFoundException aException) {
+
+		String artworkUploadId = null;
+		if (aException.getArtworkUploadId() != null) {
+			artworkUploadId = aException.getArtworkUploadId().toString();
+		}
+
+		return responseBuilder.build(new ErrorDto("errorArtworkUploadNotFound", aException.getMessage(), Arrays.asList(artworkUploadId)));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

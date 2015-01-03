@@ -1,7 +1,9 @@
 package net.dorokhov.pony.web.service;
 
+import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.domain.ScanJob;
 import net.dorokhov.pony.core.domain.ScanResult;
+import net.dorokhov.pony.core.library.ScanEditCommand;
 import net.dorokhov.pony.core.library.ScanJobService;
 import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
@@ -9,12 +11,18 @@ import net.dorokhov.pony.web.domain.ListDto;
 import net.dorokhov.pony.web.domain.ScanJobDto;
 import net.dorokhov.pony.web.domain.ScanResultDto;
 import net.dorokhov.pony.web.domain.ScanStatusDto;
+import net.dorokhov.pony.web.domain.command.ScanEditCommandDto;
+import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ScanServiceFacadeImpl implements ScanServiceFacade {
@@ -24,6 +32,8 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	private ScanJobService scanJobService;
 
 	private ScanService scanService;
+
+	private UploadServiceFacade uploadServiceFacade;
 
 	@Autowired
 	public void setScanJobService(ScanJobService aScanJobService) {
@@ -35,10 +45,66 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		scanService = aScanService;
 	}
 
+	@Autowired
+	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
+		uploadServiceFacade = aUploadServiceFacade;
+	}
+
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public ScanJobDto startScanJob() throws LibraryNotDefinedException {
 		return ScanJobDto.valueOf(scanJobService.startScanJob());
+	}
+
+	@Override
+	@Transactional
+	public ScanJobDto startEditJob(ScanEditCommandDto aCommand) throws ArtworkUploadNotFoundException {
+
+		List<ScanEditCommand> commandList = new ArrayList<>();
+
+		for (ScanEditCommandDto.Task task : aCommand.getTasks()) {
+
+			ScanEditCommand command = new ScanEditCommand();
+
+			command.setSongId(task.getSongId());
+			command.setSongData(new SongDataWritable());
+
+			command.getSongData().setDiscNumber(task.getDiscNumber());
+			command.getSongData().setDiscCount(task.getDiscCount());
+			command.getSongData().setTrackNumber(task.getTrackNumber());
+			command.getSongData().setTrackCount(task.getTrackCount());
+			command.getSongData().setTitle(task.getTitle());
+			command.getSongData().setArtist(task.getArtist());
+			command.getSongData().setAlbumArtist(task.getAlbumArtist());
+			command.getSongData().setAlbum(task.getAlbum());
+			command.getSongData().setYear(task.getYear());
+			command.getSongData().setGenre(task.getGenre());
+
+			command.getSongData().setWriteDiscNumber(task.getWriteDiscNumber());
+			command.getSongData().setWriteDiscCount(task.getWriteDiscCount());
+			command.getSongData().setWriteTrackNumber(task.getWriteTrackNumber());
+			command.getSongData().setWriteTrackCount(task.getWriteTrackCount());
+			command.getSongData().setWriteTitle(task.getWriteTitle());
+			command.getSongData().setWriteArtist(task.getWriteArtist());
+			command.getSongData().setWriteAlbumArtist(task.getWriteAlbumArtist());
+			command.getSongData().setWriteAlbum(task.getWriteAlbum());
+			command.getSongData().setWriteYear(task.getWriteYear());
+			command.getSongData().setWriteGenre(task.getWriteGenre());
+			command.getSongData().setWriteArtwork(task.getWriteArtwork());
+
+			if (task.getArtworkUploadId() != null) {
+
+				File artwork = uploadServiceFacade.getArtworkUploadFile(task.getArtworkUploadId());
+
+				if (artwork == null) {
+					throw new ArtworkUploadNotFoundException(task.getArtworkUploadId());
+				}
+
+				command.getSongData().setArtwork(artwork);
+			}
+		}
+
+		return ScanJobDto.valueOf(scanJobService.startEditJob(commandList));
 	}
 
 	@Override

@@ -5,15 +5,18 @@ import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.*;
 import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.domain.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
+import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
+import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.security.UserTokenReader;
 import net.dorokhov.pony.web.service.*;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletRequest;
 import javax.validation.Valid;
@@ -32,13 +35,15 @@ public class ApiController {
 
 	private UserServiceFacade userServiceFacade;
 
-	private ScanServiceFacade scanServiceFacade;
-
 	private SongServiceFacade songServiceFacade;
 
 	private ConfigServiceFacade configServiceFacade;
 
 	private LogServiceFacade logServiceFacade;
+
+	private ScanServiceFacade scanServiceFacade;
+
+	private UploadServiceFacade uploadServiceFacade;
 
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
@@ -61,11 +66,6 @@ public class ApiController {
 	}
 
 	@Autowired
-	public void setScanServiceFacade(ScanServiceFacade aScanServiceFacade) {
-		scanServiceFacade = aScanServiceFacade;
-	}
-
-	@Autowired
 	public void setSongServiceFacade(SongServiceFacade aSongServiceFacade) {
 		songServiceFacade = aSongServiceFacade;
 	}
@@ -78,6 +78,16 @@ public class ApiController {
 	@Autowired
 	public void setLogServiceFacade(LogServiceFacade aLogServiceFacade) {
 		logServiceFacade = aLogServiceFacade;
+	}
+
+	@Autowired
+	public void setScanServiceFacade(ScanServiceFacade aScanServiceFacade) {
+		scanServiceFacade = aScanServiceFacade;
+	}
+
+	@Autowired
+	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
+		uploadServiceFacade = aUploadServiceFacade;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -142,8 +152,15 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.GET)
-	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) {
-		return responseBuilder.build(userServiceFacade.getById(aId));
+	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+
+		UserDto user = userServiceFacade.getById(aId);
+
+		if (user == null) {
+			throw new ObjectNotFoundException(aId, "userNotFound", "User [" + aId + "] could not be found.");
+		}
+
+		return responseBuilder.build(user);
 	}
 
 	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.DELETE)
@@ -164,14 +181,30 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 
-	@RequestMapping(value = "/admin/startScanJob", method = RequestMethod.POST)
-	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
-		return responseBuilder.build(scanServiceFacade.startScanJob());
+	@RequestMapping(value = "/admin/config", method = RequestMethod.GET)
+	public ResponseDto<ConfigDto> getConfig() {
+		return responseBuilder.build(configServiceFacade.get());
 	}
 
-	@RequestMapping(value = "/admin/startEditJob", method = RequestMethod.POST)
-	public ResponseDto<ScanJobDto> startEditJob() throws LibraryNotDefinedException {
-		throw new NotImplementedException("Operation not implemented.");
+	@RequestMapping(value = "/admin/config", method = RequestMethod.PUT)
+	public ResponseDto<ConfigDto> saveConfig(@Valid @RequestBody ConfigDto aConfig) {
+		return responseBuilder.build(configServiceFacade.save(aConfig));
+	}
+
+	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
+	public ResponseDto<ListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessage.Type aType,
+													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
+													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
+													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+
+		LogQueryDto query = new LogQueryDto();
+
+		query.setType(aType);
+		query.setMinDate(aMinDate);
+		query.setMaxDate(aMaxDate);
+
+		return responseBuilder.build(logServiceFacade.getByQuery(query, aPageNumber, aPageSize));
 	}
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
@@ -215,30 +248,31 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}
 
-	@RequestMapping(value = "/admin/config", method = RequestMethod.GET)
-	public ResponseDto<ConfigDto> getConfig() {
-		return responseBuilder.build(configServiceFacade.get());
+	@RequestMapping(value = "/admin/startScanJob", method = RequestMethod.POST)
+	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
+		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
-	@RequestMapping(value = "/admin/config", method = RequestMethod.PUT)
-	public ResponseDto<ConfigDto> saveConfig(@Valid @RequestBody ConfigDto aConfig) {
-		return responseBuilder.build(configServiceFacade.save(aConfig));
+	@RequestMapping(value = "/admin/artworkUpload/{id}", method = RequestMethod.GET)
+	public ResponseDto<ArtworkUploadDto> getArtworkUpload(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+
+		ArtworkUploadDto artworkUpload = uploadServiceFacade.getArtworkUpload(aId);
+
+		if (artworkUpload == null) {
+			throw new ObjectNotFoundException(aId, "artworkUploadNotFound", "Artwork upload [" + aId + "] could not be found.");
+		}
+
+		return responseBuilder.build(artworkUpload);
 	}
 
-	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
-	public ResponseDto<ListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessage.Type aType,
-													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
-													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
-													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+	@RequestMapping(value = "/admin/artworkUpload", method = RequestMethod.POST)
+	public ResponseDto<ArtworkUploadDto> uploadArtwork(@RequestParam("file") MultipartFile aFile) throws ArtworkUploadFormatException {
+		return responseBuilder.build(uploadServiceFacade.uploadArtwork(aFile));
+	}
 
-		LogQueryDto query = new LogQueryDto();
-
-		query.setType(aType);
-		query.setMinDate(aMinDate);
-		query.setMaxDate(aMaxDate);
-
-		return responseBuilder.build(logServiceFacade.getByQuery(query, aPageNumber, aPageSize));
+	@RequestMapping(value = "/admin/startEditJob", method = RequestMethod.POST)
+	public ResponseDto<ScanJobDto> startEditJob(@Valid @RequestBody ScanEditCommandDto aCommand) throws ArtworkUploadNotFoundException {
+		return responseBuilder.build(scanServiceFacade.startEditJob(aCommand));
 	}
 
 }

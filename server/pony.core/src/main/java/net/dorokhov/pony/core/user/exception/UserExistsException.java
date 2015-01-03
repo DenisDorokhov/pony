@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.user.exception;
 
 public class UserExistsException extends Exception {
 
-	private String email;
+	private final String email;
 
 	public UserExistsException(String aEmail) {
 

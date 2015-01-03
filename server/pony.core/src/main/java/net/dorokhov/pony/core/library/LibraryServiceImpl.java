@@ -3,6 +3,7 @@ package net.dorokhov.pony.core.library;
 import net.dorokhov.pony.core.audio.SongDataService;
 import net.dorokhov.pony.core.audio.data.SongDataReadable;
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
+import net.dorokhov.pony.core.common.PageProcessor;
 import net.dorokhov.pony.core.dao.AlbumDao;
 import net.dorokhov.pony.core.dao.ArtistDao;
 import net.dorokhov.pony.core.dao.GenreDao;
@@ -14,7 +15,6 @@ import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.storage.StoreFileCommand;
 import net.dorokhov.pony.core.storage.StoredFileService;
-import net.dorokhov.pony.core.common.PageProcessor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,11 +41,11 @@ import java.util.*;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
-	private static final Object lock = new Object();
-
 	private static final int CLEANING_BUFFER_SIZE = 300;
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
+
+	private final Object lock = new Object();
 
 	private TransactionTemplate transactionTemplate;
 
@@ -693,18 +693,18 @@ public class LibraryServiceImpl implements LibraryService {
 
 			if (artwork == null) {
 
-				StoreFileCommand saveCommand = null;
+				StoreFileCommand command = null;
 
 				try {
-					saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
+					command = buildEmbeddedArtworkStoreCommand(aSongData);
 				} catch (Exception e) {
 					logService.warn(log, "libraryService.couldNotStoreEmbeddedArtwork", "Could not store embedded artwork of " + aSongData.toString() + ".",
 							e, Arrays.asList(aSongData.toString()));
 				}
 
-				if (saveCommand != null) {
+				if (command != null) {
 
-					artwork = storedFileService.save(saveCommand);
+					artwork = storedFileService.save(command);
 
 					logService.debug(log, "libraryService.storingEmbeddedArtwork", "Storing embedded artwork " + artwork + ".",
 							Arrays.asList(artwork.toString()));
@@ -741,17 +741,17 @@ public class LibraryServiceImpl implements LibraryService {
 
 					if (artwork == null) {
 
-						StoreFileCommand saveCommand = null;
+						StoreFileCommand command = null;
 
 						try {
-							saveCommand = buildFileArtworkStorageCommand(aSong, aSongData, artworkImage, mimeType, checksum);
+							command = buildFileArtworkStoreCommand(aSong, aSongData, artworkImage, mimeType, checksum);
 						} catch (Exception e) {
 							logService.warn(log, "libraryService.couldNotStoreFileArtwork", "Could not store file artwork", e);
 						}
 
-						if (saveCommand != null) {
+						if (command != null) {
 
-							artwork = storedFileService.save(saveCommand);
+							artwork = storedFileService.save(command);
 
 							logService.debug(log, "libraryService.storingFileArtwork", "Storing file artwork " + artwork + ".",
 									Arrays.asList(artwork.toString()));
@@ -764,23 +764,23 @@ public class LibraryServiceImpl implements LibraryService {
 		return artwork;
 	}
 
-	private StoreFileCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
+	private StoreFileCommand buildEmbeddedArtworkStoreCommand(SongDataReadable aSongData) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
 
 		thumbnailService.makeThumbnail(aSongData.getArtwork().getBinaryData(), file);
 
-		StoreFileCommand saveCommand = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
+		StoreFileCommand command = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
 
-		saveCommand.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
-		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
-		saveCommand.setChecksum(aSongData.getArtwork().getChecksum());
-		saveCommand.setTag(StoredFile.TAG_ARTWORK_EMBEDDED);
+		command.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
+		command.setMimeType(aSongData.getArtwork().getMimeType());
+		command.setChecksum(aSongData.getArtwork().getChecksum());
+		command.setTag(StoredFile.TAG_ARTWORK_EMBEDDED);
 
-		return saveCommand;
+		return command;
 	}
 
-	private StoreFileCommand buildFileArtworkStorageCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
+	private StoreFileCommand buildFileArtworkStoreCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
 
@@ -807,15 +807,15 @@ public class LibraryServiceImpl implements LibraryService {
 			title = aSongData.getTitle();
 		}
 
-		StoreFileCommand saveCommand = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
+		StoreFileCommand command = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
 
-		saveCommand.setName(artist + " " + album + " " + title);
-		saveCommand.setMimeType(aMimeType);
-		saveCommand.setChecksum(aChecksum);
-		saveCommand.setTag(StoredFile.TAG_ARTWORK_FILE);
-		saveCommand.setUserData(aArtwork.getFile().getAbsolutePath());
+		command.setName(artist + " " + album + " " + title);
+		command.setMimeType(aMimeType);
+		command.setChecksum(aChecksum);
+		command.setTag(StoredFile.TAG_ARTWORK_FILE);
+		command.setUserData(aArtwork.getFile().getAbsolutePath());
 
-		return saveCommand;
+		return command;
 	}
 
 	private void deleteSong(Long aId) {

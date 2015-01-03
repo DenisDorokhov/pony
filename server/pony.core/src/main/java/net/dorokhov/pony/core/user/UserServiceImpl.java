@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
 	public void cleanTickets() {
 		if (installationService.getInstallation() != null) {
 
-			log.debug("cleaning tickets...");
+			log.debug("Cleaning tickets...");
 
 			Date maxDate = new Date(new Date().getTime() - ticketLifetime * 1000);
 
