@@ -43,7 +43,7 @@ public class ApiController {
 
 	private ScanServiceFacade scanServiceFacade;
 
-	private UploadServiceFacade uploadServiceFacade;
+	private UploadService uploadService;
 
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
@@ -86,8 +86,8 @@ public class ApiController {
 	}
 
 	@Autowired
-	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
-		uploadServiceFacade = aUploadServiceFacade;
+	public void setUploadService(UploadService aUploadService) {
+		uploadService = aUploadService;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -126,14 +126,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
 	public ResponseDto<ArtistAlbumsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
-
-		ArtistAlbumsDto artist = songServiceFacade.getArtistSongs(aArtistIdOrName);
-
-		if (artist == null) {
-			throw new ObjectNotFoundException(aArtistIdOrName, "artistNotFound", "Artist [" + aArtistIdOrName + "] could not be found.");
-		}
-
-		return responseBuilder.build(artist);
+		return responseBuilder.build(songServiceFacade.getArtistSongs(aArtistIdOrName));
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -153,14 +146,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.GET)
 	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) throws ObjectNotFoundException {
-
-		UserDto user = userServiceFacade.getById(aId);
-
-		if (user == null) {
-			throw new ObjectNotFoundException(aId, "userNotFound", "User [" + aId + "] could not be found.");
-		}
-
-		return responseBuilder.build(user);
+		return responseBuilder.build(userServiceFacade.getById(aId));
 	}
 
 	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.DELETE)
@@ -215,14 +201,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanJobs/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) throws ObjectNotFoundException {
-
-		ScanJobDto job = scanServiceFacade.getScanJob(aId);
-
-		if (job == null) {
-			throw new ObjectNotFoundException(aId, "scanJobNotFound", "Scan job [" + aId + "] could not be found.");
-		}
-
-		return responseBuilder.build(job);
+		return responseBuilder.build(scanServiceFacade.getScanJob(aId));
 	}
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
@@ -233,14 +212,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanResults/{id}", method = RequestMethod.GET)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) throws ObjectNotFoundException {
-
-		ScanResultDto result = scanServiceFacade.getScanResult(aId);
-
-		if (result == null) {
-			throw new ObjectNotFoundException(aId, "scanResultNotFound", "Scan result [" + aId + "] could not be found.");
-		}
-
-		return responseBuilder.build(result);
+		return responseBuilder.build(scanServiceFacade.getScanResult(aId));
 	}
 
 	@RequestMapping(value = "/admin/scanStatus", method = RequestMethod.GET)
@@ -255,19 +227,12 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/artworkUpload/{id}", method = RequestMethod.GET)
 	public ResponseDto<ArtworkUploadDto> getArtworkUpload(@PathVariable("id") Long aId) throws ObjectNotFoundException {
-
-		ArtworkUploadDto artworkUpload = uploadServiceFacade.getArtworkUpload(aId);
-
-		if (artworkUpload == null) {
-			throw new ObjectNotFoundException(aId, "artworkUploadNotFound", "Artwork upload [" + aId + "] could not be found.");
-		}
-
-		return responseBuilder.build(artworkUpload);
+		return responseBuilder.build(uploadService.getArtworkUpload(aId));
 	}
 
 	@RequestMapping(value = "/admin/artworkUpload", method = RequestMethod.POST)
 	public ResponseDto<ArtworkUploadDto> uploadArtwork(@RequestParam("file") MultipartFile aFile) throws ArtworkUploadFormatException {
-		return responseBuilder.build(uploadServiceFacade.uploadArtwork(aFile));
+		return responseBuilder.build(uploadService.uploadArtwork(aFile));
 	}
 
 	@RequestMapping(value = "/admin/startEditJob", method = RequestMethod.POST)

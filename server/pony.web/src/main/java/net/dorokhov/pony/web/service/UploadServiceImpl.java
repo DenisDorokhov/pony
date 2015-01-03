@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.storage.StoreFileCommand;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.web.domain.ArtworkUploadDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
+import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
-public class UploadServiceFacadeImpl implements UploadServiceFacade {
+public class UploadServiceImpl implements UploadService {
 
 	private static final String TAG_ARTWORK_UPLOAD = "artworkUpload";
 
@@ -109,28 +113,14 @@ public class UploadServiceFacadeImpl implements UploadServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ArtworkUploadDto getArtworkUpload(Long aId) {
-
-		StoredFile storedFile = storedFileService.getById(aId);
-
-		if (storedFile == null || !Objects.equals(storedFile.getTag(), TAG_ARTWORK_UPLOAD)) {
-			return null;
-		}
-
-		return ArtworkUploadDto.valueOf(storedFile);
+	public ArtworkUploadDto getArtworkUpload(Long aId) throws ArtworkUploadNotFoundException {
+		return ArtworkUploadDto.valueOf(doGetArtworkUpload(aId));
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public File getArtworkUploadFile(Long aId) {
-
-		StoredFile storedFile = storedFileService.getById(aId);
-
-		if (storedFile == null || !Objects.equals(storedFile.getTag(), TAG_ARTWORK_UPLOAD)) {
-			return null;
-		}
-
-		return storedFileService.getFile(storedFile);
+	public File getArtworkUploadFile(Long aId) throws ArtworkUploadNotFoundException {
+		return storedFileService.getFile(doGetArtworkUpload(aId));
 	}
 
 	@Override
@@ -174,6 +164,17 @@ public class UploadServiceFacadeImpl implements UploadServiceFacade {
 
 			storedFileService.delete(id);
 		}
+	}
+
+	private StoredFile doGetArtworkUpload(Long aId) throws ArtworkUploadNotFoundException {
+
+		StoredFile storedFile = storedFileService.getById(aId);
+
+		if (storedFile == null || !Objects.equals(storedFile.getTag(), TAG_ARTWORK_UPLOAD)) {
+			throw new ArtworkUploadNotFoundException(aId);
+		}
+
+		return storedFile;
 	}
 
 	private File moveMultipartFile(MultipartFile aMultipartFile) throws Exception {

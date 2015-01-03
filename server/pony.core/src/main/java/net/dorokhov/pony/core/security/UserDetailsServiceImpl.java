@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		User user = userDao.findByEmail(aUsername);
 
 		if (user == null) {
-			throw new UsernameNotFoundException("User [" + aUsername + "] could not be found.");
+			throw new UsernameNotFoundException("User [" + aUsername + "] not found.");
 		}
 
 		return new UserDetailsImpl(user);

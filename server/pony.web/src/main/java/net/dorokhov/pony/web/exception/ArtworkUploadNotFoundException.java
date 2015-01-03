@@ -1,17 +1,9 @@
 package net.dorokhov.pony.web.exception;
 
-public class ArtworkUploadNotFoundException extends Exception {
-
-	private Long artworkUploadId;
+public class ArtworkUploadNotFoundException extends ObjectNotFoundException {
 
 	public ArtworkUploadNotFoundException(Long aArtworkUploadId) {
-
-		super("Artwork upload [" + aArtworkUploadId + "] not found.");
-
-		artworkUploadId = aArtworkUploadId;
+		super(aArtworkUploadId, "errorArtworkUploadNotFound", "Artwork upload [" + aArtworkUploadId + "] not found.");
 	}
 
-	public Long getArtworkUploadId() {
-		return artworkUploadId;
-	}
 }

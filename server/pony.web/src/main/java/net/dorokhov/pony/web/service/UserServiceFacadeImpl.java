@@ -9,6 +9,7 @@ import net.dorokhov.pony.web.domain.UserDto;
 import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +31,15 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public UserDto getById(Long aId) {
-		return UserDto.valueOf(userService.getById(aId));
+	public UserDto getById(Long aId) throws ObjectNotFoundException {
+
+		User user = userService.getById(aId);
+
+		if (user != null) {
+			return UserDto.valueOf(user);
+		}
+
+		throw new ObjectNotFoundException(aId, "errorUserNotFound", "User [" + aId + "] not found.");
 	}
 
 	@Override

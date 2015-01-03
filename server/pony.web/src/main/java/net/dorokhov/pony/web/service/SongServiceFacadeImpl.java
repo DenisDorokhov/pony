@@ -8,6 +8,7 @@ import net.dorokhov.pony.core.domain.Genre;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.search.SearchService;
 import net.dorokhov.pony.web.domain.*;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	}
 
 	@Override
-	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) {
+	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) throws ObjectNotFoundException {
 
 		Artist artist = null;
 
@@ -89,7 +90,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			return dto;
 		}
 
-		return null;
+		throw new ObjectNotFoundException(aArtistIdOrName, "errorArtistNotFound", "Artist [" + aArtistIdOrName + "] not found.");
 	}
 
 	@Override

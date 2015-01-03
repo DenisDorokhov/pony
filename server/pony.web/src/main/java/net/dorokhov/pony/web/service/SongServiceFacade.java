@@ -4,6 +4,7 @@ import net.dorokhov.pony.web.domain.ArtistDto;
 import net.dorokhov.pony.web.domain.ArtistAlbumsDto;
 import net.dorokhov.pony.web.domain.SearchDto;
 import net.dorokhov.pony.web.domain.SearchQueryDto;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface SongServiceFacade {
 
 	public List<ArtistDto> getArtists();
 
-	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName);
+	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) throws ObjectNotFoundException;
 
 	public SearchDto search(SearchQueryDto aQuery);
 

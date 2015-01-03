@@ -7,6 +7,7 @@ import net.dorokhov.pony.web.domain.ScanResultDto;
 import net.dorokhov.pony.web.domain.ScanStatusDto;
 import net.dorokhov.pony.web.domain.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 
 public interface ScanServiceFacade {
 
@@ -15,11 +16,11 @@ public interface ScanServiceFacade {
 
 	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize);
 
-	public ScanJobDto getScanJob(Long aId);
+	public ScanJobDto getScanJob(Long aId) throws ObjectNotFoundException;
 
 	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize);
 
-	public ScanResultDto getScanResult(Long aId);
+	public ScanResultDto getScanResult(Long aId) throws ObjectNotFoundException;
 
 	public ScanStatusDto getScanStatus();
 

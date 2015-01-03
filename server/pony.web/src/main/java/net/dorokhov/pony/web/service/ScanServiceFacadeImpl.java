@@ -13,6 +13,7 @@ import net.dorokhov.pony.web.domain.ScanResultDto;
 import net.dorokhov.pony.web.domain.ScanStatusDto;
 import net.dorokhov.pony.web.domain.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	private ScanService scanService;
 
-	private UploadServiceFacade uploadServiceFacade;
+	private UploadService uploadService;
 
 	@Autowired
 	public void setScanJobService(ScanJobService aScanJobService) {
@@ -46,8 +47,8 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	}
 
 	@Autowired
-	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
-		uploadServiceFacade = aUploadServiceFacade;
+	public void setUploadService(UploadService aUploadService) {
+		uploadService = aUploadService;
 	}
 
 	@Override
@@ -94,9 +95,11 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 			if (task.getArtworkUploadId() != null) {
 
-				File artwork = uploadServiceFacade.getArtworkUploadFile(task.getArtworkUploadId());
+				File artwork;
 
-				if (artwork == null) {
+				try {
+					artwork = uploadService.getArtworkUploadFile(task.getArtworkUploadId());
+				} catch (ObjectNotFoundException e) {
 					throw new ArtworkUploadNotFoundException(task.getArtworkUploadId());
 				}
 
@@ -126,11 +129,15 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ScanJobDto getScanJob(Long aId) {
+	public ScanJobDto getScanJob(Long aId) throws ObjectNotFoundException {
 
 		ScanJob job = scanJobService.getById(aId);
 
-		return job != null ? ScanJobDto.valueOf(job) : null;
+		if (job == null) {
+			throw new ObjectNotFoundException(aId, "errorScanJobNotFound", "Scan job [" + aId + "] not found.");
+		}
+
+		return ScanJobDto.valueOf(job);
 	}
 
 	@Override
@@ -152,11 +159,15 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ScanResultDto getScanResult(Long aId) {
+	public ScanResultDto getScanResult(Long aId) throws ObjectNotFoundException {
 
 		ScanResult result = scanService.getById(aId);
 
-		return result != null ? ScanResultDto.valueOf(result) : null;
+		if (result == null) {
+			throw new ObjectNotFoundException(aId, "errorScanResultNotFound", "Scan result [" + aId + "] not found.");
+		}
+
+		return ScanResultDto.valueOf(result);
 	}
 
 	@Override

@@ -6,12 +6,13 @@ import net.dorokhov.pony.web.domain.UserDto;
 import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
+import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 
 import java.util.List;
 
 public interface UserServiceFacade {
 
-	public UserDto getById(Long aId);
+	public UserDto getById(Long aId) throws ObjectNotFoundException;
 
 	public List<UserDto> getAll();
 

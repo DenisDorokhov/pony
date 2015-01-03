@@ -20,6 +20,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -117,8 +118,8 @@ public class ApiControllerAdvice {
 	public ResponseDto onArtworkUploadNotFoundError(ArtworkUploadNotFoundException aException) {
 
 		String artworkUploadId = null;
-		if (aException.getArtworkUploadId() != null) {
-			artworkUploadId = aException.getArtworkUploadId().toString();
+		if (aException.getObjectId() != null) {
+			artworkUploadId = aException.getObjectId().toString();
 		}
 
 		return responseBuilder.build(new ErrorDto("errorArtworkUploadNotFound", aException.getMessage(), Arrays.asList(artworkUploadId)));
@@ -172,9 +173,9 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(new ErrorDto("errorInvalidContentType", "Invalid content type."));
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onMessageNotReadableError(HttpMessageNotReadableException aException) {
+	public ResponseDto onMessageNotReadableError(Exception aException) {
 
 		log.debug(aException.getMessage());
 
