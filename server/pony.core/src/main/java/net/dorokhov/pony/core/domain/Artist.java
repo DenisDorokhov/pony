@@ -23,7 +23,6 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 	private List<Album> albums;
 
 	@Column(name = "name")
-	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
 	public String getName() {
 		return name;
 	}
@@ -56,6 +55,27 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 		albums = aAlbums;
 	}
 
+	@Transient
+	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
+	public String getSearchTerms() {
+
+		String value = "";
+
+		if (name != null) {
+			value += name + " ";
+		}
+
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return "Artist{" +
+				"id=" + getId() +
+				", name='" + name + '\'' +
+				'}';
+	}
+
 	@Override
 	@SuppressWarnings("NullableProblems")
 	public int compareTo(Artist aArtist) {
@@ -73,14 +93,6 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 		}
 
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Artist{" +
-				"id=" + getId() +
-				", name='" + name + '\'' +
-				'}';
 	}
 
 }

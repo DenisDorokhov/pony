@@ -83,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
 	@SuppressWarnings("unchecked")
 	public List<Artist> searchArtists(String aQuery, int aMaxResults) {
 
-		FullTextQuery jpaQuery = buildQuery(aQuery, Artist.class, "name");
+		FullTextQuery jpaQuery = buildQuery(aQuery, Artist.class, "searchTerms");
 
 		Criteria criteria = getSession().createCriteria(Artist.class)
 				.setFetchMode("artwork", FetchMode.JOIN);
@@ -102,7 +102,7 @@ public class SearchServiceImpl implements SearchService {
 	@SuppressWarnings("unchecked")
 	public List<Album> searchAlbums(String aQuery, int aMaxResults) {
 
-		FullTextQuery jpaQuery = buildQuery(aQuery, Album.class, "name");
+		FullTextQuery jpaQuery = buildQuery(aQuery, Album.class, "searchTerms");
 
 		Criteria criteria = getSession().createCriteria(Album.class)
 				.setFetchMode("artwork", FetchMode.JOIN)
@@ -123,7 +123,7 @@ public class SearchServiceImpl implements SearchService {
 	@SuppressWarnings("unchecked")
 	public List<Song> searchSongs(String aQuery, int aMaxResults) {
 
-		FullTextQuery jpaQuery = buildQuery(aQuery, Song.class, "name");
+		FullTextQuery jpaQuery = buildQuery(aQuery, Song.class, "searchTerms");
 
 		Criteria criteria = getSession().createCriteria(Song.class)
 				.setFetchMode("artwork", FetchMode.JOIN)

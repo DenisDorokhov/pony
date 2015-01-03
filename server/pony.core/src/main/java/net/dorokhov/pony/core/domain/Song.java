@@ -150,7 +150,6 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 	}
 
 	@Column(name = "name")
-	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
 	public String getName() {
 		return name;
 	}
@@ -234,6 +233,28 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 	public void setGenre(Genre aGenre) {
 		genre = aGenre;
+	}
+
+	@Transient
+	@Field(analyzer = @Analyzer(impl = SearchAnalyzer.class))
+	public String getSearchTerms() {
+
+		String value = "";
+
+		if (name != null) {
+			value += name + " ";
+		}
+		if (artistName != null) {
+			value += artistName + " ";
+		}
+		if (albumArtistName != null) {
+			value += albumArtistName + " ";
+		}
+		if (albumName != null) {
+			value += albumName + " ";
+		}
+
+		return value;
 	}
 
 	@Override

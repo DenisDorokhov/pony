@@ -57,12 +57,12 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertEquals(1, searchService.searchGenres("gen foo", 10).size());
 		Assert.assertEquals(1, searchService.searchArtists("the art Foo", 10).size());
-		Assert.assertEquals(1, searchService.searchAlbums("Alb of foo", 10).size());
-		Assert.assertEquals(1, searchService.searchSongs("the So foo", 10).size());
+		Assert.assertEquals(1, searchService.searchAlbums("art Alb of foo", 10).size());
+		Assert.assertEquals(1, searchService.searchSongs("art alb the So foo", 10).size());
 
 		Assert.assertEquals(0, searchService.searchArtists("genre2", 10).size());
 		Assert.assertEquals(0, searchService.searchArtists("artist2", 10).size());
-		Assert.assertEquals(0, searchService.searchAlbums("album2", 10).size());
+		Assert.assertEquals(0, searchService.searchAlbums("art album2", 10).size());
 		Assert.assertEquals(0, searchService.searchSongs("song2", 10).size());
 
 		searchService.clearIndex();
@@ -112,6 +112,10 @@ public class SearchServiceIT extends AbstractIntegrationCase {
 
 		song.setDuration(100);
 		song.setBitRate(2000L);
+
+		song.setArtistName("The artist1 foobar");
+		song.setAlbumArtistName("The artist1 foobar");
+		song.setAlbumName("album1 of FOOBAR");
 
 		song.setName("song1 foobar");
 

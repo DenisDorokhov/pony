@@ -119,8 +119,10 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("User identifier must be null.");
 		}
 
-		if (getByEmail(aUser.getEmail()) != null) {
-			throw new UserExistsException(aUser.getEmail());
+		String email = aUser.getEmail() != null ? aUser.getEmail().trim() : null;
+
+		if (email != null && getByEmail(email) != null) {
+			throw new UserExistsException(email);
 		}
 
 		aUser.setPassword(passwordEncoder.encode(aUser.getPassword()));

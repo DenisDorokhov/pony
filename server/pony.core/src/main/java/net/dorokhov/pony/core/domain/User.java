@@ -75,10 +75,4 @@ public class User extends BaseEntity<Long> {
 				'}';
 	}
 
-	@PrePersist
-	@PreUpdate
-	public void normalize() {
-		setEmail(getEmail() != null ? getEmail().trim() : null);
-	}
-
 }
