@@ -1,7 +1,7 @@
 package net.dorokhov.pony.web.controller;
 
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
-import net.dorokhov.pony.web.domain.command.InstallCommand;
+import net.dorokhov.pony.web.domain.command.InstallCommandDto;
 import net.dorokhov.pony.web.service.InstallationServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,9 +26,9 @@ public class InstallationController {
 	@RequestMapping(value = "/install", method = RequestMethod.GET)
 	public String install(Model aModel) {
 
-		InstallCommand command = new InstallCommand();
+		InstallCommandDto command = new InstallCommandDto();
 
-		command.getLibraryFolders().add(new InstallCommand.LibraryFolder());
+		command.getLibraryFolders().add(new InstallCommandDto.LibraryFolder());
 
 		aModel.addAttribute("installCommand", command);
 
@@ -36,11 +36,11 @@ public class InstallationController {
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.POST)
-	public String install(@Valid @ModelAttribute("installCommand") InstallCommand aInstallCommand, BindingResult aBindingResult) {
+	public String install(@Valid @ModelAttribute("installCommand") InstallCommandDto aCommand, BindingResult aBindingResult) {
 
 		if (!aBindingResult.hasErrors()) {
 			try {
-				installationServiceFacade.install(aInstallCommand);
+				installationServiceFacade.install(aCommand);
 			} catch (AlreadyInstalledException e) {
 				// Ignore when already installed
 			} catch (RuntimeException e) {

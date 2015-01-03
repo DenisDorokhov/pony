@@ -135,7 +135,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 	@Override
 	@Transactional
-	public StoredFile save(StoredFileSaveCommand aCommand) {
+	public StoredFile save(StoreFileCommand aCommand) {
 
 		if (!aCommand.getFile().exists()) {
 			throw new RuntimeException(new FileNotFoundException("File [" + aCommand.getFile().getAbsolutePath() + "] not found."));
@@ -248,7 +248,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 		}
 	}
 
-	private String commandToPath(StoredFileSaveCommand aCommand) {
+	private String commandToPath(StoreFileCommand aCommand) {
 
 		File file;
 

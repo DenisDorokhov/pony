@@ -2,12 +2,12 @@ package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.installation.InstallationCommand;
+import net.dorokhov.pony.core.installation.InstallCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.web.domain.InstallationDto;
 import net.dorokhov.pony.web.domain.RoleDto;
-import net.dorokhov.pony.web.domain.command.InstallCommand;
+import net.dorokhov.pony.web.domain.command.InstallCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,13 +37,13 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 	@Override
 	@Transactional
-	public InstallationDto install(InstallCommand aCommand) throws AlreadyInstalledException {
+	public InstallationDto install(InstallCommandDto aCommand) throws AlreadyInstalledException {
 
-		InstallationCommand command = new InstallationCommand();
+		InstallCommand command = new InstallCommand();
 
 		command.setAutoScanInterval(AUTO_SCAN_INTERVAL);
 
-		for (InstallCommand.LibraryFolder folder : aCommand.getLibraryFolders()) {
+		for (InstallCommandDto.LibraryFolder folder : aCommand.getLibraryFolders()) {
 
 			String normalizedPath = folder.getPath().trim();
 

@@ -3,9 +3,9 @@ package net.dorokhov.pony.web.validation;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.NotAuthenticatedException;
-import net.dorokhov.pony.web.domain.command.CreateUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
+import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,12 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 	@Override
 	public boolean isValid(Object aObject, ConstraintValidatorContext aContext) {
 
-		if (aObject instanceof CreateUserCommand) {
-			return validateCreateUserCommand((CreateUserCommand)aObject, aContext);
-		} else if (aObject instanceof UpdateUserCommand) {
-			return validateUpdateUserCommand((UpdateUserCommand)aObject, aContext);
-		} else if (aObject instanceof UpdateCurrentUserCommand) {
-			return validateUpdateCurrentUserCommand((UpdateCurrentUserCommand)aObject, aContext);
+		if (aObject instanceof CreateUserCommandDto) {
+			return validateCreateUserCommand((CreateUserCommandDto)aObject, aContext);
+		} else if (aObject instanceof UpdateUserCommandDto) {
+			return validateUpdateUserCommand((UpdateUserCommandDto)aObject, aContext);
+		} else if (aObject instanceof UpdateCurrentUserCommandDto) {
+			return validateUpdateCurrentUserCommand((UpdateCurrentUserCommandDto)aObject, aContext);
 		} else {
 			log.warn("Object type [" + aObject.getClass() + "] is not supported.");
 		}
@@ -44,7 +44,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		return false;
 	}
 
-	private boolean validateCreateUserCommand(CreateUserCommand aCommand, ConstraintValidatorContext aContext) {
+	private boolean validateCreateUserCommand(CreateUserCommandDto aCommand, ConstraintValidatorContext aContext) {
 
 		if (!isEmailUnique(aCommand)) {
 
@@ -56,7 +56,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		return true;
 	}
 
-	private boolean validateUpdateUserCommand(UpdateUserCommand aCommand, ConstraintValidatorContext aContext) {
+	private boolean validateUpdateUserCommand(UpdateUserCommandDto aCommand, ConstraintValidatorContext aContext) {
 
 		if (!isEmailUnique(aCommand)) {
 
@@ -68,7 +68,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		return true;
 	}
 
-	private boolean validateUpdateCurrentUserCommand(UpdateCurrentUserCommand aCommand, ConstraintValidatorContext aContext) {
+	private boolean validateUpdateCurrentUserCommand(UpdateCurrentUserCommandDto aCommand, ConstraintValidatorContext aContext) {
 
 		if (!isEmailUnique(aCommand)) {
 
@@ -80,15 +80,15 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		return true;
 	}
 
-	private boolean isEmailUnique(CreateUserCommand aCommand) {
+	private boolean isEmailUnique(CreateUserCommandDto aCommand) {
 		return validateEmail(null, aCommand.getEmail());
 	}
 
-	private boolean isEmailUnique(UpdateUserCommand aCommand) {
+	private boolean isEmailUnique(UpdateUserCommandDto aCommand) {
 		return validateEmail(userService.getById(aCommand.getId()), aCommand.getEmail());
 	}
 
-	private boolean isEmailUnique(UpdateCurrentUserCommand aCommand) {
+	private boolean isEmailUnique(UpdateCurrentUserCommandDto aCommand) {
 
 		User user = null;
 

@@ -9,6 +9,7 @@ import net.dorokhov.pony.web.domain.ErrorDto;
 import net.dorokhov.pony.web.domain.ResponseDto;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.ResponseBuilder;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,7 @@ public class ApiControllerAdvice {
 						|| argument instanceof Character
 						|| argument instanceof Boolean
 						|| argument instanceof String) {
+
 					errorArguments.add(argument.toString());
 				}
 			}
@@ -130,6 +132,15 @@ public class ApiControllerAdvice {
 		}
 
 		return responseBuilder.build(errorList);
+	}
+
+	@ExceptionHandler(NotImplementedException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onNotImplementedError(NotImplementedException aException) {
+
+		log.warn(aException.getMessage(), aException);
+
+		return responseBuilder.build(new ErrorDto("errorNotImplemented", aException.getMessage()));
 	}
 
 	@ExceptionHandler(HttpMediaTypeException.class)

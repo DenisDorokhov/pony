@@ -6,9 +6,9 @@ import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.CredentialsDto;
 import net.dorokhov.pony.web.domain.RoleDto;
 import net.dorokhov.pony.web.domain.UserDto;
-import net.dorokhov.pony.web.domain.command.CreateUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
+import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +49,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserDto create(CreateUserCommand aCommand) throws UserExistsException {
+	public UserDto create(CreateUserCommandDto aCommand) throws UserExistsException {
 
 		User user = new User();
 
@@ -63,7 +63,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserDto update(UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException {
+	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException {
 
 		User user = userService.getById(aCommand.getId());
 
@@ -104,7 +104,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
+	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
 
 		User user = userService.getById(userService.getAuthenticatedUser().getId());

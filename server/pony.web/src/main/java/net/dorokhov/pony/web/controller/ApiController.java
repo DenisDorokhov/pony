@@ -4,12 +4,13 @@ import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.domain.*;
-import net.dorokhov.pony.web.domain.command.CreateUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommand;
-import net.dorokhov.pony.web.domain.command.UpdateUserCommand;
+import net.dorokhov.pony.web.domain.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
+import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.security.UserTokenReader;
 import net.dorokhov.pony.web.service.*;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -103,7 +104,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
-	public ResponseDto<UserDto> updateCurrentUser(@Valid @RequestBody UpdateCurrentUserCommand aCommand) throws NotAuthenticatedException,
+	public ResponseDto<UserDto> updateCurrentUser(@Valid @RequestBody UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
 		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
@@ -154,13 +155,23 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.POST)
-	public ResponseDto<UserDto> createUser(@Valid @RequestBody CreateUserCommand aCommand) throws UserExistsException {
+	public ResponseDto<UserDto> createUser(@Valid @RequestBody CreateUserCommandDto aCommand) throws UserExistsException {
 		return responseBuilder.build(userServiceFacade.create(aCommand));
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.PUT)
-	public ResponseDto<UserDto> updateUser(@Valid @RequestBody UpdateUserCommand aCommand) throws UserNotFoundException, UserExistsException {
+	public ResponseDto<UserDto> updateUser(@Valid @RequestBody UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
+	}
+
+	@RequestMapping(value = "/admin/startScanJob", method = RequestMethod.POST)
+	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
+		return responseBuilder.build(scanServiceFacade.startScanJob());
+	}
+
+	@RequestMapping(value = "/admin/startEditJob", method = RequestMethod.POST)
+	public ResponseDto<ScanJobDto> startEditJob() throws LibraryNotDefinedException {
+		throw new NotImplementedException("Operation not implemented.");
 	}
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
@@ -179,11 +190,6 @@ public class ApiController {
 		}
 
 		return responseBuilder.build(job);
-	}
-
-	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.POST)
-	public ResponseDto<ScanJobDto> startScanJob() throws LibraryNotDefinedException {
-		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)

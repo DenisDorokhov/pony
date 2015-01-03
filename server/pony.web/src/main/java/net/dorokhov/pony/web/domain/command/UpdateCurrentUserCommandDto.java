@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @UniqueUserEmail
-public class UpdateCurrentUserCommand {
+public class UpdateCurrentUserCommandDto {
 
 	private String name;
 

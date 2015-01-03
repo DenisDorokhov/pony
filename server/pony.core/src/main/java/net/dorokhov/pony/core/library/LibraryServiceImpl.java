@@ -12,7 +12,7 @@ import net.dorokhov.pony.core.image.ThumbnailService;
 import net.dorokhov.pony.core.library.file.LibraryImage;
 import net.dorokhov.pony.core.library.file.LibrarySong;
 import net.dorokhov.pony.core.logging.LogService;
-import net.dorokhov.pony.core.storage.StoredFileSaveCommand;
+import net.dorokhov.pony.core.storage.StoreFileCommand;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.core.common.PageProcessor;
 import org.apache.commons.io.FileUtils;
@@ -693,7 +693,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			if (artwork == null) {
 
-				StoredFileSaveCommand saveCommand = null;
+				StoreFileCommand saveCommand = null;
 
 				try {
 					saveCommand = buildEmbeddedArtworkStorageCommand(aSongData);
@@ -741,7 +741,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 					if (artwork == null) {
 
-						StoredFileSaveCommand saveCommand = null;
+						StoreFileCommand saveCommand = null;
 
 						try {
 							saveCommand = buildFileArtworkStorageCommand(aSong, aSongData, artworkImage, mimeType, checksum);
@@ -764,13 +764,13 @@ public class LibraryServiceImpl implements LibraryService {
 		return artwork;
 	}
 
-	private StoredFileSaveCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
+	private StoreFileCommand buildEmbeddedArtworkStorageCommand(SongDataReadable aSongData) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_EMBEDDED + "." + UUID.randomUUID() + ".tmp");
 
 		thumbnailService.makeThumbnail(aSongData.getArtwork().getBinaryData(), file);
 
-		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
+		StoreFileCommand saveCommand = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
 
 		saveCommand.setName(aSongData.getArtist() + " " + aSongData.getAlbum() + " " + aSongData.getTitle());
 		saveCommand.setMimeType(aSongData.getArtwork().getMimeType());
@@ -780,7 +780,7 @@ public class LibraryServiceImpl implements LibraryService {
 		return saveCommand;
 	}
 
-	private StoredFileSaveCommand buildFileArtworkStorageCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
+	private StoreFileCommand buildFileArtworkStorageCommand(Song aSong, SongDataReadable aSongData, LibraryImage aArtwork, String aMimeType, String aChecksum) throws Exception {
 
 		File file = new File(FileUtils.getTempDirectory(), "pony." + StoredFile.TAG_ARTWORK_FILE + "." + UUID.randomUUID() + ".tmp");
 
@@ -807,7 +807,7 @@ public class LibraryServiceImpl implements LibraryService {
 			title = aSongData.getTitle();
 		}
 
-		StoredFileSaveCommand saveCommand = new StoredFileSaveCommand(StoredFileSaveCommand.Type.MOVE, file);
+		StoreFileCommand saveCommand = new StoreFileCommand(StoreFileCommand.Type.MOVE, file);
 
 		saveCommand.setName(artist + " " + album + " " + title);
 		saveCommand.setMimeType(aMimeType);

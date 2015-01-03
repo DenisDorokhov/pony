@@ -26,7 +26,7 @@ public interface StoredFileService {
 	public File getFile(Long aId);
 	public File getFile(StoredFile aStoredFile);
 
-	public StoredFile save(StoredFileSaveCommand aCommand);
+	public StoredFile save(StoreFileCommand aCommand);
 
 	public void delete(Long aId);
 	public void deleteAll();

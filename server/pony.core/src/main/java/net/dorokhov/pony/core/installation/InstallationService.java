@@ -8,7 +8,7 @@ public interface InstallationService {
 
 	public Installation getInstallation();
 
-	public Installation install(InstallationCommand aCommand) throws AlreadyInstalledException;
+	public Installation install(InstallCommand aCommand) throws AlreadyInstalledException;
 
 	public void uninstall() throws NotInstalledException;
 

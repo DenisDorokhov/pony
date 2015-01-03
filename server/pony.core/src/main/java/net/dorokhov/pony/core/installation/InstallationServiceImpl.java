@@ -74,7 +74,7 @@ public class InstallationServiceImpl implements InstallationService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public synchronized Installation install(final InstallationCommand aCommand) throws AlreadyInstalledException {
+	public synchronized Installation install(final InstallCommand aCommand) throws AlreadyInstalledException {
 
 		if (getInstallation() != null) {
 			throw new AlreadyInstalledException();
@@ -129,17 +129,6 @@ public class InstallationServiceImpl implements InstallationService {
 		});
 
 		log.info("Successfully uninstalled.");
-	}
-
-	private HashMap<String, Config> configsToMap(List<Config> aConfigs) {
-
-		HashMap<String, Config> configMap = new HashMap<>();
-
-		for (Config config : aConfigs) {
-			configMap.put(config.getId(), config);
-		}
-
-		return configMap;
 	}
 
 }

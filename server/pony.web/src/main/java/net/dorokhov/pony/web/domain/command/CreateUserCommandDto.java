@@ -9,9 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @UniqueUserEmail
-public class UpdateUserCommand {
-
-	private Long id;
+public class CreateUserCommandDto {
 
 	private String name;
 
@@ -20,15 +18,6 @@ public class UpdateUserCommand {
 	private String password;
 
 	private RoleDto role;
-
-	@NotNull
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	@NotBlank
 	@Size(max = 255)
@@ -51,6 +40,7 @@ public class UpdateUserCommand {
 		email = aEmail;
 	}
 
+	@NotBlank
 	@Size(max = 255)
 	public String getPassword() {
 		return password;

@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.test.integration;
 
 import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.domain.Installation;
-import net.dorokhov.pony.core.installation.InstallationCommand;
+import net.dorokhov.pony.core.installation.InstallCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
@@ -50,7 +50,7 @@ public class InstallationServiceIT {
 
 		boolean isExceptionThrown;
 
-		InstallationCommand defaultCommand = new InstallationCommand();
+		InstallCommand defaultCommand = new InstallCommand();
 
 		Assert.assertNull(installationService.getInstallation());
 
@@ -60,7 +60,7 @@ public class InstallationServiceIT {
 		isExceptionThrown = false;
 
 		try {
-			installationService.install(new InstallationCommand());
+			installationService.install(new InstallCommand());
 		} catch (AlreadyInstalledException e) {
 			isExceptionThrown = true;
 		}
@@ -81,7 +81,7 @@ public class InstallationServiceIT {
 
 		Assert.assertTrue(isExceptionThrown);
 
-		InstallationCommand testCommand = new InstallationCommand();
+		InstallCommand testCommand = new InstallCommand();
 
 		testCommand.setAutoScanInterval(1000);
 		testCommand.setLibraryFolders(Arrays.asList(new File("/folder1"), new File("/folder2")));

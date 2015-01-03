@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.storage;
 
 import java.io.File;
 
-public class StoredFileSaveCommand {
+public class StoreFileCommand {
 
 	public static enum Type {
 		COPY, MOVE
@@ -22,7 +22,7 @@ public class StoredFileSaveCommand {
 
 	private String userData;
 
-	public StoredFileSaveCommand(Type aType, File aFile) {
+	public StoreFileCommand(Type aType, File aFile) {
 
 		if (aType == null) {
 			throw new IllegalArgumentException("Type must not be null.");
