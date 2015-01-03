@@ -179,7 +179,7 @@ public class ApiControllerAdvice {
 
 		log.warn(aException.getMessage());
 
-		return responseBuilder.build(new ErrorDto("errorMaxUploadSizeExceeded", aException.getMessage()));
+		return responseBuilder.build(new ErrorDto("errorMaxUploadSizeExceeded", aException.getMessage(), Arrays.asList(String.valueOf(aException.getMaxUploadSize()))));
 	}
 
 	@ExceptionHandler(Throwable.class)
