@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.storage;
 
+import net.dorokhov.pony.core.common.PonyUtils;
 import net.dorokhov.pony.core.dao.StoredFileDao;
 import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.file.FileTypeService;
@@ -264,14 +265,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 
 			// Append task name or file name
 			if (aCommand.getName() != null) {
-
-				String name = aCommand.getName();
-
-				name = name.replaceAll("[^\\p{L}0-9\\s]", "");
-				name = name.replaceAll("\\s+", "-");
-
-				buf.append(name);
-
+				buf.append(PonyUtils.sanitizeFileName(aCommand.getName()));
 			} else {
 				buf.append(aCommand.getFile().getName());
 			}

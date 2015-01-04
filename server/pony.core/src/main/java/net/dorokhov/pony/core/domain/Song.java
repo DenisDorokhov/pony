@@ -275,7 +275,11 @@ public class Song extends BaseEntity<Long> implements Comparable<Song> {
 
 		if (!equals(aSong)) {
 
-			result = ObjectUtils.compare(getAlbum(), aSong.getAlbum());
+			result = ObjectUtils.compare(getAlbum().getArtist(), aSong.getAlbum().getArtist());
+
+			if (result == 0) {
+				result = ObjectUtils.compare(getAlbum(), aSong.getAlbum());
+			}
 
 			if (result == 0) {
 

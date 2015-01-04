@@ -1,26 +1,15 @@
 package net.dorokhov.pony.core.library;
 
-import net.dorokhov.pony.core.library.exception.AlbumNotFoundException;
-import net.dorokhov.pony.core.library.exception.ArtistNotFoundException;
+import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.library.exception.FileNotFoundException;
-import net.dorokhov.pony.core.library.exception.SongNotFoundException;
 
-import java.io.OutputStream;
+import java.io.File;
+import java.util.List;
 
 public interface LibraryExportService {
 
-	public ExportDescriptor exportArtistSongs(Long aId, OutputStream aOutputStream) throws ArtistNotFoundException, FileNotFoundException;
+	public File exportSong(Song aSong, File aFolder) throws FileNotFoundException;
 
-	public ExportDescriptor exportAlbumSongs(Long aId, OutputStream aOutputStream) throws AlbumNotFoundException, FileNotFoundException;
-
-	public ExportDescriptor exportSong(Long aId, OutputStream aOutputStream) throws SongNotFoundException, FileNotFoundException;
-
-	public static interface ExportDescriptor {
-
-		public String getMimeType();
-
-		public String getFileName();
-
-	}
+	public List<File> exportSongList(List<Song> aSongList, File aFolder) throws FileNotFoundException;
 
 }
