@@ -8,7 +8,7 @@ public class FileNotFoundException extends Exception {
 
 	public FileNotFoundException(File aFile) {
 
-		super("File '" + aFile.getPath() + "' must exist.");
+		super("File [" + aFile.getPath() + "] must exist.");
 
 		file = aFile;
 	}

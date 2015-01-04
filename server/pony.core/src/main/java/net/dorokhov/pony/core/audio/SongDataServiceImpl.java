@@ -39,7 +39,7 @@ public class SongDataServiceImpl implements SongDataService {
 		String mimeType = getMimeType(header);
 
 		if (mimeType == null) {
-			throw new Exception("Unsupported file format '" + header.getFormat() + "'.");
+			throw new Exception("Unsupported file format [" + header.getFormat() + "].");
 		}
 
 		Tag tag = audioFile.getTag();
@@ -136,7 +136,7 @@ public class SongDataServiceImpl implements SongDataService {
 		String mimeType = getMimeType(header);
 
 		if (mimeType == null) {
-			throw new Exception("Unsupported file format '" + header.getFormat() + "'.");
+			throw new Exception("Unsupported file format [" + header.getFormat() + "].");
 		}
 
 		SongDataReadable songData = new SongDataReadable();

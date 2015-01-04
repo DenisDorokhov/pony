@@ -33,10 +33,18 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 			"LEFT JOIN FETCH s.artwork " +
 			"LEFT JOIN FETCH al.artwork " +
 			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE al.id = ?1")
+	public List<Song> findByAlbumId(Long aAlbumId, Sort aSort);
+
+	@Query("SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
 			"WHERE ar.id = ?1")
 	public List<Song> findByAlbumArtistId(Long aArtistId, Sort aSort);
-
-	public Page<Song> findByGenreId(Long aGenreId, Pageable aPageable);
 
 	public Page<Song> findByGenreIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
 	public Page<Song> findByAlbumIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);

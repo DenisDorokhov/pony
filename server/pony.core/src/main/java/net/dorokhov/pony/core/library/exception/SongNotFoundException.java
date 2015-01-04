@@ -6,7 +6,7 @@ public class SongNotFoundException extends Exception {
 
 	public SongNotFoundException(Long aSongId) {
 
-		super("Song '" + aSongId + "' not found.");
+		super("Song [" + aSongId + "] not found.");
 
 		songId = aSongId;
 	}

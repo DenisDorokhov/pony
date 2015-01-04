@@ -36,13 +36,6 @@ public class InstallationDto {
 		return false;
 	}
 
-	@Override
-	public String toString() {
-		return "InstallationDto{" +
-				"version='" + version + '\'' +
-				'}';
-	}
-
 	public static InstallationDto valueOf(Installation aInstallation) {
 
 		InstallationDto dto = new InstallationDto();

@@ -8,7 +8,7 @@ public class NotSongException extends Exception {
 
 	public NotSongException(File aFile) {
 
-		super("File '" + aFile.getPath() + "' must be a song.");
+		super("File [" + aFile.getPath() + "] must be a song.");
 
 		file = aFile;
 	}

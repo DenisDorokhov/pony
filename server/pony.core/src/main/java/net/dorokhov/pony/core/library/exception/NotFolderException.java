@@ -8,7 +8,7 @@ public class NotFolderException extends Exception {
 
 	public NotFolderException(File aFile) {
 
-		super("File '" + aFile.getPath() + "' must be a folder.");
+		super("File [" + aFile.getPath() + "] must be a folder.");
 
 		file = aFile;
 	}
