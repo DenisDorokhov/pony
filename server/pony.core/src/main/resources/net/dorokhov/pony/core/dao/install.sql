@@ -17,11 +17,12 @@ CREATE TABLE user (
 
 	name VARCHAR (255) NOT NULL,
 
-	email VARCHAR (255) NOT NULL,
-	password VARCHAR (255) NOT NULL
-);
+	email VARCHAR_IGNORECASE (255) NOT NULL,
 
-CREATE INDEX index_user_login_password ON user(email, password);
+	password VARCHAR (255) NOT NULL,
+
+	UNIQUE (email)
+);
 
 CREATE TABLE user_ticket (
 
@@ -203,7 +204,7 @@ CREATE TABLE genre (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR(255),
+	name VARCHAR_IGNORECASE (255),
 
 	artwork_stored_file_id BIGINT,
 
@@ -219,7 +220,7 @@ CREATE TABLE artist (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR (255),
+	name VARCHAR_IGNORECASE (255),
 
 	artwork_stored_file_id BIGINT,
 
@@ -235,7 +236,7 @@ CREATE TABLE album (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	name VARCHAR (255),
+	name VARCHAR_IGNORECASE (255),
 	year INT,
 
 	artwork_stored_file_id BIGINT,
@@ -256,7 +257,8 @@ CREATE TABLE song (
 	creation_date TIMESTAMP NOT NULL,
 	update_date TIMESTAMP,
 
-	path VARCHAR (255) NOT NULL,
+	path VARCHAR_IGNORECASE (255) NOT NULL,
+
 	format VARCHAR (255) NOT NULL,
 	mime_type VARCHAR (255) NOT NULL,
 	size BIGINT NOT NULL,
