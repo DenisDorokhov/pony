@@ -1,20 +1,21 @@
 package net.dorokhov.pony.web.controller;
 
-import net.dorokhov.pony.core.common.PonyUtils;
 import net.dorokhov.pony.core.dao.SongDao;
-import net.dorokhov.pony.core.domain.Album;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.domain.StoredFile;
 import net.dorokhov.pony.core.library.LibraryExportService;
-import net.dorokhov.pony.core.library.exception.FileNotFoundException;
+import net.dorokhov.pony.core.library.LibraryExportTaskService;
+import net.dorokhov.pony.core.library.exception.AlbumNotFoundException;
+import net.dorokhov.pony.core.library.exception.ArtistNotFoundException;
+import net.dorokhov.pony.core.library.exception.SongNotFoundException;
+import net.dorokhov.pony.core.library.export.LibraryBatchExportTask;
+import net.dorokhov.pony.core.library.export.LibrarySingleExportTask;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.web.common.StreamingViewRenderer;
-import net.dorokhov.pony.web.common.ZipCompressor;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,14 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 
 @Controller
 @ResponseBody
@@ -41,6 +41,8 @@ public class FileController {
 	private StoredFileService storedFileService;
 
 	private SongDao songDao;
+
+	private LibraryExportTaskService libraryExportTaskService;
 
 	private LibraryExportService libraryExportService;
 
@@ -55,12 +57,17 @@ public class FileController {
 	}
 
 	@Autowired
+	public void setLibraryExportTaskService(LibraryExportTaskService aLibraryExportTaskService) {
+		libraryExportTaskService = aLibraryExportTaskService;
+	}
+
+	@Autowired
 	public void setLibraryExportService(LibraryExportService aLibraryExportService) {
 		libraryExportService = aLibraryExportService;
 	}
 
 	@RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
-	public Object getStoredFile(@PathVariable("id") Long aStoredFileId) throws IOException {
+	public Object getStoredFile(@PathVariable("id") Long aStoredFileId, HttpServletResponse aResponse) throws IOException {
 
 		StoredFile storedFile = storedFileService.getById(aStoredFileId);
 
@@ -70,17 +77,9 @@ public class FileController {
 
 			if (file != null) {
 
-				StreamingViewRenderer renderer = new StreamingViewRenderer();
+				aResponse.setHeader("Content-Type", storedFile.getMimeType());
 
-				HashMap<String, Object> model = new HashMap<>();
-
-				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_LENGTH, file.length());
-				model.put(StreamingViewRenderer.DownloadConstants.FILENAME, file.getName());
-				model.put(StreamingViewRenderer.DownloadConstants.LAST_MODIFIED, storedFile.getDate());
-				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_TYPE, storedFile.getMimeType());
-				model.put(StreamingViewRenderer.DownloadConstants.INPUT_STREAM, new FileInputStream(file));
-
-				return new ModelAndView(renderer, model);
+				return new FileSystemResource(file);
 			}
 		}
 
@@ -118,35 +117,43 @@ public class FileController {
 		return new ResponseEntity<>("Audio not found.", HttpStatus.NOT_FOUND);
 	}
 
+	@RequestMapping(value = "/export/artists/{artistId}", method = RequestMethod.GET)
+	public Object exportArtist(@PathVariable("artistId") Long aArtistId, HttpServletResponse aResponse) throws IOException {
+
+		LibraryBatchExportTask task = null;
+
+		try {
+			task = libraryExportTaskService.getArtistExportTask(aArtistId);
+		} catch (ArtistNotFoundException e) {
+			log.warn("Album [" + aArtistId + "] not found.");
+		}
+
+		if (task != null) {
+
+			exportBatchTask(task, aResponse);
+
+			return null;
+		}
+
+		return new ResponseEntity<>("Artist not found.", HttpStatus.NOT_FOUND);
+	}
+
 	@RequestMapping(value = "/export/albums/{albumId}", method = RequestMethod.GET)
 	public Object exportAlbum(@PathVariable("albumId") Long aAlbumId, HttpServletResponse aResponse) throws IOException {
 
-		List<Song> songList = songDao.findByAlbumId(aAlbumId, new Sort("discNumber", "trackNumber", "name"));
+		LibraryBatchExportTask task = null;
 
-		if (songList.size() > 0) {
+		try {
+			task = libraryExportTaskService.getAlbumExportTask(aAlbumId);
+		} catch (AlbumNotFoundException e) {
+			log.warn("Album [" + aAlbumId + "] not found.");
+		}
 
-			File tempFolder = Files.createTempDirectory("pony.export").toFile();
+		if (task != null) {
 
-			List<File> exportedFiles = null;
+			exportBatchTask(task, aResponse);
 
-			try {
-				exportedFiles = libraryExportService.exportSongList(songList, tempFolder);
-			}  catch (FileNotFoundException e) {
-				log.warn("File [" + e.getFile().getAbsolutePath() + "] not found.");
-			}
-
-			if (exportedFiles != null) {
-
-				aResponse.setHeader("Content-Disposition", "attachment; filename=\"" + buildAlbumExportFileName(songList.get(0).getAlbum()) + "\"");
-
-				ZipCompressor.compress(exportedFiles, aResponse.getOutputStream());
-
-				try {
-					return null;
-				} finally {
-					FileUtils.deleteQuietly(tempFolder);
-				}
-			}
+			return null;
 		}
 
 		return new ResponseEntity<>("Album not found.", HttpStatus.NOT_FOUND);
@@ -155,55 +162,43 @@ public class FileController {
 	@RequestMapping(value = "/export/songs/{songId}", method = RequestMethod.GET)
 	public Object exportSong(@PathVariable("songId") Long aSongId, HttpServletResponse aResponse) throws IOException {
 
-		Song song = songDao.findOne(aSongId);
+		LibrarySingleExportTask task = null;
 
-		if (song != null) {
+		try {
+			task = libraryExportTaskService.getSongExportTask(aSongId);
+		} catch (SongNotFoundException e) {
+			log.warn("Song [" + aSongId + "] not found.");
+		}
 
-			File tempFolder = Files.createTempDirectory("pony.export").toFile();
+		if (task != null) {
 
-			File exportedFile = null;
-
-			try {
-				exportedFile = libraryExportService.exportSong(song, tempFolder);
-			} catch (FileNotFoundException e) {
-				log.warn("File [" + e.getFile().getAbsolutePath() + "] not found.");
+			String extension = libraryExportService.getSingleTaskExportFileExtension();
+			if (extension.length() > 0) {
+				extension = "." + extension;
 			}
 
-			if (exportedFile != null) {
+			aResponse.setHeader("Content-Type", libraryExportService.getSingleTaskExportMimeType());
+			aResponse.setHeader("Content-Disposition", "attachment; filename=\"" + UriUtils.encodeQuery(task.getBaseName() + extension, "UTF-8") + "\"");
 
-				aResponse.setHeader("Content-Disposition", "attachment; filename=\"" + buildSongExportFileName(song, exportedFile) + "\"");
+			libraryExportService.exportSingleTask(task, aResponse.getOutputStream());
 
-				FileUtils.copyFile(exportedFile, aResponse.getOutputStream());
-
-				try {
-					return null;
-				} finally {
-					FileUtils.deleteQuietly(tempFolder);
-				}
-			}
+			return null;
 		}
 
 		return new ResponseEntity<>("Song not found.", HttpStatus.NOT_FOUND);
 	}
 
-	private String buildAlbumExportFileName(Album aAlbum) {
+	private void exportBatchTask(LibraryBatchExportTask aTask, HttpServletResponse aResponse) throws IOException {
 
-		String fileName = aAlbum.getArtist().getName() != null ? aAlbum.getArtist().getName() : "Unknown";
+		String extension = libraryExportService.getBatchTaskExportFileExtension();
+		if (extension.length() > 0) {
+			extension = "." + extension;
+		}
 
-		fileName += " - ";
-		fileName += aAlbum.getYear() != null ? aAlbum.getYear() + " - " : "";
-		fileName += aAlbum.getName() != null ? aAlbum.getName() : "Unknown";
+		aResponse.setHeader("Content-Type", libraryExportService.getBatchTaskExportMimeType());
+		aResponse.setHeader("Content-Disposition", "attachment; filename=\"" + UriUtils.encodeQuery(aTask.getBaseName() + extension, "UTF-8") + "\"");
 
-		return PonyUtils.sanitizeFileName(fileName);
-	}
-
-	private String buildSongExportFileName(Song aSong, File aExportedFile) {
-
-		String fileName = buildAlbumExportFileName(aSong.getAlbum());
-
-		fileName += " - " + aExportedFile.getName();
-
-		return PonyUtils.sanitizeFileName(fileName);
+		libraryExportService.exportBatchTask(aTask, aResponse.getOutputStream());
 	}
 
 }

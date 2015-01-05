@@ -1,9 +1,68 @@
 package net.dorokhov.pony.core.common;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class PonyUtils {
 
-	public static String sanitizeFileName(String aFileName) {
-		return aFileName.replaceAll("[^\\p{L}0-9.\\- ]", "_").trim();
+	private final static Set<Character> RESERVED_FILENAME_CHARACTERS = new HashSet<>();
+
+	static {
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x00);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x01);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x02);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x03);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x04);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x05);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x06);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x07);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x08);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x09);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0A);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0B);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0C);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0D);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0E);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x0F);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x10);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x11);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x12);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x13);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x14);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x15);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x16);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x17);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x18);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x19);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1A);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1B);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1C);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1D);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1E);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x1F);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x2F);
+		RESERVED_FILENAME_CHARACTERS.add((char) 0x5C);
+		RESERVED_FILENAME_CHARACTERS.add('?');
+		RESERVED_FILENAME_CHARACTERS.add(':');
+		RESERVED_FILENAME_CHARACTERS.add('*');
+		RESERVED_FILENAME_CHARACTERS.add('<');
+		RESERVED_FILENAME_CHARACTERS.add('>');
+		RESERVED_FILENAME_CHARACTERS.add('|');
+	}
+
+	public static String sanitizeFileName(String aName) {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (char c : aName.toCharArray()) {
+			if (RESERVED_FILENAME_CHARACTERS.contains(c)) {
+				sb.append('_');
+			} else {
+				sb.append(c);
+			}
+		}
+
+		return sb.toString();
 	}
 
 }
