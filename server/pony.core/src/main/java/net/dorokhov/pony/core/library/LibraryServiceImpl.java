@@ -422,8 +422,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song = new Song();
 			song.setPath(aSongData.getPath());
-			song.setAlbum(aAlbum);
-			song.setGenre(aGenre);
 
 			shouldSave = true;
 		}
@@ -449,7 +447,7 @@ public class LibraryServiceImpl implements LibraryService {
 					!ObjectUtils.nullSafeEquals(song.getName(), aSongData.getTitle()) ||
 					!ObjectUtils.nullSafeEquals(song.getArtistName(), aSongData.getArtist()) ||
 					!ObjectUtils.nullSafeEquals(song.getAlbumArtistName(), aSongData.getAlbumArtist()) ||
-					!ObjectUtils.nullSafeEquals(song.getAlbum(), aSongData.getAlbum()) ||
+					!ObjectUtils.nullSafeEquals(song.getAlbumName(), aSongData.getAlbum()) ||
 					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear()) ||
 					!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
 
@@ -495,6 +493,8 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setAlbumName(aSongData.getAlbum());
 			song.setYear(aSongData.getYear());
 
+			song.setAlbum(aAlbum);
+			song.setGenre(aGenre);
 			song.setArtwork(artwork);
 
 			boolean newSong = (song.getId() == null);
@@ -624,16 +624,14 @@ public class LibraryServiceImpl implements LibraryService {
 		if (album == null) {
 
 			album = new Album();
-			album.setArtist(aArtist);
 
 			shouldSave = true;
 		}
 
 		if (album.getId() != null) {
-			if (!ObjectUtils.nullSafeEquals(album.getName(), albumName)) {
-				shouldSave = true;
-			}
-			if (!ObjectUtils.nullSafeEquals(album.getYear(), aSongData.getYear())) {
+			if (!ObjectUtils.nullSafeEquals(album.getName(), albumName) ||
+					!ObjectUtils.nullSafeEquals(album.getYear(), aSongData.getYear())) {
+
 				shouldSave = true;
 			}
 		}
@@ -642,6 +640,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 			album.setName(albumName);
 			album.setYear(aSongData.getYear());
+
+			album.setArtist(aArtist);
 
 			boolean newAlbum = (album.getId() == null);
 
