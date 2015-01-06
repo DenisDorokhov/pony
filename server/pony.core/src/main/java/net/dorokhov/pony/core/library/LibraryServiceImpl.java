@@ -501,8 +501,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 			song = songDao.save(song);
 
-			deleteEntitiesWithoutSongs(overriddenAlbum, overriddenAlbum != null ? overriddenAlbum.getArtist() : null, overriddenGenre, overriddenArtwork);
-
 			if (newSong) {
 				logService.debug(log, "libraryService.creatingSong", "Creating song " + song + ".",
 						Arrays.asList(song.toString()));
@@ -510,6 +508,8 @@ public class LibraryServiceImpl implements LibraryService {
 				logService.debug(log, "libraryService.updatingSong", "Updating song " + song + ".",
 						Arrays.asList(song.toString()));
 			}
+
+			deleteEntitiesWithoutSongs(overriddenAlbum, overriddenAlbum != null ? overriddenAlbum.getArtist() : null, overriddenGenre, overriddenArtwork);
 
 			song.setAlbum(albumDao.findOne(song.getAlbum().getId()));
 
@@ -624,6 +624,7 @@ public class LibraryServiceImpl implements LibraryService {
 		if (album == null) {
 
 			album = new Album();
+			album.setArtist(aArtist);
 
 			shouldSave = true;
 		}
@@ -640,8 +641,6 @@ public class LibraryServiceImpl implements LibraryService {
 
 			album.setName(albumName);
 			album.setYear(aSongData.getYear());
-
-			album.setArtist(aArtist);
 
 			boolean newAlbum = (album.getId() == null);
 

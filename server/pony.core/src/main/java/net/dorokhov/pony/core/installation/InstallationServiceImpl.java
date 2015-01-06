@@ -2,11 +2,12 @@ package net.dorokhov.pony.core.installation;
 
 import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.core.dao.InstallationDao;
-import net.dorokhov.pony.core.domain.Config;
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.core.installation.exception.NotInstalledException;
+import net.dorokhov.pony.core.library.ScanJobService;
+import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.user.UserService;
 import org.slf4j.Logger;
@@ -23,9 +24,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-
 @Service
 public class InstallationServiceImpl implements InstallationService {
 
@@ -38,6 +36,8 @@ public class InstallationServiceImpl implements InstallationService {
 	private ConfigService configService;
 
 	private UserService userService;
+
+	private ScanJobService scanJobService;
 
 	private LogService logService;
 
@@ -59,6 +59,11 @@ public class InstallationServiceImpl implements InstallationService {
 	@Autowired
 	public void setUserService(UserService aUserService) {
 		userService = aUserService;
+	}
+
+	@Autowired
+	public void setScanJobService(ScanJobService aScanJobService) {
+		scanJobService = aScanJobService;
 	}
 
 	@Autowired
@@ -105,6 +110,12 @@ public class InstallationServiceImpl implements InstallationService {
 				return installation;
 			}
 		});
+
+		try {
+			scanJobService.startScanJob();
+		} catch (LibraryNotDefinedException e) {
+			logService.info(log, "installationService.libraryNotDefined", "Scan job not started, library is not defined.");
+		}
 
 		logService.info(log, "installationService.installed", "Successfully installed.");
 
