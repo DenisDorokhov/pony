@@ -246,7 +246,7 @@ public class UserServiceImpl implements UserService {
 		if (!StringUtils.isBlank(debugToken) && Objects.equals(aToken, debugToken)) {
 
 			Page<User> page = userDao.findAll(new PageRequest(0, 1, new Sort("id")));
-			if (page.getNumberOfElements() > 0) {
+			if (page.hasContent()) {
 				user = page.getContent().get(0);
 			} else {
 				throw new RuntimeException("No users found in the database.");

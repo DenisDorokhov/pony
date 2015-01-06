@@ -129,6 +129,16 @@ public class ApiController {
 		return responseBuilder.build(songServiceFacade.getArtistSongs(aArtistIdOrName));
 	}
 
+	@RequestMapping(value = "/songs/random", method = RequestMethod.GET)
+	public ResponseDto<List<SongDto>> getRandomSongs(@RequestParam(value = "count", defaultValue = "10") int aCount,
+													 @RequestParam(value = "artist", required = false) String aArtistIdOrName) {
+		if (aArtistIdOrName != null) {
+			return responseBuilder.build(songServiceFacade.getRandomArtistSongs(aCount, aArtistIdOrName));
+		} else {
+			return responseBuilder.build(songServiceFacade.getRandomSongs(aCount));
+		}
+	}
+
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public ResponseDto<SearchDto> search(@RequestParam("text") String aText) {
 

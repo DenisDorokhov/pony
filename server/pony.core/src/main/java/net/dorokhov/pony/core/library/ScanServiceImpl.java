@@ -548,7 +548,7 @@ public class ScanServiceImpl implements ScanService {
 
 		Page<ScanResult> scanResults = scanResultDao.findAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
 
-		ScanResult lastScan = scanResults.getNumberOfElements() > 0 ? scanResults.getContent().get(0) : null;
+		ScanResult lastScan = scanResults.hasContent() ? scanResults.getContent().get(0) : null;
 
 		Date lastScanDate = (lastScan != null ? lastScan.getDate() : new Date(0L));
 

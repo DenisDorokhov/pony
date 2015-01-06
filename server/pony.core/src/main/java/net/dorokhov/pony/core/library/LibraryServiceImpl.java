@@ -254,7 +254,7 @@ public class LibraryServiceImpl implements LibraryService {
 					Page<Song> songPage = songDao.findByGenreIdAndArtworkNotNull(aGenre.getId(),
 							new PageRequest((int) Math.floor(genreSongCount / 2.0), 1, new Sort(Sort.Direction.ASC, "year")));
 
-					if (songPage.getNumberOfElements() > 0) {
+					if (songPage.hasContent()) {
 
 						StoredFile artwork = songPage.getContent().get(0).getArtwork();
 
@@ -291,7 +291,7 @@ public class LibraryServiceImpl implements LibraryService {
 					Page<Album> albumPage = albumDao.findByArtistIdAndArtworkNotNull(aArtist.getId(),
 							new PageRequest((int) Math.floor(artistAlbumCount / 2.0), 1, Sort.Direction.ASC, "year"));
 
-					if (albumPage.getNumberOfElements() > 0) {
+					if (albumPage.hasContent()) {
 
 						StoredFile artwork = albumPage.getContent().get(0).getArtwork();
 

@@ -15,6 +15,7 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 
 	public long countByGenreId(Long aGenreId);
 	public long countByAlbumId(Long aAlbumId);
+	public long countByAlbumArtistId(Long aArtistId);
 	public long countByArtworkId(Long aStoredFileId);
 	public long countByCreationDateGreaterThan(Date aDate);
 	public long countByCreationDateLessThanAndUpdateDateGreaterThan(Date aCreationDate, Date aUpdateDate);
@@ -45,6 +46,17 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 			"LEFT JOIN FETCH ar.artwork " +
 			"WHERE ar.id = ?1")
 	public List<Song> findByAlbumArtistId(Long aArtistId, Sort aSort);
+
+	@Query(value = "SELECT s FROM Song s " +
+			"INNER JOIN FETCH s.genre g " +
+			"INNER JOIN FETCH s.album al " +
+			"INNER JOIN FETCH al.artist ar " +
+			"LEFT JOIN FETCH s.artwork " +
+			"LEFT JOIN FETCH al.artwork " +
+			"LEFT JOIN FETCH ar.artwork " +
+			"WHERE ar.id = ?1",
+			countQuery = "SELECT COUNT(s) FROM Song s WHERE s.album.artist.id = ?1")
+	public Page<Song> findByAlbumArtistId(Long aArtistId, Pageable aPageable);
 
 	public Page<Song> findByGenreIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
 	public Page<Song> findByAlbumIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
