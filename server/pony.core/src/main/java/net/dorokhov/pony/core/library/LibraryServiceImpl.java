@@ -138,8 +138,8 @@ public class LibraryServiceImpl implements LibraryService {
 					itemsToDelete.add(aSong.getId());
 
 					logService.debug(log, "libraryService.deletingNotFoundSong",
-							"Song file not found [" + aSong.getPath() + "], deleting song [" + aSong + "].",
-							Arrays.asList(aSong.getPath(), aSong.toString()));
+							"Deleting song [" + aSong + "], song file not found [" + aSong.getPath() + "].",
+							Arrays.asList(aSong.toString(), aSong.getPath()));
 				}
 
 				if (aDelegate != null) {
@@ -515,7 +515,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			if (artwork != null && song.getAlbum().getArtwork() == null) {
 
-				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album " + song.getAlbum() + " artwork " + artwork,
+				logService.debug(log, "libraryService.settingAlbumArtwork", "Updating album artwork " + song.getAlbum() + " with " + artwork,
 						Arrays.asList(song.getAlbum().toString(), artwork.toString()));
 
 				song.getAlbum().setArtwork(artwork);

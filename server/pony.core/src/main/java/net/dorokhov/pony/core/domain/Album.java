@@ -102,6 +102,7 @@ public class Album extends BaseEntity<Long> implements Comparable<Album> {
 				"id=" + getId() +
 				", artist='" + artist + '\'' +
 				", name='" + name + '\'' +
+				", year=" + year +
 				'}';
 	}
 

@@ -215,7 +215,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@Override
 	@Transactional
-	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
+	@Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 5 * 60 * 1000)
 	synchronized public void startAutoScanJobIfNeeded() {
 		if (installationService.getInstallation() != null) {
 
