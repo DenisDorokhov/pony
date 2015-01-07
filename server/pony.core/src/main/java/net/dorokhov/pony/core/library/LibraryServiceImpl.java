@@ -187,8 +187,8 @@ public class LibraryServiceImpl implements LibraryService {
 					if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
 
 						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-								"Artwork file [" + externalFilePath + "] not found, deleting stored file [" + aStoredFile + "].",
-								Arrays.asList(externalFilePath, aStoredFile.toString()));
+								"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + aStoredFile + "].",
+								Arrays.asList(aStoredFile.toString(), externalFilePath));
 
 						shouldDelete = true;
 
@@ -200,8 +200,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 						if (shouldDelete) {
 							logService.debug(log, "libraryService.deletingModifiedStoredFile",
-									"Artwork file [" + externalFilePath + "] modified, deleting stored file [" + aStoredFile + "].",
-									Arrays.asList(externalFilePath, aStoredFile.toString()));
+									"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + aStoredFile + "].",
+									Arrays.asList(aStoredFile.toString(), externalFilePath));
 						}
 					}
 				}
@@ -258,7 +258,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 						StoredFile artwork = songPage.getContent().get(0).getArtwork();
 
-						logService.debug(log, "libraryService.settingGenreArtwork", "Setting genre " + aGenre + " artwork " + artwork,
+						logService.debug(log, "libraryService.settingGenreArtwork", "Setting genre artwork " + aGenre + " with " + artwork,
 								Arrays.asList(aGenre.toString(), artwork.toString()));
 
 						aGenre.setArtwork(artwork);
@@ -295,7 +295,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 						StoredFile artwork = albumPage.getContent().get(0).getArtwork();
 
-						logService.debug(log, "libraryService.settingArtistArtwork", "Setting artist " + aArtist + " artwork " + artwork,
+						logService.debug(log, "libraryService.settingArtistArtwork", "Setting artist artwork " + aArtist + " with " + artwork,
 								Arrays.asList(aArtist.toString(), artwork.toString()));
 
 						aArtist.setArtwork(artwork);
@@ -515,7 +515,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			if (artwork != null && song.getAlbum().getArtwork() == null) {
 
-				logService.debug(log, "libraryService.settingAlbumArtwork", "Updating album artwork " + song.getAlbum() + " with " + artwork,
+				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album artwork " + song.getAlbum() + " with " + artwork,
 						Arrays.asList(song.getAlbum().toString(), artwork.toString()));
 
 				song.getAlbum().setArtwork(artwork);
@@ -670,7 +670,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 			if (aSong.getAlbum().getArtwork() == null) {
 
-				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album " + aSong.getAlbum() + " artwork " + artwork,
+				logService.debug(log, "libraryService.settingAlbumArtwork", "Setting album artwork " + aSong.getAlbum() + " with " + artwork,
 						Arrays.asList(aSong.getAlbum().toString(), artwork.toString()));
 
 				aSong.getAlbum().setArtwork(artwork);
