@@ -124,12 +124,12 @@ public class ApiController {
 		return responseBuilder.build(songServiceFacade.getArtists());
 	}
 
-	@RequestMapping(value = "/artists/{artistIdOrName}", method = RequestMethod.GET)
+	@RequestMapping(value = "/artistSongs/{artistIdOrName}", method = RequestMethod.GET)
 	public ResponseDto<ArtistAlbumsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
 		return responseBuilder.build(songServiceFacade.getArtistSongs(aArtistIdOrName));
 	}
 
-	@RequestMapping(value = "/songs/random", method = RequestMethod.GET)
+	@RequestMapping(value = "/randomSongs", method = RequestMethod.GET)
 	public ResponseDto<List<SongDto>> getRandomSongs(@RequestParam(value = "count", defaultValue = "10") int aCount,
 													 @RequestParam(value = "artist", required = false) String aArtistIdOrName) {
 		if (aArtistIdOrName != null) {
@@ -137,6 +137,12 @@ public class ApiController {
 		} else {
 			return responseBuilder.build(songServiceFacade.getRandomSongs(aCount));
 		}
+	}
+
+	// TODO: restrict number of requested songs
+	@RequestMapping(value = "/songData/{songIds}", method = RequestMethod.GET)
+	public ResponseDto<List<SongDataDto>> getSongData(@PathVariable("songIds") List<Long> aSongIds) throws ObjectNotFoundException {
+		return responseBuilder.build(songServiceFacade.getSongData(aSongIds));
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)

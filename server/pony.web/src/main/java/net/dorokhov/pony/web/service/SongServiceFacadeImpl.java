@@ -197,6 +197,26 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 		return dto;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException {
+
+		List<SongDataDto> dto = new ArrayList<>();
+
+		for (Long songId : aSongIds) {
+
+			Song song = songDao.findOne(songId);
+
+			if (song == null) {
+				throw new ObjectNotFoundException(songId, "errorSongNotFound", "Song [" + songId + "] not found.");
+			}
+
+			dto.add(SongDataDto.valueOf(song));
+		}
+
+		return dto;
+	}
+
 	private ArrayList<AlbumSongsDto> songListToDto(List<Song> aSongList) {
 
 		ArrayList<AlbumSongsDto> result = new ArrayList<>();

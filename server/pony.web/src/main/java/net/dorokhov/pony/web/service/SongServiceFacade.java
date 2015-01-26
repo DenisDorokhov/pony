@@ -17,4 +17,6 @@ public interface SongServiceFacade {
 
 	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName);
 
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException;
+
 }
