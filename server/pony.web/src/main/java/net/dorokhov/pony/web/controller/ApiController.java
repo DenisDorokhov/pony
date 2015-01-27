@@ -10,6 +10,7 @@ import net.dorokhov.pony.web.domain.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.domain.command.UpdateUserCommandDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
+import net.dorokhov.pony.web.exception.InvalidRequestException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.security.UserTokenReader;
 import net.dorokhov.pony.web.service.*;
@@ -131,7 +132,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/randomSongs", method = RequestMethod.GET)
 	public ResponseDto<List<SongDto>> getRandomSongs(@RequestParam(value = "count", defaultValue = "10") int aCount,
-													 @RequestParam(value = "artist", required = false) String aArtistIdOrName) {
+													 @RequestParam(value = "artist", required = false) String aArtistIdOrName) throws InvalidRequestException {
 		if (aArtistIdOrName != null) {
 			return responseBuilder.build(songServiceFacade.getRandomArtistSongs(aCount, aArtistIdOrName));
 		} else {
@@ -139,9 +140,8 @@ public class ApiController {
 		}
 	}
 
-	// TODO: restrict number of requested songs
 	@RequestMapping(value = "/songData/{songIds}", method = RequestMethod.GET)
-	public ResponseDto<List<SongDataDto>> getSongData(@PathVariable("songIds") List<Long> aSongIds) throws ObjectNotFoundException {
+	public ResponseDto<List<SongDataDto>> getSongData(@PathVariable("songIds") List<Long> aSongIds) throws ObjectNotFoundException, InvalidRequestException {
 		return responseBuilder.build(songServiceFacade.getSongData(aSongIds));
 	}
 
@@ -198,7 +198,7 @@ public class ApiController {
 													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
 													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
 													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidRequestException {
 
 		LogQueryDto query = new LogQueryDto();
 
@@ -211,7 +211,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-														@RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+														@RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidRequestException {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
@@ -222,7 +222,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
 	public ResponseDto<ListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-															  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) {
+															  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidRequestException {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 

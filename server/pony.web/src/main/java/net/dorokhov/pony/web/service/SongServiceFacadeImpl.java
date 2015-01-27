@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.domain.Genre;
 import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.search.SearchService;
 import net.dorokhov.pony.web.domain.*;
+import net.dorokhov.pony.web.exception.InvalidRequestException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -26,8 +27,10 @@ import java.util.List;
 @Service
 public class SongServiceFacadeImpl implements SongServiceFacade {
 
-	private static final int MAX_SEARCH_RESULTS = 10;
+	private static final int SEARCH_RESULTS_COUNT = 10;
+
 	private static final int MAX_RANDOM_SONGS = 30;
+	private static final int MAX_SONG_DATA = 500;
 
 	private ArtistDao artistDao;
 
@@ -101,10 +104,10 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	@Transactional(readOnly = true)
 	public SearchDto search(SearchQueryDto aQuery) {
 
-		List<Genre> genreList = searchService.searchGenres(aQuery.getText(), MAX_SEARCH_RESULTS);
-		List<Artist> artistList = searchService.searchArtists(aQuery.getText(), MAX_SEARCH_RESULTS);
-		List<Album> albumList = searchService.searchAlbums(aQuery.getText(), MAX_SEARCH_RESULTS);
-		List<Song> songList = searchService.searchSongs(aQuery.getText(), MAX_SEARCH_RESULTS);
+		List<Genre> genreList = searchService.searchGenres(aQuery.getText(), SEARCH_RESULTS_COUNT);
+		List<Artist> artistList = searchService.searchArtists(aQuery.getText(), SEARCH_RESULTS_COUNT);
+		List<Album> albumList = searchService.searchAlbums(aQuery.getText(), SEARCH_RESULTS_COUNT);
+		List<Song> songList = searchService.searchSongs(aQuery.getText(), SEARCH_RESULTS_COUNT);
 
 		SearchDto dto = new SearchDto();
 
@@ -128,9 +131,12 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SongDto> getRandomSongs(int aCount) {
+	public List<SongDto> getRandomSongs(int aCount) throws InvalidRequestException {
 
-		aCount = Math.min(aCount, MAX_RANDOM_SONGS);
+		if (aCount > MAX_RANDOM_SONGS) {
+			throw new InvalidRequestException("errorRandomSongsCountInvalid", "Number of random songs [" + aCount + "] must be less than or equal to [" + 100 + "]",
+					String.valueOf(aCount), String.valueOf(MAX_RANDOM_SONGS));
+		}
 
 		List<Song> songList = new RandomEntityFetcher<Song>().fetch(aCount, new RandomEntityFetcher.Dao<Song>() {
 
@@ -156,9 +162,12 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) {
+	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidRequestException {
 
-		aCount = Math.min(aCount, MAX_RANDOM_SONGS);
+		if (aCount > MAX_RANDOM_SONGS) {
+			throw new InvalidRequestException("errorRandomSongsCountInvalid", "Number of random songs [" + aCount + "] must be less than or equal to [" + 100 + "]",
+					String.valueOf(aCount), String.valueOf(MAX_RANDOM_SONGS));
+		}
 
 		Artist artist = null;
 
@@ -199,7 +208,12 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException {
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidRequestException {
+
+		if (aSongIds.size() > MAX_SONG_DATA) {
+			throw new InvalidRequestException("errorSongsCountInvalid", "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONG_DATA + "]",
+					String.valueOf(aSongIds.size()), String.valueOf(MAX_SONG_DATA));
+		}
 
 		List<SongDataDto> dto = new ArrayList<>();
 

@@ -13,6 +13,7 @@ import net.dorokhov.pony.web.domain.ScanResultDto;
 import net.dorokhov.pony.web.domain.ScanStatusDto;
 import net.dorokhov.pony.web.domain.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
+import net.dorokhov.pony.web.exception.InvalidRequestException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -112,10 +113,15 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize) {
+	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize) throws InvalidRequestException {
 
-		aPageNumber = Math.max(aPageNumber, 0);
-		aPageSize = Math.min(aPageSize, MAX_PAGE_SIZE);
+		if (aPageNumber < 0) {
+			throw new InvalidRequestException("errorPageNumberInvalid", "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
+		}
+		if (aPageSize > MAX_PAGE_SIZE) {
+			throw new InvalidRequestException("errorPageSizeInvalid", "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
+		}
 
 		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "updateDate"));
 
@@ -142,10 +148,15 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize) {
+	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize) throws InvalidRequestException {
 
-		aPageNumber = Math.max(aPageNumber, 0);
-		aPageSize = Math.min(aPageSize, MAX_PAGE_SIZE);
+		if (aPageNumber < 0) {
+			throw new InvalidRequestException("errorPageNumberInvalid", "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
+		}
+		if (aPageSize > MAX_PAGE_SIZE) {
+			throw new InvalidRequestException("errorPageSizeInvalid", "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
+		}
 
 		Page<ScanResult> page = scanService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));
 

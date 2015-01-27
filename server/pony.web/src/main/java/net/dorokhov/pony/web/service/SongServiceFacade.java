@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.service;
 
 import net.dorokhov.pony.web.domain.*;
+import net.dorokhov.pony.web.exception.InvalidRequestException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 
 import java.util.List;
@@ -13,10 +14,10 @@ public interface SongServiceFacade {
 
 	public SearchDto search(SearchQueryDto aQuery);
 
-	public List<SongDto> getRandomSongs(int aCount);
+	public List<SongDto> getRandomSongs(int aCount) throws InvalidRequestException;
 
-	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName);
+	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidRequestException;
 
-	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException;
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidRequestException;
 
 }
