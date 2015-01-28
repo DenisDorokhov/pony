@@ -9,7 +9,7 @@ import net.dorokhov.pony.web.domain.ErrorDto;
 import net.dorokhov.pony.web.domain.ResponseDto;
 import net.dorokhov.pony.web.exception.ArtworkUploadFormatException;
 import net.dorokhov.pony.web.exception.ArtworkUploadNotFoundException;
-import net.dorokhov.pony.web.exception.InvalidRequestException;
+import net.dorokhov.pony.web.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.service.ResponseBuilder;
 import org.slf4j.Logger;
@@ -71,9 +71,9 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(new ErrorDto(aException.getErrorCode(), aException.getMessage(), aException.getObjectId() != null ? Arrays.asList(aException.getObjectId().toString()) : null));
 	}
 
-	@ExceptionHandler(InvalidRequestException.class)
+	@ExceptionHandler(InvalidArgumentException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onInvalidRequest(InvalidRequestException aException) {
+	public ResponseDto onInvalidRequest(InvalidArgumentException aException) {
 
 		log.debug(aException.getMessage());
 

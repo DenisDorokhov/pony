@@ -50,10 +50,10 @@ public class FileScanServiceImpl implements FileScanService {
 	private AbstractLibraryFile doScanFile(File aFile, LibraryFolder aParentFolder) {
 
 		if (!aFile.exists()) {
-			throw new IllegalArgumentException("File must exist.");
+			throw new IllegalArgumentException("File [" + aFile.getAbsolutePath() + "] must exist.");
 		}
 		if (aFile.isDirectory()) {
-			throw new IllegalArgumentException("File must not be a directory.");
+			throw new IllegalArgumentException("File [" + aFile.getAbsolutePath() + "] must not be a directory.");
 		}
 
 		AbstractLibraryFile result = null;
@@ -79,10 +79,10 @@ public class FileScanServiceImpl implements FileScanService {
 	private LibraryFolderImpl doScanFolder(File aFolder, LibraryFolder aParentFolder) {
 
 		if (!aFolder.exists()) {
-			throw new IllegalArgumentException("File must exist.");
+			throw new IllegalArgumentException("File [" + aFolder.getAbsolutePath() + "] must exist.");
 		}
 		if (!aFolder.isDirectory()) {
-			throw new IllegalArgumentException("File must be a directory.");
+			throw new IllegalArgumentException("File [" + aFolder.getAbsolutePath() + "] must be a directory.");
 		}
 
 		LibraryFolderImpl currentFolder = new LibraryFolderImpl(aFolder, aParentFolder);

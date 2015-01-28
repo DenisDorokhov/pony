@@ -4,7 +4,7 @@ import net.dorokhov.pony.core.domain.Song;
 import net.dorokhov.pony.core.domain.StoredFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-public class SongDataDto {
+public class SongScanDataDto {
 
 	private Long songId;
 
@@ -196,9 +196,9 @@ public class SongDataDto {
 		bitRate = aBitRate;
 	}
 
-	public static SongDataDto valueOf(Song aSong) {
+	public static SongScanDataDto valueOf(Song aSong) {
 
-		SongDataDto dto = new SongDataDto();
+		SongScanDataDto dto = new SongScanDataDto();
 
 		dto.setSongId(aSong.getId());
 

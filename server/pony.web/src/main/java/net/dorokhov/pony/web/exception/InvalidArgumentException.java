@@ -4,24 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class InvalidRequestException extends Exception {
+public class InvalidArgumentException extends Exception {
 
 	private String errorCode;
 
 	private List<String> arguments;
 
-	public InvalidRequestException() {
-		this(null, "Request is invalid.");
-	}
-
-	public InvalidRequestException(String aErrorCode, String aMessage) {
+	public InvalidArgumentException(String aErrorCode, String aMessage) {
 
 		super(aMessage);
 
 		errorCode = aErrorCode;
 	}
 
-	public InvalidRequestException(String aErrorCode, String aMessage, String... aArguments) {
+	public InvalidArgumentException(String aErrorCode, String aMessage, String... aArguments) {
 
 		super(aMessage);
 
