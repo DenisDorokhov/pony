@@ -21,10 +21,10 @@
 
     <task:annotation-driven/>
 
-    <context:component-scan base-package="net.dorokhov.pony.web.service"/>
-    <context:component-scan base-package="net.dorokhov.pony.web.security"/>
+    <context:component-scan base-package="net.dorokhov.pony.web.server.service"/>
+    <context:component-scan base-package="net.dorokhov.pony.web.server.security"/>
 
-    <bean id="securityEntryPoint" class="net.dorokhov.pony.web.security.SecurityEntryPoint">
+    <bean id="securityEntryPoint" class="net.dorokhov.pony.web.server.security.SecurityEntryPoint">
         <property name="jsonResponsePathPrefix" value="/api/" />
     </bean>
 
@@ -42,6 +42,7 @@
         <security:intercept-url pattern="/img/**" access="permitAll" />
         <security:intercept-url pattern="/css/**" access="permitAll" />
         <security:intercept-url pattern="/js/**" access="permitAll" />
+        <security:intercept-url pattern="/pony/**" access="permitAll" />
 
         <security:intercept-url pattern="/install" access="permitAll" />
 

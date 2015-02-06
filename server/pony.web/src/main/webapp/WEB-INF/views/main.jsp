@@ -14,8 +14,12 @@
     <link rel="icon" type="image/png" href="./img/favicon.png">
     <link rel="stylesheet" href="./css/pony.css">
 
+    <script type="text/javascript" src="./pony/pony.nocache.js"></script>
+
 </head>
 <body>
+
+<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
 
 </body>
 </html>

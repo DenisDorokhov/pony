@@ -67,11 +67,21 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>jUnitHostImpl</servlet-name>
+        <servlet-class>com.google.gwt.junit.server.JUnitHostImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jUnitHostImpl</servlet-name>
+        <url-pattern>/pony/junithost/*</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/img/*</url-pattern>
         <url-pattern>/js/*</url-pattern>
         <url-pattern>/css/*</url-pattern>
+        <url-pattern>/pony/*</url-pattern>
     </servlet-mapping>
 
     <jsp-config>

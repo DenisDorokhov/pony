@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="pony">
+
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.junit.JUnit" />
+	<inherits name="com.google.gwt.logging.Logging" />
+	<inherits name="com.google.gwt.i18n.I18N" />
+
+	<inherits name="com.google.gwt.inject.Inject" />
+
+	<inherits name="com.google.gwt.user.theme.standard.Standard" />
+
+	<set-property name="gwt.logging.logLevel" value="FINE" />
+	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
+	<inherits name='com.gwtplatform.mvp.MvpWithEntryPoint'/>
+
+	<set-configuration-property name="gin.ginjector.modules" value="net.dorokhov.pony.web.client.ClientModule"/>
+
+	<source path="client" />
+	<source path="shared" />
+
+</module>

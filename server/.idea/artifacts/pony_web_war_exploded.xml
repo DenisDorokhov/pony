@@ -79,10 +79,14 @@
           <element id="library" level="project" name="Maven: org.apache.lucene:lucene-smartcn:3.6.2" />
           <element id="library" level="project" name="Maven: org.apache.lucene:lucene-stempel:3.6.2" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-validator:4.3.2.Final" />
-          <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA" />
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
           <element id="library" level="project" name="Maven: org:jaudiotagger:2.0.3" />
           <element id="library" level="project" name="Maven: net.coobird:thumbnailator:0.4.7" />
+          <element id="library" level="project" name="Maven: com.google.gwt.inject:gin:2.1.2" />
+          <element id="library" level="project" name="Maven: com.google.inject:guice:3.0" />
+          <element id="library" level="project" name="Maven: javax.inject:javax.inject:1" />
+          <element id="library" level="project" name="Maven: com.google.inject.extensions:guice-assistedinject:3.0" />
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA" />
           <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.4" />
         </element>
       </element>

@@ -33,9 +33,9 @@
     <mvc:annotation-driven validator="validatorFactory" />
 
     <mvc:interceptors>
-        <bean class="net.dorokhov.pony.web.interceptor.InstallationInterceptor" />
+        <bean class="net.dorokhov.pony.web.server.interceptor.InstallationInterceptor" />
     </mvc:interceptors>
 
-    <context:component-scan base-package="net.dorokhov.pony.web.controller"/>
+    <context:component-scan base-package="net.dorokhov.pony.web.server.controller"/>
 
 </beans>
