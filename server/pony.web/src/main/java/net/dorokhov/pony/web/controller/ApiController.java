@@ -246,8 +246,8 @@ public class ApiController {
 		return responseBuilder.build(uploadService.uploadArtwork(aFile));
 	}
 
-	@RequestMapping(value = "/admin/songScanData", method = RequestMethod.POST)
-	public ResponseDto<List<SongScanDataDto>> getSongData(@RequestBody List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
+	@RequestMapping(value = "/admin/getSongData", method = RequestMethod.POST)
+	public ResponseDto<List<SongDataDto>> getSongData(@RequestBody List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
 		return responseBuilder.build(songServiceFacade.getSongData(aSongIds));
 	}
 

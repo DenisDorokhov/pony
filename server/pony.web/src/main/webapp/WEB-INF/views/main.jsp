@@ -17,7 +17,5 @@
 </head>
 <body>
 
-<script data-main="./js/main" src="./js/lib/require.js"></script>
-
 </body>
 </html>

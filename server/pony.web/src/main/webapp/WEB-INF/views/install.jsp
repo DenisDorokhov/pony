@@ -11,7 +11,7 @@
 
     <title><spring:message code="install.title" /></title>
 
-    <script src="./js/lib/jquery.js"></script>
+    <script src="./js/jquery.js"></script>
 
     <link rel="icon" type="image/png" href="./img/favicon.png">
     <link href="./css/pony.css" rel="stylesheet">

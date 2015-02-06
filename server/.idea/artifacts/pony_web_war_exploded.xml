@@ -91,6 +91,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/pony.web/target/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="pony.web/web/Web" />
+      <element id="gwt-compiler-output" facet="pony.web/gwt/GWT" />
     </root>
   </artifact>
 </component>

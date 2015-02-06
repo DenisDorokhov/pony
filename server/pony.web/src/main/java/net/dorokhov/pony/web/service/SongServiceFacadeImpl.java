@@ -206,7 +206,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<SongScanDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
 
 		if (aSongIds.size() > MAX_SONG_DATA) {
 			throw new InvalidArgumentException("errorSongsCountInvalid", "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONG_DATA + "]",
@@ -215,11 +215,11 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 		Set<Long> idSet = new HashSet<>(aSongIds);
 
-		List<SongScanDataDto> dto = new ArrayList<>();
+		List<SongDataDto> dto = new ArrayList<>();
 
 		for (Song song : songDao.findAll(aSongIds)) {
 
-			dto.add(SongScanDataDto.valueOf(song));
+			dto.add(SongDataDto.valueOf(song));
 
 			idSet.remove(song.getId());
 		}
