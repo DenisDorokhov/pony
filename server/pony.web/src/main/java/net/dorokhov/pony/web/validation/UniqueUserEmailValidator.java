@@ -114,7 +114,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 
 	private void addFieldError(String aField, ConstraintValidatorContext aContext) {
 		aContext.disableDefaultConstraintViolation();
-		aContext.buildConstraintViolationWithTemplate(aContext.getDefaultConstraintMessageTemplate()).addPropertyNode(aField).addConstraintViolation();
+		aContext.buildConstraintViolationWithTemplate(aContext.getDefaultConstraintMessageTemplate()).addNode(aField).addConstraintViolation();
 	}
 
 }

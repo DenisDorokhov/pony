@@ -93,9 +93,8 @@
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-smartcn:3.6.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-stempel:3.6.2" level="project" />
-    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.1.2.Final" level="project" />
-    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml:classmate:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:4.3.2.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.glassfish.web:el-impl:2.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.el:el-api:2.2" level="project" />
     <orderEntry type="library" name="Maven: org.hsqldb:hsqldb:2.3.2" level="project" />
