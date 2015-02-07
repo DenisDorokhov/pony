@@ -1,7 +1,6 @@
 package net.dorokhov.pony.web.client.gin;
 
-import com.gwtplatform.dispatch.rest.client.RestApplicationPath;
-import com.gwtplatform.dispatch.rest.client.gin.RestDispatchAsyncModuleCustom;
+import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
@@ -9,6 +8,7 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.*;
+import net.dorokhov.pony.web.client.service.ApiService;
 
 public class ClientModule extends AbstractPresenterModule {
 
@@ -30,11 +30,7 @@ public class ClientModule extends AbstractPresenterModule {
 		bindConstant().annotatedWith(ErrorPlace.class).to(PlaceTokens.ERROR);
 		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.LOGIN);
 
-		RestDispatchAsyncModuleCustom.Builder dispatchBuilder = new RestDispatchAsyncModuleCustom.Builder();
-
-		install(dispatchBuilder.build());
-
-		bindConstant().annotatedWith(RestApplicationPath.class).to("/api");
+		bind(ApiService.class).in(Singleton.class);
 	}
 
 }

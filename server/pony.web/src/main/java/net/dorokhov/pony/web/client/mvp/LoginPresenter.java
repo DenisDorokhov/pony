@@ -1,9 +1,7 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.dispatch.rest.shared.RestDispatch;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -12,9 +10,11 @@ import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import net.dorokhov.pony.web.client.PlaceTokens;
-import net.dorokhov.pony.web.client.service.AuthenticationResource;
+import net.dorokhov.pony.web.client.service.ApiService;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
+import org.fusesource.restygwt.client.Method;
+import org.fusesource.restygwt.client.MethodCallback;
 
 import java.util.logging.Logger;
 
@@ -29,18 +29,15 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
-	private final RestDispatch dispatcher;
-
-	private final AuthenticationResource authenticationResource;
+	private final ApiService apiService;
 
 	@Inject
 	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-						  RestDispatch aDispatcher, AuthenticationResource aAuthenticationResource) {
+						  ApiService aApiService) {
 
 		super(eventBus, view, proxy, RevealType.RootLayout);
 
-		dispatcher = aDispatcher;
-		authenticationResource = aAuthenticationResource;
+		apiService = aApiService;
 
 		getView().setUiHandlers(this);
 	}
@@ -50,17 +47,16 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 		log.fine("Authenticating...");
 
-		dispatcher.execute(authenticationResource.authenticate(aCredentials), new AsyncCallback<ResponseDto<String>>() {
-
+		apiService.authenticate(aCredentials, new MethodCallback<ResponseDto<String>>() {
 			@Override
-			public void onFailure(Throwable aCaught) {
+			public void onFailure(Method aMethod, Throwable aThrowable) {
 				log.severe("Authentication failed.");
 			}
 
 			@Override
-			public void onSuccess(ResponseDto<String> aResult) {
+			public void onSuccess(Method aMethod, ResponseDto<String> aResponse) {
 
-				String token = aResult.getData();
+				String token = aResponse.getData();
 
 				log.fine("Authentication [" + token + "] successful.");
 			}
