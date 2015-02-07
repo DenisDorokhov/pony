@@ -15,9 +15,10 @@
 	<set-property name="gwt.logging.logLevel" value="FINE" />
 	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 
+    <inherits name="com.gwtplatform.dispatch.rest.DispatchRest"/>
 	<inherits name='com.gwtplatform.mvp.MvpWithEntryPoint'/>
 
-	<set-configuration-property name="gin.ginjector.modules" value="net.dorokhov.pony.web.client.ClientModule"/>
+	<extend-configuration-property name="gin.ginjector.modules" value="net.dorokhov.pony.web.client.gin.ClientModule"/>
 
 	<source path="client" />
 	<source path="shared" />

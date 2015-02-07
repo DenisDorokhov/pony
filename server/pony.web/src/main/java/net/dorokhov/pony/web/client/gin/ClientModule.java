@@ -1,10 +1,13 @@
-package net.dorokhov.pony.web.client;
+package net.dorokhov.pony.web.client.gin;
 
+import com.gwtplatform.dispatch.rest.client.RestApplicationPath;
+import com.gwtplatform.dispatch.rest.client.gin.RestDispatchAsyncModule;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
+import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.*;
 
 public class ClientModule extends AbstractPresenterModule {
@@ -26,6 +29,12 @@ public class ClientModule extends AbstractPresenterModule {
 		bindConstant().annotatedWith(DefaultPlace.class).to(PlaceTokens.LIBRARY);
 		bindConstant().annotatedWith(ErrorPlace.class).to(PlaceTokens.ERROR);
 		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.LOGIN);
+
+		RestDispatchAsyncModule.Builder dispatchBuilder = new RestDispatchAsyncModule.Builder();
+
+		install(dispatchBuilder.build());
+
+		bindConstant().annotatedWith(RestApplicationPath.class).to("/api");
 	}
 
 }

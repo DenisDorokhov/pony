@@ -8,7 +8,7 @@ public class SecurityService implements Gatekeeper {
 
 	@Override
 	public boolean canReveal() {
-		return true;
+		return false;
 	}
 
 }
