@@ -5,13 +5,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 
-public class ApplicationView extends ViewImpl implements ApplicationPresenter.MyView {
+public class ErrorView extends ViewImpl implements ErrorPresenter.MyView {
 
-	interface MyUiBinder extends UiBinder<Widget, ApplicationView> {}
+	interface MyUiBinder extends UiBinder<Widget, ErrorView> {}
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	public ApplicationView() {
+	public ErrorView() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 

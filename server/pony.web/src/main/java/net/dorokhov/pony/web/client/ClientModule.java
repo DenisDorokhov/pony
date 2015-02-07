@@ -5,9 +5,7 @@ import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
-import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
-import net.dorokhov.pony.web.client.mvp.ApplicationPresenter;
-import net.dorokhov.pony.web.client.mvp.ApplicationView;
+import net.dorokhov.pony.web.client.mvp.*;
 
 public class ClientModule extends AbstractPresenterModule {
 
@@ -16,11 +14,18 @@ public class ClientModule extends AbstractPresenterModule {
 
 		install(new DefaultModule());
 
-		bindPresenter(ApplicationPresenter.class, ApplicationPresenter.MyView.class, ApplicationView.class, ApplicationPresenter.MyProxy.class);
+		bindPresenter(LoginPresenter.class, LoginPresenter.MyView.class, LoginView.class, LoginPresenter.MyProxy.class);
 
-		bindConstant().annotatedWith(DefaultPlace.class).to(PlaceTokens.HOME);
-		bindConstant().annotatedWith(ErrorPlace.class).to(PlaceTokens.HOME);
-		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.HOME);
+		bindPresenter(LibraryPresenter.class, LibraryPresenter.MyView.class, LibraryView.class, LibraryPresenter.MyProxy.class);
+
+		bindSingletonPresenterWidget(PlayerPresenter.class, PlayerPresenter.MyView.class, PlayerView.class);
+		bindSingletonPresenterWidget(LibraryContentPresenter.class, LibraryContentPresenter.MyView.class, LibraryContentView.class);
+
+		bindPresenter(ErrorPresenter.class, ErrorPresenter.MyView.class, ErrorView.class, ErrorPresenter.MyProxy.class);
+
+		bindConstant().annotatedWith(DefaultPlace.class).to(PlaceTokens.LIBRARY);
+		bindConstant().annotatedWith(ErrorPlace.class).to(PlaceTokens.ERROR);
+		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.LOGIN);
 	}
 
 }
