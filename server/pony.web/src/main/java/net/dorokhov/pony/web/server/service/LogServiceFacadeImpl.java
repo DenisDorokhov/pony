@@ -2,10 +2,10 @@ package net.dorokhov.pony.web.server.service;
 
 import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.logging.LogService;
+import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.shared.ListDto;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.LogQueryDto;
-import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,9 +20,16 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 
 	private LogService logService;
 
+	private DtoConverter dtoConverter;
+
 	@Autowired
 	public void setLogService(LogService aLogService) {
 		logService = aLogService;
+	}
+
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
 	}
 
 	@Override
@@ -51,11 +58,11 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 			maxDate = new Date();
 		}
 
-		return ListDto.valueOf(logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date")),
-				new ListDto.ContentConverter<LogMessage, LogMessageDto>() {
+		return dtoConverter.listToDto(logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date")),
+				new DtoConverter.ListConverter<LogMessage, LogMessageDto>() {
 					@Override
 					public LogMessageDto convert(LogMessage aItem) {
-						return LogMessageDto.valueOf(aItem);
+						return dtoConverter.logMessageToDto(aItem);
 					}
 				});
 	}

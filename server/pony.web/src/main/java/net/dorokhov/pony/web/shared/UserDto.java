@@ -1,7 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.User;
-
 public class UserDto {
 
 	private Long id;
@@ -42,23 +40,6 @@ public class UserDto {
 
 	public void setRole(RoleDto aRole) {
 		role = aRole;
-	}
-
-	public static UserDto valueOf(User aUser) {
-
-		UserDto dto = new UserDto();
-
-		dto.setId(aUser.getId());
-		dto.setName(aUser.getName());
-		dto.setEmail(aUser.getEmail());
-
-		if (aUser.getRoles().contains(RoleDto.ADMIN.toString())) {
-			dto.setRole(RoleDto.ADMIN);
-		} else if (aUser.getRoles().contains(RoleDto.USER.toString())) {
-			dto.setRole(RoleDto.USER);
-		}
-
-		return dto;
 	}
 
 }

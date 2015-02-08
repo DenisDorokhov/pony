@@ -3,13 +3,14 @@ package net.dorokhov.pony.web.server.service;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
+import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
+import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.RoleDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
-import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +25,16 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	private UserService userService;
 
+	private DtoConverter dtoConverter;
+
 	@Autowired
 	public void setUserService(UserService aUserService) {
 		userService = aUserService;
+	}
+
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
 	}
 
 	@Override
@@ -36,7 +44,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		User user = userService.getById(aId);
 
 		if (user != null) {
-			return UserDto.valueOf(user);
+			return dtoConverter.userToDto(user);
 		}
 
 		throw new ObjectNotFoundException(aId, "errorUserNotFound", "User [" + aId + "] not found.");
@@ -49,7 +57,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		List<UserDto> dto = new ArrayList<>();
 
 		for (User user : userService.getAll()) {
-			dto.add(UserDto.valueOf(user));
+			dto.add(dtoConverter.userToDto(user));
 		}
 
 		return dto;
@@ -66,7 +74,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setPassword(aCommand.getPassword());
 		user.setRoles(dtoToRoles(aCommand.getRole()));
 
-		return UserDto.valueOf(userService.create(user));
+		return dtoConverter.userToDto(userService.create(user));
 	}
 
 	@Override
@@ -83,7 +91,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setEmail(aCommand.getEmail());
 		user.setRoles(dtoToRoles(aCommand.getRole()));
 
-		return UserDto.valueOf(userService.update(user, aCommand.getPassword()));
+		return dtoConverter.userToDto(userService.update(user, aCommand.getPassword()));
 	}
 
 	@Override
@@ -94,8 +102,24 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
-		return userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword());
+	public AuthenticationDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
+
+		String token = userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword());
+
+		User user;
+
+		try {
+			user = userService.getAuthenticatedUser();
+		} catch (NotAuthenticatedException e) {
+			throw new RuntimeException(e);
+		}
+
+		AuthenticationDto dto = new AuthenticationDto();
+
+		dto.setToken(token);
+		dto.setUser(dtoConverter.userToDto(user));
+
+		return dto;
 	}
 
 	@Override
@@ -107,7 +131,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException {
-		return UserDto.valueOf(userService.getAuthenticatedUser());
+		return dtoConverter.userToDto(userService.getAuthenticatedUser());
 	}
 
 	@Override
@@ -120,7 +144,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setName(aCommand.getName());
 		user.setEmail(aCommand.getEmail());
 
-		return UserDto.valueOf(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
+		return dtoConverter.userToDto(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
 	}
 
 	private Set<String> dtoToRoles(RoleDto aDto) {

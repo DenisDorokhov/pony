@@ -11,6 +11,8 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.service.ApiService;
+import net.dorokhov.pony.web.client.service.AuthenticationStatus;
+import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import org.fusesource.restygwt.client.Method;
@@ -31,13 +33,16 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 	private final ApiService apiService;
 
+	private final AuthenticationStatus authenticationStatus;
+
 	@Inject
 	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy,
-						  ApiService aApiService) {
+						  ApiService aApiService, AuthenticationStatus aAuthenticationStatus) {
 
 		super(eventBus, view, proxy, RevealType.RootLayout);
 
 		apiService = aApiService;
+		authenticationStatus = aAuthenticationStatus;
 
 		getView().setUiHandlers(this);
 	}
@@ -47,18 +52,22 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 		log.fine("Authenticating...");
 
-		apiService.authenticate(aCredentials, new MethodCallback<ResponseDto<String>>() {
+		apiService.authenticate(aCredentials, new MethodCallback<ResponseDto<AuthenticationDto>>() {
 			@Override
 			public void onFailure(Method aMethod, Throwable aThrowable) {
 				log.severe("Authentication failed.");
 			}
 
 			@Override
-			public void onSuccess(Method aMethod, ResponseDto<String> aResponse) {
+			public void onSuccess(Method aMethod, ResponseDto<AuthenticationDto> aResponse) {
 
-				String token = aResponse.getData();
+				authenticationStatus.updateAuthentication(aResponse.getData());
 
-				log.fine("Authentication [" + token + "] successful.");
+				if (authenticationStatus.isAuthenticated()) {
+					log.fine("Authentication [" + authenticationStatus.getCurrentUser().getEmail() +"] successful.");
+				} else {
+					log.severe("Authentication failed.");
+				}
 			}
 		});
 	}

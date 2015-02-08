@@ -1,9 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.Song;
-import net.dorokhov.pony.core.domain.StoredFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 public class SongDataDto {
 
 	private Long songId;
@@ -196,47 +192,4 @@ public class SongDataDto {
 		bitRate = aBitRate;
 	}
 
-	public static SongDataDto valueOf(Song aSong) {
-
-		SongDataDto dto = new SongDataDto();
-
-		dto.setSongId(aSong.getId());
-
-		dto.setDiscNumber(aSong.getDiscNumber());
-		dto.setDiscCount(aSong.getDiscCount());
-
-		dto.setTrackNumber(aSong.getTrackNumber());
-		dto.setTrackCount(aSong.getTrackCount());
-
-		dto.setTitle(aSong.getName());
-
-		dto.setArtist(aSong.getArtistName());
-		dto.setAlbumArtist(aSong.getAlbumArtistName());
-
-		dto.setAlbum(aSong.getAlbumName());
-
-		dto.setYear(aSong.getYear());
-
-		dto.setGenre(aSong.getGenreName());
-
-		StoredFile artwork = aSong.getArtwork();
-
-		if (artwork == null) {
-			artwork = aSong.getAlbum().getArtwork();
-		}
-
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/" + artwork.getId()).build().toUriString());
-		}
-
-		dto.setPath(aSong.getPath());
-		dto.setFormat(aSong.getFormat());
-		dto.setMimeType(aSong.getMimeType());
-		dto.setSize(aSong.getSize());
-		dto.setDuration(aSong.getDuration());
-		dto.setBitRate(aSong.getBitRate());
-
-		return dto;
-	}
 }

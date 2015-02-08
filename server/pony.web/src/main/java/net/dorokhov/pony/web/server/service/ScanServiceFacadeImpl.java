@@ -7,14 +7,14 @@ import net.dorokhov.pony.core.library.ScanEditCommand;
 import net.dorokhov.pony.core.library.ScanJobService;
 import net.dorokhov.pony.core.library.ScanService;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
+import net.dorokhov.pony.web.server.exception.ArtworkUploadNotFoundException;
+import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
+import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.shared.ListDto;
 import net.dorokhov.pony.web.shared.ScanJobDto;
 import net.dorokhov.pony.web.shared.ScanResultDto;
 import net.dorokhov.pony.web.shared.ScanStatusDto;
 import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
-import net.dorokhov.pony.web.server.exception.ArtworkUploadNotFoundException;
-import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
-import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +37,8 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	private UploadService uploadService;
 
+	private DtoConverter dtoConverter;
+
 	@Autowired
 	public void setScanJobService(ScanJobService aScanJobService) {
 		scanJobService = aScanJobService;
@@ -52,10 +54,15 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		uploadService = aUploadService;
 	}
 
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
+	}
+
 	@Override
 	@Transactional
 	public ScanJobDto startScanJob() throws LibraryNotDefinedException {
-		return ScanJobDto.valueOf(scanJobService.startScanJob());
+		return dtoConverter.scanJobToDto(scanJobService.startScanJob());
 	}
 
 	@Override
@@ -108,7 +115,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 			}
 		}
 
-		return ScanJobDto.valueOf(scanJobService.startEditJob(commandList));
+		return dtoConverter.scanJobToDto(scanJobService.startEditJob(commandList));
 	}
 
 	@Override
@@ -125,10 +132,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "updateDate"));
 
-		return ListDto.valueOf(page, new ListDto.ContentConverter<ScanJob, ScanJobDto>() {
+		return dtoConverter.listToDto(page, new DtoConverter.ListConverter<ScanJob, ScanJobDto>() {
 			@Override
 			public ScanJobDto convert(ScanJob aItem) {
-				return ScanJobDto.valueOf(aItem);
+				return dtoConverter.scanJobToDto(aItem);
 			}
 		});
 	}
@@ -143,7 +150,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 			throw new ObjectNotFoundException(aId, "errorScanJobNotFound", "Scan job [" + aId + "] not found.");
 		}
 
-		return ScanJobDto.valueOf(job);
+		return dtoConverter.scanJobToDto(job);
 	}
 
 	@Override
@@ -160,10 +167,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanResult> page = scanService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));
 
-		return ListDto.valueOf(page, new ListDto.ContentConverter<ScanResult, ScanResultDto>() {
+		return dtoConverter.listToDto(page, new DtoConverter.ListConverter<ScanResult, ScanResultDto>() {
 			@Override
 			public ScanResultDto convert(ScanResult aItem) {
-				return ScanResultDto.valueOf(aItem);
+				return dtoConverter.scanResultToDto(aItem);
 			}
 		});
 	}
@@ -178,7 +185,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 			throw new ObjectNotFoundException(aId, "errorScanResultNotFound", "Scan result [" + aId + "] not found.");
 		}
 
-		return ScanResultDto.valueOf(result);
+		return dtoConverter.scanResultToDto(result);
 	}
 
 	@Override
@@ -187,7 +194,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		ScanService.Status status = scanService.getStatus();
 
-		return status != null ? ScanStatusDto.valueOf(status) : null;
+		return status != null ? dtoConverter.scanStatusToDto(status) : null;
 	}
 
 }

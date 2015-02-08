@@ -1,11 +1,12 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.ScanJob;
-import net.dorokhov.pony.core.domain.ScanType;
-
 import java.util.Date;
 
 public class ScanJobDto {
+
+	public static enum Status {
+		STARTING, STARTED, COMPLETE, FAILED, INTERRUPTED
+	}
 
 	private Long id;
 
@@ -13,9 +14,9 @@ public class ScanJobDto {
 
 	private Date updateDate;
 
-	private ScanType scanType;
+	private ScanTypeDto scanType;
 
-	private ScanJob.Status status;
+	private Status status;
 
 	private LogMessageDto logMessage;
 
@@ -45,19 +46,19 @@ public class ScanJobDto {
 		updateDate = aUpdateDate;
 	}
 
-	public ScanType getScanType() {
+	public ScanTypeDto getScanType() {
 		return scanType;
 	}
 
-	public void setScanType(ScanType aScanType) {
+	public void setScanType(ScanTypeDto aScanType) {
 		scanType = aScanType;
 	}
 
-	public ScanJob.Status getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(ScanJob.Status aStatus) {
+	public void setStatus(Status aStatus) {
 		status = aStatus;
 	}
 
@@ -75,26 +76,6 @@ public class ScanJobDto {
 
 	public void setScanResult(ScanResultDto aScanResult) {
 		scanResult = aScanResult;
-	}
-
-	public static ScanJobDto valueOf(ScanJob aScanJob) {
-
-		ScanJobDto dto = new ScanJobDto();
-
-		dto.setId(aScanJob.getId());
-		dto.setCreationDate(aScanJob.getCreationDate());
-		dto.setUpdateDate(aScanJob.getUpdateDate());
-		dto.setScanType(aScanJob.getScanType());
-		dto.setStatus(aScanJob.getStatus());
-
-		if (aScanJob.getLogMessage() != null) {
-			dto.setLogMessage(LogMessageDto.valueOf(aScanJob.getLogMessage()));
-		}
-		if (aScanJob.getScanResult() != null) {
-			dto.setScanResult(ScanResultDto.valueOf(aScanJob.getScanResult()));
-		}
-
-		return dto;
 	}
 
 }

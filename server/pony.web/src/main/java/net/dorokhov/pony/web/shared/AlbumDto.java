@@ -1,9 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.Album;
-import net.dorokhov.pony.core.domain.StoredFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 public class AlbumDto {
 
 	private Long id;
@@ -74,27 +70,6 @@ public class AlbumDto {
 
 	public void setArtistName(String aArtistName) {
 		artistName = aArtistName;
-	}
-
-	public static AlbumDto valueOf(Album aAlbum) {
-
-		AlbumDto dto = new AlbumDto();
-
-		dto.setId(aAlbum.getId());
-		dto.setName(aAlbum.getName());
-		dto.setYear(aAlbum.getYear());
-
-		dto.setArtist(aAlbum.getArtist().getId());
-		dto.setArtistName(aAlbum.getArtist().getName());
-
-		StoredFile artwork = aAlbum.getArtwork();
-
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/" + artwork.getId()).build().toUriString());
-		}
-
-		return dto;
 	}
 
 }

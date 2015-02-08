@@ -1,15 +1,11 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.ScanType;
-import net.dorokhov.pony.core.library.ScanService;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScanStatusDto {
 
-	private ScanType scanType;
+	private ScanTypeDto scanType;
 
 	private List<String> files;
 
@@ -21,11 +17,11 @@ public class ScanStatusDto {
 
 	private double progress;
 
-	public ScanType getScanType() {
+	public ScanTypeDto getScanType() {
 		return scanType;
 	}
 
-	public void setScanType(ScanType aScanType) {
+	public void setScanType(ScanTypeDto aScanType) {
 		scanType = aScanType;
 	}
 
@@ -72,23 +68,6 @@ public class ScanStatusDto {
 
 	public void setProgress(double aProgress) {
 		progress = aProgress;
-	}
-
-	public static ScanStatusDto valueOf(ScanService.Status aScanStatus) {
-
-		ScanStatusDto dto = new ScanStatusDto();
-
-		dto.setScanType(aScanStatus.getScanType());
-		dto.setStep(aScanStatus.getStep());
-		dto.setTotalSteps(aScanStatus.getTotalSteps());
-		dto.setStepCode(aScanStatus.getStepCode());
-		dto.setProgress(aScanStatus.getProgress());
-
-		for (File file : aScanStatus.getFiles()) {
-			dto.getFiles().add(file.getAbsolutePath());
-		}
-
-		return dto;
 	}
 
 }

@@ -1,19 +1,20 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.LogMessage;
-import net.dorokhov.pony.core.domain.LogMessageArgument;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class LogMessageDto {
 
+	public static enum Type {
+		DEBUG, INFO, WARN, ERROR
+	}
+
 	private Long id;
 
 	private Date date;
 
-	private LogMessage.Type type;
+	private Type type;
 
 	private String code;
 
@@ -39,11 +40,11 @@ public class LogMessageDto {
 		date = aDate;
 	}
 
-	public LogMessage.Type getType() {
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(LogMessage.Type aType) {
+	public void setType(Type aType) {
 		type = aType;
 	}
 
@@ -82,24 +83,6 @@ public class LogMessageDto {
 
 	public void setArguments(List<String> aArguments) {
 		arguments = aArguments;
-	}
-
-	public static LogMessageDto valueOf(LogMessage aLogMessage) {
-
-		LogMessageDto dto = new LogMessageDto();
-
-		dto.setId(aLogMessage.getId());
-		dto.setDate(aLogMessage.getDate());
-		dto.setType(aLogMessage.getType());
-		dto.setCode(aLogMessage.getCode());
-		dto.setText(aLogMessage.getText());
-		dto.setDetails(aLogMessage.getDetails());
-
-		for (LogMessageArgument argument : aLogMessage.getArguments()) {
-			dto.getArguments().add(argument.getValue());
-		}
-
-		return dto;
 	}
 
 }

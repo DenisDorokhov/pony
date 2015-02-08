@@ -46,6 +46,8 @@ public class UploadServiceImpl implements UploadService {
 
 	private ChecksumService checksumService;
 
+	private DtoConverter dtoConverter;
+
 	@Autowired
 	public void setInstallationService(InstallationService aInstallationService) {
 		installationService = aInstallationService;
@@ -59,6 +61,11 @@ public class UploadServiceImpl implements UploadService {
 	@Autowired
 	public void setChecksumService(ChecksumService aChecksumService) {
 		checksumService = aChecksumService;
+	}
+
+	@Autowired
+	public void setDtoConverter(DtoConverter aDtoConverter) {
+		dtoConverter = aDtoConverter;
 	}
 
 	@Override
@@ -108,13 +115,13 @@ public class UploadServiceImpl implements UploadService {
 			log.debug("Storing uploaded artwork " + artwork + ".");
 		}
 
-		return ArtworkUploadDto.valueOf(artwork);
+		return dtoConverter.artworkToUploadDto(artwork);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public ArtworkUploadDto getArtworkUpload(Long aId) throws ArtworkUploadNotFoundException {
-		return ArtworkUploadDto.valueOf(doGetArtworkUpload(aId));
+		return dtoConverter.artworkToUploadDto(doGetArtworkUpload(aId));
 	}
 
 	@Override

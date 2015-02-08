@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.client.service;
 
+import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import org.fusesource.restygwt.client.MethodCallback;
@@ -14,6 +15,6 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/authenticate")
-	void authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<String>> aCallback);
+	void authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
 
 }

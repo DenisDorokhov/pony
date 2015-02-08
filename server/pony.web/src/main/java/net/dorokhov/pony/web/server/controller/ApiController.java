@@ -3,17 +3,17 @@ package net.dorokhov.pony.web.server.controller;
 import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.*;
-import net.dorokhov.pony.web.shared.*;
-import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
-import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
-import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
-import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import net.dorokhov.pony.web.server.exception.ArtworkUploadFormatException;
 import net.dorokhov.pony.web.server.exception.ArtworkUploadNotFoundException;
 import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.server.security.UserTokenReader;
 import net.dorokhov.pony.web.server.service.*;
+import net.dorokhov.pony.web.shared.*;
+import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
+import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
+import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -97,7 +97,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public ResponseDto<String> authenticate(@Valid @RequestBody CredentialsDto aCredentials) throws InvalidCredentialsException {
+	public ResponseDto<AuthenticationDto> authenticate(@Valid @RequestBody CredentialsDto aCredentials) throws InvalidCredentialsException {
 		return responseBuilder.build(userServiceFacade.authenticate(aCredentials));
 	}
 

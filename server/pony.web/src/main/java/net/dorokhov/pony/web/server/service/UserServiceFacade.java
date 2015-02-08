@@ -1,12 +1,13 @@
 package net.dorokhov.pony.web.server.service;
 
 import net.dorokhov.pony.core.user.exception.*;
+import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
+import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
-import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface UserServiceFacade {
 
 	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException;
 
-	public String authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
+	public AuthenticationDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
 
 	public void logout(String aToken) throws InvalidTokenException;
 

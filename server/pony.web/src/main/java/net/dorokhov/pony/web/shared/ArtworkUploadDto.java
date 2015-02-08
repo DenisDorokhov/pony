@@ -1,8 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.StoredFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 public class ArtworkUploadDto {
 
 	private Long id;
@@ -25,13 +22,4 @@ public class ArtworkUploadDto {
 		url = aUrl;
 	}
 
-	public static ArtworkUploadDto valueOf(StoredFile aArtwork) {
-
-		ArtworkUploadDto dto = new ArtworkUploadDto();
-
-		dto.setId(aArtwork.getId());
-		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/" + aArtwork.getId()).build().toUriString());
-
-		return dto;
-	}
 }

@@ -9,6 +9,8 @@ import com.gwtplatform.mvp.client.gin.DefaultModule;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.*;
 import net.dorokhov.pony.web.client.service.ApiService;
+import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
+import net.dorokhov.pony.web.client.service.AuthenticationStatus;
 
 public class ClientModule extends AbstractPresenterModule {
 
@@ -31,6 +33,9 @@ public class ClientModule extends AbstractPresenterModule {
 		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.LOGIN);
 
 		bind(ApiService.class).in(Singleton.class);
+
+		bind(AuthenticationStatus.class).in(Singleton.class);
+		bind(AuthenticationDispatcherFilter.class).in(Singleton.class);
 	}
 
 }

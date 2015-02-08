@@ -1,7 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.Installation;
-
 public class InstallationDto {
 
 	private String version;
@@ -34,15 +32,6 @@ public class InstallationDto {
 		}
 
 		return false;
-	}
-
-	public static InstallationDto valueOf(Installation aInstallation) {
-
-		InstallationDto dto = new InstallationDto();
-
-		dto.setVersion(aInstallation.getVersion());
-
-		return dto;
 	}
 
 }

@@ -1,9 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.Song;
-import net.dorokhov.pony.core.domain.StoredFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 public class SongDto {
 
 	private Long id;
@@ -164,42 +160,6 @@ public class SongDto {
 
 	public void setAlbumYear(Integer aAlbumYear) {
 		albumYear = aAlbumYear;
-	}
-
-	public static SongDto valueOf(Song aSong) {
-
-		SongDto dto = new SongDto();
-
-		dto.setId(aSong.getId());
-		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/audio/" + aSong.getId()).build().toUriString());
-		dto.setDuration(aSong.getDuration());
-		dto.setDiscNumber(aSong.getDiscNumber());
-		dto.setTrackNumber(aSong.getTrackNumber());
-		dto.setName(aSong.getName());
-
-		dto.setGenre(aSong.getGenre().getId());
-		dto.setGenreName(aSong.getGenre().getName());
-
-		dto.setArtist(aSong.getAlbum().getArtist().getId());
-		dto.setArtistName(aSong.getAlbum().getArtist().getName());
-
-		dto.setAlbum(aSong.getAlbum().getId());
-		dto.setAlbumName(aSong.getAlbum().getName());
-		dto.setAlbumArtistName(aSong.getAlbumArtistName());
-		dto.setAlbumYear(aSong.getAlbum().getYear());
-
-		StoredFile artwork = aSong.getArtwork();
-
-		if (artwork == null) {
-			artwork = aSong.getAlbum().getArtwork();
-		}
-
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/" + artwork.getId()).build().toUriString());
-		}
-
-		return dto;
 	}
 
 }

@@ -1,8 +1,5 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.ScanResult;
-import net.dorokhov.pony.core.domain.ScanType;
-
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +9,7 @@ public class ScanResultDto {
 
 	private Date date;
 
-	private ScanType scanType;
+	private ScanTypeDto scanType;
 
 	private List<String> targetPaths;
 	private List<String> failedPaths;
@@ -65,11 +62,11 @@ public class ScanResultDto {
 		date = aDate;
 	}
 
-	public ScanType getScanType() {
+	public ScanTypeDto getScanType() {
 		return scanType;
 	}
 
-	public void setScanType(ScanType aScanType) {
+	public void setScanType(ScanTypeDto aScanType) {
 		scanType = aScanType;
 	}
 
@@ -271,53 +268,6 @@ public class ScanResultDto {
 
 	public void setDeletedArtworkCount(Long aDeletedArtworkCount) {
 		deletedArtworkCount = aDeletedArtworkCount;
-	}
-
-	public static ScanResultDto valueOf(ScanResult aScanResult) {
-
-		ScanResultDto dto = new ScanResultDto();
-
-		dto.setId(aScanResult.getId());
-
-		dto.setDate(aScanResult.getDate());
-		dto.setScanType(aScanResult.getScanType());
-
-		dto.setTargetPaths(aScanResult.getTargetPaths());
-		dto.setFailedPaths(aScanResult.getFailedPaths());
-
-		dto.setDuration(aScanResult.getDuration());
-
-		dto.setSongSize(aScanResult.getSongSize());
-		dto.setArtworkSize(aScanResult.getArtworkSize());
-
-		dto.setGenreCount(aScanResult.getGenreCount());
-		dto.setArtistCount(aScanResult.getArtistCount());
-		dto.setAlbumCount(aScanResult.getAlbumCount());
-		dto.setSongCount(aScanResult.getSongCount());
-		dto.setArtworkCount(aScanResult.getArtworkCount());
-
-		dto.setProcessedSongCount(aScanResult.getProcessedSongCount());
-
-		dto.setCreatedArtistCount(aScanResult.getCreatedArtistCount());
-		dto.setUpdatedArtistCount(aScanResult.getUpdatedArtistCount());
-		dto.setDeletedArtistCount(aScanResult.getDeletedArtistCount());
-
-		dto.setCreatedAlbumCount(aScanResult.getCreatedAlbumCount());
-		dto.setUpdatedAlbumCount(aScanResult.getUpdatedAlbumCount());
-		dto.setDeletedAlbumCount(aScanResult.getDeletedAlbumCount());
-
-		dto.setCreatedGenreCount(aScanResult.getCreatedGenreCount());
-		dto.setUpdatedGenreCount(aScanResult.getUpdatedGenreCount());
-		dto.setDeletedGenreCount(aScanResult.getDeletedGenreCount());
-
-		dto.setCreatedSongCount(aScanResult.getCreatedSongCount());
-		dto.setUpdatedSongCount(aScanResult.getUpdatedSongCount());
-		dto.setDeletedSongCount(aScanResult.getDeletedSongCount());
-
-		dto.setCreatedArtworkCount(aScanResult.getCreatedArtworkCount());
-		dto.setDeletedArtworkCount(aScanResult.getDeletedArtworkCount());
-
-		return dto;
 	}
 
 }
