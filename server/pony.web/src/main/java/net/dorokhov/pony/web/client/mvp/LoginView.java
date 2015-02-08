@@ -67,6 +67,11 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 		updateErrors();
 	}
 
+	@Override
+	public void setFocus() {
+		emailField.setFocus(true);
+	}
+
 	@UiHandler("loginButton")
 	void onSaveClick(ClickEvent aEvent) {
 		requestLogin();

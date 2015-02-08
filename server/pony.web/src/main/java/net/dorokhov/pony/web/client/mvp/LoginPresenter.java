@@ -39,6 +39,8 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 		public void clearErrors();
 
+		public void setFocus();
+
 	}
 
 	private final Logger log = Logger.getLogger(getClass().getName());
@@ -62,6 +64,14 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 		messages = aMessages;
 
 		getView().setUiHandlers(this);
+	}
+
+	@Override
+	protected void onReveal() {
+
+		super.onReveal();
+
+		getView().setFocus();
 	}
 
 	@Override
