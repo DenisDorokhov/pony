@@ -2,24 +2,23 @@ package net.dorokhov.pony.web.client.service;
 
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.inject.Inject;
-import net.dorokhov.pony.web.client.common.AuthenticationStatus;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.dispatcher.DispatcherFilter;
 
 public class AuthenticationDispatcherFilter implements DispatcherFilter {
 
-	private final AuthenticationStatus authenticationStatus;
+	private final AuthenticationManager authenticationManager;
 
 	@Inject
-	public AuthenticationDispatcherFilter(AuthenticationStatus aAuthenticationStatus) {
-		authenticationStatus = aAuthenticationStatus;
+	public AuthenticationDispatcherFilter(AuthenticationManager aAuthenticationManager) {
+		authenticationManager = aAuthenticationManager;
 	}
 
 	@Override
 	public boolean filter(Method aMethod, RequestBuilder aBuilder) {
 
-		if (authenticationStatus.isAuthenticated()) {
-			aBuilder.setHeader("X-Auth-Token", authenticationStatus.getToken());
+		if (authenticationManager.isAuthenticated()) {
+			aBuilder.setHeader("X-Auth-Token", authenticationManager.getToken());
 		}
 
 		return true;

@@ -10,7 +10,7 @@ import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.*;
 import net.dorokhov.pony.web.client.service.ApiService;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
-import net.dorokhov.pony.web.client.common.AuthenticationStatus;
+import net.dorokhov.pony.web.client.service.AuthenticationManager;
 
 public class ClientModule extends AbstractPresenterModule {
 
@@ -24,6 +24,7 @@ public class ClientModule extends AbstractPresenterModule {
 		bindPresenter(LibraryPresenter.class, LibraryPresenter.MyView.class, LibraryView.class, LibraryPresenter.MyProxy.class);
 
 		bindSingletonPresenterWidget(PlayerPresenter.class, PlayerPresenter.MyView.class, PlayerView.class);
+		bindSingletonPresenterWidget(ToolbarPresenter.class, ToolbarPresenter.MyView.class, ToolbarView.class);
 		bindSingletonPresenterWidget(LibraryContentPresenter.class, LibraryContentPresenter.MyView.class, LibraryContentView.class);
 
 		bindPresenter(ErrorPresenter.class, ErrorPresenter.MyView.class, ErrorView.class, ErrorPresenter.MyProxy.class);
@@ -34,7 +35,7 @@ public class ClientModule extends AbstractPresenterModule {
 
 		bind(ApiService.class).in(Singleton.class);
 
-		bind(AuthenticationStatus.class).in(Singleton.class);
+		bind(AuthenticationManager.class).in(Singleton.class);
 		bind(AuthenticationDispatcherFilter.class).in(Singleton.class);
 	}
 

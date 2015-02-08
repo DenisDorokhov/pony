@@ -18,20 +18,25 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 	public interface MyView extends View {}
 
 	public static final Object SLOT_PLAYER = new Object();
+	public static final Object SLOT_TOOLBAR = new Object();
 	public static final Object SLOT_CONTENT = new Object();
 
 	private final PlayerPresenter playerPresenter;
+
+	private final ToolbarPresenter toolbarPresenter;
 
 	private final LibraryContentPresenter contentPresenter;
 
 	@Inject
 	public LibraryPresenter(EventBus aEventBus, MyView aView, MyProxy aProxy,
 							PlayerPresenter aPlayerPresenter,
+							ToolbarPresenter aToolbarPresenter,
 							LibraryContentPresenter aLibraryContentPresenter) {
 
-		super(aEventBus, aView, aProxy, RevealType.RootLayout);
+		super(aEventBus, aView, aProxy, RevealType.Root);
 
 		playerPresenter = aPlayerPresenter;
+		toolbarPresenter = aToolbarPresenter;
 		contentPresenter = aLibraryContentPresenter;
 	}
 
@@ -41,6 +46,7 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 		super.onBind();
 
 		setInSlot(SLOT_PLAYER, playerPresenter);
+		setInSlot(SLOT_TOOLBAR, toolbarPresenter);
 		setInSlot(SLOT_CONTENT, contentPresenter);
 	}
 

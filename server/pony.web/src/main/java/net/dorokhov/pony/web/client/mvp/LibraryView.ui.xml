@@ -1,16 +1,21 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <g:DockLayoutPanel unit="PX">
-
-        <g:north size="82">
-            <g:FlowPanel ui:field="playerContainer" />
-        </g:north>
-
-        <g:center>
-            <g:SimpleLayoutPanel ui:field="contentContainer" />
-        </g:center>
-
-    </g:DockLayoutPanel>
+    <b:Container fluid="true">
+        <b:Row>
+            <b:Column size="MD_9">
+                <g:SimplePanel ui:field="playerContainer" />
+            </b:Column>
+            <b:Column size="MD_3">
+                <g:SimplePanel ui:field="toolbarContainer" />
+            </b:Column>
+        </b:Row>
+        <b:Row>
+            <b:Column size="MD_12">
+                <g:SimplePanel ui:field="contentContainer" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>

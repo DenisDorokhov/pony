@@ -9,11 +9,13 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import net.dorokhov.pony.web.client.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.service.ApiService;
-import net.dorokhov.pony.web.client.common.AuthenticationStatus;
+import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
@@ -45,22 +47,25 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
+	private final PlaceManager placeManager;
+
 	private final ApiService apiService;
 
-	private final AuthenticationStatus authenticationStatus;
+	private final AuthenticationManager authenticationManager;
 
 	private final Messages messages;
 
 	@Inject
-	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy,
+	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager aPlaceManager,
 						  ApiService aApiService,
-						  AuthenticationStatus aAuthenticationStatus,
+						  AuthenticationManager aAuthenticationManager,
 						  Messages aMessages) {
 
-		super(eventBus, view, proxy, RevealType.RootLayout);
+		super(eventBus, view, proxy, RevealType.Root);
 
+		placeManager = aPlaceManager;
 		apiService = aApiService;
-		authenticationStatus = aAuthenticationStatus;
+		authenticationManager = aAuthenticationManager;
 		messages = aMessages;
 
 		getView().setUiHandlers(this);
@@ -92,16 +97,20 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 			public void onSuccess(Method aMethod, ResponseDto<AuthenticationDto> aResponse) {
 
 				if (aResponse.isSuccessful()) {
-					authenticationStatus.updateAuthentication(aResponse.getData());
+					authenticationManager.authenticate(aResponse.getData());
 				} else {
-					authenticationStatus.clearAuthentication();
+					authenticationManager.clearAuthentication();
 				}
 
-				if (authenticationStatus.isAuthenticated()) {
+				if (authenticationManager.isAuthenticated()) {
 
 					getView().clearErrors();
 
-					log.info("Authentication [" + authenticationStatus.getCurrentUser().getEmail() + "] successful.");
+					log.info("Authentication [" + authenticationManager.getCurrentUser().getEmail() + "] successful.");
+
+					PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
+
+					placeManager.revealPlace(requestBuilder.build());
 
 				} else {
 
