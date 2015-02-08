@@ -9,14 +9,24 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import net.dorokhov.pony.web.client.control.ErrorAwareForm;
 import net.dorokhov.pony.web.shared.CredentialsDto;
+import net.dorokhov.pony.web.shared.ErrorDto;
 import org.gwtbootstrap3.client.ui.Input;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements LoginPresenter.MyView {
 
 	interface MyUiBinder extends UiBinder<Widget, LoginView> {}
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+
+	private List<ErrorDto> errors;
+
+	@UiField
+	ErrorAwareForm form;
 
 	@UiField
 	Input emailField;
@@ -25,7 +35,36 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	Input passwordField;
 
 	public LoginView() {
+
 		initWidget(uiBinder.createAndBindUi(this));
+
+		updateErrors();
+	}
+
+	@Override
+	public List<ErrorDto> getErrors() {
+
+		if (errors == null) {
+			errors = new ArrayList<>();
+		}
+
+		return errors;
+	}
+
+	@Override
+	public void setErrors(List<ErrorDto> aErrors) {
+
+		errors = aErrors;
+
+		updateErrors();
+	}
+
+	@Override
+	public void clearErrors() {
+
+		getErrors().clear();
+
+		updateErrors();
 	}
 
 	@UiHandler("loginButton")
@@ -38,6 +77,10 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 		if (aEvent.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			requestLogin();
 		}
+	}
+
+	private void updateErrors() {
+		form.setErrors(getErrors());
 	}
 
 	private void requestLogin() {

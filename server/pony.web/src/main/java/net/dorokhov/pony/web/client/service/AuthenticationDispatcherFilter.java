@@ -2,6 +2,7 @@ package net.dorokhov.pony.web.client.service;
 
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.inject.Inject;
+import net.dorokhov.pony.web.client.common.AuthenticationStatus;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.dispatcher.DispatcherFilter;
 

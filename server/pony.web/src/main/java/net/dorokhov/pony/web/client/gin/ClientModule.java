@@ -10,7 +10,7 @@ import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.*;
 import net.dorokhov.pony.web.client.service.ApiService;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
-import net.dorokhov.pony.web.client.service.AuthenticationStatus;
+import net.dorokhov.pony.web.client.common.AuthenticationStatus;
 
 public class ClientModule extends AbstractPresenterModule {
 

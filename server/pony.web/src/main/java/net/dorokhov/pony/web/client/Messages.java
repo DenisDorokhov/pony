@@ -4,9 +4,13 @@ import com.google.gwt.core.client.GWT;
 
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
-	public static final Messages IMPL = GWT.create(Messages.class);
+	public static final Messages INSTANCE = GWT.create(Messages.class);
 
 	public String titlePrefix();
+
+	public String errorsHeader();
+
+	public String loginAlertUnexpectedError();
 
 	public String loginViewHeader();
 	public String loginViewEmail();

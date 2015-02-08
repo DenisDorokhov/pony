@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.client.service;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
+import net.dorokhov.pony.web.client.common.AuthenticationStatus;
 import net.dorokhov.pony.web.shared.RoleDto;
 
 @DefaultGatekeeper
