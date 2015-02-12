@@ -12,7 +12,7 @@
 
     <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
 
-	<set-property name="gwt.logging.logLevel" value="FINE" />
+	<set-property name="gwt.logging.logLevel" value="INFO" />
 	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 
 	<inherits name='com.gwtplatform.mvp.MvpWithEntryPoint'/>

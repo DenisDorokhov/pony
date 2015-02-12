@@ -60,6 +60,12 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	}
 
 	@Override
+	public void clearForm() {
+		emailField.setText("");
+		passwordField.setText("");
+	}
+
+	@Override
 	public void clearErrors() {
 
 		getErrors().clear();

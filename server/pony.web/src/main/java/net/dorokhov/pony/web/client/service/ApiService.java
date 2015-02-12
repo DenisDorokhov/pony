@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.client.service;
 
+import com.google.gwt.http.client.Request;
 import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
@@ -17,10 +18,14 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/authenticate")
-	void authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+	Request authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+
+	@POST
+	@Path("/logout")
+	Request logout(MethodCallback<ResponseDto<Object>> aCallback);
 
 	@GET
 	@Path("/currentUser")
-	void getCurrentUser(MethodCallback<ResponseDto<UserDto>> aCallback);
+	Request getCurrentUser(MethodCallback<ResponseDto<UserDto>> aCallback);
 
 }

@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
@@ -12,19 +11,15 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import net.dorokhov.pony.web.client.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
-import net.dorokhov.pony.web.client.service.ApiService;
+import net.dorokhov.pony.web.client.common.OperationCallback;
+import net.dorokhov.pony.web.client.common.OperationRequest;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
-import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
-import net.dorokhov.pony.web.shared.ResponseDto;
-import org.fusesource.restygwt.client.Method;
-import org.fusesource.restygwt.client.MethodCallback;
+import net.dorokhov.pony.web.shared.UserDto;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresenter.MyProxy> implements LoginUiHandlers {
 
@@ -39,34 +34,27 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 		public void setErrors(List<ErrorDto> aErrors);
 
+		public void clearForm();
 		public void clearErrors();
 
 		public void setFocus();
 
 	}
 
-	private final Logger log = Logger.getLogger(getClass().getName());
-
 	private final PlaceManager placeManager;
-
-	private final ApiService apiService;
 
 	private final AuthenticationManager authenticationManager;
 
-	private final Messages messages;
+	private OperationRequest currentRequest;
 
 	@Inject
 	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager aPlaceManager,
-						  ApiService aApiService,
-						  AuthenticationManager aAuthenticationManager,
-						  Messages aMessages) {
+						  AuthenticationManager aAuthenticationManager) {
 
 		super(eventBus, view, proxy, RevealType.Root);
 
 		placeManager = aPlaceManager;
-		apiService = aApiService;
 		authenticationManager = aAuthenticationManager;
-		messages = aMessages;
 
 		getView().setUiHandlers(this);
 	}
@@ -82,42 +70,30 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 	@Override
 	public void onLoginRequested(CredentialsDto aCredentials) {
 
-		log.info("Authenticating...");
+		if (currentRequest != null) {
+			currentRequest.cancel();
+		}
 
-		apiService.authenticate(aCredentials, new MethodCallback<ResponseDto<AuthenticationDto>>() {
+		currentRequest = authenticationManager.authenticate(aCredentials, new OperationCallback<UserDto>() {
 			@Override
-			public void onFailure(Method aMethod, Throwable aThrowable) {
+			public void onSuccess(UserDto aUser) {
 
-				log.severe("Authentication failed because of unexpected error: " + aThrowable.getMessage());
+				getView().clearForm();
+				getView().clearErrors();
 
-				Window.alert(messages.loginAlertUnexpectedError());
+				PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
+
+				placeManager.revealPlace(requestBuilder.build());
+
+				currentRequest = null;
 			}
 
 			@Override
-			public void onSuccess(Method aMethod, ResponseDto<AuthenticationDto> aResponse) {
+			public void onError(List<ErrorDto> aErrors) {
 
-				if (aResponse.isSuccessful()) {
-					authenticationManager.authenticate(aResponse.getData());
-				} else {
-					authenticationManager.clearAuthentication();
-				}
+				getView().setErrors(aErrors);
 
-				if (authenticationManager.isAuthenticated()) {
-
-					getView().clearErrors();
-
-					log.info("Authentication [" + authenticationManager.getCurrentUser().getEmail() + "] successful.");
-
-					PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
-
-					placeManager.revealPlace(requestBuilder.build());
-
-				} else {
-
-					getView().setErrors(aResponse.getErrors());
-
-					log.severe("Authentication failed.");
-				}
+				currentRequest = null;
 			}
 		});
 	}

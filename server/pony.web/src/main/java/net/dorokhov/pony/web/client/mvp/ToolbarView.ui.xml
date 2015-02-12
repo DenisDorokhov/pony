@@ -1,6 +1,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <g:HTMLPanel>Toolbar</g:HTMLPanel>
+    <b:ButtonGroup>
+        <b:Button ui:field="currentUserButton" dataToggle="DROPDOWN" />
+        <b:DropDownMenu>
+            <b:AnchorListItem ui:field="editProfileButton">Edit Profile</b:AnchorListItem>
+            <b:AnchorListItem ui:field="logoutButton">Sign Out</b:AnchorListItem>
+        </b:DropDownMenu>
+    </b:ButtonGroup>
 
 </ui:UiBinder>
