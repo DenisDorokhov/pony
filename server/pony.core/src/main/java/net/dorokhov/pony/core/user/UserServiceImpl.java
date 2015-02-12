@@ -256,18 +256,11 @@ public class UserServiceImpl implements UserService {
 
 			UserTicket ticket = getTicketByToken(aToken);
 
-			Date ticketDate = ticket.getUpdateDate();
-			if (ticketDate == null) {
-				ticketDate = ticket.getCreationDate();
-			}
-
-			long ticketAge = (new Date().getTime() - ticketDate.getTime()) / 1000;
+			long ticketAge = (new Date().getTime() - ticket.getCreationDate().getTime()) / 1000;
 
 			if (ticketAge > ticketLifetime) {
 				throw new InvalidTokenException();
 			}
-
-			ticket = userTicketDao.save(ticket);
 
 			user = ticket.getUser();
 		}
@@ -336,8 +329,7 @@ public class UserServiceImpl implements UserService {
 
 			Date maxDate = new Date(new Date().getTime() - ticketLifetime * 1000);
 
-			userTicketDao.deleteByUpdateDateNullAndCreationDateLessThan(maxDate);
-			userTicketDao.deleteByUpdateDateNotNullAndUpdateDateLessThan(maxDate);
+			userTicketDao.deleteByCreationDateLessThan(maxDate);
 		}
 	}
 

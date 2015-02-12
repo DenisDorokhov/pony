@@ -30,8 +30,7 @@ CREATE TABLE user_ticket (
 
 	secret LONGVARCHAR NOT NULL,
 
-	creation_date TIMESTAMP NOT NULL,
-	update_date TIMESTAMP,
+	date TIMESTAMP NOT NULL,
 
 	user_id BIGINT NOT NULL,
 

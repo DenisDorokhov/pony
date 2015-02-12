@@ -8,7 +8,6 @@ import java.util.Date;
 public interface UserTicketDao extends PagingAndSortingRepository<UserTicket, String> {
 
 	public void deleteByUserId(Long aId);
-	public void deleteByUpdateDateNullAndCreationDateLessThan(Date aMaxCreationDate);
-	public void deleteByUpdateDateNotNullAndUpdateDateLessThan(Date aMaxUpdateDate);
+	public void deleteByCreationDateLessThan(Date aMaxCreationDate);
 
 }
