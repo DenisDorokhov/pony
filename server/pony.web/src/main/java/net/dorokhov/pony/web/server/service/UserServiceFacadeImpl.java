@@ -124,8 +124,8 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public void logout(String aToken) throws InvalidTokenException {
-		userService.logout(aToken);
+	public UserDto logout(String aToken) throws InvalidTokenException {
+		return dtoConverter.userToDto(userService.logout(aToken));
 	}
 
 	@Override

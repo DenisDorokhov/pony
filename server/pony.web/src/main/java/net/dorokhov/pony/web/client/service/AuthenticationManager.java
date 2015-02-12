@@ -5,7 +5,10 @@ import net.dorokhov.pony.web.client.common.MethodCallbackAdapter;
 import net.dorokhov.pony.web.client.common.OperationCallback;
 import net.dorokhov.pony.web.client.common.OperationRequest;
 import net.dorokhov.pony.web.client.common.RequestAdapter;
-import net.dorokhov.pony.web.shared.*;
+import net.dorokhov.pony.web.shared.AuthenticationDto;
+import net.dorokhov.pony.web.shared.CredentialsDto;
+import net.dorokhov.pony.web.shared.ErrorDto;
+import net.dorokhov.pony.web.shared.UserDto;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -104,17 +107,23 @@ public class AuthenticationManager {
 		})));
 	}
 
-	public OperationRequest logout(final OperationCallback<Void> aCallback) {
+	public OperationRequest logout(final OperationCallback<UserDto> aCallback) {
 
-		log.info("Logging out...");
+		UserDto user = getUser();
 
-		OperationRequest request = new RequestAdapter(apiService.logout(new MethodCallbackAdapter<>(new OperationCallback<Object>() {
+		if (user != null) {
+			log.info("Logging out user [" + user.getEmail() + "]...");
+		} else {
+			log.info("Logging out...");
+		}
+
+		OperationRequest request = new RequestAdapter(apiService.logout(new MethodCallbackAdapter<>(new OperationCallback<UserDto>() {
 			@Override
-			public void onSuccess(Object aData) {
+			public void onSuccess(UserDto aUser) {
 
-				log.info("User has logged out.");
+				log.info("User [" + aUser.getEmail() + "] has logged out.");
 
-				aCallback.onSuccess(null);
+				aCallback.onSuccess(aUser);
 			}
 
 			@Override

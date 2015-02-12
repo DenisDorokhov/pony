@@ -102,11 +102,8 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public ResponseDto<Void> logout(ServletRequest aRequest) throws InvalidTokenException {
-
-		userServiceFacade.logout(userTokenReader.readToken(aRequest));
-
-		return responseBuilder.build();
+	public ResponseDto<UserDto> logout(ServletRequest aRequest) throws InvalidTokenException {
+		return responseBuilder.build(userServiceFacade.logout(userTokenReader.readToken(aRequest)));
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.GET)

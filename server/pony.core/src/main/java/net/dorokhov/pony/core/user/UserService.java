@@ -21,7 +21,7 @@ public interface UserService {
 
 	public void authenticate(String aToken) throws InvalidTokenException;
 
-	public void logout(String aToken) throws InvalidTokenException;
+	public User logout(String aToken) throws InvalidTokenException;
 
 	public User getAuthenticatedUser() throws NotAuthenticatedException;
 

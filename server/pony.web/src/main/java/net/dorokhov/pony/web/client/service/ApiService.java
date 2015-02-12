@@ -22,7 +22,7 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/logout")
-	Request logout(MethodCallback<ResponseDto<Object>> aCallback);
+	Request logout(MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@GET
 	@Path("/currentUser")

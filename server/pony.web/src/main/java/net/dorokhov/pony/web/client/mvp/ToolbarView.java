@@ -33,12 +33,12 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	}
 
 	@Override
-	public UserDto getCurrentUser() {
+	public UserDto getUser() {
 		return currentUser;
 	}
 
 	@Override
-	public void setCurrentUser(UserDto aCurrentUser) {
+	public void setUser(UserDto aCurrentUser) {
 
 		currentUser = aCurrentUser;
 

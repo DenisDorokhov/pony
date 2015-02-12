@@ -21,9 +21,9 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	public interface MyView extends View, HasUiHandlers<ToolbarUiHandlers> {
 
-		public UserDto getCurrentUser();
+		public UserDto getUser();
 
-		public void setCurrentUser(UserDto aCurrentUser);
+		public void setUser(UserDto aCurrentUser);
 
 	}
 
@@ -52,7 +52,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 		super.onReveal();
 
-		getView().setCurrentUser(authenticationManager.getUser());
+		getView().setUser(authenticationManager.getUser());
 	}
 
 	@Override
@@ -67,9 +67,9 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 			currentRequest.cancel();
 		}
 
-		currentRequest = authenticationManager.logout(new OperationCallback<Void>() {
+		currentRequest = authenticationManager.logout(new OperationCallback<UserDto>() {
 			@Override
-			public void onSuccess(Void aData) {
+			public void onSuccess(UserDto aUser) {
 
 				PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LOGIN);
 

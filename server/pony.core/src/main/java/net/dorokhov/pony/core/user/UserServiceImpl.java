@@ -281,7 +281,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void logout(String aToken) throws InvalidTokenException {
+	public User logout(String aToken) throws InvalidTokenException {
 
 		UserTicket ticket = getTicketByToken(aToken);
 
@@ -290,6 +290,8 @@ public class UserServiceImpl implements UserService {
 		SecurityContextHolder.clearContext();
 
 		log.info("User [" + ticket.getUser().getEmail() + "] has logged out.");
+
+		return ticket.getUser();
 	}
 
 	@Override
