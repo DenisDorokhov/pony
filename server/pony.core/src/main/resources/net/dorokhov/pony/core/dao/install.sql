@@ -24,7 +24,22 @@ CREATE TABLE user (
 	UNIQUE (email)
 );
 
-CREATE TABLE user_ticket (
+CREATE TABLE access_token (
+
+	id VARCHAR (255) NOT NULL,
+
+	secret LONGVARCHAR NOT NULL,
+
+	date TIMESTAMP NOT NULL,
+
+	user_id BIGINT NOT NULL,
+
+	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE refresh_token (
 
 	id VARCHAR (255) NOT NULL,
 

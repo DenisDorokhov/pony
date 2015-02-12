@@ -17,7 +17,7 @@ public class AuthenticationDispatcherFilter implements DispatcherFilter {
 	@Override
 	public boolean filter(Method aMethod, RequestBuilder aBuilder) {
 
-		String token = authenticationManager.getToken();
+		String token = authenticationManager.getAccessToken();
 
 		if (token != null) {
 			aBuilder.setHeader("X-Auth-Token", token);

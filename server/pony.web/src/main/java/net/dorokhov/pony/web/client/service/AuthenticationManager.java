@@ -11,12 +11,16 @@ import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
 
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
 public class AuthenticationManager {
 
-	private static final String STORAGE_TOKEN_KEY = "AuthenticationStatusProvider.token";
+	private static final String STORAGE_ACCESS_TOKEN_KEY = "AuthenticationStatusProvider.accessToken";
+	private static final String STORAGE_ACCESS_TOKEN_EXPIRATION_KEY = "AuthenticationStatusProvider.accessTokenExpiration";
+
+	private static final String STORAGE_REFRESH_TOKEN_KEY = "AuthenticationStatusProvider.refreshToken";
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -24,7 +28,10 @@ public class AuthenticationManager {
 
 	private Storage storage;
 
-	private String token;
+	private String accessToken;
+	private String refreshToken;
+
+	private Date accessTokenExpiration;
 
 	private UserDto user;
 
@@ -40,13 +47,13 @@ public class AuthenticationManager {
 		return getUser() != null;
 	}
 
-	public String getToken() {
+	public String getAccessToken() {
 
-		if (token == null && storage != null) {
-			token = storage.getItem(STORAGE_TOKEN_KEY);
+		if (accessToken == null) {
+			accessToken = fetchValue(STORAGE_ACCESS_TOKEN_KEY);
 		}
 
-		return token;
+		return accessToken;
 	}
 
 	public UserDto getUser() {
@@ -71,7 +78,7 @@ public class AuthenticationManager {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				setToken(null);
+				setAccessToken(null);
 				setUser(null);
 
 				log.info("Could not update authentication status.");
@@ -89,7 +96,11 @@ public class AuthenticationManager {
 			@Override
 			public void onSuccess(AuthenticationDto aAuthentication) {
 
-				setToken(aAuthentication.getToken());
+				setAccessToken(aAuthentication.getAccessToken());
+				setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
+
+				setRefreshToken(aAuthentication.getAccessToken());
+
 				setUser(aAuthentication.getUser());
 
 				log.info("User [" + aAuthentication.getUser().getEmail() + "] has authenticated.");
@@ -135,27 +146,79 @@ public class AuthenticationManager {
 			}
 		})));
 
-		setToken(null);
+		setAccessToken(null);
 		setUser(null);
 
 		return request;
 	}
 
-	private void setToken(String aToken) {
+	private void setAccessToken(String aAccessToken) {
 
-		token = aToken;
+		accessToken = aAccessToken;
 
-		if (storage != null) {
-			if (token != null) {
-				storage.setItem(STORAGE_TOKEN_KEY, token);
-			} else {
-				storage.removeItem(STORAGE_TOKEN_KEY);
+		storeValue(STORAGE_ACCESS_TOKEN_KEY, accessToken);
+	}
+
+	private Date getAccessTokenExpiration() {
+
+		if (accessTokenExpiration == null) {
+
+			String value = fetchValue(STORAGE_ACCESS_TOKEN_EXPIRATION_KEY);
+
+			if (value != null) {
+				accessTokenExpiration = new Date(Long.valueOf(value));
 			}
 		}
+
+		return accessTokenExpiration;
+	}
+
+	private void setAccessTokenExpiration(Date aExpiration) {
+
+		accessTokenExpiration = aExpiration;
+
+		storeValue(STORAGE_ACCESS_TOKEN_EXPIRATION_KEY, accessTokenExpiration != null ? String.valueOf(accessTokenExpiration.getTime()) : null);
+	}
+
+	private String getRefreshToken() {
+
+		if (refreshToken == null) {
+			refreshToken = fetchValue(STORAGE_REFRESH_TOKEN_KEY);
+		}
+
+		return refreshToken;
+	}
+
+	private void setRefreshToken(String aRefreshToken) {
+
+		refreshToken = aRefreshToken;
+
+		storeValue(STORAGE_REFRESH_TOKEN_KEY, refreshToken);
 	}
 
 	private void setUser(UserDto aUser) {
 		user = aUser;
+	}
+
+	private String fetchValue(String aKey) {
+
+		String value = null;
+
+		if (storage != null) {
+			value = storage.getItem(aKey);
+		}
+
+		return value;
+	}
+
+	private void storeValue(String aKey, String aValue) {
+		if (storage != null) {
+			if (aValue != null) {
+				storage.setItem(aKey, aValue);
+			} else {
+				storage.removeItem(aKey);
+			}
+		}
 	}
 
 }

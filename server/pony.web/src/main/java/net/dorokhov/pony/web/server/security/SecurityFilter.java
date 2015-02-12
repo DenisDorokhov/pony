@@ -49,7 +49,7 @@ public class SecurityFilter extends GenericFilterBean {
 		try {
 			if (token != null && installationService.getInstallation() != null) {
 				try {
-					userService.authenticate(token);
+					userService.authenticateToken(token);
 				} catch (InvalidTokenException e) {
 					log.info("Token [" + token + "] is invalid.");
 				}

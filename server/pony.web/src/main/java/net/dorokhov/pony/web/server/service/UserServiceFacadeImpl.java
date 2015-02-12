@@ -103,23 +103,12 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	@Override
 	@Transactional
 	public AuthenticationDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException {
+		return authenticationToDto(userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword()));
+	}
 
-		String token = userService.authenticate(aCredentials.getEmail(), aCredentials.getPassword());
-
-		User user;
-
-		try {
-			user = userService.getAuthenticatedUser();
-		} catch (NotAuthenticatedException e) {
-			throw new RuntimeException(e);
-		}
-
-		AuthenticationDto dto = new AuthenticationDto();
-
-		dto.setToken(token);
-		dto.setUser(dtoConverter.userToDto(user));
-
-		return dto;
+	@Override
+	public AuthenticationDto refreshToken(String aRefreshToken) throws InvalidTokenException {
+		return authenticationToDto(userService.refreshToken(aRefreshToken));
 	}
 
 	@Override
@@ -145,6 +134,21 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setEmail(aCommand.getEmail());
 
 		return dtoConverter.userToDto(userService.updateAuthenticatedUser(user, aCommand.getOldPassword(), aCommand.getNewPassword()));
+	}
+
+	private AuthenticationDto authenticationToDto(UserService.Authentication aAuthentication) {
+
+		AuthenticationDto dto = new AuthenticationDto();
+
+		dto.setAccessToken(aAuthentication.getAccessToken());
+		dto.setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
+
+		dto.setRefreshToken(aAuthentication.getRefreshToken());
+		dto.setRefreshTokenExpiration(aAuthentication.getRefreshTokenExpiration());
+
+		dto.setUser(dtoConverter.userToDto(aAuthentication.getUser()));
+
+		return dto;
 	}
 
 	private Set<String> dtoToRoles(RoleDto aDto) {

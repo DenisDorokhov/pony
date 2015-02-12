@@ -28,4 +28,8 @@ public interface ApiService extends RestService {
 	@Path("/currentUser")
 	Request getCurrentUser(MethodCallback<ResponseDto<UserDto>> aCallback);
 
+	@POST
+	@Path("/refreshToken")
+	Request refreshToken(MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+
 }

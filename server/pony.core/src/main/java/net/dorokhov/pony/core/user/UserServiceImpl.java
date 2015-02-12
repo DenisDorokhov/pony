@@ -1,9 +1,12 @@
 package net.dorokhov.pony.core.user;
 
+import net.dorokhov.pony.core.dao.RefreshTokenDao;
 import net.dorokhov.pony.core.dao.UserDao;
-import net.dorokhov.pony.core.dao.UserTicketDao;
+import net.dorokhov.pony.core.dao.AccessTokenDao;
+import net.dorokhov.pony.core.domain.RefreshToken;
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.domain.UserTicket;
+import net.dorokhov.pony.core.domain.AccessToken;
+import net.dorokhov.pony.core.domain.common.BaseToken;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
@@ -21,7 +24,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,7 +40,8 @@ public class UserServiceImpl implements UserService {
 
 	private UserDao userDao;
 
-	private UserTicketDao userTicketDao;
+	private AccessTokenDao accessTokenDao;
+	private RefreshTokenDao refreshTokenDao;
 
 	private InstallationService installationService;
 
@@ -46,7 +49,8 @@ public class UserServiceImpl implements UserService {
 
 	private AuthenticationManager authenticationManager;
 
-	private int ticketLifetime;
+	private int accessTokenLifetime;
+	private int refreshTokenLifetime;
 
 	private String debugToken;
 
@@ -56,8 +60,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Autowired
-	public void setUserTicketDao(UserTicketDao aUserTicketDao) {
-		userTicketDao = aUserTicketDao;
+	public void setAccessTokenDao(AccessTokenDao aAccessTokenDao) {
+		accessTokenDao = aAccessTokenDao;
+	}
+
+	@Autowired
+	public void setRefreshTokenDao(RefreshTokenDao aRefreshTokenDao) {
+		refreshTokenDao = aRefreshTokenDao;
 	}
 
 	@Autowired
@@ -76,9 +85,14 @@ public class UserServiceImpl implements UserService {
 		authenticationManager = aAuthenticationManager;
 	}
 
-	@Value("${user.ticketLifetime}")
-	public void setTicketLifetime(int aTicketLifetime) {
-		ticketLifetime = aTicketLifetime;
+	@Value("${user.accessTokenLifetime}")
+	public void setAccessTokenLifetime(int aAccessTokenLifetime) {
+		accessTokenLifetime = aAccessTokenLifetime;
+	}
+
+	@Value("${user.refreshTokenLifetime}")
+	public void setRefreshTokenLifetime(int aRefreshTokenLifetime) {
+		refreshTokenLifetime = aRefreshTokenLifetime;
 	}
 
 	@Value("${user.debugToken}")
@@ -170,7 +184,7 @@ public class UserServiceImpl implements UserService {
 
 				UserDetailsImpl userDetails = new UserDetailsImpl(updatedUser);
 
-				Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+				org.springframework.security.core.Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 				SecurityContextHolder.getContext().setAuthentication(token);
 			}
@@ -202,44 +216,51 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 
-		userTicketDao.deleteByUserId(aId);
+		accessTokenDao.deleteByUserId(aId);
+		refreshTokenDao.deleteByUserId(aId);
 		userDao.delete(aId);
 	}
 
 	@Override
 	@Transactional
-	public String authenticate(String aEmail, String aPassword) throws InvalidCredentialsException {
+	public Authentication authenticate(String aEmail, String aPassword) throws InvalidCredentialsException {
 
-		Authentication authentication = new UsernamePasswordAuthenticationToken(aEmail, aPassword);
+		org.springframework.security.core.Authentication springAuthentication = new UsernamePasswordAuthenticationToken(aEmail, aPassword);
 
 		try {
-			authentication = authenticationManager.authenticate(authentication);
+			springAuthentication = authenticationManager.authenticate(springAuthentication);
 		} catch (AuthenticationException e) {
 			throw new InvalidCredentialsException();
 		}
 
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		UserDetailsImpl userDetails = (UserDetailsImpl) springAuthentication.getPrincipal();
 
-		Token token = new Token();
+		TokenString accessTokenString = new TokenString();
+		AccessToken accessToken = createAccessToken(accessTokenString, userDetails.getUser());
 
-		UserTicket ticket = new UserTicket();
+		TokenString refreshTokenString = new TokenString();
+		RefreshToken refreshToken = createRefreshToken(accessTokenString, userDetails.getUser());
 
-		ticket.setId(token.getTicketId());
-		ticket.setSecret(passwordEncoder.encode(token.getTicketSecret()));
-		ticket.setUser(userDetails.getUser());
+		SecurityContextHolder.getContext().setAuthentication(springAuthentication);
 
-		ticket = userTicketDao.save(ticket);
+		log.info("User [" + userDetails.getUser().getEmail() + "] has authenticated with email and password.");
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+		AuthenticationImpl authentication = new AuthenticationImpl();
 
-		log.info("User [" + ticket.getUser().getEmail() + "] has authenticated.");
+		authentication.setAccessToken(accessTokenString.toString());
+		authentication.setRefreshToken(refreshTokenString.toString());
 
-		return token.toString();
+		authentication.setAccessTokenExpiration(new Date(accessToken.getCreationDate().getTime() + accessTokenLifetime * 1000));
+		authentication.setRefreshTokenExpiration(new Date(refreshToken.getCreationDate().getTime() + refreshTokenLifetime * 1000));
+
+		authentication.setUser(userDetails.getUser());
+
+		return authentication;
 	}
 
 	@Override
 	@Transactional
-	public void authenticate(String aToken) throws InvalidTokenException {
+	public void authenticateToken(String aToken) throws InvalidTokenException {
 
 		User user;
 
@@ -254,44 +275,73 @@ public class UserServiceImpl implements UserService {
 
 		} else {
 
-			UserTicket ticket = getTicketByToken(aToken);
+			AccessToken token = getAccessTokenByString(aToken);
 
-			long ticketAge = (new Date().getTime() - ticket.getCreationDate().getTime()) / 1000;
+			validateTokenAge(token, accessTokenLifetime);
 
-			if (ticketAge > ticketLifetime) {
-				throw new InvalidTokenException();
-			}
-
-			user = ticket.getUser();
+			user = token.getUser();
 		}
 
 		UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-		Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		org.springframework.security.core.Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
 		SecurityContextHolder.getContext().setAuthentication(token);
+
+		log.debug("User [" + userDetails.getUser().getEmail() + "] has authenticated with access token.");
+	}
+
+	@Override
+	@Transactional
+	public Authentication refreshToken(String aRefreshToken) throws InvalidTokenException {
+
+		RefreshToken token = getRefreshTokenByString(aRefreshToken);
+
+		validateTokenAge(token, refreshTokenLifetime);
+
+		refreshTokenDao.delete(token);
+
+		TokenString accessTokenString = new TokenString();
+		AccessToken accessToken = createAccessToken(accessTokenString, token.getUser());
+
+		TokenString refreshTokenString = new TokenString();
+		RefreshToken refreshToken = createRefreshToken(accessTokenString, token.getUser());
+
+		log.info("Token for user [" + token.getUser().getEmail() + "] has been refreshed.");
+
+		AuthenticationImpl authentication = new AuthenticationImpl();
+
+		authentication.setAccessToken(accessTokenString.toString());
+		authentication.setRefreshToken(refreshTokenString.toString());
+
+		authentication.setAccessTokenExpiration(getTokenExpiration(accessToken));
+		authentication.setRefreshTokenExpiration(getTokenExpiration(refreshToken));
+
+		authentication.setUser(token.getUser());
+
+		return authentication;
 	}
 
 	@Override
 	@Transactional
 	public User logout(String aToken) throws InvalidTokenException {
 
-		UserTicket ticket = getTicketByToken(aToken);
+		AccessToken token = getAccessTokenByString(aToken);
 
-		userTicketDao.delete(ticket);
+		accessTokenDao.delete(token);
 
 		SecurityContextHolder.clearContext();
 
-		log.info("User [" + ticket.getUser().getEmail() + "] has logged out.");
+		log.info("User [" + token.getUser().getEmail() + "] has logged out.");
 
-		return ticket.getUser();
+		return token.getUser();
 	}
 
 	@Override
 	@Transactional
 	public User getAuthenticatedUser() throws NotAuthenticatedException {
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
 			throw new NotAuthenticatedException();
@@ -322,71 +372,175 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
-	public void cleanTickets() {
+	public void cleanTokens() {
 		if (installationService.getInstallation() != null) {
 
-			log.debug("Cleaning tickets...");
+			log.debug("Cleaning tokens...");
 
-			Date maxDate = new Date(new Date().getTime() - ticketLifetime * 1000);
+			Date maxAccessTokenDate = new Date(new Date().getTime() - accessTokenLifetime * 1000);
 
-			userTicketDao.deleteByCreationDateLessThan(maxDate);
+			accessTokenDao.deleteByCreationDateLessThan(maxAccessTokenDate);
+
+			Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
+
+			refreshTokenDao.deleteByCreationDateLessThan(maxRefreshTokenDate);
 		}
 	}
 
-	private UserTicket getTicketByToken(String aToken) throws InvalidTokenException {
+	private AccessToken createAccessToken(TokenString aToken, User aUser) {
 
-		Token token;
+		AccessToken token = new AccessToken();
 
-		try {
-			token = Token.valueOf(aToken);
-		} catch (IllegalArgumentException e) {
-			throw new InvalidTokenException();
-		}
+		token.setId(aToken.getTokenId());
+		token.setSecret(passwordEncoder.encode(aToken.getTokenSecret()));
+		token.setUser(aUser);
 
-		UserTicket ticket = userTicketDao.findOne(token.getTicketId());
-
-		if (ticket == null || !passwordEncoder.matches(ticket.getSecret(), passwordEncoder.encode(ticket.getSecret()))) {
-			throw new InvalidTokenException();
-		}
-
-		return ticket;
+		return accessTokenDao.save(token);
 	}
 
-	private static class Token {
+	private RefreshToken createRefreshToken(TokenString aToken, User aUser) {
 
-		private String ticketId;
+		RefreshToken token = new RefreshToken();
 
-		private String ticketSecret;
+		token.setId(aToken.getTokenId());
+		token.setSecret(passwordEncoder.encode(aToken.getTokenSecret()));
+		token.setUser(aUser);
 
-		public Token() {
-			ticketId = UUID.randomUUID().toString().replaceAll("-", "");
-			ticketSecret = RandomStringUtils.random(64, 33, 126, false, false, null, new SecureRandom());
+		return refreshTokenDao.save(token);
+	}
+
+	private void validateTokenAge(BaseToken aToken, long aLifetime) throws InvalidTokenException {
+
+		long tokenAge = (new Date().getTime() - aToken.getCreationDate().getTime()) / 1000;
+
+		if (tokenAge > aLifetime) {
+			throw new InvalidTokenException();
+		}
+	}
+
+	private AccessToken getAccessTokenByString(String aTokenString) throws InvalidTokenException {
+
+		TokenString tokenString = TokenString.valueOf(aTokenString);
+
+		AccessToken token = accessTokenDao.findOne(tokenString.getTokenId());
+
+		if (token == null || !passwordEncoder.matches(token.getSecret(), passwordEncoder.encode(token.getSecret()))) {
+			throw new InvalidTokenException();
 		}
 
-		public Token(String aTicketId, String aTicketSecret) {
-			ticketId = aTicketId;
-			ticketSecret = aTicketSecret;
+		return token;
+	}
+
+	private RefreshToken getRefreshTokenByString(String aTokenString) throws InvalidTokenException {
+
+		TokenString tokenString = TokenString.valueOf(aTokenString);
+
+		RefreshToken token = refreshTokenDao.findOne(tokenString.getTokenId());
+
+		if (token == null || !passwordEncoder.matches(token.getSecret(), passwordEncoder.encode(token.getSecret()))) {
+			throw new InvalidTokenException();
 		}
 
-		public String getTicketId() {
-			return ticketId;
+		return token;
+	}
+
+	private Date getTokenExpiration(BaseToken aToken) {
+		return new Date(aToken.getCreationDate().getTime() + accessTokenLifetime * 1000);
+	}
+
+	private class AuthenticationImpl implements Authentication {
+
+		private String accessToken;
+
+		private Date accessTokenExpiration;
+
+		private String refreshToken;
+
+		private Date refreshTokenExpiration;
+
+		private User user;
+
+		@Override
+		public String getAccessToken() {
+			return accessToken;
 		}
 
-		public String getTicketSecret() {
-			return ticketSecret;
+		public void setAccessToken(String aAccessToken) {
+			accessToken = aAccessToken;
+		}
+
+		@Override
+		public Date getAccessTokenExpiration() {
+			return accessTokenExpiration;
+		}
+
+		public void setAccessTokenExpiration(Date aAccessTokenExpiration) {
+			accessTokenExpiration = aAccessTokenExpiration;
+		}
+
+		@Override
+		public String getRefreshToken() {
+			return refreshToken;
+		}
+
+		public void setRefreshToken(String aRefreshToken) {
+			refreshToken = aRefreshToken;
+		}
+
+		@Override
+		public Date getRefreshTokenExpiration() {
+			return refreshTokenExpiration;
+		}
+
+		public void setRefreshTokenExpiration(Date aRefreshTokenExpiration) {
+			refreshTokenExpiration = aRefreshTokenExpiration;
+		}
+
+		@Override
+		public User getUser() {
+			return user;
+		}
+
+		public void setUser(User aUser) {
+			user = aUser;
+		}
+	}
+
+	private static class TokenString {
+
+		private String tokenId;
+
+		private String tokenSecret;
+
+		public TokenString() {
+			tokenId = UUID.randomUUID().toString().replaceAll("-", "");
+			tokenSecret = RandomStringUtils.random(64, 33, 126, false, false, null, new SecureRandom());
+		}
+
+		public TokenString(String aTokenId, String aTokenSecret) {
+			tokenId = aTokenId;
+			tokenSecret = aTokenSecret;
+		}
+
+		public String getTokenId() {
+			return tokenId;
+		}
+
+		public String getTokenSecret() {
+			return tokenSecret;
 		}
 
 		public String toString() {
-			return ticketId + ticketSecret;
+			return tokenId + tokenSecret;
 		}
 
-		public static Token valueOf(String aString) throws IllegalArgumentException {
+		public static TokenString valueOf(String aString) throws InvalidTokenException {
 
 			if (aString == null || aString.length() < 32) {
-				throw new IllegalArgumentException();
+				throw new InvalidTokenException();
 			}
 
-			return new Token(aString.substring(0, 32), aString.substring(32));
+			return new TokenString(aString.substring(0, 32), aString.substring(32));
 		}
 	}
 

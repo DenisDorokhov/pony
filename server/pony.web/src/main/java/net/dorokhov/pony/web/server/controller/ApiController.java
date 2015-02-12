@@ -111,6 +111,11 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.getAuthenticatedUser());
 	}
 
+	@RequestMapping(value = "/refreshToken/{aRefreshToken}", method = RequestMethod.POST)
+	public ResponseDto<AuthenticationDto> refreshToken(@PathVariable String aRefreshToken) throws InvalidTokenException {
+		return responseBuilder.build(userServiceFacade.refreshToken(aRefreshToken));
+	}
+
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
 	public ResponseDto<UserDto> updateCurrentUser(@Valid @RequestBody UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
@@ -122,8 +127,8 @@ public class ApiController {
 		return responseBuilder.build(songServiceFacade.getArtists());
 	}
 
-	@RequestMapping(value = "/artistSongs/{artistIdOrName}", method = RequestMethod.GET)
-	public ResponseDto<ArtistAlbumsDto> getArtist(@PathVariable("artistIdOrName") String aArtistIdOrName) throws ObjectNotFoundException {
+	@RequestMapping(value = "/artistSongs/{aArtistIdOrName}", method = RequestMethod.GET)
+	public ResponseDto<ArtistAlbumsDto> getArtist(@PathVariable String aArtistIdOrName) throws ObjectNotFoundException {
 		return responseBuilder.build(songServiceFacade.getArtistSongs(aArtistIdOrName));
 	}
 
@@ -152,13 +157,13 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.getAll());
 	}
 
-	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.GET)
-	public ResponseDto<UserDto> getUser(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+	@RequestMapping(value = "/admin/users/{aId}", method = RequestMethod.GET)
+	public ResponseDto<UserDto> getUser(@PathVariable Long aId) throws ObjectNotFoundException {
 		return responseBuilder.build(userServiceFacade.getById(aId));
 	}
 
-	@RequestMapping(value = "/admin/users/{id}", method = RequestMethod.DELETE)
-	public ResponseDto<Void> deleteUser(@PathVariable("id") Long aId) throws UserNotFoundException, UserSelfDeletionException {
+	@RequestMapping(value = "/admin/users/{aId}", method = RequestMethod.DELETE)
+	public ResponseDto<Void> deleteUser(@PathVariable Long aId) throws UserNotFoundException, UserSelfDeletionException {
 
 		userServiceFacade.delete(aId);
 
@@ -207,8 +212,8 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
-	@RequestMapping(value = "/admin/scanJobs/{id}", method = RequestMethod.GET)
-	public ResponseDto<ScanJobDto> getScanJob(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+	@RequestMapping(value = "/admin/scanJobs/{aId}", method = RequestMethod.GET)
+	public ResponseDto<ScanJobDto> getScanJob(@PathVariable Long aId) throws ObjectNotFoundException {
 		return responseBuilder.build(scanServiceFacade.getScanJob(aId));
 	}
 
@@ -218,8 +223,8 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 
-	@RequestMapping(value = "/admin/scanResults/{id}", method = RequestMethod.GET)
-	public ResponseDto<ScanResultDto> getScanResult(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+	@RequestMapping(value = "/admin/scanResults/{aId}", method = RequestMethod.GET)
+	public ResponseDto<ScanResultDto> getScanResult(@PathVariable Long aId) throws ObjectNotFoundException {
 		return responseBuilder.build(scanServiceFacade.getScanResult(aId));
 	}
 
@@ -233,8 +238,8 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.startScanJob());
 	}
 
-	@RequestMapping(value = "/admin/artworkUpload/{id}", method = RequestMethod.GET)
-	public ResponseDto<ArtworkUploadDto> getArtworkUpload(@PathVariable("id") Long aId) throws ObjectNotFoundException {
+	@RequestMapping(value = "/admin/artworkUpload/{aId}", method = RequestMethod.GET)
+	public ResponseDto<ArtworkUploadDto> getArtworkUpload(@PathVariable Long aId) throws ObjectNotFoundException {
 		return responseBuilder.build(uploadService.getArtworkUpload(aId));
 	}
 

@@ -70,11 +70,6 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 		currentRequest = authenticationManager.logout(new OperationCallback<UserDto>() {
 			@Override
 			public void onSuccess(UserDto aUser) {
-
-				PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LOGIN);
-
-				placeManager.revealPlace(requestBuilder.build());
-
 				currentRequest = null;
 			}
 
@@ -83,6 +78,10 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 				currentRequest = null;
 			}
 		});
+
+		PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LOGIN);
+
+		placeManager.revealPlace(requestBuilder.build());
 	}
 
 }

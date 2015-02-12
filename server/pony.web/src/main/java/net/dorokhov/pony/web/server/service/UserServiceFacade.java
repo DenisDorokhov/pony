@@ -24,6 +24,8 @@ public interface UserServiceFacade {
 
 	public AuthenticationDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
 
+	public AuthenticationDto refreshToken(String aRefreshToken) throws InvalidTokenException;
+
 	public UserDto logout(String aToken) throws InvalidTokenException;
 
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException;

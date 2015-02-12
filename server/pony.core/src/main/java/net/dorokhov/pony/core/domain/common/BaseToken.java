@@ -1,12 +1,13 @@
-package net.dorokhov.pony.core.domain;
+package net.dorokhov.pony.core.domain.common;
+
+import net.dorokhov.pony.core.domain.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Entity
-@Table(name = "user_ticket")
-public class UserTicket {
+@MappedSuperclass
+public abstract class BaseToken {
 
 	private String id;
 
@@ -77,7 +78,7 @@ public class UserTicket {
 
 		if (aObj != null && id != null && getClass().equals(aObj.getClass())) {
 
-			UserTicket that = (UserTicket)aObj;
+			BaseToken that = (BaseToken)aObj;
 
 			return id.equals(that.id);
 		}

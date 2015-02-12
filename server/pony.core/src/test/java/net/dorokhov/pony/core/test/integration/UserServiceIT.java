@@ -1,6 +1,6 @@
 package net.dorokhov.pony.core.test.integration;
 
-import net.dorokhov.pony.core.dao.UserTicketDao;
+import net.dorokhov.pony.core.dao.AccessTokenDao;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.test.AbstractIntegrationCase;
 import net.dorokhov.pony.core.user.UserService;
@@ -13,12 +13,12 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 	private UserService userService;
 
-	private UserTicketDao userTicketDao;
+	private AccessTokenDao accessTokenDao;
 
 	@Before
 	public void setUp() throws Exception {
 		userService = context.getBean(UserService.class);
-		userTicketDao = context.getBean(UserTicketDao.class);
+		accessTokenDao = context.getBean(AccessTokenDao.class);
 	}
 
 	@Test
@@ -124,9 +124,9 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		String token = userService.authenticate("test1@test.com", "password1");
+		UserService.Authentication authentication = userService.authenticate("test1@test.com", "password1");
 
-		userService.authenticate(token);
+		userService.authenticateToken(authentication.getAccessToken());
 
 		User user = userService.getAuthenticatedUser();
 
@@ -173,7 +173,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertTrue(isExceptionThrown);
 
-		userService.logout(token);
+		userService.logout(authentication.getAccessToken());
 
 		isExceptionThrown = false;
 
@@ -195,7 +195,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertTrue(isExceptionThrown);
 
-		userService.authenticate("DEBUG");
+		userService.authenticateToken("DEBUG");
 
 		Assert.assertNotNull(userService.getAuthenticatedUser());
 	}
@@ -228,7 +228,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		isExceptionThrown = false;
 
 		try {
-			userService.authenticate("invalidToken");
+			userService.authenticateToken("invalidToken");
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}
@@ -247,17 +247,17 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		String token = userService.authenticate("test1@test.com", "password1");
+		UserService.Authentication authentication = userService.authenticate("test1@test.com", "password1");
 
-		userService.authenticate(token);
-		userService.authenticate(token);
+		userService.authenticateToken(authentication.getAccessToken());
+		userService.authenticateToken(authentication.getAccessToken());
 
 		Thread.sleep(6000);
 
 		isExceptionThrown = false;
 
 		try {
-			userService.authenticate(token);
+			userService.authenticateToken(authentication.getAccessToken());
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}
@@ -272,19 +272,19 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(buildUser(1));
 
-		String token1 = userService.authenticate("test1@test.com", "password1");
-		String token2 = userService.authenticate("test1@test.com", "password1");
+		UserService.Authentication authentication1 = userService.authenticate("test1@test.com", "password1");
+		UserService.Authentication authentication2 = userService.authenticate("test1@test.com", "password1");
 
 		Thread.sleep(6000);
 
-		userService.cleanTickets();
+		userService.cleanTokens();
 
-		Assert.assertEquals(0L, userTicketDao.count());
+		Assert.assertEquals(0L, accessTokenDao.count());
 
 		isExceptionThrown = false;
 
 		try {
-			userService.authenticate(token1);
+			userService.authenticateToken(authentication1.getAccessToken());
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}
@@ -294,7 +294,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		isExceptionThrown = false;
 
 		try {
-			userService.authenticate(token2);
+			userService.authenticateToken(authentication2.getAccessToken());
 		} catch (InvalidTokenException e) {
 			isExceptionThrown = true;
 		}

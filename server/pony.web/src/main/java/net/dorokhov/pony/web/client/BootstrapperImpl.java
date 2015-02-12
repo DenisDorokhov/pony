@@ -43,6 +43,7 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		dispatcher.addFilter(authenticationDispatcherFilter);
 
 		Defaults.setDispatcher(dispatcher);
+		Defaults.setDateFormat(null);
 
 		authenticationManager.updateStatus(new OperationCallback<UserDto>() {
 			@Override
