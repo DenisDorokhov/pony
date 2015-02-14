@@ -44,7 +44,7 @@ public class SecurityFilter extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest aServletRequest, ServletResponse aServletResponse, FilterChain aFilterChain) throws IOException, ServletException {
 
-		String token = userTokenReader.readToken(aServletRequest);
+		String token = userTokenReader.readAccessToken(aServletRequest);
 
 		try {
 			if (token != null && installationService.getInstallation() != null) {

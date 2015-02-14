@@ -20,7 +20,7 @@ public class AuthenticationDispatcherFilter implements DispatcherFilter {
 		String token = authenticationManager.getAccessToken();
 
 		if (token != null) {
-			aBuilder.setHeader("X-Auth-Token", token);
+			aBuilder.setHeader("X-Access-Token", token);
 		}
 
 		return true;

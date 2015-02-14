@@ -10,6 +10,7 @@ import org.fusesource.restygwt.client.Options;
 import org.fusesource.restygwt.client.RestService;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -30,6 +31,6 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/refreshToken")
-	Request refreshToken(MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+	Request refreshToken(@HeaderParam("X-Refresh-Token") String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
 
 }

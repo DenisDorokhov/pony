@@ -103,7 +103,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public ResponseDto<UserDto> logout(ServletRequest aRequest) throws InvalidTokenException {
-		return responseBuilder.build(userServiceFacade.logout(userTokenReader.readToken(aRequest)));
+		return responseBuilder.build(userServiceFacade.logout(userTokenReader.readAccessToken(aRequest)));
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.GET)
@@ -111,9 +111,9 @@ public class ApiController {
 		return responseBuilder.build(userServiceFacade.getAuthenticatedUser());
 	}
 
-	@RequestMapping(value = "/refreshToken/{aRefreshToken}", method = RequestMethod.POST)
-	public ResponseDto<AuthenticationDto> refreshToken(@PathVariable String aRefreshToken) throws InvalidTokenException {
-		return responseBuilder.build(userServiceFacade.refreshToken(aRefreshToken));
+	@RequestMapping(value = "/refreshToken", method = RequestMethod.POST)
+	public ResponseDto<AuthenticationDto> refreshToken(ServletRequest aRequest) throws InvalidTokenException {
+		return responseBuilder.build(userServiceFacade.refreshToken(userTokenReader.readRefreshToken(aRequest)));
 	}
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)

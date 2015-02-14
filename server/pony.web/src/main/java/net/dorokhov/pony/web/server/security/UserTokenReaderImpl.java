@@ -10,23 +10,49 @@ import javax.servlet.http.HttpServletRequest;
 public class UserTokenReaderImpl implements UserTokenReader {
 
 	@Override
-	public String readToken(ServletRequest aRequest) {
+	public String readAccessToken(ServletRequest aRequest) {
 
-		if (aRequest instanceof HttpServletRequest) {
+		HttpServletRequest httpRequest = getHttpRequest(aRequest);
 
-			HttpServletRequest httpRequest = (HttpServletRequest) aRequest;
+		if (httpRequest != null) {
 
 			String token;
 
-			token = httpRequest.getHeader("X-Auth-Token");
+			token = httpRequest.getHeader("X-Access-Token");
 			if (!StringUtils.isBlank(token)) {
 				return token;
 			}
 
-			token = httpRequest.getParameter("x_auth_token");
+			token = httpRequest.getParameter("x_access_token");
 			if (!StringUtils.isBlank(token)) {
 				return token;
 			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public String readRefreshToken(ServletRequest aRequest) {
+
+		HttpServletRequest httpRequest = getHttpRequest(aRequest);
+
+		if (httpRequest != null) {
+
+			String token = httpRequest.getHeader("X-Refresh-Token");
+
+			if (!StringUtils.isBlank(token)) {
+				return token;
+			}
+		}
+
+		return null;
+	}
+
+	private HttpServletRequest getHttpRequest(ServletRequest aRequest) {
+
+		if (aRequest instanceof HttpServletRequest) {
+			return (HttpServletRequest) aRequest;
 		}
 
 		return null;
