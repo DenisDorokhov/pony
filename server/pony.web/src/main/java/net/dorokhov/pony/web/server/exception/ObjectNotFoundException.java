@@ -6,10 +6,6 @@ public class ObjectNotFoundException extends Exception {
 
 	private String errorCode;
 
-	public ObjectNotFoundException(Object aObjectId) {
-		this(aObjectId, "errorObjectNotFound", "Object [" + aObjectId + "] not found.");
-	}
-
 	public ObjectNotFoundException(Object aObjectId, String aErrorCode, String aMessage) {
 
 		super(aMessage);

@@ -1,6 +1,7 @@
-package net.dorokhov.pony.web.client.common;
+package net.dorokhov.pony.web.client.service.api;
 
 import com.google.gwt.http.client.Request;
+import net.dorokhov.pony.web.client.service.common.OperationRequest;
 
 public class RequestAdapter implements OperationRequest {
 

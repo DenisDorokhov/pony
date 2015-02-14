@@ -1,5 +1,7 @@
-package net.dorokhov.pony.web.client.common;
+package net.dorokhov.pony.web.client.service.api;
 
+import net.dorokhov.pony.web.client.service.common.OperationCallback;
+import net.dorokhov.pony.web.shared.ErrorCode;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import org.fusesource.restygwt.client.Method;
@@ -27,8 +29,7 @@ public class MethodCallbackAdapter<T> implements MethodCallback<ResponseDto<T>> 
 	@Override
 	public void onFailure(Method aMethod, Throwable aException) {
 		operationCallback.onError(Arrays.asList(
-				new ErrorDto(
-						"errorClientException",
+				new ErrorDto(ErrorCode.CLIENT_EXCEPTION,
 						"An error has occurred when making server request: \"" + aException.getMessage() + "\"",
 						Arrays.asList(aException.getMessage()))
 		));

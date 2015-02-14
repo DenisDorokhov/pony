@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.service;
+package net.dorokhov.pony.web.client.service.api;
 
 import com.google.gwt.http.client.Request;
 import net.dorokhov.pony.web.shared.AuthenticationDto;

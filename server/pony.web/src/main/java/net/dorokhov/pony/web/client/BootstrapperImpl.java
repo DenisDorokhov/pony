@@ -3,19 +3,15 @@ package net.dorokhov.pony.web.client;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import net.dorokhov.pony.web.client.common.OperationCallback;
-import net.dorokhov.pony.web.client.service.ApiService;
+import net.dorokhov.pony.web.client.service.api.ApiService;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
-import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import org.fusesource.restygwt.client.Defaults;
 import org.fusesource.restygwt.client.dispatcher.DefaultFilterawareDispatcher;
 import org.fusesource.restygwt.client.dispatcher.FilterawareDispatcher;
 
-import java.util.List;
-
-public class BootstrapperImpl extends DefaultBootstrapper {
+public class BootstrapperImpl extends DefaultBootstrapper implements AuthenticationManager.InitializationHandler {
 
 	private final AuthenticationDispatcherFilter authenticationDispatcherFilter;
 
@@ -45,20 +41,11 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		Defaults.setDispatcher(dispatcher);
 		Defaults.setDateFormat(null);
 
-		authenticationManager.updateStatus(new OperationCallback<UserDto>() {
-			@Override
-			public void onSuccess(UserDto aData) {
-				proceed();
-			}
-
-			@Override
-			public void onError(List<ErrorDto> aErrors) {
-				proceed();
-			}
-		});
+		authenticationManager.initialize(this);
 	}
 
-	private void proceed() {
+	@Override
+	public void onInitialization(UserDto aUser) {
 		super.onBootstrap();
 	}
 

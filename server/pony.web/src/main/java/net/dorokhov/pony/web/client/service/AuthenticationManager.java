@@ -1,14 +1,13 @@
 package net.dorokhov.pony.web.client.service;
 
 import com.google.gwt.storage.client.Storage;
-import net.dorokhov.pony.web.client.common.MethodCallbackAdapter;
-import net.dorokhov.pony.web.client.common.OperationCallback;
-import net.dorokhov.pony.web.client.common.OperationRequest;
-import net.dorokhov.pony.web.client.common.RequestAdapter;
-import net.dorokhov.pony.web.shared.AuthenticationDto;
-import net.dorokhov.pony.web.shared.CredentialsDto;
-import net.dorokhov.pony.web.shared.ErrorDto;
-import net.dorokhov.pony.web.shared.UserDto;
+import net.dorokhov.pony.web.client.service.api.ApiService;
+import net.dorokhov.pony.web.client.service.api.MethodCallbackAdapter;
+import net.dorokhov.pony.web.client.service.api.RequestAdapter;
+import net.dorokhov.pony.web.client.service.common.OperationCallback;
+import net.dorokhov.pony.web.client.service.common.OperationRequest;
+import net.dorokhov.pony.web.client.util.ErrorUtils;
+import net.dorokhov.pony.web.shared.*;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -16,6 +15,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class AuthenticationManager {
+
+	public interface InitializationHandler {
+		public void onInitialization(UserDto aUser);
+	}
 
 	private static final String STORAGE_ACCESS_TOKEN_KEY = "AuthenticationStatusProvider.accessToken";
 	private static final String STORAGE_ACCESS_TOKEN_EXPIRATION_KEY = "AuthenticationStatusProvider.accessTokenExpiration";
@@ -47,6 +50,10 @@ public class AuthenticationManager {
 		return getUser() != null;
 	}
 
+	public UserDto getUser() {
+		return user;
+	}
+
 	public String getAccessToken() {
 
 		if (accessToken == null) {
@@ -56,13 +63,42 @@ public class AuthenticationManager {
 		return accessToken;
 	}
 
-	public UserDto getUser() {
-		return user;
+	private String getRefreshToken() {
+
+		if (refreshToken == null) {
+			refreshToken = fetchValue(STORAGE_REFRESH_TOKEN_KEY);
+		}
+
+		return refreshToken;
 	}
 
-	public OperationRequest updateStatus(final OperationCallback<UserDto> aCallback) {
+	public void initialize(final InitializationHandler aCallback) {
 
-		log.info("Updating authentication status...");
+		log.info("Initializing...");
+
+		if (getAccessToken() != null) {
+			updateUser(new OperationCallback<UserDto>() {
+				@Override
+				public void onSuccess(UserDto aUser) {
+					aCallback.onInitialization(aUser);
+				}
+
+				@Override
+				public void onError(List<ErrorDto> aErrors) {
+					aCallback.onInitialization(null);
+				}
+			});
+		} else {
+
+			log.info("User is not authenticated.");
+
+			aCallback.onInitialization(null);
+		}
+	}
+
+	public OperationRequest updateUser(final OperationCallback<UserDto> aCallback) {
+
+		log.info("Updating current user...");
 
 		return new RequestAdapter(apiService.getCurrentUser(new MethodCallbackAdapter<>(new OperationCallback<UserDto>() {
 			@Override
@@ -78,10 +114,16 @@ public class AuthenticationManager {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				setAccessToken(null);
-				setUser(null);
+				if (ErrorUtils.getErrorByCode(ErrorCode.ACCESS_DENIED, aErrors) != null) {
 
-				log.info("Could not update authentication status.");
+					setAccessToken(null);
+					setUser(null);
+
+					log.info("User is not authenticated.");
+
+				} else {
+					log.info("Could not update authentication status.");
+				}
 
 				aCallback.onError(aErrors);
 			}
@@ -178,15 +220,6 @@ public class AuthenticationManager {
 		accessTokenExpiration = aExpiration;
 
 		storeValue(STORAGE_ACCESS_TOKEN_EXPIRATION_KEY, accessTokenExpiration != null ? String.valueOf(accessTokenExpiration.getTime()) : null);
-	}
-
-	private String getRefreshToken() {
-
-		if (refreshToken == null) {
-			refreshToken = fetchValue(STORAGE_REFRESH_TOKEN_KEY);
-		}
-
-		return refreshToken;
 	}
 
 	private void setRefreshToken(String aRefreshToken) {

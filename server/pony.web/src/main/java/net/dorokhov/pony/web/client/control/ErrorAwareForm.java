@@ -4,7 +4,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.Messages;
-import net.dorokhov.pony.web.client.common.ErrorFormatter;
+import net.dorokhov.pony.web.client.service.ErrorFormatter;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Form;

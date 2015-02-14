@@ -10,10 +10,7 @@ import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.web.server.exception.ArtworkUploadNotFoundException;
 import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
-import net.dorokhov.pony.web.shared.ListDto;
-import net.dorokhov.pony.web.shared.ScanJobDto;
-import net.dorokhov.pony.web.shared.ScanResultDto;
-import net.dorokhov.pony.web.shared.ScanStatusDto;
+import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -123,10 +120,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
-			throw new InvalidArgumentException("errorPageNumberInvalid", "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
+			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
 		}
 		if (aPageSize > MAX_PAGE_SIZE) {
-			throw new InvalidArgumentException("errorPageSizeInvalid", "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+			throw new InvalidArgumentException(ErrorCode.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
@@ -147,7 +144,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		ScanJob job = scanJobService.getById(aId);
 
 		if (job == null) {
-			throw new ObjectNotFoundException(aId, "errorScanJobNotFound", "Scan job [" + aId + "] not found.");
+			throw new ObjectNotFoundException(aId, ErrorCode.SCAN_JOB_NOT_FOUND, "Scan job [" + aId + "] not found.");
 		}
 
 		return dtoConverter.scanJobToDto(job);
@@ -158,10 +155,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
-			throw new InvalidArgumentException("errorPageNumberInvalid", "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
+			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
 		}
 		if (aPageSize > MAX_PAGE_SIZE) {
-			throw new InvalidArgumentException("errorPageSizeInvalid", "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+			throw new InvalidArgumentException(ErrorCode.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
@@ -182,7 +179,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		ScanResult result = scanService.getById(aId);
 
 		if (result == null) {
-			throw new ObjectNotFoundException(aId, "errorScanResultNotFound", "Scan result [" + aId + "] not found.");
+			throw new ObjectNotFoundException(aId, ErrorCode.SCAN_RESULT_NOT_FOUND, "Scan result [" + aId + "] not found.");
 		}
 
 		return dtoConverter.scanResultToDto(result);

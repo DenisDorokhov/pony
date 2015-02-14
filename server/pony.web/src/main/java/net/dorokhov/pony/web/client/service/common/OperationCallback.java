@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.common;
+package net.dorokhov.pony.web.client.service.common;
 
 import net.dorokhov.pony.web.shared.ErrorDto;
 

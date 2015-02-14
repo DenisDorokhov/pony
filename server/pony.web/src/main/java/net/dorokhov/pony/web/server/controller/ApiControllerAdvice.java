@@ -5,6 +5,7 @@ import net.dorokhov.pony.core.user.exception.InvalidCredentialsException;
 import net.dorokhov.pony.core.user.exception.InvalidPasswordException;
 import net.dorokhov.pony.core.user.exception.UserNotFoundException;
 import net.dorokhov.pony.core.user.exception.UserSelfDeletionException;
+import net.dorokhov.pony.web.shared.ErrorCode;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import net.dorokhov.pony.web.server.exception.ArtworkUploadFormatException;
@@ -50,7 +51,7 @@ public class ApiControllerAdvice {
 
 		log.warn("Credentials are invalid.");
 
-		return responseBuilder.build(new ErrorDto("errorInvalidCredentials", aException.getMessage()));
+		return responseBuilder.build(new ErrorDto(ErrorCode.INVALID_CREDENTIALS, aException.getMessage()));
 	}
 
 	@ExceptionHandler(InvalidPasswordException.class)
@@ -59,7 +60,7 @@ public class ApiControllerAdvice {
 
 		log.warn("Password is invalid.");
 
-		return responseBuilder.build(new ErrorDto("errorInvalidPassword", aException.getMessage()));
+		return responseBuilder.build(new ErrorDto(ErrorCode.INVALID_PASSWORD, aException.getMessage()));
 	}
 
 	@ExceptionHandler(ObjectNotFoundException.class)
@@ -91,7 +92,7 @@ public class ApiControllerAdvice {
 			userId = aException.getUserId().toString();
 		}
 
-		return responseBuilder.build(new ErrorDto("errorUserNotFound", aException.getMessage(), Arrays.asList(userId)));
+		return responseBuilder.build(new ErrorDto(ErrorCode.USER_NOT_FOUND, aException.getMessage(), Arrays.asList(userId)));
 	}
 
 	@ExceptionHandler(UserSelfDeletionException.class)
@@ -105,7 +106,7 @@ public class ApiControllerAdvice {
 			userId = aException.getUserId().toString();
 		}
 
-		return responseBuilder.build(new ErrorDto("errorUserSelfDeletion", aException.getMessage(), Arrays.asList(userId)));
+		return responseBuilder.build(new ErrorDto(ErrorCode.USER_SELF_DELETION, aException.getMessage(), Arrays.asList(userId)));
 	}
 
 	@ExceptionHandler(LibraryNotDefinedException.class)
@@ -114,13 +115,13 @@ public class ApiControllerAdvice {
 
 		log.warn("Library is not defined.");
 
-		return responseBuilder.build(new ErrorDto("errorLibraryNotDefined", aException.getMessage()));
+		return responseBuilder.build(new ErrorDto(ErrorCode.LIBRARY_NOT_DEFINED, aException.getMessage()));
 	}
 
 	@ExceptionHandler(ArtworkUploadFormatException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseDto onArtworkUploadFormatError(ArtworkUploadFormatException aException) {
-		return responseBuilder.build(new ErrorDto("errorArtworkUploadFormat", aException.getMessage()));
+		return responseBuilder.build(new ErrorDto(ErrorCode.ARTWORK_UPLOAD_FORMAT, aException.getMessage()));
 	}
 
 	@ExceptionHandler(ArtworkUploadNotFoundException.class)
@@ -132,7 +133,7 @@ public class ApiControllerAdvice {
 			artworkUploadId = aException.getObjectId().toString();
 		}
 
-		return responseBuilder.build(new ErrorDto("errorArtworkUploadNotFound", aException.getMessage(), Arrays.asList(artworkUploadId)));
+		return responseBuilder.build(new ErrorDto(ErrorCode.ARTWORK_UPLOAD_NOT_FOUND, aException.getMessage(), Arrays.asList(artworkUploadId)));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -159,7 +160,7 @@ public class ApiControllerAdvice {
 				}
 			}
 
-			errorList.add(new ErrorDto("errorValidation." + fieldError.getCode(), fieldError.getDefaultMessage(), fieldError.getField(), errorArguments));
+			errorList.add(new ErrorDto(ErrorCode.VALIDATION + "." + fieldError.getCode(), fieldError.getDefaultMessage(), fieldError.getField(), errorArguments));
 		}
 
 		return responseBuilder.build(errorList);
@@ -171,7 +172,7 @@ public class ApiControllerAdvice {
 
 		log.debug(aException.getMessage());
 
-		return responseBuilder.build(new ErrorDto("errorInvalidContentType", "Invalid content type."));
+		return responseBuilder.build(new ErrorDto(ErrorCode.INVALID_CONTENT_TYPE, "Invalid content type."));
 	}
 
 	@ExceptionHandler({HttpMessageNotReadableException.class, MissingServletRequestParameterException.class})
@@ -180,7 +181,7 @@ public class ApiControllerAdvice {
 
 		log.debug(aException.getMessage());
 
-		return responseBuilder.build(new ErrorDto("errorInvalidRequest", "Invalid request."));
+		return responseBuilder.build(new ErrorDto(ErrorCode.INVALID_REQUEST, "Invalid request."));
 	}
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -189,7 +190,7 @@ public class ApiControllerAdvice {
 
 		log.warn(aException.getMessage());
 
-		return responseBuilder.build(new ErrorDto("errorMaxUploadSizeExceeded", aException.getMessage(), Arrays.asList(String.valueOf(aException.getMaxUploadSize()))));
+		return responseBuilder.build(new ErrorDto(ErrorCode.MAX_UPLOAD_SIZE_EXCEEDED, aException.getMessage(), Arrays.asList(String.valueOf(aException.getMaxUploadSize()))));
 	}
 
 	@ExceptionHandler(Throwable.class)
@@ -198,7 +199,7 @@ public class ApiControllerAdvice {
 
 		log.error("Unexpected error occurred.", aException);
 
-		return responseBuilder.build(new ErrorDto("errorUnexpected", "Unexpected error occurred."));
+		return responseBuilder.build(new ErrorDto(ErrorCode.UNEXPECTED, "Unexpected error occurred."));
 	}
 
 }

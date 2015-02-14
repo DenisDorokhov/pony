@@ -4,10 +4,7 @@ import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
-import net.dorokhov.pony.web.shared.AuthenticationDto;
-import net.dorokhov.pony.web.shared.CredentialsDto;
-import net.dorokhov.pony.web.shared.RoleDto;
-import net.dorokhov.pony.web.shared.UserDto;
+import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
@@ -47,7 +44,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 			return dtoConverter.userToDto(user);
 		}
 
-		throw new ObjectNotFoundException(aId, "errorUserNotFound", "User [" + aId + "] not found.");
+		throw new ObjectNotFoundException(aId, ErrorCode.USER_NOT_FOUND, "User [" + aId + "] not found.");
 	}
 
 	@Override

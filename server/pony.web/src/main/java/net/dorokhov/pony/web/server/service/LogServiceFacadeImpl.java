@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.server.service;
 import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
+import net.dorokhov.pony.web.shared.ErrorCode;
 import net.dorokhov.pony.web.shared.ListDto;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.LogQueryDto;
@@ -36,10 +37,10 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 	public ListDto<LogMessageDto> getByQuery(LogQueryDto aQuery, int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
-			throw new InvalidArgumentException("errorPageNumberInvalid", "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
+			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
 		}
 		if (aPageSize > MAX_PAGE_SIZE) {
-			throw new InvalidArgumentException("errorPageSizeInvalid", "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+			throw new InvalidArgumentException(ErrorCode.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
