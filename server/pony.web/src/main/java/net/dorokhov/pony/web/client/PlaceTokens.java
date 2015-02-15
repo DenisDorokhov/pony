@@ -6,4 +6,6 @@ public class PlaceTokens {
 	public static final String LOGIN = "login";
 	public static final String ERROR = "error";
 
+	public static final String DEFAULT = LIBRARY;
+
 }

@@ -1,13 +1,16 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.inject.Inject;
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import net.dorokhov.pony.web.client.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
+
+import javax.inject.Inject;
 
 public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, LibraryPresenter.MyProxy> {
 
@@ -48,6 +51,14 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 		setInSlot(SLOT_PLAYER, playerPresenter);
 		setInSlot(SLOT_TOOLBAR, toolbarPresenter);
 		setInSlot(SLOT_CONTENT, contentPresenter);
+	}
+
+	@Override
+	protected void onReveal() {
+
+		super.onReveal();
+
+		Window.setTitle(Messages.INSTANCE.libraryTitle());
 	}
 
 }

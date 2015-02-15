@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.inject.Inject;
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.Presenter;
@@ -9,6 +9,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import net.dorokhov.pony.web.client.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -17,6 +18,7 @@ import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresenter.MyProxy> implements LoginUiHandlers {
@@ -62,6 +64,8 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 	protected void onReveal() {
 
 		super.onReveal();
+
+		Window.setTitle(Messages.INSTANCE.loginTitle());
 
 		getView().setFocus();
 	}

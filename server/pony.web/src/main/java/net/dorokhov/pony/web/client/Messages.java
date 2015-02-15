@@ -6,7 +6,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public static final Messages INSTANCE = GWT.create(Messages.class);
 
-	public String titlePrefix();
+	public String errorTitle();
+	public String errorText();
+	public String errorHomeButton();
+
+	public String loginTitle();
+	public String libraryTitle();
+	public String songTitlePrefix();
 
 	public String errorsHeader();
 

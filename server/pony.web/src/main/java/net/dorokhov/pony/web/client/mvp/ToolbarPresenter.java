@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -11,6 +10,7 @@ import net.dorokhov.pony.web.client.service.common.NoOpOperationCallback;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.logging.Logger;
 
