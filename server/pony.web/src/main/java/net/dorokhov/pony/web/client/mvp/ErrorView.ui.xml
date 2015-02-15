@@ -11,7 +11,7 @@
     </ui:style>
 
     <b:Container>
-        <b.html:Div styleName="{style.errorText}">
+        <b.html:Div addStyleNames="{style.errorText}">
             <b:Heading size="H3" text="{mes.errorText}" />
             <b:Button ui:field="homeButton" type="PRIMARY" icon="HOME" text="{mes.errorHomeButton}" />
         </b.html:Div>

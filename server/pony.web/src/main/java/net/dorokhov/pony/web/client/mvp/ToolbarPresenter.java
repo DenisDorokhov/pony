@@ -51,6 +51,11 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	}
 
 	@Override
+	public void onSettingsRequested() {
+		log.info("Settings requested.");
+	}
+
+	@Override
 	public void onEditProfileRequested() {
 		log.info("Profile edit requested.");
 	}

@@ -16,11 +16,13 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String errorsHeader();
 
-	public String loginAlertUnexpectedError();
-
 	public String loginViewHeader();
 	public String loginViewEmail();
 	public String loginViewPassword();
 	public String loginViewLoginButton();
+
+	public String toolbarSettings();
+
+	public String libraryHeader();
 
 }

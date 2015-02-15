@@ -2,17 +2,28 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <b:Container fluid="true">
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.Messages" />
+
+    <ui:style>
+        .container {
+            min-width: 800px;
+        }
+    </ui:style>
+
+    <b:Container addStyleNames="{style.container}" fluid="true">
         <b:Row>
-            <b:Column size="MD_9">
+            <b:Column size="XS_2,SM_2,MD_2,LG_2">
+                <b:Heading size="H1" text="{mes.libraryHeader}" />
+            </b:Column>
+            <b:Column size="XS_5,SM_5,MD_5,LG_5">
                 <g:SimplePanel ui:field="playerContainer" />
             </b:Column>
-            <b:Column size="MD_3">
+            <b:Column size="XS_5,SM_5,MD_5,LG_5">
                 <g:SimplePanel ui:field="toolbarContainer" />
             </b:Column>
         </b:Row>
         <b:Row>
-            <b:Column size="MD_12">
+            <b:Column size="LG_12">
                 <g:SimplePanel ui:field="contentContainer" />
             </b:Column>
         </b:Row>
