@@ -4,7 +4,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.Messages;
-import net.dorokhov.pony.web.client.service.ErrorFormatter;
+import net.dorokhov.pony.web.client.util.ErrorUtils;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Form;
@@ -18,8 +18,6 @@ import org.gwtbootstrap3.client.ui.html.UnorderedList;
 import java.util.*;
 
 public class ErrorAwareForm extends Form {
-
-	private static final ErrorFormatter ERROR_FORMATTER = new ErrorFormatter();
 
 	private List<ErrorDto> errors;
 
@@ -62,7 +60,7 @@ public class ErrorAwareForm extends Form {
 					formGroup.add(helpBlock);
 				}
 
-				helpBlock.setText(ERROR_FORMATTER.formatError(error));
+				helpBlock.setText(ErrorUtils.formatError(error));
 
 			} else {
 
@@ -83,7 +81,7 @@ public class ErrorAwareForm extends Form {
 					alert.add(new UnorderedList());
 				}
 
-				((UnorderedList)alert.getWidget(1)).add(new ListItem(ERROR_FORMATTER.formatError(error)));
+				((UnorderedList)alert.getWidget(1)).add(new ListItem(ErrorUtils.formatError(error)));
 			}
 		}
 	}

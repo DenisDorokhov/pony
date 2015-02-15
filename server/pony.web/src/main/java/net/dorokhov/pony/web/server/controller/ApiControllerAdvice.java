@@ -1,10 +1,7 @@
 package net.dorokhov.pony.web.server.controller;
 
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
-import net.dorokhov.pony.core.user.exception.InvalidCredentialsException;
-import net.dorokhov.pony.core.user.exception.InvalidPasswordException;
-import net.dorokhov.pony.core.user.exception.UserNotFoundException;
-import net.dorokhov.pony.core.user.exception.UserSelfDeletionException;
+import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.shared.ErrorCode;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
@@ -61,6 +58,15 @@ public class ApiControllerAdvice {
 		log.warn("Password is invalid.");
 
 		return responseBuilder.build(new ErrorDto(ErrorCode.INVALID_PASSWORD, aException.getMessage()));
+	}
+
+	@ExceptionHandler(InvalidTokenException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseDto onInvalidToken() {
+
+		log.warn("Token is invalid.");
+
+		return responseBuilder.build(new ErrorDto(ErrorCode.ACCESS_DENIED, "Access denied."));
 	}
 
 	@ExceptionHandler(ObjectNotFoundException.class)

@@ -33,4 +33,6 @@ public class ErrorCode {
 
 	public static final String SONGS_COUNT_INVALID = "errorSongsCountInvalid";
 
+	private ErrorCode() {}
+
 }

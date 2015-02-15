@@ -3,15 +3,18 @@ package net.dorokhov.pony.web.client;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import net.dorokhov.pony.web.client.service.api.ApiService;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
+import net.dorokhov.pony.web.client.service.common.NoOpOperationCallback;
+import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import org.fusesource.restygwt.client.Defaults;
 import org.fusesource.restygwt.client.dispatcher.DefaultFilterawareDispatcher;
 import org.fusesource.restygwt.client.dispatcher.FilterawareDispatcher;
 
-public class BootstrapperImpl extends DefaultBootstrapper implements AuthenticationManager.InitializationHandler {
+import java.util.List;
+
+public class BootstrapperImpl extends DefaultBootstrapper {
 
 	private final AuthenticationDispatcherFilter authenticationDispatcherFilter;
 
@@ -20,7 +23,6 @@ public class BootstrapperImpl extends DefaultBootstrapper implements Authenticat
 	@Inject
 	public BootstrapperImpl(PlaceManager aPlaceManager,
 							AuthenticationDispatcherFilter aAuthenticationDispatcherFilter,
-							ApiService aApiService,
 							AuthenticationManager aAuthenticationManager) {
 
 		super(aPlaceManager);
@@ -41,12 +43,12 @@ public class BootstrapperImpl extends DefaultBootstrapper implements Authenticat
 		Defaults.setDispatcher(dispatcher);
 		Defaults.setDateFormat(null);
 
-		authenticationManager.initialize(this);
-	}
-
-	@Override
-	public void onInitialization(UserDto aUser) {
-		super.onBootstrap();
+		authenticationManager.initialize(new NoOpOperationCallback<UserDto>() {
+			@Override
+			public void onFinish(boolean aSuccess, UserDto aData, List<ErrorDto> aErrors) {
+				BootstrapperImpl.super.onBootstrap();
+			}
+		});
 	}
 
 }
