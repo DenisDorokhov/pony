@@ -1,6 +1,6 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
-             xmlns:b.html="urn:import:org.gwtbootstrap3.client.ui.html">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.Messages" />
 
@@ -10,11 +10,11 @@
         }
     </ui:style>
 
-    <b:Container>
-        <b.html:Div addStyleNames="{style.errorText}">
+    <g:HTMLPanel>
+        <div class="{style.errorText}">
             <b:Heading size="H3" text="{mes.errorText}" />
             <b:Button ui:field="homeButton" type="PRIMARY" icon="HOME" text="{mes.errorHomeButton}" />
-        </b.html:Div>
-    </b:Container>
+        </div>
+    </g:HTMLPanel>
 
 </ui:UiBinder>

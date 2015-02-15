@@ -6,27 +6,65 @@
 
     <ui:style>
         .container {
-            min-width: 800px;
+            position: absolute;
+            top: 0;
+            left: 20px;
+            right: 20px;
+            bottom: 0;
+            min-width: 900px;
+        }
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+        }
+        .title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            bottom: 0;
+        }
+        .player {
+            position: absolute;
+            top: 0;
+            left: 300px;
+            right: 300px;
+            bottom: 0;
+        }
+        .toolbar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            bottom: 0;
+        }
+        .content {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
     </ui:style>
 
-    <b:Container addStyleNames="{style.container}" fluid="true">
-        <b:Row>
-            <b:Column size="XS_2,SM_2,MD_2,LG_2">
+    <g:HTMLPanel styleName="{style.container}">
+        <div class="{style.header}">
+            <div class="{style.title}">
                 <b:Heading size="H1" text="{mes.libraryHeader}" />
-            </b:Column>
-            <b:Column size="XS_5,SM_5,MD_5,LG_5">
+            </div>
+            <div class="{style.player}">
                 <g:SimplePanel ui:field="playerContainer" />
-            </b:Column>
-            <b:Column size="XS_5,SM_5,MD_5,LG_5">
+            </div>
+            <div class="{style.toolbar}">
                 <g:SimplePanel ui:field="toolbarContainer" />
-            </b:Column>
-        </b:Row>
-        <b:Row>
-            <b:Column size="LG_12">
-                <g:SimplePanel ui:field="contentContainer" />
-            </b:Column>
-        </b:Row>
-    </b:Container>
+            </div>
+        </div>
+        <div class="{style.content}">
+            <g:SimplePanel ui:field="contentContainer" />
+        </div>
+    </g:HTMLPanel>
 
 </ui:UiBinder>
