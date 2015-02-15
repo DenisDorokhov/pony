@@ -28,6 +28,10 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 	public interface MyView extends View, HasUiHandlers<LoginUiHandlers> {
 
+		public boolean isLoading();
+
+		public void setLoading(boolean aLoading);
+
 		public List<ErrorDto> getErrors();
 
 		public void setErrors(List<ErrorDto> aErrors);
@@ -69,9 +73,13 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 			currentRequest.cancel();
 		}
 
+		getView().setLoading(true);
+
 		currentRequest = authenticationManager.authenticate(aCredentials, new OperationCallback<UserDto>() {
 			@Override
 			public void onSuccess(UserDto aUser) {
+
+				getView().setLoading(false);
 
 				getView().clearForm();
 				getView().clearErrors();
@@ -82,6 +90,7 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
+				getView().setLoading(false);
 				getView().setErrors(aErrors);
 
 				currentRequest = null;

@@ -26,19 +26,21 @@
 
             <b:PanelBody>
                 <p:ErrorAwareForm ui:field="form">
+                    <b:FieldSet ui:field="fieldSet">
 
-                    <p:FieldAwareFormGroup fieldName="email">
-                        <b:FormLabel for="loginView.emailField" text="{mes.loginViewEmail}" />
-                        <b:Input ui:field="emailField" type="TEXT" b:id="loginView.emailField" />
-                    </p:FieldAwareFormGroup>
+                        <p:FieldAwareFormGroup fieldName="email">
+                            <b:FormLabel for="loginView.emailField" text="{mes.loginViewEmail}" />
+                            <b:Input ui:field="emailField" type="TEXT" b:id="loginView.emailField" />
+                        </p:FieldAwareFormGroup>
 
-                    <p:FieldAwareFormGroup fieldName="password">
-                        <b:FormLabel for="loginView.passwordField" text="{mes.loginViewPassword}" />
-                        <b:Input ui:field="passwordField" type="PASSWORD" b:id="loginView.passwordField" />
-                    </p:FieldAwareFormGroup>
+                        <p:FieldAwareFormGroup fieldName="password">
+                            <b:FormLabel for="loginView.passwordField" text="{mes.loginViewPassword}" />
+                            <b:Input ui:field="passwordField" type="PASSWORD" b:id="loginView.passwordField" />
+                        </p:FieldAwareFormGroup>
 
-                    <b:Button ui:field="loginButton" text="{mes.loginViewLoginButton}" />
+                        <b:Button ui:field="loginButton" text="{mes.loginViewLoginButton}" />
 
+                    </b:FieldSet>
                 </p:ErrorAwareForm>
             </b:PanelBody>
 

@@ -12,6 +12,7 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import net.dorokhov.pony.web.client.control.ErrorAwareForm;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
+import org.gwtbootstrap3.client.ui.FieldSet;
 import org.gwtbootstrap3.client.ui.Input;
 
 import java.util.ArrayList;
@@ -23,10 +24,15 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
+	private boolean loading;
+
 	private List<ErrorDto> errors;
 
 	@UiField
 	ErrorAwareForm form;
+
+	@UiField
+	FieldSet fieldSet;
 
 	@UiField
 	Input emailField;
@@ -39,6 +45,19 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 		initWidget(uiBinder.createAndBindUi(this));
 
 		updateErrors();
+	}
+
+	@Override
+	public boolean isLoading() {
+		return loading;
+	}
+
+	@Override
+	public void setLoading(boolean aLoading) {
+
+		loading = aLoading;
+
+		updateLoading();
 	}
 
 	@Override
@@ -88,6 +107,10 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 		if (aEvent.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			requestLogin();
 		}
+	}
+
+	private void updateLoading() {
+		fieldSet.setEnabled(!isLoading());
 	}
 
 	private void updateErrors() {
