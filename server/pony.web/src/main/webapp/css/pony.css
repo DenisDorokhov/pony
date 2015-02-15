@@ -8,3 +8,7 @@
 #libraryFolderContainer > div {
     margin-bottom: 10px;
 }
+
+#loadingContainer {
+    text-align: center;
+}

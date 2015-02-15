@@ -1,5 +1,7 @@
 package net.dorokhov.pony.web.client;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.DOM;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
@@ -15,6 +17,8 @@ import javax.inject.Inject;
 import java.util.List;
 
 public class BootstrapperImpl extends DefaultBootstrapper {
+
+	private static final String LOADING_CONTAINER_ID = "loadingContainer";
 
 	private final AuthenticationDispatcherFilter authenticationDispatcherFilter;
 
@@ -46,9 +50,20 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		authenticationManager.initialize(new NoOpOperationCallback<UserDto>() {
 			@Override
 			public void onFinish(boolean aSuccess, UserDto aData, List<ErrorDto> aErrors) {
-				BootstrapperImpl.super.onBootstrap();
+				doBootstrap();
 			}
 		});
+	}
+
+	private void doBootstrap() {
+
+		Element loadingContainer = Element.as(DOM.getElementById(LOADING_CONTAINER_ID));
+
+		if (loadingContainer != null) {
+			loadingContainer.removeFromParent();
+		}
+
+		super.onBootstrap();
 	}
 
 }
