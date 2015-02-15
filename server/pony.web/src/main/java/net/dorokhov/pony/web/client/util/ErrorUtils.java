@@ -9,20 +9,22 @@ import java.util.MissingResourceException;
 
 public class ErrorUtils {
 
-	public static ErrorDto getErrorByCode(String aCode, List<ErrorDto> aErrors) {
+	public static ErrorDto getErrorByCode(List<ErrorDto> aErrors, String ... aCodes) {
 
-		List<ErrorDto> result = getErrorsByCode(aCode, aErrors);
+		List<ErrorDto> result = getErrorsByCode(aErrors, aCodes);
 
 		return result.size() > 0 ? result.get(0) : null;
 	}
 
-	public static List<ErrorDto> getErrorsByCode(String aCode, List<ErrorDto> aErrors) {
+	public static List<ErrorDto> getErrorsByCode(List<ErrorDto> aErrors, String ... aCodes) {
 
 		List<ErrorDto> result = new ArrayList<>();
 
 		for (ErrorDto error : aErrors) {
-			if (error.getCode().equals(aCode) || error.getCode().startsWith(aCode + ".")) {
-				result.add(error);
+			for (String code : aCodes) {
+				if (error.getCode().equals(code) || error.getCode().startsWith(code + ".")) {
+					result.add(error);
+				}
 			}
 		}
 
@@ -33,6 +35,7 @@ public class ErrorUtils {
 
 		String result = null;
 
+		//noinspection EmptyCatchBlock
 		try {
 			result = Errors.INSTANCE.getString(errorCodeToMethod(aError.getCode()));
 		} catch (MissingResourceException e) {}

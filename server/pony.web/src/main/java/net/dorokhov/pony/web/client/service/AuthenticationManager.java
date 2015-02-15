@@ -178,13 +178,13 @@ public class AuthenticationManager {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				if (ErrorUtils.getErrorByCode(ErrorCode.CLIENT_EXCEPTION, aErrors) != null) {
+				if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.CLIENT_REQUEST_FAILED, ErrorCode.CLIENT_OFFLINE) != null) {
 
 					log.info("Could not update authentication status.");
 
 					aCallback.onError(aErrors);
 
-				} else if (ErrorUtils.getErrorByCode(ErrorCode.ACCESS_DENIED, aErrors) != null) {
+				} else if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.ACCESS_DENIED) != null) {
 
 					refreshToken(new OperationCallback<AuthenticationDto>() {
 						@Override
@@ -293,7 +293,7 @@ public class AuthenticationManager {
 				@Override
 				public void onError(List<ErrorDto> aErrors) {
 
-					if (ErrorUtils.getErrorByCode(ErrorCode.CLIENT_EXCEPTION, aErrors) != null) {
+					if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.CLIENT_REQUEST_FAILED, ErrorCode.CLIENT_OFFLINE) != null) {
 						log.severe("Token refresh failed");
 					} else {
 

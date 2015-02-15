@@ -2,7 +2,8 @@ package net.dorokhov.pony.web.shared;
 
 public class ErrorCode {
 
-	public static final String CLIENT_EXCEPTION = "errorClientException";
+	public static final String CLIENT_REQUEST_FAILED = "errorClientRequestFailed";
+	public static final String CLIENT_OFFLINE = "errorClientOffline";
 
 	public static final String INVALID_CONTENT_TYPE = "errorInvalidContentType";
 	public static final String INVALID_REQUEST = "errorInvalidRequest";

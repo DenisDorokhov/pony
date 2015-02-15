@@ -28,11 +28,18 @@ public class MethodCallbackAdapter<T> implements MethodCallback<ResponseDto<T>> 
 
 	@Override
 	public void onFailure(Method aMethod, Throwable aException) {
-		operationCallback.onError(Arrays.asList(
-				new ErrorDto(ErrorCode.CLIENT_EXCEPTION,
-						"An error has occurred when making server request: \"" + aException.getMessage() + "\"",
-						Arrays.asList(aException.getMessage()))
-		));
+
+		ErrorDto error;
+
+		if (aException.getMessage() != null && aException.getMessage().length() > 0) {
+			error = new ErrorDto(ErrorCode.CLIENT_REQUEST_FAILED,
+					"An error has occurred when making server request: \"" + aException.getMessage() + "\".",
+					Arrays.asList(aException.getMessage()));
+		} else {
+			error = new ErrorDto(ErrorCode.CLIENT_OFFLINE, "Could not make server request. Are you online?");
+		}
+
+		operationCallback.onError(Arrays.asList(error));
 	}
 
 }
