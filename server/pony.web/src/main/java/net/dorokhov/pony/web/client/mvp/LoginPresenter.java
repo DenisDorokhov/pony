@@ -8,13 +8,11 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import net.dorokhov.pony.web.client.PlaceTokens;
+import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
-import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.UserDto;
@@ -41,19 +39,16 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 	}
 
-	private final PlaceManager placeManager;
-
 	private final AuthenticationManager authenticationManager;
 
 	private OperationRequest currentRequest;
 
 	@Inject
-	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager aPlaceManager,
+	public LoginPresenter(EventBus eventBus, MyView view, MyProxy proxy,
 						  AuthenticationManager aAuthenticationManager) {
 
 		super(eventBus, view, proxy, RevealType.Root);
 
-		placeManager = aPlaceManager;
 		authenticationManager = aAuthenticationManager;
 
 		getView().setUiHandlers(this);
@@ -80,10 +75,6 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 				getView().clearForm();
 				getView().clearErrors();
-
-				PlaceRequest.Builder requestBuilder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
-
-				placeManager.revealPlace(requestBuilder.build());
 
 				currentRequest = null;
 			}

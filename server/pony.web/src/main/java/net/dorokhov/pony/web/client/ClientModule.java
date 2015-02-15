@@ -1,17 +1,13 @@
 package net.dorokhov.pony.web.client;
 
-import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
 import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import net.dorokhov.pony.web.client.mvp.*;
-import net.dorokhov.pony.web.client.service.ErrorNotifier;
-import net.dorokhov.pony.web.client.service.ErrorNotifierImpl;
+import net.dorokhov.pony.web.client.service.*;
 import net.dorokhov.pony.web.client.service.api.ApiService;
-import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
-import net.dorokhov.pony.web.client.service.AuthenticationManager;
 
 public class ClientModule extends AbstractPresenterModule {
 
@@ -34,12 +30,14 @@ public class ClientModule extends AbstractPresenterModule {
 		bindConstant().annotatedWith(ErrorPlace.class).to(PlaceTokens.ERROR);
 		bindConstant().annotatedWith(UnauthorizedPlace.class).to(PlaceTokens.LOGIN);
 
-		bind(ApiService.class).in(Singleton.class);
+		bind(ApiService.class).asEagerSingleton();
 
-		bind(ErrorNotifier.class).to(ErrorNotifierImpl.class).in(Singleton.class);
+		bind(ErrorNotifier.class).to(ErrorNotifierImpl.class).asEagerSingleton();
 
-		bind(AuthenticationManager.class).in(Singleton.class);
-		bind(AuthenticationDispatcherFilter.class).in(Singleton.class);
+		bind(AuthenticationManager.class).asEagerSingleton();
+		bind(AuthenticationDispatcherFilter.class).asEagerSingleton();
+
+		bind(AuthenticationListener.class).asEagerSingleton();
 	}
 
 }

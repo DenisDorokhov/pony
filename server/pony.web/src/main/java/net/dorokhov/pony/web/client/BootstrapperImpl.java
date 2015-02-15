@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.client;
 
-import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
@@ -12,6 +11,7 @@ import org.fusesource.restygwt.client.Defaults;
 import org.fusesource.restygwt.client.dispatcher.DefaultFilterawareDispatcher;
 import org.fusesource.restygwt.client.dispatcher.FilterawareDispatcher;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class BootstrapperImpl extends DefaultBootstrapper {
