@@ -1,4 +1,4 @@
-@import url("lib/bootstrap.css");
+@import url("lib/bootstrap.min.css");
 
 .installationContainer {
     padding-top: 25px;
@@ -7,8 +7,4 @@
 
 #libraryFolderContainer > div {
     margin-bottom: 10px;
-}
-
-#loadingContainer {
-    text-align: center;
 }

@@ -11,15 +11,31 @@
 
     <title><spring:message code="main.title" /></title>
 
-    <link rel="icon" type="image/png" href="./img/favicon.png">
-    <link rel="stylesheet" href="./css/pony.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #loadingContainer {
+            text-align: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            line-height: 15px;
+            color: #333;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
 
     <script type="text/javascript" src="./pony/pony.nocache.js"></script>
 
 </head>
 <body>
 
-<div id="loadingContainer" class="container"><h3><spring:message code="main.loading" /></h3></div>
+<div id="loadingContainer" class="container"><spring:message code="main.loading" /></div>
 
 <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
 
