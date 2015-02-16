@@ -12,6 +12,7 @@
         }
         .panel {
             margin-bottom: 0;
+            overflow-y: scroll;
         }
     </ui:style>
 

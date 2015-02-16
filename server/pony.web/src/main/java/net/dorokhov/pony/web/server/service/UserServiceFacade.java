@@ -8,14 +8,13 @@ import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
-
-import java.util.List;
+import net.dorokhov.pony.web.shared.list.UserListDto;
 
 public interface UserServiceFacade {
 
 	public UserDto getById(Long aId) throws ObjectNotFoundException;
 
-	public List<UserDto> getAll();
+	public UserListDto getAll();
 
 	public UserDto create(CreateUserCommandDto aCommand) throws UserExistsException;
 	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException;

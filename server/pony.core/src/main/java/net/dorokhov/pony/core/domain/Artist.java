@@ -2,7 +2,7 @@ package net.dorokhov.pony.core.domain;
 
 import net.dorokhov.pony.core.domain.common.BaseEntity;
 import net.dorokhov.pony.core.search.SearchAnalyzer;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
@@ -89,7 +89,13 @@ public class Artist extends BaseEntity<Long> implements Comparable<Artist> {
 			String name1 = getName() != null ? getName().toLowerCase().replaceAll(regex, "") : null;
 			String name2 = aArtist.getName() != null ? aArtist.getName().toLowerCase().replaceAll(regex, "") : null;
 
-			result = ObjectUtils.compare(name1, name2);
+			if (name1 == null) {
+				result = 1;
+			} else if (name2 == null) {
+				result = -1;
+			} else {
+				result = ObjectUtils.compare(name1, name2);
+			}
 		}
 
 		return result;

@@ -8,13 +8,12 @@ import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
+import net.dorokhov.pony.web.shared.list.UserListDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -49,15 +48,13 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<UserDto> getAll() {
-
-		List<UserDto> dto = new ArrayList<>();
-
-		for (User user : userService.getAll()) {
-			dto.add(dtoConverter.userToDto(user));
-		}
-
-		return dto;
+	public UserListDto getAll() {
+		return dtoConverter.listToDto(UserListDto.class, userService.getAll(), new DtoConverter.ListConverter<User, UserDto>() {
+			@Override
+			public UserDto convert(User aItem) {
+				return dtoConverter.userToDto(aItem);
+			}
+		});
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import net.dorokhov.pony.web.shared.AuthenticationDto;
 import net.dorokhov.pony.web.shared.CredentialsDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import net.dorokhov.pony.web.shared.UserDto;
+import net.dorokhov.pony.web.shared.list.ArtistListDto;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.Options;
 import org.fusesource.restygwt.client.RestService;
@@ -32,5 +33,9 @@ public interface ApiService extends RestService {
 	@POST
 	@Path("/refreshToken")
 	Request refreshToken(@HeaderParam("X-Refresh-Token") String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+
+	@GET
+	@Path("/artists")
+	Request getArtists(MethodCallback<ResponseDto<ArtistListDto>> aCallback);
 
 }

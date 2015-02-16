@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 public class DtoConverter {
@@ -90,9 +91,38 @@ public class DtoConverter {
 		return dto;
 	}
 
-	public <EntityType, DtoType> ListDto<DtoType> listToDto(Page<EntityType> aPage, ListConverter<EntityType, DtoType> aItemConverter) {
+	public <ListType extends ListDto<DtoType>, EntityType, DtoType> ListType listToDto(Class<ListType> aType, List<EntityType> aList, ListConverter<EntityType, DtoType> aItemConverter) {
 
-		ListDto<DtoType> dto = new ListDto<>();
+		ListType dto;
+
+		//noinspection TryWithIdenticalCatches
+		try {
+			dto = aType.newInstance();
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		}
+
+		for (EntityType item : aList) {
+			dto.getContent().add(aItemConverter.convert(item));
+		}
+
+		return dto;
+	}
+
+	public <ListType extends PagedListDto<DtoType>, EntityType, DtoType> ListType pagedListToDto(Class<ListType> aType, Page<EntityType> aPage, ListConverter<EntityType, DtoType> aItemConverter) {
+
+		ListType dto;
+
+		//noinspection TryWithIdenticalCatches
+		try {
+			dto = aType.newInstance();
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException(e);
+		}
 
 		dto.setPageNumber(aPage.getNumber());
 		dto.setPageSize(aPage.getSize());

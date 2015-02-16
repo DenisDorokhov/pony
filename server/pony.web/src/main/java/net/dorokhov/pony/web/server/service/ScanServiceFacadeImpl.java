@@ -12,6 +12,8 @@ import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
+import net.dorokhov.pony.web.shared.list.ScanJobListDto;
+import net.dorokhov.pony.web.shared.list.ScanResultListDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -117,7 +119,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize) throws InvalidArgumentException {
+	public ScanJobListDto getScanJobs(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
 			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
@@ -129,7 +131,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "updateDate"));
 
-		return dtoConverter.listToDto(page, new DtoConverter.ListConverter<ScanJob, ScanJobDto>() {
+		return dtoConverter.pagedListToDto(ScanJobListDto.class, page, new DtoConverter.ListConverter<ScanJob, ScanJobDto>() {
 			@Override
 			public ScanJobDto convert(ScanJob aItem) {
 				return dtoConverter.scanJobToDto(aItem);
@@ -152,7 +154,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public ListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize) throws InvalidArgumentException {
+	public ScanResultListDto getScanResults(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
 			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
@@ -164,7 +166,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 		Page<ScanResult> page = scanService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));
 
-		return dtoConverter.listToDto(page, new DtoConverter.ListConverter<ScanResult, ScanResultDto>() {
+		return dtoConverter.pagedListToDto(ScanResultListDto.class, page, new DtoConverter.ListConverter<ScanResult, ScanResultDto>() {
 			@Override
 			public ScanResultDto convert(ScanResult aItem) {
 				return dtoConverter.scanResultToDto(aItem);
