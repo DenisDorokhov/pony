@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.mvp;
+package net.dorokhov.pony.web.client;
 
 import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;

@@ -1,0 +1,33 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .artistsContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+        }
+        .albumsContainer {
+            position: absolute;
+            top: 0;
+            left: 260px;
+            right: 0;
+            bottom: 0;
+        }
+    </ui:style>
+
+    <g:FlowPanel styleName="{style.container}">
+        <g:SimplePanel styleName="{style.artistsContainer}" ui:field="artistsContainer" />
+        <g:SimplePanel styleName="{style.albumsContainer}" ui:field="albumsContainer" />
+    </g:FlowPanel>
+
+</ui:UiBinder>

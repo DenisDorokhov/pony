@@ -1,0 +1,24 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+        .container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .panel {
+            margin-bottom: 0;
+        }
+    </ui:style>
+
+    <g:HTMLPanel styleName="{style.container}">
+        <b:Panel addStyleNames="{style.container} {style.panel}">
+            <b:LinkedGroup ui:field="artistList" addStyleNames="{style.container}" />
+        </b:Panel>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.mvp;
+package net.dorokhov.pony.web.client.mvp.library;
 
 import com.gwtplatform.mvp.client.UiHandlers;
 

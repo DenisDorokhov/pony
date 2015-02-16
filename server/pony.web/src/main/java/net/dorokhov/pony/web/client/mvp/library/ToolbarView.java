@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.mvp;
+package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

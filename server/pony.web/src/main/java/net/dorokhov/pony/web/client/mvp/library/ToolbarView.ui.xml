@@ -6,7 +6,6 @@
 
     <ui:style>
         .container {
-            margin-top: 20px;
             text-align: right;
         }
         .settingsButton {

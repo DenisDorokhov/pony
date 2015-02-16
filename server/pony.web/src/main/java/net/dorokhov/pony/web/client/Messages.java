@@ -25,4 +25,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String libraryHeader();
 
+	public String artistNameUnknown();
+
 }
