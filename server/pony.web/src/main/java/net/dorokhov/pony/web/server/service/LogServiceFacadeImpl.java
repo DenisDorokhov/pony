@@ -45,9 +45,9 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
-		LogMessage.Type type = aQuery.getType();
-		if (type == null) {
-			type = LogMessage.Type.DEBUG;
+		LogMessageDto.Type typeDto = aQuery.getType();
+		if (typeDto == null) {
+			typeDto = LogMessageDto.Type.DEBUG;
 		}
 
 		Date minDate = aQuery.getMinDate();
@@ -58,6 +58,24 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 		Date maxDate = aQuery.getMaxDate();
 		if (maxDate == null) {
 			maxDate = new Date();
+		}
+
+		LogMessage.Type type = null;
+
+		switch (typeDto) {
+
+			case DEBUG:
+				type = LogMessage.Type.DEBUG;
+				break;
+			case INFO:
+				type = LogMessage.Type.INFO;
+				break;
+			case WARN:
+				type = LogMessage.Type.WARN;
+				break;
+			case ERROR:
+				type = LogMessage.Type.ERROR;
+				break;
 		}
 
 		Page<LogMessage> page = logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));

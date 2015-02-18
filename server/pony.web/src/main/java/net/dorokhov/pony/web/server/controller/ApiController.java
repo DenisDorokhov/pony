@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.server.controller;
 
-import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.user.exception.*;
 import net.dorokhov.pony.web.server.exception.ArtworkUploadFormatException;
@@ -192,7 +191,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
-	public ResponseDto<LogMessageListDto> getLog(@RequestParam(value = "type", required = false) LogMessage.Type aType,
+	public ResponseDto<LogMessageListDto> getLog(@RequestParam(value = "type", required = false) LogMessageDto.Type aType,
 													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
 													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
 													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,

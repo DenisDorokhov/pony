@@ -1,22 +1,20 @@
 package net.dorokhov.pony.web.shared;
 
-import net.dorokhov.pony.core.domain.LogMessage;
-
 import java.util.Date;
 
 public class LogQueryDto {
 
-	private LogMessage.Type type;
+	private LogMessageDto.Type type;
 
 	private Date minDate;
 
 	private Date maxDate;
 
-	public LogMessage.Type getType() {
+	public LogMessageDto.Type getType() {
 		return type;
 	}
 
-	public void setType(LogMessage.Type aType) {
+	public void setType(LogMessageDto.Type aType) {
 		type = aType;
 	}
 
