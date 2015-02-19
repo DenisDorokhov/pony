@@ -53,7 +53,8 @@ public class AuthenticationManager {
 	private static final String STORAGE_REFRESH_TOKEN_KEY = "AuthenticationStatusProvider.refreshToken";
 
 	private static final int CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL = 5 * 1000;
-	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 60 * 1000;
+	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 5 * 60 * 1000;
+	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
 	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 24 * 60 * 60 * 1000;
 
 	private final Logger log = Logger.getLogger(getClass().getName());
@@ -64,6 +65,7 @@ public class AuthenticationManager {
 
 	private final Timer checkExternalStatusChangeTimer;
 	private final Timer checkTokenExpirationTimer;
+	private final Timer checkStatusTimer;
 
 	private final Set<Delegate> delegates = new TreeSet<>();
 
@@ -88,6 +90,12 @@ public class AuthenticationManager {
 			@Override
 			public void run() {
 				checkTokenExpiration();
+			}
+		};
+		checkStatusTimer = new Timer() {
+			@Override
+			public void run() {
+				checkStatus();
 			}
 		};
 	}
@@ -155,7 +163,8 @@ public class AuthenticationManager {
 
 		lastAccessToken = getAccessToken();
 
-		checkExternalStatusChange();
+		checkExternalStatusChangeTimer.schedule(CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL);
+		checkStatusTimer.schedule(CHECK_STATUS_INTERVAL);
 	}
 
 	public OperationRequest updateStatus(final OperationCallback<UserDto> aCallback) {
@@ -349,6 +358,22 @@ public class AuthenticationManager {
 		if (scheduleChecking) {
 			checkTokenExpirationTimer.schedule(CHECK_TOKEN_EXPIRATION_INTERVAL);
 		}
+	}
+	
+	private void checkStatus() {
+		
+		if (isAuthenticated()) {
+			updateStatus(new NoOpOperationCallback<UserDto>() {
+				@Override
+				public void onError(List<ErrorDto> aErrors) {
+					if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.ACCESS_DENIED) != null) {
+						Window.Location.reload();
+					}
+				}
+			});
+		}
+		
+		checkStatusTimer.schedule(CHECK_STATUS_INTERVAL);
 	}
 
 	private void propagateInitialization(UserDto aUser) {
