@@ -6,7 +6,7 @@ import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.shared.ErrorCode;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.LogQueryDto;
-import net.dorokhov.pony.web.shared.list.LogMessageListDto;
+import net.dorokhov.pony.web.shared.PagedListDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +35,7 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 	}
 
 	@Override
-	public LogMessageListDto getByQuery(LogQueryDto aQuery, int aPageNumber, int aPageSize) throws InvalidArgumentException {
+	public PagedListDto<LogMessageDto> getByQuery(LogQueryDto aQuery, int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
 			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
@@ -80,7 +80,7 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 
 		Page<LogMessage> page = logService.getByTypeAndDate(type, minDate, maxDate, new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "date"));
 
-		return dtoConverter.pagedListToDto(LogMessageListDto.class, page, new DtoConverter.ListConverter<LogMessage, LogMessageDto>() {
+		return dtoConverter.pagedListToDto(page, new DtoConverter.ListConverter<LogMessage, LogMessageDto>() {
 			@Override
 			public LogMessageDto convert(LogMessage aItem) {
 				return dtoConverter.logMessageToDto(aItem);

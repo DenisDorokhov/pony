@@ -13,7 +13,6 @@ import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
-import net.dorokhov.pony.web.shared.list.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -123,7 +122,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/artists", method = RequestMethod.GET)
-	public ResponseDto<ArtistListDto> getArtists() {
+	public ResponseDto<List<ArtistDto>> getArtists() {
 		return responseBuilder.build(songServiceFacade.getArtists());
 	}
 
@@ -133,7 +132,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/randomSongs", method = RequestMethod.GET)
-	public ResponseDto<SongListDto> getRandomSongs(@RequestParam(value = "count", defaultValue = "10") int aCount,
+	public ResponseDto<List<SongDto>> getRandomSongs(@RequestParam(value = "count", defaultValue = "10") int aCount,
 													 @RequestParam(value = "artist", required = false) String aArtistIdOrName) throws InvalidArgumentException {
 		if (aArtistIdOrName != null) {
 			return responseBuilder.build(songServiceFacade.getRandomArtistSongs(aCount, aArtistIdOrName));
@@ -153,7 +152,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
-	public ResponseDto<UserListDto> getUsers() {
+	public ResponseDto<List<UserDto>> getUsers() {
 		return responseBuilder.build(userServiceFacade.getAll());
 	}
 
@@ -191,7 +190,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
-	public ResponseDto<LogMessageListDto> getLog(@RequestParam(value = "type", required = false) LogMessageDto.Type aType,
+	public ResponseDto<PagedListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessageDto.Type aType,
 													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
 													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
 													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
@@ -207,7 +206,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
-	public ResponseDto<ScanJobListDto> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+	public ResponseDto<PagedListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 														@RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
@@ -218,7 +217,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
-	public ResponseDto<ScanResultListDto> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+	public ResponseDto<PagedListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 															  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
@@ -249,7 +248,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/getSongData", method = RequestMethod.POST)
-	public ResponseDto<SongDataListDto> getSongData(@RequestBody List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
+	public ResponseDto<List<SongDataDto>> getSongData(@RequestBody List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
 		return responseBuilder.build(songServiceFacade.getSongData(aSongIds));
 	}
 

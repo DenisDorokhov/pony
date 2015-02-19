@@ -5,9 +5,10 @@ import net.dorokhov.pony.web.client.service.api.MethodCallbackAdapter;
 import net.dorokhov.pony.web.client.service.api.RequestAdapter;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
-import net.dorokhov.pony.web.shared.list.ArtistListDto;
+import net.dorokhov.pony.web.shared.ArtistDto;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class SongService {
 
@@ -18,7 +19,7 @@ public class SongService {
 		apiService = aApiService;
 	}
 
-	public OperationRequest getArtists(OperationCallback<ArtistListDto> aCallback) {
+	public OperationRequest getArtists(OperationCallback<List<ArtistDto>> aCallback) {
 		return new RequestAdapter(apiService.getArtists(new MethodCallbackAdapter<>(aCallback)));
 	}
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -91,38 +92,20 @@ public class DtoConverter {
 		return dto;
 	}
 
-	public <ListType extends ListDto<DtoType>, EntityType, DtoType> ListType listToDto(Class<ListType> aType, List<EntityType> aList, ListConverter<EntityType, DtoType> aItemConverter) {
+	public <EntityType, DtoType> List<DtoType> listToDto(List<EntityType> aList, ListConverter<EntityType, DtoType> aItemConverter) {
 
-		ListType dto;
-
-		//noinspection TryWithIdenticalCatches
-		try {
-			dto = aType.newInstance();
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		}
+		List<DtoType> dto = new ArrayList<>();
 
 		for (EntityType item : aList) {
-			dto.getContent().add(aItemConverter.convert(item));
+			dto.add(aItemConverter.convert(item));
 		}
 
 		return dto;
 	}
 
-	public <ListType extends PagedListDto<DtoType>, EntityType, DtoType> ListType pagedListToDto(Class<ListType> aType, Page<EntityType> aPage, ListConverter<EntityType, DtoType> aItemConverter) {
+	public <EntityType, DtoType> PagedListDto<DtoType> pagedListToDto(Page<EntityType> aPage, ListConverter<EntityType, DtoType> aItemConverter) {
 
-		ListType dto;
-
-		//noinspection TryWithIdenticalCatches
-		try {
-			dto = aType.newInstance();
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		}
+		PagedListDto<DtoType> dto = new PagedListDto<>();
 
 		dto.setPageNumber(aPage.getNumber());
 		dto.setPageSize(aPage.getSize());

@@ -11,9 +11,6 @@ import net.dorokhov.pony.core.search.SearchService;
 import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.shared.*;
-import net.dorokhov.pony.web.shared.list.ArtistListDto;
-import net.dorokhov.pony.web.shared.list.SongDataListDto;
-import net.dorokhov.pony.web.shared.list.SongListDto;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,13 +59,13 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	}
 
 	@Override
-	public ArtistListDto getArtists() {
+	public List<ArtistDto> getArtists() {
 
 		List<Artist> artistList = artistDao.findAll(new Sort("name"));
 
 		Collections.sort(artistList);
 
-		return dtoConverter.listToDto(ArtistListDto.class, artistList, new DtoConverter.ListConverter<Artist, ArtistDto>() {
+		return dtoConverter.listToDto(artistList, new DtoConverter.ListConverter<Artist, ArtistDto>() {
 			@Override
 			public ArtistDto convert(Artist aItem) {
 				return dtoConverter.artistToDto(aItem);
@@ -138,7 +135,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public SongListDto getRandomSongs(int aCount) throws InvalidArgumentException {
+	public List<SongDto> getRandomSongs(int aCount) throws InvalidArgumentException {
 
 		if (aCount > MAX_RANDOM_SONGS) {
 			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
@@ -146,7 +143,6 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 		}
 
 		List<Song> songList = new RandomEntityFetcher<Song>().fetch(aCount, new RandomEntityFetcher.Dao<Song>() {
-
 			@Override
 			public long fetchCount() {
 				return songDao.count();
@@ -158,7 +154,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			}
 		});
 
-		return dtoConverter.listToDto(SongListDto.class, songList, new DtoConverter.ListConverter<Song, SongDto>() {
+		return dtoConverter.listToDto(songList, new DtoConverter.ListConverter<Song, SongDto>() {
 			@Override
 			public SongDto convert(Song aItem) {
 				return dtoConverter.songToDto(aItem);
@@ -168,7 +164,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public SongListDto getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidArgumentException {
+	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidArgumentException {
 
 		if (aCount > MAX_RANDOM_SONGS) {
 			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
@@ -185,7 +181,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			artist = artistDao.findByName(aArtistIdOrName);
 		}
 
-		SongListDto dto = new SongListDto();
+		List<SongDto> dto = new ArrayList<>();
 
 		if (artist != null) {
 
@@ -205,7 +201,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			});
 
 			for (Song song : songList) {
-				dto.getContent().add(dtoConverter.songToDto(song));
+				dto.add(dtoConverter.songToDto(song));
 			}
 		}
 
@@ -214,7 +210,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public SongDataListDto getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
+	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
 
 		if (aSongIds.size() > MAX_SONG_DATA) {
 			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONG_DATA + "]",
@@ -223,11 +219,11 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 		Set<Long> idSet = new HashSet<>(aSongIds);
 
-		SongDataListDto dto = new SongDataListDto();
+		List<SongDataDto> dto = new ArrayList<>();
 
 		for (Song song : songDao.findAll(aSongIds)) {
 
-			dto.getContent().add(dtoConverter.songDataToDto(song));
+			dto.add(dtoConverter.songDataToDto(song));
 
 			idSet.remove(song.getId());
 		}

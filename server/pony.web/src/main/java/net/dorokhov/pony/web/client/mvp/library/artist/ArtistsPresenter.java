@@ -6,8 +6,8 @@ import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.SongService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
+import net.dorokhov.pony.web.shared.ArtistDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
-import net.dorokhov.pony.web.shared.list.ArtistListDto;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -16,9 +16,9 @@ public class ArtistsPresenter extends PresenterWidget<ArtistsPresenter.MyView> {
 
 	public interface MyView extends View {
 
-		public ArtistListDto getArtists();
+		public List<ArtistDto> getArtists();
 
-		public void setArtists(ArtistListDto aArtists);
+		public void setArtists(List<ArtistDto> aArtists);
 
 	}
 
@@ -45,9 +45,9 @@ public class ArtistsPresenter extends PresenterWidget<ArtistsPresenter.MyView> {
 	}
 
 	private void loadArtists() {
-		songService.getArtists(new OperationCallback<ArtistListDto>() {
+		songService.getArtists(new OperationCallback<List<ArtistDto>>() {
 			@Override
-			public void onSuccess(ArtistListDto aArtists) {
+			public void onSuccess(List<ArtistDto> aArtists) {
 				getView().setArtists(aArtists);
 			}
 

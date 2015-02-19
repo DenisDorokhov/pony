@@ -34,7 +34,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.fusesource.restygwt:restygwt:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.3.1" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.1.2.RELEASE" level="project" />
@@ -126,7 +125,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.gwtbootstrap3:gwtbootstrap3:0.8.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.gwtbootstrap3:gwtbootstrap3-extras:0.8.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.ws.rs:jsr311-api:1.1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.fusesource.restygwt:restygwt:2.0.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.fusesource.restygwt:restygwt:2.0.3-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.googlecode.junit-toolbox:junit-toolbox:1.5" level="project" />

@@ -1,7 +1,10 @@
 package net.dorokhov.pony.web.shared;
 
-public class PagedListDto<T> extends ListDto<T> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class PagedListDto<T> {
+	
 	private int pageNumber;
 
 	private int pageSize;
@@ -9,6 +12,8 @@ public class PagedListDto<T> extends ListDto<T> {
 	private int totalPages;
 
 	private long totalElements;
+
+	private List<T> content;
 
 	public int getPageNumber() {
 		return pageNumber;
@@ -40,6 +45,19 @@ public class PagedListDto<T> extends ListDto<T> {
 
 	public void setTotalElements(long aTotalElements) {
 		totalElements = aTotalElements;
+	}
+
+	public List<T> getContent() {
+
+		if (content == null) {
+			content = new ArrayList<>();
+		}
+
+		return content;
+	}
+
+	public void setContent(List<T> aContent) {
+		content = aContent;
 	}
 
 }
