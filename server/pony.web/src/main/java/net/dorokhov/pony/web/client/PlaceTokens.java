@@ -7,5 +7,7 @@ public class PlaceTokens {
 	public static final String ERROR = "error";
 
 	public static final String DEFAULT = LIBRARY;
+	
+	private PlaceTokens() {}
 
 }

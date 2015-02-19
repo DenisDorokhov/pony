@@ -120,10 +120,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	public PagedListDto<ScanJobDto> getScanJobs(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
-			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
+			throw new InvalidArgumentException(ErrorCodes.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
 		}
 		if (aPageSize > MAX_PAGE_SIZE) {
-			throw new InvalidArgumentException(ErrorCode.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+			throw new InvalidArgumentException(ErrorCodes.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
@@ -144,7 +144,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		ScanJob job = scanJobService.getById(aId);
 
 		if (job == null) {
-			throw new ObjectNotFoundException(aId, ErrorCode.SCAN_JOB_NOT_FOUND, "Scan job [" + aId + "] not found.");
+			throw new ObjectNotFoundException(aId, ErrorCodes.SCAN_JOB_NOT_FOUND, "Scan job [" + aId + "] not found.");
 		}
 
 		return dtoConverter.scanJobToDto(job);
@@ -155,10 +155,10 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	public PagedListDto<ScanResultDto> getScanResults(int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {
-			throw new InvalidArgumentException(ErrorCode.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
+			throw new InvalidArgumentException(ErrorCodes.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid", String.valueOf(aPageNumber));
 		}
 		if (aPageSize > MAX_PAGE_SIZE) {
-			throw new InvalidArgumentException(ErrorCode.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+			throw new InvalidArgumentException(ErrorCodes.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
@@ -179,7 +179,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 		ScanResult result = scanService.getById(aId);
 
 		if (result == null) {
-			throw new ObjectNotFoundException(aId, ErrorCode.SCAN_RESULT_NOT_FOUND, "Scan result [" + aId + "] not found.");
+			throw new ObjectNotFoundException(aId, ErrorCodes.SCAN_RESULT_NOT_FOUND, "Scan result [" + aId + "] not found.");
 		}
 
 		return dtoConverter.scanResultToDto(result);

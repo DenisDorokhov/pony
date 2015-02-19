@@ -187,13 +187,13 @@ public class AuthenticationManager {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.CLIENT_REQUEST_FAILED, ErrorCode.CLIENT_OFFLINE) != null) {
+				if (ErrorUtils.getErrorByCode(aErrors, ErrorCodes.CLIENT_REQUEST_FAILED, ErrorCodes.CLIENT_OFFLINE) != null) {
 
 					log.info("Could not update authentication status.");
 
 					aCallback.onError(aErrors);
 
-				} else if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.ACCESS_DENIED) != null) {
+				} else if (ErrorUtils.getErrorByCode(aErrors, ErrorCodes.ACCESS_DENIED) != null) {
 
 					refreshToken(new OperationCallback<AuthenticationDto>() {
 						@Override
@@ -302,7 +302,7 @@ public class AuthenticationManager {
 				@Override
 				public void onError(List<ErrorDto> aErrors) {
 
-					if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.CLIENT_REQUEST_FAILED, ErrorCode.CLIENT_OFFLINE) != null) {
+					if (ErrorUtils.getErrorByCode(aErrors, ErrorCodes.CLIENT_REQUEST_FAILED, ErrorCodes.CLIENT_OFFLINE) != null) {
 						log.severe("Token refresh failed");
 					} else {
 
@@ -320,7 +320,7 @@ public class AuthenticationManager {
 
 			log.severe("No refresh token.");
 
-			aCallback.onError(Arrays.asList(new ErrorDto(ErrorCode.ACCESS_DENIED, "Access denied.")));
+			aCallback.onError(Arrays.asList(new ErrorDto(ErrorCodes.ACCESS_DENIED, "Access denied.")));
 		}
 	}
 

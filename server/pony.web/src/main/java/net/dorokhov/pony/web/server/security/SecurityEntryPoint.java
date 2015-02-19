@@ -1,7 +1,7 @@
 package net.dorokhov.pony.web.server.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.dorokhov.pony.web.shared.ErrorCode;
+import net.dorokhov.pony.web.shared.ErrorCodes;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
 import net.dorokhov.pony.web.server.service.ResponseBuilder;
@@ -44,7 +44,7 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
 		if (jsonResponsePathPrefix != null && aRequest.getServletPath().startsWith(jsonResponsePathPrefix)) {
 
-			ResponseDto error = responseBuilder.build(new ErrorDto(ErrorCode.ACCESS_DENIED, "Access denied."));
+			ResponseDto error = responseBuilder.build(new ErrorDto(ErrorCodes.ACCESS_DENIED, "Access denied."));
 
 			aResponse.setContentType("application/json");
 			aResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

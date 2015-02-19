@@ -43,7 +43,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 			return dtoConverter.userToDto(user);
 		}
 
-		throw new ObjectNotFoundException(aId, ErrorCode.USER_NOT_FOUND, "User [" + aId + "] not found.");
+		throw new ObjectNotFoundException(aId, ErrorCodes.USER_NOT_FOUND, "User [" + aId + "] not found.");
 	}
 
 	@Override

@@ -101,7 +101,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			return dto;
 		}
 
-		throw new ObjectNotFoundException(aArtistIdOrName, ErrorCode.ARTIST_NOT_FOUND, "Artist [" + aArtistIdOrName + "] not found.");
+		throw new ObjectNotFoundException(aArtistIdOrName, ErrorCodes.ARTIST_NOT_FOUND, "Artist [" + aArtistIdOrName + "] not found.");
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	public List<SongDto> getRandomSongs(int aCount) throws InvalidArgumentException {
 
 		if (aCount > MAX_RANDOM_SONGS) {
-			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
+			throw new InvalidArgumentException(ErrorCodes.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
 					String.valueOf(aCount), String.valueOf(MAX_RANDOM_SONGS));
 		}
 
@@ -167,7 +167,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidArgumentException {
 
 		if (aCount > MAX_RANDOM_SONGS) {
-			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
+			throw new InvalidArgumentException(ErrorCodes.SONGS_COUNT_INVALID, "Songs count [" + aCount + "] must be less than or equal to [" + 100 + "]",
 					String.valueOf(aCount), String.valueOf(MAX_RANDOM_SONGS));
 		}
 
@@ -213,7 +213,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException {
 
 		if (aSongIds.size() > MAX_SONG_DATA) {
-			throw new InvalidArgumentException(ErrorCode.SONGS_COUNT_INVALID, "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONG_DATA + "]",
+			throw new InvalidArgumentException(ErrorCodes.SONGS_COUNT_INVALID, "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONG_DATA + "]",
 					String.valueOf(aSongIds.size()), String.valueOf(MAX_SONG_DATA));
 		}
 
@@ -232,7 +232,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 
 			Long songId = idSet.iterator().next();
 
-			throw new ObjectNotFoundException(songId, ErrorCode.SONG_NOT_FOUND, "Song [" + songId + "] not found.");
+			throw new ObjectNotFoundException(songId, ErrorCodes.SONG_NOT_FOUND, "Song [" + songId + "] not found.");
 		}
 
 		return dto;

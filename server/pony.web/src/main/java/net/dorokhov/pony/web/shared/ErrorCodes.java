@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.shared;
 
-public class ErrorCode {
+public class ErrorCodes {
 
 	public static final String CLIENT_REQUEST_FAILED = "errorClientRequestFailed";
 	public static final String CLIENT_OFFLINE = "errorClientOffline";
@@ -34,6 +34,6 @@ public class ErrorCode {
 
 	public static final String SONGS_COUNT_INVALID = "errorSongsCountInvalid";
 
-	private ErrorCode() {}
+	private ErrorCodes() {}
 
 }
