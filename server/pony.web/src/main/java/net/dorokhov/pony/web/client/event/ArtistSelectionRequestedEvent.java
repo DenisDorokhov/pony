@@ -1,7 +1,6 @@
 package net.dorokhov.pony.web.client.event;
 
 import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
 
 public class ArtistSelectionRequestedEvent extends AbstractEvent<ArtistSelectionRequestedEvent.Handler> {
 
@@ -9,19 +8,19 @@ public class ArtistSelectionRequestedEvent extends AbstractEvent<ArtistSelection
 		public void onArtistSelectionRequested(ArtistSelectionRequestedEvent aEvent);
 	}
 
-	public static final GwtEvent.Type<Handler> TYPE = new GwtEvent.Type<>();
+	public static final Type<Handler> TYPE = new Type<>();
 
-	private final String artistId;
+	private final String artistIdOrName;
 
-	public ArtistSelectionRequestedEvent(String aArtistId) {
+	public ArtistSelectionRequestedEvent(String aArtistIdOrName) {
 
 		super(TYPE);
 
-		artistId = aArtistId;
+		artistIdOrName = aArtistIdOrName;
 	}
 
-	public String getArtistId() {
-		return artistId;
+	public String getArtistIdOrName() {
+		return artistIdOrName;
 	}
 
 	@Override

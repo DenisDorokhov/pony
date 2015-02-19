@@ -4,6 +4,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.common.NoOpOperationCallback;
@@ -50,6 +51,11 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 		getView().setUser(authenticationManager.getUser());
 	}
 
+	@Override
+	public void onRefreshRequested() {
+		getEventBus().fireEvent(new RefreshRequestEvent());
+	}
+	
 	@Override
 	public void onSettingsRequested() {
 		log.info("Settings requested.");

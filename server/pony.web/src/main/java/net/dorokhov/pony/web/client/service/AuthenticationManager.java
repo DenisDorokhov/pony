@@ -363,14 +363,7 @@ public class AuthenticationManager {
 	private void checkStatus() {
 		
 		if (isAuthenticated()) {
-			updateStatus(new NoOpOperationCallback<UserDto>() {
-				@Override
-				public void onError(List<ErrorDto> aErrors) {
-					if (ErrorUtils.getErrorByCode(aErrors, ErrorCode.ACCESS_DENIED) != null) {
-						Window.Location.reload();
-					}
-				}
-			});
+			updateStatus(new NoOpOperationCallback<UserDto>());
 		}
 		
 		checkStatusTimer.schedule(CHECK_STATUS_INTERVAL);

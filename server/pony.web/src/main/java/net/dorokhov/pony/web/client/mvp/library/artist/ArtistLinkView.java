@@ -3,15 +3,15 @@ package net.dorokhov.pony.web.client.mvp.library.artist;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import net.dorokhov.pony.web.client.Messages;
+import net.dorokhov.pony.web.client.message.Messages;
 import net.dorokhov.pony.web.shared.ArtistDto;
+import org.gwtbootstrap3.client.ui.LinkedGroupItem;
 
-public class ArtistListItemView extends Composite {
+public class ArtistLinkView extends LinkedGroupItem {
 
-	interface MyUiBinder extends UiBinder<Widget, ArtistListItemView> {}
+	interface MyUiBinder extends UiBinder<Widget, ArtistLinkView> {}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -20,8 +20,8 @@ public class ArtistListItemView extends Composite {
 
 	private ArtistDto artist;
 
-	public ArtistListItemView() {
-		initWidget(uiBinder.createAndBindUi(this));
+	public ArtistLinkView() {
+		add(uiBinder.createAndBindUi(this));
 	}
 
 	public ArtistDto getArtist() {

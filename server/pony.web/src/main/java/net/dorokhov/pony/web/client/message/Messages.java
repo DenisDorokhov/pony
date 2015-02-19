@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client;
+package net.dorokhov.pony.web.client.message;
 
 import com.google.gwt.core.client.GWT;
 
@@ -21,10 +21,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String loginViewPassword();
 	public String loginViewLoginButton();
 
+	public String toolbarRefresh();
 	public String toolbarSettings();
 
 	public String libraryHeader();
 
 	public String artistNameUnknown();
+	
+	public String statusLoading();
+	public String statusError();
 
 }

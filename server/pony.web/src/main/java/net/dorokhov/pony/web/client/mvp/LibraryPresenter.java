@@ -7,7 +7,7 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import net.dorokhov.pony.web.client.Messages;
+import net.dorokhov.pony.web.client.message.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.library.LibraryContentPresenter;
 import net.dorokhov.pony.web.client.mvp.library.PlayerPresenter;

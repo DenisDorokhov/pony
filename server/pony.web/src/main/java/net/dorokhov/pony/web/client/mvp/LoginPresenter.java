@@ -9,7 +9,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import net.dorokhov.pony.web.client.Messages;
+import net.dorokhov.pony.web.client.message.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;

@@ -2,7 +2,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field="mes" type="net.dorokhov.pony.web.client.Messages" />
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.message.Messages" />
 
     <ui:style>
         .container {
@@ -34,14 +34,14 @@
             position: absolute;
             top: 0;
             left: 300px;
-            right: 300px;
+            right: 400px;
             bottom: 0;
         }
         .toolbar {
             position: absolute;
             top: 0;
             right: 0;
-            width: 300px;
+            width: 400px;
             bottom: 0;
         }
         .content {

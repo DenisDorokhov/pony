@@ -49,6 +49,11 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 		updateUser();
 	}
 
+	@UiHandler("refreshButton")
+	void onRefreshButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onRefreshRequested();
+	}
+
 	@UiHandler("settingsButton")
 	void onSettingsButtonClick(ClickEvent aEvent) {
 		getUiHandlers().onSettingsRequested();
