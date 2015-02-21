@@ -134,9 +134,7 @@ public class ArtworkDiscoveryServiceImplTest {
 
 		LibraryFolder testFolder = fileScanService.scanFolder(TEST_FOLDER);
 
-		LibraryImage artwork = artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3"));
-
-		Assert.assertEquals("image.jpg", artwork.getFile().getName());
+		Assert.assertNull(artworkDiscoveryService.discoverArtwork(getChildSongByName(testFolder, "song.mp3")));
 	}
 
 	@Test

@@ -53,7 +53,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel styleName="{style.container}">
+    <g:HTMLPanel addStyleNames="{style.container}">
         <div class="{style.header}">
             <div class="{style.title}">
                 <b:Heading addStyleNames="{style.titleHeader}" size="H1" text="{mes.libraryHeader}" />

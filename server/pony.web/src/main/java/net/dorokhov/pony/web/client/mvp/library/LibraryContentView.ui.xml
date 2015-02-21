@@ -25,9 +25,9 @@
         }
     </ui:style>
 
-    <g:FlowPanel styleName="{style.container}">
-        <g:SimplePanel styleName="{style.artistsContainer}" ui:field="artistsContainer" />
-        <g:SimplePanel styleName="{style.albumsContainer}" ui:field="albumsContainer" />
+    <g:FlowPanel addStyleNames="{style.container}">
+        <g:SimplePanel addStyleNames="{style.artistsContainer}" ui:field="artistsContainer" />
+        <g:SimplePanel addStyleNames="{style.albumsContainer}" ui:field="albumsContainer" />
     </g:FlowPanel>
 
 </ui:UiBinder>

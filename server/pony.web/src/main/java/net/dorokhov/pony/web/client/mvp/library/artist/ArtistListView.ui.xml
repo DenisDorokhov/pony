@@ -24,11 +24,11 @@
         }
     </ui:style>
 
-    <g:HTMLPanel styleName="{style.container}">
+    <g:HTMLPanel addStyleNames="{style.container}">
         <b:Panel addStyleNames="{style.container} {style.panel}">
             <b:LinkedGroup ui:field="artistList" addStyleNames="{style.container} {style.list}" />
-            <g:Label ui:field="loadingLabel" styleName="{style.container} {style.statusLabel}" text="{mes.statusLoading}" />
-            <g:Label ui:field="errorLabel" styleName="{style.container} {style.statusLabel}" text="{mes.statusError}" />
+            <g:Label ui:field="loadingLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusLoading}" />
+            <g:Label ui:field="errorLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusError}" />
         </b:Panel>
     </g:HTMLPanel>
 

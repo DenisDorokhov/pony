@@ -13,7 +13,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel styleName="{style.container}">
+    <g:HTMLPanel addStyleNames="{style.container}">
 
         <b:Button ui:field="refreshButton" addStyleNames="{style.settingsButton}"
                   text="{mes.toolbarRefresh}" icon="REFRESH" iconPosition="RIGHT" />
