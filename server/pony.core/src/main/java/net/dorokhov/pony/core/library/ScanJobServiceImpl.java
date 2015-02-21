@@ -219,7 +219,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 	synchronized public void startAutoScanJobIfNeeded() {
 		if (installationService.getInstallation() != null) {
 
-			log.debug("Checking if automatic scan needed...");
+			log.trace("Checking if automatic scan needed...");
 
 			boolean shouldScan = false;
 
@@ -244,26 +244,26 @@ public class ScanJobServiceImpl implements ScanJobService {
 							if (secondsSinceLastScan >= autoScanInterval) {
 								shouldScan = true;
 							} else {
-								log.debug("Too early for automatic scan.");
+								log.trace("Too early for automatic scan.");
 							}
 
 						} else {
 
-							log.debug("Library was never scanned before.");
+							log.trace("Library was never scanned before.");
 
 							shouldScan = true;
 						}
 
 					} else {
-						log.debug("Automatic scan is off.");
+						log.trace("Automatic scan is off.");
 					}
 
 				} else {
-					log.debug("Library is already being scanned.");
+					log.trace("Library is already being scanned.");
 				}
 
 			} else {
-				log.debug("No library files defined.");
+				log.trace("No library files defined.");
 			}
 
 			if (shouldScan) {
