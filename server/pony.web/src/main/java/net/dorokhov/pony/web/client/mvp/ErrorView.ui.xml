@@ -2,7 +2,7 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:with field="mes" type="net.dorokhov.pony.web.client.message.Messages" />
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
     <ui:style>
         .errorText {

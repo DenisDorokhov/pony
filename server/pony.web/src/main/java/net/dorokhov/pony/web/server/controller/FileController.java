@@ -15,7 +15,6 @@ import net.dorokhov.pony.web.server.common.StreamingViewRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -75,11 +74,22 @@ public class FileController {
 
 			File file = storedFileService.getFile(storedFile);
 
-			if (file != null) {
+			if (file.exists()) {
 
-				aResponse.setHeader("Content-Type", storedFile.getMimeType());
+				StreamingViewRenderer renderer = new StreamingViewRenderer();
 
-				return new FileSystemResource(file);
+				HashMap<String, Object> model = new HashMap<>();
+
+				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_LENGTH, file.length());
+				model.put(StreamingViewRenderer.DownloadConstants.FILENAME, file.getName());
+				model.put(StreamingViewRenderer.DownloadConstants.LAST_MODIFIED, storedFile.getDate());
+				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_TYPE, storedFile.getMimeType());
+				model.put(StreamingViewRenderer.DownloadConstants.INPUT_STREAM, new FileInputStream(file));
+
+				return new ModelAndView(renderer, model);
+
+			} else {
+				log.warn("File [" + file.getPath() + "] not found.");
 			}
 		}
 

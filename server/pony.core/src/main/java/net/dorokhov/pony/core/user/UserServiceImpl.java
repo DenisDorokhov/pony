@@ -288,7 +288,7 @@ public class UserServiceImpl implements UserService {
 
 		SecurityContextHolder.getContext().setAuthentication(token);
 
-		log.debug("User [" + userDetails.getUser().getEmail() + "] has authenticated with access token.");
+		log.trace("User [" + userDetails.getUser().getEmail() + "] has authenticated with access token.");
 	}
 
 	@Override

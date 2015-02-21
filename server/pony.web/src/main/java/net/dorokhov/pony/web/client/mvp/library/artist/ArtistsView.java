@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import net.dorokhov.pony.web.client.mvp.common.LoadingState;
+import net.dorokhov.pony.web.client.common.LoadingState;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroup;
 
@@ -27,9 +27,9 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private final List<ArtistLinkView> viewCache = new ArrayList<>();
+	private final List<ArtistView> viewCache = new ArrayList<>();
 	
-	private final Map<ArtistDto, ArtistLinkView> artistToView = new HashMap<>();
+	private final Map<ArtistDto, ArtistView> artistToView = new HashMap<>();
 
 	private final SingleSelectionModel<ArtistDto> selectionModel = new SingleSelectionModel<>();
 	
@@ -99,7 +99,7 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 
 		if (aShouldScroll && artists != null) {
 
-			final ArtistLinkView artistView = artistToView.get(aArtist);
+			final ArtistView artistView = artistToView.get(aArtist);
 
 			Scheduler.get().scheduleFinally(new Command() {
 				@Override
@@ -129,7 +129,7 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 
 			int i = artistList.getWidgetCount() - 1;
 
-			ArtistLinkView artistView = (ArtistLinkView) artistList.getWidget(i);
+			ArtistView artistView = (ArtistView) artistList.getWidget(i);
 			
 			artistList.remove(i);
 			
@@ -144,9 +144,9 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 
 			ArtistDto artist = getArtists().get(i);
 
-			ArtistLinkView artistView;
+			ArtistView artistView;
 			if (i < artistList.getWidgetCount()) {
-				artistView = (ArtistLinkView) artistList.getWidget(i);
+				artistView = (ArtistView) artistList.getWidget(i);
 			} else {
 
 				artistView = viewCache.size() > 0 ? viewCache.remove(0) : null;
@@ -167,7 +167,7 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 	}
 
 	private void updateArtistViews() {
-		for (Map.Entry<ArtistDto, ArtistLinkView> entry : artistToView.entrySet()) {
+		for (Map.Entry<ArtistDto, ArtistView> entry : artistToView.entrySet()) {
 			entry.getValue().setActive(selectionModel.isSelected(entry.getKey()));
 		}
 	}
@@ -178,13 +178,13 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 		artistList.setVisible(getLoadingState() == LoadingState.LOADED);
 	}
 
-	private ArtistLinkView createArtistView() {
+	private ArtistView createArtistView() {
 
-		final ArtistLinkView artistView = new ArtistLinkView();
+		final ArtistView artistView = new ArtistView();
 
 		artistView.addClickHandler(new ClickHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onClick(ClickEvent aEvent) {
 				selectionModel.setSelected(artistView.getArtist(), true);
 			}
 		});

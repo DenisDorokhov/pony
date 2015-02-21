@@ -12,7 +12,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import net.dorokhov.pony.web.client.LibraryParams;
 import net.dorokhov.pony.web.client.event.ArtistSelectionDoneEvent;
 import net.dorokhov.pony.web.client.event.ArtistSelectionRequestedEvent;
-import net.dorokhov.pony.web.client.message.Messages;
+import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 import net.dorokhov.pony.web.client.mvp.library.LibraryContentPresenter;
 import net.dorokhov.pony.web.client.mvp.library.PlayerPresenter;

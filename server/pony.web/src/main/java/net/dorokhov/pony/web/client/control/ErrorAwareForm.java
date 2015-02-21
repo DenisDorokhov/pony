@@ -3,7 +3,7 @@ package net.dorokhov.pony.web.client.control;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
-import net.dorokhov.pony.web.client.message.Messages;
+import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.util.ErrorUtils;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import org.gwtbootstrap3.client.ui.Alert;

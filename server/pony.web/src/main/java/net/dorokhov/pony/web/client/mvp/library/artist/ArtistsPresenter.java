@@ -8,8 +8,8 @@ import net.dorokhov.pony.web.client.event.ArtistSelectionDoneEvent;
 import net.dorokhov.pony.web.client.event.ArtistSelectionRequestedEvent;
 import net.dorokhov.pony.web.client.event.ArtistsUpdateEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
-import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
-import net.dorokhov.pony.web.client.mvp.common.LoadingState;
+import net.dorokhov.pony.web.client.common.HasLoadingState;
+import net.dorokhov.pony.web.client.common.LoadingState;
 import net.dorokhov.pony.web.client.service.BusyIndicator;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.SongService;
@@ -125,8 +125,6 @@ public class ArtistsPresenter extends PresenterWidget<ArtistsPresenter.MyView> i
 				getEventBus().fireEvent(new ArtistsUpdateEvent(aArtists));
 
 				doSelectArtist(artistToSelect, aShouldScroll);
-				
-				getView().setArtists(aArtists);
 			}
 
 			@Override

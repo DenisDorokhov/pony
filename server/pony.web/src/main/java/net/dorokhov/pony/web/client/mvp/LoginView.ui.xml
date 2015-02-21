@@ -3,7 +3,7 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:p="urn:import:net.dorokhov.pony.web.client.control">
 
-    <ui:with field="mes" type="net.dorokhov.pony.web.client.message.Messages" />
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
     <ui:style>
         .loginContainer {

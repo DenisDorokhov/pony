@@ -20,18 +20,14 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 
 	private static final String LOADING_CONTAINER_ID = "loadingContainer";
 
-	private final AuthenticationDispatcherFilter authenticationDispatcherFilter;
-
 	private final AuthenticationManager authenticationManager;
 
 	@Inject
 	public BootstrapperImpl(PlaceManager aPlaceManager,
-							AuthenticationDispatcherFilter aAuthenticationDispatcherFilter,
 							AuthenticationManager aAuthenticationManager) {
 
 		super(aPlaceManager);
 
-		authenticationDispatcherFilter = aAuthenticationDispatcherFilter;
 		authenticationManager = aAuthenticationManager;
 	}
 
@@ -42,7 +38,7 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 
 		FilterawareDispatcher dispatcher = DefaultFilterawareDispatcher.singleton();
 
-		dispatcher.addFilter(authenticationDispatcherFilter);
+		dispatcher.addFilter(new AuthenticationDispatcherFilter());
 
 		Defaults.setDispatcher(dispatcher);
 		Defaults.setDateFormat(null);

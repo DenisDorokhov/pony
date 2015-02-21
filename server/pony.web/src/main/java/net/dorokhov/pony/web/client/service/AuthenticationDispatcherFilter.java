@@ -4,21 +4,18 @@ import com.google.gwt.http.client.RequestBuilder;
 import org.fusesource.restygwt.client.Method;
 import org.fusesource.restygwt.client.dispatcher.DispatcherFilter;
 
-import javax.inject.Inject;
-
 public class AuthenticationDispatcherFilter implements DispatcherFilter {
 
-	private final AuthenticationManager authenticationManager;
+	private final AuthenticationStorage authenticationStorage;
 
-	@Inject
-	public AuthenticationDispatcherFilter(AuthenticationManager aAuthenticationManager) {
-		authenticationManager = aAuthenticationManager;
+	public AuthenticationDispatcherFilter() {
+		authenticationStorage = AuthenticationStorage.INSTANCE;
 	}
 
 	@Override
 	public boolean filter(Method aMethod, RequestBuilder aBuilder) {
 
-		String token = authenticationManager.getAccessToken();
+		String token = authenticationStorage.getAccessToken();
 
 		if (token != null) {
 			aBuilder.setHeader("X-Access-Token", token);

@@ -11,7 +11,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import net.dorokhov.pony.web.client.message.Messages;
+import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
 
 import javax.inject.Inject;

@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.client.util;
 
-import net.dorokhov.pony.web.client.message.Errors;
+import net.dorokhov.pony.web.client.resource.Errors;
 import net.dorokhov.pony.web.shared.ErrorDto;
 
 import java.util.ArrayList;

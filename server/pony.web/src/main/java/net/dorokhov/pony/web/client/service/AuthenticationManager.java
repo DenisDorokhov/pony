@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.client.service;
 
-import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import net.dorokhov.pony.web.client.service.api.ApiService;
@@ -47,11 +46,6 @@ public class AuthenticationManager {
 
 	}
 
-	private static final String STORAGE_ACCESS_TOKEN_KEY = "AuthenticationStatusProvider.accessToken";
-	private static final String STORAGE_ACCESS_TOKEN_EXPIRATION_KEY = "AuthenticationStatusProvider.accessTokenExpiration";
-
-	private static final String STORAGE_REFRESH_TOKEN_KEY = "AuthenticationStatusProvider.refreshToken";
-
 	private static final int CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL = 5 * 1000;
 	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 5 * 60 * 1000;
 	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
@@ -61,7 +55,7 @@ public class AuthenticationManager {
 
 	private final ApiService apiService;
 
-	private final Storage storage;
+	private final AuthenticationStorage authenticationStorage;
 
 	private final Timer checkExternalStatusChangeTimer;
 	private final Timer checkTokenExpirationTimer;
@@ -78,7 +72,7 @@ public class AuthenticationManager {
 
 		apiService = aApiService;
 
-		storage = Storage.getLocalStorageIfSupported();
+		authenticationStorage = AuthenticationStorage.INSTANCE;
 
 		checkExternalStatusChangeTimer = new Timer() {
 			@Override
@@ -116,19 +110,11 @@ public class AuthenticationManager {
 		return user;
 	}
 
-	public String getAccessToken() {
-		return fetchValue(STORAGE_ACCESS_TOKEN_KEY);
-	}
-
-	private String getRefreshToken() {
-		return fetchValue(STORAGE_REFRESH_TOKEN_KEY);
-	}
-
 	public void initialize(final OperationCallback<UserDto> aCallback) {
 
 		log.info("Initializing...");
 
-		if (getAccessToken() != null) {
+		if (authenticationStorage.getAccessToken() != null) {
 
 			updateStatus(new OperationCallback<UserDto>() {
 				@Override
@@ -161,7 +147,7 @@ public class AuthenticationManager {
 			propagateInitialization(null);
 		}
 
-		lastAccessToken = getAccessToken();
+		lastAccessToken = authenticationStorage.getAccessToken();
 
 		checkExternalStatusChangeTimer.schedule(CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL);
 		checkStatusTimer.schedule(CHECK_STATUS_INTERVAL);
@@ -287,8 +273,8 @@ public class AuthenticationManager {
 
 		log.info("Refreshing access token...");
 
-		if (getRefreshToken() != null) {
-			apiService.refreshToken(getRefreshToken(), new MethodCallbackAdapter<>(new OperationCallback<AuthenticationDto>() {
+		if (authenticationStorage.getRefreshToken() != null) {
+			apiService.refreshToken(authenticationStorage.getRefreshToken(), new MethodCallbackAdapter<>(new OperationCallback<AuthenticationDto>() {
 				@Override
 				public void onSuccess(AuthenticationDto aAuthentication) {
 
@@ -326,7 +312,7 @@ public class AuthenticationManager {
 
 	private void checkExternalStatusChange() {
 
-		String token = getAccessToken();
+		String token = authenticationStorage.getAccessToken();
 
 		if (!ObjectUtils.nullSafeEquals(token, lastAccessToken)) {
 			Window.Location.reload();
@@ -341,8 +327,8 @@ public class AuthenticationManager {
 
 		boolean scheduleChecking = true;
 
-		if (getAccessTokenExpiration() != null) {
-			if (getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
+		if (authenticationStorage.getAccessTokenExpiration() != null) {
+			if (authenticationStorage.getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
 
 				scheduleChecking = false;
 
@@ -396,11 +382,10 @@ public class AuthenticationManager {
 	private void setAuthentication(AuthenticationDto aAuthentication) {
 
 		setAccessToken(aAuthentication.getAccessToken());
-		setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
-
-		setRefreshToken(aAuthentication.getAccessToken());
-
 		setUser(aAuthentication.getUser());
+
+		authenticationStorage.setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
+		authenticationStorage.setRefreshToken(aAuthentication.getAccessToken());
 	}
 
 	private void clearAuthentication(boolean aPropagateLogout) {
@@ -408,9 +393,10 @@ public class AuthenticationManager {
 		UserDto oldUser = getUser();
 
 		setAccessToken(null);
-		setAccessTokenExpiration(null);
-		setRefreshToken(null);
 		setUser(null);
+
+		authenticationStorage.setAccessTokenExpiration(null);
+		authenticationStorage.setRefreshToken(null);
 
 		if (aPropagateLogout) {
 			propagateLogout(oldUser, false);
@@ -419,49 +405,13 @@ public class AuthenticationManager {
 
 	private void setAccessToken(String aAccessToken) {
 
-		storeValue(STORAGE_ACCESS_TOKEN_KEY, aAccessToken);
+		authenticationStorage.setAccessToken(aAccessToken);
 
 		lastAccessToken = aAccessToken;
 	}
 
-	private Date getAccessTokenExpiration() {
-
-		String value = fetchValue(STORAGE_ACCESS_TOKEN_EXPIRATION_KEY);
-
-		return value != null ? new Date(Long.valueOf(value)) : null;
-	}
-
-	private void setAccessTokenExpiration(Date aAccessTokenExpiration) {
-		storeValue(STORAGE_ACCESS_TOKEN_EXPIRATION_KEY, aAccessTokenExpiration != null ? String.valueOf(aAccessTokenExpiration.getTime()) : null);
-	}
-
-	private void setRefreshToken(String aRefreshToken) {
-		storeValue(STORAGE_REFRESH_TOKEN_KEY, aRefreshToken);
-	}
-
 	private void setUser(UserDto aUser) {
 		user = aUser;
-	}
-
-	private String fetchValue(String aKey) {
-
-		String value = null;
-
-		if (storage != null) {
-			value = storage.getItem(aKey);
-		}
-
-		return value;
-	}
-
-	private void storeValue(String aKey, String aValue) {
-		if (storage != null) {
-			if (aValue != null) {
-				storage.setItem(aKey, aValue);
-			} else {
-				storage.removeItem(aKey);
-			}
-		}
 	}
 
 }
