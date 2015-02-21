@@ -12,6 +12,9 @@
         .name {
             line-height: 50px;
             margin-left: 60px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
     </ui:style>
 

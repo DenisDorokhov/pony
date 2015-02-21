@@ -11,17 +11,23 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import net.dorokhov.pony.web.client.common.LoadingState;
 import net.dorokhov.pony.web.client.service.SecurityStorage;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 
 public class ImageLoader extends Composite {
+
+	public enum State {
+		EMPTY, LOADING, ERROR, LOADED
+	}
 
 	interface MyUiBinder extends UiBinder<Widget, ImageLoader> {}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	private final SecurityStorage securityStorage;
+
+	@UiField
+	Image emptyImage;
 
 	@UiField
 	Image loadingImage;
@@ -34,7 +40,7 @@ public class ImageLoader extends Composite {
 
 	private String url;
 
-	private LoadingState loadingState;
+	private State loadingState;
 
 	private JavaScriptObject currentRequest;
 
@@ -44,7 +50,7 @@ public class ImageLoader extends Composite {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		setLoadingState(LoadingState.LOADING);
+		setState(State.EMPTY);
 	}
 
 	public String getUrl() {
@@ -52,7 +58,7 @@ public class ImageLoader extends Composite {
 	}
 
 	public void setUrl(String aUrl) {
-		if (getLoadingState() == LoadingState.ERROR || !ObjectUtils.nullSafeEquals(url, aUrl)) {
+		if (getState() == State.ERROR || !ObjectUtils.nullSafeEquals(url, aUrl)) {
 
 			url = UriUtils.fromString(aUrl).asString();
 
@@ -73,14 +79,18 @@ public class ImageLoader extends Composite {
 
 		url = loadedImage.getUrl();
 
-		setLoadingState(LoadingState.LOADED);
+		setState(State.LOADED);
 	}
 
-	public LoadingState getLoadingState() {
+	public void clear() {
+		setState(State.EMPTY);
+	}
+
+	public State getState() {
 		return loadingState;
 	}
 
-	private void setLoadingState(LoadingState aLoadingState) {
+	private void setState(State aLoadingState) {
 
 		loadingState = aLoadingState;
 
@@ -88,14 +98,15 @@ public class ImageLoader extends Composite {
 	}
 
 	private void updateLoadingState() {
-		loadingImage.setVisible(getLoadingState() == LoadingState.LOADING);
-		errorImage.setVisible(getLoadingState() == LoadingState.ERROR);
-		loadedImage.setVisible(getLoadingState() == LoadingState.LOADED);
+		emptyImage.setVisible(getState() == State.EMPTY);
+		loadingImage.setVisible(getState() == State.LOADING);
+		errorImage.setVisible(getState() == State.ERROR);
+		loadedImage.setVisible(getState() == State.LOADED);
 	}
 
 	private void load() {
 
-		setLoadingState(LoadingState.LOADING);
+		setState(State.LOADING);
 
 		if (currentRequest != null) {
 			cancelRequest(currentRequest);
@@ -157,7 +168,7 @@ public class ImageLoader extends Composite {
 		loadedImage.addLoadHandler(new LoadHandler() {
 			@Override
 			public void onLoad(LoadEvent aEvent) {
-				setLoadingState(LoadingState.LOADED);
+				setState(State.LOADED);
 			}
 		});
 
@@ -168,7 +179,7 @@ public class ImageLoader extends Composite {
 
 	private void fail() {
 
-		setLoadingState(LoadingState.ERROR);
+		setState(State.ERROR);
 
 		currentRequest = null;
 	}

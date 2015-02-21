@@ -77,12 +77,14 @@ public class ArtistView extends Composite implements HasClickHandlers {
 			artworkValue = getArtist().getArtworkUrl();
 		}
 
+		linkedGroupItem.setTitle(nameValue);
+
 		nameLabel.setText(nameValue);
 
 		if (artworkValue != null) {
 			artworkImage.setUrl(artworkValue);
 		} else {
-			artworkImage.setResource(Images.INSTANCE.unknown());
+			artworkImage.clear();
 		}
 	}
 
