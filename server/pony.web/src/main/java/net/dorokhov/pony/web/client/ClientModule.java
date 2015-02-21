@@ -7,10 +7,10 @@ import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 import com.gwtplatform.mvp.client.gin.DefaultModule;
 import net.dorokhov.pony.web.client.mvp.*;
 import net.dorokhov.pony.web.client.mvp.library.*;
-import net.dorokhov.pony.web.client.mvp.library.album.AlbumsPresenter;
-import net.dorokhov.pony.web.client.mvp.library.album.AlbumsView;
-import net.dorokhov.pony.web.client.mvp.library.artist.ArtistsPresenter;
-import net.dorokhov.pony.web.client.mvp.library.artist.ArtistsView;
+import net.dorokhov.pony.web.client.mvp.library.album.AlbumListPresenter;
+import net.dorokhov.pony.web.client.mvp.library.album.AlbumListView;
+import net.dorokhov.pony.web.client.mvp.library.artist.ArtistListPresenter;
+import net.dorokhov.pony.web.client.mvp.library.artist.ArtistListView;
 import net.dorokhov.pony.web.client.service.*;
 import net.dorokhov.pony.web.client.service.api.ApiService;
 
@@ -28,8 +28,8 @@ public class ClientModule extends AbstractPresenterModule {
 		bindSingletonPresenterWidget(PlayerPresenter.class, PlayerPresenter.MyView.class, PlayerView.class);
 		bindSingletonPresenterWidget(ToolbarPresenter.class, ToolbarPresenter.MyView.class, ToolbarView.class);
 		bindSingletonPresenterWidget(LibraryContentPresenter.class, LibraryContentPresenter.MyView.class, LibraryContentView.class);
-		bindSingletonPresenterWidget(ArtistsPresenter.class, ArtistsPresenter.MyView.class, ArtistsView.class);
-		bindSingletonPresenterWidget(AlbumsPresenter.class, AlbumsPresenter.MyView.class, AlbumsView.class);
+		bindSingletonPresenterWidget(ArtistListPresenter.class, ArtistListPresenter.MyView.class, ArtistListView.class);
+		bindSingletonPresenterWidget(AlbumListPresenter.class, AlbumListPresenter.MyView.class, AlbumListView.class);
 
 		bindPresenter(ErrorPresenter.class, ErrorPresenter.MyView.class, ErrorView.class, ErrorPresenter.MyProxy.class);
 

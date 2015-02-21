@@ -6,12 +6,12 @@ import com.gwtplatform.mvp.client.View;
 
 import javax.inject.Inject;
 
-public class AlbumsPresenter extends PresenterWidget<AlbumsPresenter.MyView> {
+public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> {
 
 	public interface MyView extends View {}
 
 	@Inject
-	public AlbumsPresenter(EventBus aEventBus, MyView aView) {
+	public AlbumListPresenter(EventBus aEventBus, MyView aView) {
 		super(aEventBus, aView);
 	}
 

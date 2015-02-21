@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ArtistsPresenter extends PresenterWidget<ArtistsPresenter.MyView> implements ArtistsUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestedEvent.Handler {
+public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestedEvent.Handler {
 
-	public interface MyView extends View, HasUiHandlers<ArtistsUiHandlers>, HasLoadingState {
+	public interface MyView extends View, HasUiHandlers<ArtistListUiHandlers>, HasLoadingState {
 
 		public List<ArtistDto> getArtists();
 
@@ -51,8 +51,8 @@ public class ArtistsPresenter extends PresenterWidget<ArtistsPresenter.MyView> i
 	private OperationRequest currentRequest;
 
 	@Inject
-	public ArtistsPresenter(EventBus aEventBus, MyView aView,
-							SongService aSongService, ErrorNotifier aErrorNotifier) {
+	public ArtistListPresenter(EventBus aEventBus, MyView aView,
+							   SongService aSongService, ErrorNotifier aErrorNotifier) {
 
 		super(aEventBus, aView);
 

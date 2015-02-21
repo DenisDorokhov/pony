@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implements ArtistsPresenter.MyView {
+public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> implements ArtistListPresenter.MyView {
 
-	interface MyUiBinder extends UiBinder<Widget, ArtistsView> {}
+	interface MyUiBinder extends UiBinder<Widget, ArtistListView> {}
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -46,7 +46,7 @@ public class ArtistsView extends ViewWithUiHandlers<ArtistsUiHandlers> implement
 
 	private LoadingState loadingState;
 
-	public ArtistsView() {
+	public ArtistListView() {
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		

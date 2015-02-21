@@ -5,13 +5,13 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 
-public class AlbumsView extends ViewImpl implements AlbumsPresenter.MyView {
+public class AlbumListView extends ViewImpl implements AlbumListPresenter.MyView {
 
-	interface MyUiBinder extends UiBinder<Widget, AlbumsView> {}
+	interface MyUiBinder extends UiBinder<Widget, AlbumListView> {}
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	public AlbumsView() {
+	public AlbumListView() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 

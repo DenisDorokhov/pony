@@ -3,8 +3,8 @@ package net.dorokhov.pony.web.client.mvp.library;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import net.dorokhov.pony.web.client.mvp.library.album.AlbumsPresenter;
-import net.dorokhov.pony.web.client.mvp.library.artist.ArtistsPresenter;
+import net.dorokhov.pony.web.client.mvp.library.album.AlbumListPresenter;
+import net.dorokhov.pony.web.client.mvp.library.artist.ArtistListPresenter;
 
 import javax.inject.Inject;
 
@@ -15,18 +15,18 @@ public class LibraryContentPresenter extends PresenterWidget<LibraryContentPrese
 	public static final Object SLOT_ARTISTS = new Object();
 	public static final Object SLOT_ALBUMS = new Object();
 
-	private final ArtistsPresenter artistsPresenter;
+	private final ArtistListPresenter artistListPresenter;
 
-	private final AlbumsPresenter albumsPresenter;
+	private final AlbumListPresenter albumListPresenter;
 
 	@Inject
 	public LibraryContentPresenter(EventBus aEventBus, MyView aView,
-								   ArtistsPresenter aArtistsPresenter, AlbumsPresenter aAlbumsPresenter) {
+								   ArtistListPresenter aArtistListPresenter, AlbumListPresenter aAlbumListPresenter) {
 
 		super(aEventBus, aView);
 
-		artistsPresenter = aArtistsPresenter;
-		albumsPresenter = aAlbumsPresenter;
+		artistListPresenter = aArtistListPresenter;
+		albumListPresenter = aAlbumListPresenter;
 	}
 
 	@Override
@@ -34,8 +34,8 @@ public class LibraryContentPresenter extends PresenterWidget<LibraryContentPrese
 
 		super.onBind();
 
-		setInSlot(SLOT_ARTISTS, artistsPresenter);
-		setInSlot(SLOT_ALBUMS, albumsPresenter);
+		setInSlot(SLOT_ARTISTS, artistListPresenter);
+		setInSlot(SLOT_ALBUMS, albumListPresenter);
 	}
 
 }

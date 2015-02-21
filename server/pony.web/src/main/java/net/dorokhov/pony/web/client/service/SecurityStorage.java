@@ -3,19 +3,22 @@ package net.dorokhov.pony.web.client.service;
 import com.google.gwt.storage.client.Storage;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AuthenticationStorage {
+public class SecurityStorage {
 
-	public static final AuthenticationStorage INSTANCE = new AuthenticationStorage();
+	public static final SecurityStorage INSTANCE = new SecurityStorage();
 
 	private static final String STORAGE_ACCESS_TOKEN_KEY = "AuthenticationStatusProvider.accessToken";
 	private static final String STORAGE_ACCESS_TOKEN_EXPIRATION_KEY = "AuthenticationStatusProvider.accessTokenExpiration";
-
 	private static final String STORAGE_REFRESH_TOKEN_KEY = "AuthenticationStatusProvider.refreshToken";
+
+	private final Map<String, String> storageFallBack = new HashMap<>();
 
 	private final Storage storage;
 
-	private AuthenticationStorage() {
+	private SecurityStorage() {
 		storage = Storage.getLocalStorageIfSupported();
 	}
 
@@ -48,10 +51,12 @@ public class AuthenticationStorage {
 
 	private String fetchValue(String aKey) {
 
-		String value = null;
+		String value;
 
 		if (storage != null) {
 			value = storage.getItem(aKey);
+		} else {
+			value = storageFallBack.get(aKey);
 		}
 
 		return value;
@@ -63,6 +68,12 @@ public class AuthenticationStorage {
 				storage.setItem(aKey, aValue);
 			} else {
 				storage.removeItem(aKey);
+			}
+		} else {
+			if (aValue != null) {
+				storageFallBack.put(aKey, aValue);
+			} else {
+				storageFallBack.remove(aKey);
 			}
 		}
 	}

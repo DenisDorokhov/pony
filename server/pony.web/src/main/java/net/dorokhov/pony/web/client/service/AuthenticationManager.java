@@ -55,7 +55,7 @@ public class AuthenticationManager {
 
 	private final ApiService apiService;
 
-	private final AuthenticationStorage authenticationStorage;
+	private final SecurityStorage securityStorage;
 
 	private final Timer checkExternalStatusChangeTimer;
 	private final Timer checkTokenExpirationTimer;
@@ -72,7 +72,7 @@ public class AuthenticationManager {
 
 		apiService = aApiService;
 
-		authenticationStorage = AuthenticationStorage.INSTANCE;
+		securityStorage = SecurityStorage.INSTANCE;
 
 		checkExternalStatusChangeTimer = new Timer() {
 			@Override
@@ -114,7 +114,7 @@ public class AuthenticationManager {
 
 		log.info("Initializing...");
 
-		if (authenticationStorage.getAccessToken() != null) {
+		if (securityStorage.getAccessToken() != null) {
 
 			updateStatus(new OperationCallback<UserDto>() {
 				@Override
@@ -147,7 +147,7 @@ public class AuthenticationManager {
 			propagateInitialization(null);
 		}
 
-		lastAccessToken = authenticationStorage.getAccessToken();
+		lastAccessToken = securityStorage.getAccessToken();
 
 		checkExternalStatusChangeTimer.schedule(CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL);
 		checkStatusTimer.schedule(CHECK_STATUS_INTERVAL);
@@ -273,8 +273,8 @@ public class AuthenticationManager {
 
 		log.info("Refreshing access token...");
 
-		if (authenticationStorage.getRefreshToken() != null) {
-			apiService.refreshToken(authenticationStorage.getRefreshToken(), new MethodCallbackAdapter<>(new OperationCallback<AuthenticationDto>() {
+		if (securityStorage.getRefreshToken() != null) {
+			apiService.refreshToken(securityStorage.getRefreshToken(), new MethodCallbackAdapter<>(new OperationCallback<AuthenticationDto>() {
 				@Override
 				public void onSuccess(AuthenticationDto aAuthentication) {
 
@@ -312,7 +312,7 @@ public class AuthenticationManager {
 
 	private void checkExternalStatusChange() {
 
-		String token = authenticationStorage.getAccessToken();
+		String token = securityStorage.getAccessToken();
 
 		if (!ObjectUtils.nullSafeEquals(token, lastAccessToken)) {
 			Window.Location.reload();
@@ -327,8 +327,8 @@ public class AuthenticationManager {
 
 		boolean scheduleChecking = true;
 
-		if (authenticationStorage.getAccessTokenExpiration() != null) {
-			if (authenticationStorage.getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
+		if (securityStorage.getAccessTokenExpiration() != null) {
+			if (securityStorage.getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
 
 				scheduleChecking = false;
 
@@ -384,8 +384,8 @@ public class AuthenticationManager {
 		setAccessToken(aAuthentication.getAccessToken());
 		setUser(aAuthentication.getUser());
 
-		authenticationStorage.setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
-		authenticationStorage.setRefreshToken(aAuthentication.getAccessToken());
+		securityStorage.setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
+		securityStorage.setRefreshToken(aAuthentication.getAccessToken());
 	}
 
 	private void clearAuthentication(boolean aPropagateLogout) {
@@ -395,8 +395,8 @@ public class AuthenticationManager {
 		setAccessToken(null);
 		setUser(null);
 
-		authenticationStorage.setAccessTokenExpiration(null);
-		authenticationStorage.setRefreshToken(null);
+		securityStorage.setAccessTokenExpiration(null);
+		securityStorage.setRefreshToken(null);
 
 		if (aPropagateLogout) {
 			propagateLogout(oldUser, false);
@@ -405,7 +405,7 @@ public class AuthenticationManager {
 
 	private void setAccessToken(String aAccessToken) {
 
-		authenticationStorage.setAccessToken(aAccessToken);
+		securityStorage.setAccessToken(aAccessToken);
 
 		lastAccessToken = aAccessToken;
 	}
