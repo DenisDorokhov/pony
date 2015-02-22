@@ -25,7 +25,9 @@ public class AlbumView extends Composite {
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private static final List<SongListView> viewCache = new ArrayList<>();
+	private final List<SongListView> viewCache = new ArrayList<>();
+
+	private final List<SongListView> songListViews = new ArrayList<>();
 
 	@UiField
 	ArtworkLoader artworkLoader;
@@ -71,10 +73,8 @@ public class AlbumView extends Composite {
 
 		playing = aPlaying;
 
-		for (Widget widget : songList) {
-			if (widget instanceof SongListView) {
-				((SongListView) widget).setPlaying(playing);
-			}
+		for (SongListView songView : songListViews) {
+			songView.setPlaying(playing);
 		}
 	}
 
@@ -86,10 +86,8 @@ public class AlbumView extends Composite {
 
 		selectionModel = aSelectionModel;
 
-		for (Widget widget : songList) {
-			if (widget instanceof SongListView) {
-				((SongListView) widget).setSelectionModel(selectionModel);
-			}
+		for (SongListView songView : songListViews) {
+			songView.setSelectionModel(selectionModel);
 		}
 	}
 
@@ -101,19 +99,14 @@ public class AlbumView extends Composite {
 
 		activationModel = aActivationModel;
 
-		for (Widget widget : songList) {
-			if (widget instanceof SongListView) {
-				((SongListView) widget).setActivationModel(activationModel);
-			}
+		for (SongListView songView : songListViews) {
+			songView.setActivationModel(activationModel);
 		}
 	}
 
 	public void scrollToSong(SongDto aSong) {
-		for (int i = 0; i < songList.getWidgetCount(); i++) {
-
-			SongListView songListView = (SongListView) songList.getWidget(i);
-
-			songListView.scrollToSong(aSong);
+		for (SongListView songView : songListViews) {
+			songView.scrollToSong(aSong);
 		}
 	}
 
@@ -173,27 +166,29 @@ public class AlbumView extends Composite {
 			viewCache.add(songListView);
 		}
 
+		songListViews.clear();
+
 		int i = 0;
 
 		for (Map.Entry<Integer, List<SongDto>> entry : albumDiscs.entrySet()) {
 
-			SongListView songListView;
+			SongListView songView;
 
 			if (i < songList.getWidgetCount()) {
-				songListView = (SongListView) songList.getWidget(i);
+				songView = (SongListView) songList.getWidget(i);
 			} else {
 
-				songListView = viewCache.size() > 0 ? viewCache.remove(0) : null;
+				songView = viewCache.size() > 0 ? viewCache.remove(0) : null;
 
-				if (songListView == null) {
-					songListView = new SongListView();
+				if (songView == null) {
+					songView = new SongListView();
 				}
 
-				songListView.setSelectionModel(getSelectionModel());
-				songListView.setActivationModel(getActivationModel());
-				songListView.setPlaying(isPlaying());
+				songView.setSelectionModel(getSelectionModel());
+				songView.setActivationModel(getActivationModel());
+				songView.setPlaying(isPlaying());
 
-				songList.add(songListView);
+				songList.add(songView);
 			}
 
 			Integer discNumber = entry.getKey();
@@ -202,9 +197,10 @@ public class AlbumView extends Composite {
 				discNumber = null;
 			}
 
-			songListView.setSongs(entry.getValue());
+			songView.setSongs(entry.getValue());
+			songView.setCaption(discNumber != null ? Messages.INSTANCE.albumDisc(discNumber) : null);
 
-			songListView.setCaption(discNumber != null ? Messages.INSTANCE.albumDisc(discNumber) : null);
+			songListViews.add(songView);
 
 			i++;
 		}
