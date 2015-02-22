@@ -47,15 +47,15 @@ public class SongService {
 		})));
 	}
 
-	public OperationRequest getArtistSongs(final String aArtistIdOrName, final OperationCallback<ArtistAlbumsDto> aCallback) {
+	public OperationRequest getArtistSongs(final Long aArtistId, final OperationCallback<ArtistAlbumsDto> aCallback) {
 
-		log.info("Getting songs for artist [" + aArtistIdOrName + "]...");
+		log.info("Getting songs for artist [" + aArtistId + "]...");
 
-		return new RequestAdapter(apiService.getArtistSongs(aArtistIdOrName, new MethodCallbackAdapter<>(new OperationCallback<ArtistAlbumsDto>() {
+		return new RequestAdapter(apiService.getArtistSongs(String.valueOf(aArtistId), new MethodCallbackAdapter<>(new OperationCallback<ArtistAlbumsDto>() {
 			@Override
 			public void onSuccess(ArtistAlbumsDto aArtistAlbums) {
 
-				log.info("[" + aArtistAlbums.getAlbums().size() + "] albums returned for artist [" + aArtistIdOrName + "].");
+				log.info("[" + aArtistAlbums.getAlbums().size() + "] albums returned for artist [" + aArtistId + "].");
 
 				aCallback.onSuccess(aArtistAlbums);
 			}
@@ -63,7 +63,7 @@ public class SongService {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				log.info("Could not get albums for artist [" + aArtistIdOrName + "].");
+				log.info("Could not get albums for artist [" + aArtistId + "].");
 
 				aCallback.onError(aErrors);
 			}

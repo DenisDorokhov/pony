@@ -6,7 +6,6 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.event.ArtistSelectionEvent;
 import net.dorokhov.pony.web.client.event.ArtistSelectionRequestEvent;
-import net.dorokhov.pony.web.client.event.ArtistListUpdateEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
@@ -123,8 +122,6 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 				doUpdateArtists(aArtists);
 
 				getView().setLoadingState(LoadingState.LOADED);
-
-				getEventBus().fireEvent(new ArtistListUpdateEvent(aArtists));
 
 				doSelectArtist(artistToSelect, aShouldScroll);
 			}

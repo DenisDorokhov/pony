@@ -9,7 +9,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import net.dorokhov.pony.web.client.control.ImageLoader;
-import net.dorokhov.pony.web.client.resource.Images;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroupItem;
@@ -71,7 +70,7 @@ public class ArtistView extends Composite implements HasClickHandlers {
 			nameValue = getArtist().getName();
 
 			if (nameValue == null) {
-				nameValue = Messages.INSTANCE.artistNameUnknown();
+				nameValue = Messages.INSTANCE.artistUnknown();
 			}
 
 			artworkValue = getArtist().getArtworkUrl();

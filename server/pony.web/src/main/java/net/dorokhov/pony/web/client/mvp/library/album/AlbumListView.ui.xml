@@ -12,6 +12,10 @@
             right: 0;
             bottom: 0;
         }
+        .albumList {
+            top: 38px;
+            overflow: auto;
+        }
         .panel {
             margin-bottom: 0;
         }
@@ -24,14 +28,14 @@
     <g:HTMLPanel addStyleNames="{style.container}">
         <b:Panel addStyleNames="{style.container} {style.panel}">
 
-            <b:PanelHeader ui:field="headerContainer">
-                <b:Heading ui:field="header" size="H3" />
-            </b:PanelHeader>
-
-            <b:PanelBody ui:field="albumList" />
-
             <g:Label ui:field="loadingLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusLoading}" />
             <g:Label ui:field="errorLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusError}" />
+
+            <b:PanelHeader ui:field="artistHeaderContainer">
+                <b:Heading ui:field="artistHeader" size="H3" />
+            </b:PanelHeader>
+
+            <b:PanelBody ui:field="albumList" addStyleNames="{style.container} {style.albumList}" />
 
         </b:Panel>
     </g:HTMLPanel>

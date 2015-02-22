@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> implements AlbumListUiHandlers,
-		ArtistSelectionEvent.Handler, ArtistListUpdateEvent.Handler, RefreshRequestEvent.Handler,
+		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler,
 		SongSelectionRequestEvent.Handler, SongChangeEvent.Handler, SongStartEvent.Handler, SongPauseEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<AlbumListUiHandlers>, HasLoadingState {
@@ -76,7 +76,6 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		super.onBind();
 
 		addRegisteredHandler(ArtistSelectionEvent.TYPE, this);
-		addRegisteredHandler(ArtistListUpdateEvent.TYPE, this);
 		addRegisteredHandler(RefreshRequestEvent.TYPE, this);
 
 		addRegisteredHandler(SongSelectionRequestEvent.TYPE, this);
@@ -110,13 +109,6 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 	@Override
 	public void onArtistSelection(ArtistSelectionEvent aEvent) {
 		doUpdateAlbums(aEvent.getArtist(), true);
-	}
-
-	@Override
-	public void onArtistListUpdate(ArtistListUpdateEvent aEvent) {
-		if (getView().getArtist() != null && aEvent.hasArtist(getView().getArtist())) {
-			getView().setArtist(aEvent.getArtist(getView().getArtist().getId()));
-		}
 	}
 
 	@Override
@@ -187,16 +179,16 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 			BusyIndicator.startTask();
 
-			currentRequest = songService.getArtistSongs(aArtist.getName(), new OperationCallback<ArtistAlbumsDto>() {
+			currentRequest = songService.getArtistSongs(aArtist.getId(), new OperationCallback<ArtistAlbumsDto>() {
 				@Override
-				public void onSuccess(ArtistAlbumsDto aResult) {
+				public void onSuccess(ArtistAlbumsDto aArtistAlbums) {
 
 					BusyIndicator.finishTask();
 
 					currentRequest = null;
 
-					getView().setArtist(aResult.getArtist());
-					getView().setAlbums(aResult.getAlbums());
+					getView().setArtist(aArtistAlbums.getArtist());
+					getView().setAlbums(aArtistAlbums.getAlbums());
 
 					getView().setLoadingState(LoadingState.LOADED);
 
