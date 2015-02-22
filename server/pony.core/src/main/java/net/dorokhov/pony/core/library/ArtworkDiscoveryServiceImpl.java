@@ -169,6 +169,10 @@ public class ArtworkDiscoveryServiceImpl implements ArtworkDiscoveryService {
 			}
 		}
 
+		if (candidatesBySize.size() > 0) {
+			return candidatesBySize.get(0);
+		}
+
 		return null;
 	}
 
