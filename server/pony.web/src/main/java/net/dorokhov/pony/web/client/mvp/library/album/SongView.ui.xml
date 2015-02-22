@@ -2,6 +2,24 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <g:HTMLPanel />
+    <ui:style>
+        .trackNumber {
+
+        }
+        .name {
+
+        }
+        .duration {
+
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+
+        <g:Label ui:field="trackNumberLabel" styleName="{style.trackNumber}" />
+        <g:Label ui:field="nameLabel" styleName="{style.name}" />
+        <g:Label ui:field="durationLabel" styleName="{style.duration}" />
+
+    </g:FlowPanel>
 
 </ui:UiBinder>

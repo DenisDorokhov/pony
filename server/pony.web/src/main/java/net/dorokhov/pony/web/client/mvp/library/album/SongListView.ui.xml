@@ -2,12 +2,12 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <g:HTMLPanel>
+    <g:FlowPanel>
 
         <b:Heading ui:field="captionHeader" size="H5" />
 
         <g:FlowPanel ui:field="songList" />
 
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

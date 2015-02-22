@@ -26,7 +26,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.container}">
+    <g:FlowPanel addStyleNames="{style.container}">
         <b:Panel addStyleNames="{style.container} {style.panel}">
             <g:FlowPanel addStyleNames="{style.container}">
                 <b:LinkedGroup ui:field="artistList" addStyleNames="{style.artistList}" />
@@ -34,6 +34,6 @@
             <g:Label ui:field="loadingLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusLoading}" />
             <g:Label ui:field="errorLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusError}" />
         </b:Panel>
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

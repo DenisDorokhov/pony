@@ -53,21 +53,21 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.container}">
-        <div class="{style.header}">
-            <div class="{style.title}">
+    <g:FlowPanel addStyleNames="{style.container}">
+        <g:FlowPanel addStyleNames="{style.header}">
+            <g:FlowPanel addStyleNames="{style.title}">
                 <b:Heading addStyleNames="{style.titleHeader}" size="H1" text="{mes.libraryHeader}" />
-            </div>
-            <div class="{style.player}">
+            </g:FlowPanel>
+            <g:FlowPanel addStyleNames="{style.player}">
                 <g:SimplePanel ui:field="playerContainer" />
-            </div>
-            <div class="{style.toolbar}">
+            </g:FlowPanel>
+            <g:FlowPanel addStyleNames="{style.toolbar}">
                 <g:SimplePanel ui:field="toolbarContainer" />
-            </div>
-        </div>
-        <div class="{style.content}">
+            </g:FlowPanel>
+        </g:FlowPanel>
+        <g:FlowPanel addStyleNames="{style.content}">
             <g:SimplePanel ui:field="contentContainer" />
-        </div>
-    </g:HTMLPanel>
+        </g:FlowPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

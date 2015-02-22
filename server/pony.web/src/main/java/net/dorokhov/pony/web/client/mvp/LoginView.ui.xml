@@ -17,7 +17,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.loginContainer}">
+    <g:FlowPanel addStyleNames="{style.loginContainer}">
         <b:Panel addStyleNames="{style.loginPanel}">
 
             <b:PanelHeader>
@@ -45,6 +45,6 @@
             </b:PanelBody>
 
         </b:Panel>
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

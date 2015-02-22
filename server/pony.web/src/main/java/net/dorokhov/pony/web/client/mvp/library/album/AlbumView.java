@@ -25,7 +25,13 @@ public class AlbumView extends Composite {
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private final List<SongListView> viewCache = new ArrayList<>();
+	private static final List<SongListView> viewCache = new ArrayList<>();
+
+	static {
+		for (int i = 0; i < 50; i++) {
+			viewCache.add(new SongListView());
+		}
+	}
 
 	private final List<SongListView> songListViews = new ArrayList<>();
 
@@ -46,12 +52,7 @@ public class AlbumView extends Composite {
 	private SingleSelectionModel<SongDto> activationModel;
 
 	public AlbumView() {
-
 		initWidget(uiBinder.createAndBindUi(this));
-
-		for (int i = 0; i < 50; i++) {
-			viewCache.add(new SongListView());
-		}
 	}
 
 	public AlbumSongsDto getAlbumSongs() {

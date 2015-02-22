@@ -27,11 +27,11 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.root}">
+    <g:FlowPanel addStyleNames="{style.root}">
         <g:Image ui:field="emptyImage" addStyleNames="{style.image} {style.status}" resource="{img.unknown}" />
         <g:Image ui:field="loadingImage" addStyleNames="{style.image} {style.status}" resource="{img.spinner}" />
         <g:Image ui:field="errorImage" addStyleNames="{style.image} {style.status}" resource="{img.error}" />
         <g:Image ui:field="loadedImage" addStyleNames="{style.image} {style.loadedImage}" />
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

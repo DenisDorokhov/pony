@@ -13,7 +13,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.container}">
+    <g:FlowPanel addStyleNames="{style.container}">
 
         <b:Button ui:field="refreshButton" addStyleNames="{style.settingsButton}"
                   text="{mes.toolbarRefresh}" icon="REFRESH" iconPosition="RIGHT" />
@@ -30,6 +30,6 @@
             </b:DropDownMenu>
         </b:ButtonGroup>
 
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>

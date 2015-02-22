@@ -10,11 +10,9 @@
         }
     </ui:style>
 
-    <g:HTMLPanel>
-        <div class="{style.errorText}">
-            <b:Heading size="H3" text="{mes.errorText}" />
-            <b:Button ui:field="homeButton" type="PRIMARY" icon="HOME" text="{mes.errorHomeButton}" />
-        </div>
-    </g:HTMLPanel>
+    <g:FlowPanel addStyleNames="{style.errorText}">
+        <b:Heading size="H3" text="{mes.errorText}" />
+        <b:Button ui:field="homeButton" type="PRIMARY" icon="HOME" text="{mes.errorHomeButton}" />
+    </g:FlowPanel>
 
 </ui:UiBinder>

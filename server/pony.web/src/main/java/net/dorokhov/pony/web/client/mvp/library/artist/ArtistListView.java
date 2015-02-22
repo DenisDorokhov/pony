@@ -62,10 +62,10 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 			}
 		});
 
-		for (int i = 0; i < 150; i++) {
+		for (int i = 0; i < 200; i++) {
 			viewCache.add(createArtistView());
 		}
-		
+
 		setLoadingState(LoadingState.LOADING);
 	}
 

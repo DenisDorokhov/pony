@@ -25,7 +25,13 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private final List<SongView> viewCache = new ArrayList<>();
+	private static final List<SongView> viewCache = new ArrayList<>();
+
+	static {
+		for (int i = 0; i < 20; i++) {
+			viewCache.add(new SongView());
+		}
+	}
 
 	private final Map<Long, SongView> songToView = new HashMap<>();
 
@@ -48,12 +54,7 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 	private HandlerRegistration activationRegistration;
 
 	public SongListView() {
-
 		initWidget(uiBinder.createAndBindUi(this));
-
-		for (int i = 0; i < 50; i++) {
-			viewCache.add(new SongView());
-		}
 	}
 
 	public List<SongDto> getSongs() {

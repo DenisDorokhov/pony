@@ -24,7 +24,7 @@
         }
     </ui:style>
 
-    <g:HTMLPanel addStyleNames="{style.albumView}">
+    <g:FlowPanel addStyleNames="{style.albumView}">
 
         <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
 
@@ -36,6 +36,6 @@
 
         </g:FlowPanel>
 
-    </g:HTMLPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>
