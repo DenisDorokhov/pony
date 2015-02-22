@@ -14,13 +14,13 @@ import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.service.SecurityStorage;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 
-public class ImageLoader extends Composite {
+public class ArtworkLoader extends Composite {
 
 	public enum State {
 		EMPTY, LOADING, ERROR, LOADED
 	}
 
-	interface MyUiBinder extends UiBinder<Widget, ImageLoader> {}
+	interface MyUiBinder extends UiBinder<Widget, ArtworkLoader> {}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -44,7 +44,7 @@ public class ImageLoader extends Composite {
 
 	private JavaScriptObject currentRequest;
 
-	public ImageLoader() {
+	public ArtworkLoader() {
 
 		securityStorage = SecurityStorage.INSTANCE;
 
@@ -144,14 +144,14 @@ public class ImageLoader extends Composite {
 
 				var source = $wnd.URL.createObjectURL(xhr.response);
 
-            	self.@net.dorokhov.pony.web.client.control.ImageLoader::complete(Ljava/lang/String;)(source);
+            	self.@net.dorokhov.pony.web.client.control.ArtworkLoader::complete(Ljava/lang/String;)(source);
 
             } else {
-                self.@net.dorokhov.pony.web.client.control.ImageLoader::fail()();
+                self.@net.dorokhov.pony.web.client.control.ArtworkLoader::fail()();
 			}
 		};
 		xhr.onerror = function(aEvent) {
-            self.@net.dorokhov.pony.web.client.control.ImageLoader::fail()();
+            self.@net.dorokhov.pony.web.client.control.ArtworkLoader::fail()();
 		};
 
 		xhr.send();

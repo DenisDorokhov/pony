@@ -30,6 +30,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String artistUnknown();
 	public String albumUnknown();
+	public String albumDisc(Integer aDisc);
 
 	public String statusLoading();
 	public String statusError();

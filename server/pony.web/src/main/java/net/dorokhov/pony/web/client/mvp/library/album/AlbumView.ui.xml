@@ -26,10 +26,14 @@
 
     <g:HTMLPanel addStyleNames="{style.albumView}">
 
-        <p:ImageLoader ui:field="artworkImage" addStyleNames="{style.artwork}" />
+        <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
 
         <g:FlowPanel addStyleNames="{style.songContainer}">
+
             <b:Heading ui:field="titleHeader" addStyleNames="{style.titleHeader}" size="H4" />
+
+            <g:FlowPanel ui:field="songList" />
+
         </g:FlowPanel>
 
     </g:HTMLPanel>

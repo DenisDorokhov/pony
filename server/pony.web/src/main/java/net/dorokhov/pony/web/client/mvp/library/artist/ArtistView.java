@@ -8,7 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import net.dorokhov.pony.web.client.control.ImageLoader;
+import net.dorokhov.pony.web.client.control.ArtworkLoader;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroupItem;
@@ -20,7 +20,7 @@ public class ArtistView extends Composite implements HasClickHandlers {
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	@UiField
-	ImageLoader artworkImage;
+	ArtworkLoader artworkLoader;
 
 	@UiField
 	Label nameLabel;
@@ -81,9 +81,9 @@ public class ArtistView extends Composite implements HasClickHandlers {
 		nameLabel.setText(nameValue);
 
 		if (artworkValue != null) {
-			artworkImage.setUrl(artworkValue);
+			artworkLoader.setUrl(artworkValue);
 		} else {
-			artworkImage.clear();
+			artworkLoader.clear();
 		}
 	}
 
