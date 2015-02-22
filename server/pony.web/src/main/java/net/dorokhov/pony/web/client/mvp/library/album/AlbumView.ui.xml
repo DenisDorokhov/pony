@@ -22,6 +22,12 @@
         .titleHeader {
             margin-top: 0;
         }
+        .songList {
+            margin-bottom: 30px;
+        }
+        .albumView:last-child .songList {
+            margin-bottom: 0;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.albumView}">
@@ -29,11 +35,8 @@
         <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
 
         <g:FlowPanel addStyleNames="{style.songContainer}">
-
             <b:Heading ui:field="titleHeader" addStyleNames="{style.titleHeader}" size="H4" />
-
-            <g:FlowPanel ui:field="songList" />
-
+            <g:FlowPanel ui:field="songList" addStyleNames="{style.songList}" />
         </g:FlowPanel>
 
     </g:FlowPanel>

@@ -4,7 +4,7 @@
     <ui:with field="img" type="net.dorokhov.pony.web.client.resource.Images" />
 
     <ui:style>
-        .root {
+        .artworkLoader {
             position: relative;
             background-color: #FFF;
             border: 1px solid #ddd;
@@ -27,7 +27,7 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.root}">
+    <g:FlowPanel addStyleNames="{style.artworkLoader}">
         <g:Image ui:field="emptyImage" addStyleNames="{style.image} {style.status}" resource="{img.unknown}" />
         <g:Image ui:field="loadingImage" addStyleNames="{style.image} {style.status}" resource="{img.spinner}" />
         <g:Image ui:field="errorImage" addStyleNames="{style.image} {style.status}" resource="{img.error}" />
