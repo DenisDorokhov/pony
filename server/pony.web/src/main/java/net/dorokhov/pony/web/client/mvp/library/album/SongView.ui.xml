@@ -4,16 +4,18 @@
     <ui:style>
         .songView {
             width: 350px;
-            height: 1.5em;
         }
         .trackNumber {
             float: left;
             width: 25px;
+            height: 25px;
             text-align: right;
+            color: gray;
         }
         .name {
             float: left;
             width: 285px;
+            height: 25px;
             padding-left: 10px;
             padding-right: 10px;
             text-overflow: ellipsis;
@@ -23,7 +25,9 @@
         .duration {
             float: left;
             width: 40px;
+            height: 25px;
             text-align: right;
+            color: gray;
         }
     </ui:style>
 

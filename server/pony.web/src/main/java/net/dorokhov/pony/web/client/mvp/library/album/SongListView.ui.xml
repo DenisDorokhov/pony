@@ -2,12 +2,20 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:style>
+        .songList {
+            -moz-column-width: 350px;
+            -webkit-column-width: 350px;
+            column-width: 350px;
+            -moz-column-gap: 20px;
+            -webkit-column-gap: 20px;
+            column-gap: 20px;
+        }
+    </ui:style>
+
     <g:FlowPanel>
-
         <b:Heading ui:field="captionHeader" size="H5" />
-
-        <g:FlowPanel ui:field="songList" />
-
+        <g:FlowPanel ui:field="songList" addStyleNames="{style.songList}" />
     </g:FlowPanel>
 
 </ui:UiBinder>

@@ -9,9 +9,9 @@
         }
         .artwork {
             float: left;
-            margin-bottom: 30px;
             width: 140px;
             height: 140px;
+            margin-bottom: 50px;
         }
         .albumView:last-child .artwork {
             margin-bottom: 0;
@@ -23,7 +23,7 @@
             margin-top: 0;
         }
         .songList {
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
         .albumView:last-child .songList {
             margin-bottom: 0;
