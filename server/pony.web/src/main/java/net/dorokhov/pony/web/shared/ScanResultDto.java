@@ -3,9 +3,7 @@ package net.dorokhov.pony.web.shared;
 import java.util.Date;
 import java.util.List;
 
-public class ScanResultDto {
-
-	private Long id;
+public class ScanResultDto extends AbstractDto<Long> {
 
 	private Date date;
 
@@ -45,14 +43,6 @@ public class ScanResultDto {
 
 	private Long createdArtworkCount;
 	private Long deletedArtworkCount;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public Date getDate() {
 		return date;

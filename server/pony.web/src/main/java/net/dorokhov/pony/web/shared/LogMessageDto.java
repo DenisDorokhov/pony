@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LogMessageDto {
+public class LogMessageDto extends AbstractDto<Long> {
 
 	public static enum Type {
 		DEBUG, INFO, WARN, ERROR
 	}
-
-	private Long id;
 
 	private Date date;
 
@@ -23,14 +21,6 @@ public class LogMessageDto {
 	private String details;
 
 	private List<String> arguments;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public Date getDate() {
 		return date;

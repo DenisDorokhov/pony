@@ -11,8 +11,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String errorHomeButton();
 
 	public String loginTitle();
+
 	public String libraryTitle();
-	public String songTitlePrefix();
+	public String libraryTitleSongPrefix();
+	public String libraryTitleSongBody(String aArtist, String aSong);
 
 	public String errorsHeader();
 

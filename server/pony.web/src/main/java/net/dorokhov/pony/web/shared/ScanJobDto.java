@@ -2,13 +2,11 @@ package net.dorokhov.pony.web.shared;
 
 import java.util.Date;
 
-public class ScanJobDto {
+public class ScanJobDto extends AbstractDto<Long> {
 
 	public static enum Status {
 		STARTING, STARTED, COMPLETE, FAILED, INTERRUPTED
 	}
-
-	private Long id;
 
 	private Date creationDate;
 
@@ -21,14 +19,6 @@ public class ScanJobDto {
 	private LogMessageDto logMessage;
 
 	private ScanResultDto scanResult;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public Date getCreationDate() {
 		return creationDate;

@@ -45,6 +45,8 @@ public class ClientModule extends AbstractPresenterModule {
 		bind(AuthenticationListener.class).asEagerSingleton();
 
 		bind(SongService.class).asEagerSingleton();
+
+		bind(TitleManager.class).asEagerSingleton();
 	}
 
 }

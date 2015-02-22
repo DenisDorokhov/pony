@@ -2,17 +2,17 @@ package net.dorokhov.pony.web.client.event;
 
 import com.google.gwt.event.shared.EventHandler;
 
-public class ArtistSelectionRequestedEvent extends AbstractEvent<ArtistSelectionRequestedEvent.Handler> {
+public class ArtistSelectionRequestEvent extends AbstractEvent<ArtistSelectionRequestEvent.Handler> {
 
 	public static interface Handler extends EventHandler {
-		public void onArtistSelectionRequested(ArtistSelectionRequestedEvent aEvent);
+		public void onArtistSelectionRequest(ArtistSelectionRequestEvent aEvent);
 	}
 
 	public static final Type<Handler> TYPE = new Type<>();
 
 	private final String artistIdOrName;
 
-	public ArtistSelectionRequestedEvent(String aArtistIdOrName) {
+	public ArtistSelectionRequestEvent(String aArtistIdOrName) {
 
 		super(TYPE);
 
@@ -25,7 +25,7 @@ public class ArtistSelectionRequestedEvent extends AbstractEvent<ArtistSelection
 
 	@Override
 	protected void dispatch(Handler aHandler) {
-		aHandler.onArtistSelectionRequested(this);
+		aHandler.onArtistSelectionRequest(this);
 	}
 
 }

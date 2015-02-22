@@ -5,6 +5,7 @@ import net.dorokhov.pony.web.client.service.api.MethodCallbackAdapter;
 import net.dorokhov.pony.web.client.service.api.RequestAdapter;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
+import net.dorokhov.pony.web.shared.ArtistAlbumsDto;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
 
@@ -41,6 +42,29 @@ public class SongService {
 
 				log.info("Could not get artists.");
 				
+				aCallback.onError(aErrors);
+			}
+		})));
+	}
+
+	public OperationRequest getArtistSongs(final String aArtistIdOrName, final OperationCallback<ArtistAlbumsDto> aCallback) {
+
+		log.info("Getting songs for artist [" + aArtistIdOrName + "]...");
+
+		return new RequestAdapter(apiService.getArtistSongs(aArtistIdOrName, new MethodCallbackAdapter<>(new OperationCallback<ArtistAlbumsDto>() {
+			@Override
+			public void onSuccess(ArtistAlbumsDto aArtistAlbums) {
+
+				log.info("[" + aArtistAlbums.getAlbums().size() + "] albums returned for artist [" + aArtistIdOrName + "].");
+
+				aCallback.onSuccess(aArtistAlbums);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				log.info("Could not get albums for artist [" + aArtistIdOrName + "].");
+
 				aCallback.onError(aErrors);
 			}
 		})));

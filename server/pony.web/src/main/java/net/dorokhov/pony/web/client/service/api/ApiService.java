@@ -6,10 +6,7 @@ import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.Options;
 import org.fusesource.restygwt.client.RestService;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import java.util.List;
 
 @Options(expect = {200, 201, 204, 1223, 400, 401, 404, 500})
@@ -34,5 +31,9 @@ public interface ApiService extends RestService {
 	@GET
 	@Path("/artists")
 	Request getArtists(MethodCallback<ResponseDto<List<ArtistDto>>> aCallback);
+
+	@GET
+	@Path("/artistAlbums/{aArtistIdOrName}")
+	Request getArtistSongs(@PathParam("aArtistIdOrName") String aArtistIdOrName, MethodCallback<ResponseDto<ArtistAlbumsDto>> aCallback);
 
 }

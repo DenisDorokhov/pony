@@ -1,22 +1,12 @@
 package net.dorokhov.pony.web.shared;
 
-public class ArtistDto {
-
-	private Long id;
+public class ArtistDto extends AbstractDto<Long> {
 
 	private String name;
 
 	private Long artwork;
 
 	private String artworkUrl;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public String getName() {
 		return name;

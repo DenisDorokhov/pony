@@ -1,8 +1,6 @@
 package net.dorokhov.pony.web.shared;
 
-public class AlbumDto {
-
-	private Long id;
+public class AlbumDto extends AbstractDto<Long> {
 
 	private String name;
 
@@ -15,14 +13,6 @@ public class AlbumDto {
 	private Long artist;
 
 	private String artistName;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public String getName() {
 		return name;

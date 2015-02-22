@@ -2,6 +2,8 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
+
     <ui:style>
         .container {
             position: absolute;
@@ -13,10 +15,25 @@
         .panel {
             margin-bottom: 0;
         }
+        .statusLabel {
+            margin-top: 2em;
+            text-align: center;
+        }
     </ui:style>
 
     <g:HTMLPanel addStyleNames="{style.container}">
-        <b:Panel addStyleNames="{style.container} {style.panel}" />
+        <b:Panel addStyleNames="{style.container} {style.panel}">
+
+            <b:PanelHeader ui:field="headerContainer">
+                <b:Heading ui:field="header" size="H3" />
+            </b:PanelHeader>
+
+            <b:PanelBody ui:field="albumList" />
+
+            <g:Label ui:field="loadingLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusLoading}" />
+            <g:Label ui:field="errorLabel" addStyleNames="{style.container} {style.statusLabel}" text="{mes.statusError}" />
+
+        </b:Panel>
     </g:HTMLPanel>
 
 </ui:UiBinder>

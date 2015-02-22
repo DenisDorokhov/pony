@@ -1,6 +1,5 @@
 package net.dorokhov.pony.web.client.mvp;
 
-import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
@@ -10,20 +9,21 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import net.dorokhov.pony.web.client.LibraryParams;
-import net.dorokhov.pony.web.client.event.ArtistSelectionDoneEvent;
-import net.dorokhov.pony.web.client.event.ArtistSelectionRequestedEvent;
-import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.PlaceTokens;
+import net.dorokhov.pony.web.client.event.ArtistSelectionEvent;
+import net.dorokhov.pony.web.client.event.ArtistSelectionRequestEvent;
+import net.dorokhov.pony.web.client.event.SongChangeEvent;
 import net.dorokhov.pony.web.client.mvp.library.LibraryContentPresenter;
 import net.dorokhov.pony.web.client.mvp.library.PlayerPresenter;
 import net.dorokhov.pony.web.client.mvp.library.ToolbarPresenter;
+import net.dorokhov.pony.web.client.service.TitleManager;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.ArtistDto;
 
 import javax.inject.Inject;
 
-public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, LibraryPresenter.MyProxy> implements ArtistSelectionDoneEvent.Handler {
+public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, LibraryPresenter.MyProxy> implements ArtistSelectionEvent.Handler, SongChangeEvent.Handler {
 
 	@ProxyStandard
 	@NameToken(PlaceTokens.LIBRARY)
@@ -37,6 +37,8 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 	
 	private final PlaceManager placeManager;
 
+	private final TitleManager titleManager;
+
 	private final PlayerPresenter playerPresenter;
 
 	private final ToolbarPresenter toolbarPresenter;
@@ -45,6 +47,7 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 	@Inject
 	public LibraryPresenter(EventBus aEventBus, MyView aView, MyProxy aProxy, PlaceManager aPlaceManager,
+							TitleManager aTitleManager,
 							PlayerPresenter aPlayerPresenter,
 							ToolbarPresenter aToolbarPresenter,
 							LibraryContentPresenter aLibraryContentPresenter) {
@@ -52,6 +55,8 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 		super(aEventBus, aView, aProxy, RevealType.Root);
 		
 		placeManager = aPlaceManager;
+
+		titleManager = aTitleManager;
 
 		playerPresenter = aPlayerPresenter;
 		toolbarPresenter = aToolbarPresenter;
@@ -67,7 +72,8 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 		setInSlot(SLOT_TOOLBAR, toolbarPresenter);
 		setInSlot(SLOT_CONTENT, contentPresenter);
 		
-		addRegisteredHandler(ArtistSelectionDoneEvent.TYPE, this);
+		addRegisteredHandler(ArtistSelectionEvent.TYPE, this);
+		addRegisteredHandler(SongChangeEvent.TYPE, this);
 	}
 
 	@Override
@@ -75,7 +81,15 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 		super.onReveal();
 
-		Window.setTitle(Messages.INSTANCE.libraryTitle());
+		titleManager.setSong(null);
+	}
+
+	@Override
+	protected void onHide() {
+
+		super.onHide();
+
+		titleManager.setSong(null);
 	}
 
 	@Override
@@ -83,12 +97,17 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 		super.prepareFromRequest(aRequest);
 		
-		getEventBus().fireEvent(new ArtistSelectionRequestedEvent(aRequest.getParameter(LibraryParams.ARTIST, null)));
+		getEventBus().fireEvent(new ArtistSelectionRequestEvent(aRequest.getParameter(LibraryParams.ARTIST, null)));
 	}
 
 	@Override
-	public void onArtistSelectionDone(ArtistSelectionDoneEvent aEvent) {
+	public void onArtistSelection(ArtistSelectionEvent aEvent) {
 		goToArtist(aEvent.getArtist());
+	}
+
+	@Override
+	public void onSongChange(SongChangeEvent aEvent) {
+		titleManager.setSong(aEvent.getSong());
 	}
 
 	private void goToArtist(ArtistDto aArtist) {

@@ -4,9 +4,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import net.dorokhov.pony.web.client.event.ArtistSelectionDoneEvent;
-import net.dorokhov.pony.web.client.event.ArtistSelectionRequestedEvent;
-import net.dorokhov.pony.web.client.event.ArtistsUpdateEvent;
+import net.dorokhov.pony.web.client.event.ArtistSelectionEvent;
+import net.dorokhov.pony.web.client.event.ArtistSelectionRequestEvent;
+import net.dorokhov.pony.web.client.event.ArtistListUpdateEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestedEvent.Handler {
+public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<ArtistListUiHandlers>, HasLoadingState {
 
@@ -68,7 +68,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 		super.onBind();
 
 		addRegisteredHandler(RefreshRequestEvent.TYPE, this);
-		addRegisteredHandler(ArtistSelectionRequestedEvent.TYPE, this);
+		addRegisteredHandler(ArtistSelectionRequestEvent.TYPE, this);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	@Override
 	public void onArtistSelection(ArtistDto aArtist) {
-		getEventBus().fireEvent(new ArtistSelectionDoneEvent(aArtist));
+		getEventBus().fireEvent(new ArtistSelectionEvent(aArtist));
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 	}
 
 	@Override
-	public void onArtistSelectionRequested(ArtistSelectionRequestedEvent aEvent) {
+	public void onArtistSelectionRequest(ArtistSelectionRequestEvent aEvent) {
 		
 		artistToSelect = aEvent.getArtistIdOrName();
 		
@@ -110,6 +110,8 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 			BusyIndicator.finishTask();
 		}
 
+		BusyIndicator.startTask();
+
 		currentRequest = songService.getArtists(new OperationCallback<List<ArtistDto>>() {
 			@Override
 			public void onSuccess(List<ArtistDto> aArtists) {
@@ -122,7 +124,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 				getView().setLoadingState(LoadingState.LOADED);
 
-				getEventBus().fireEvent(new ArtistsUpdateEvent(aArtists));
+				getEventBus().fireEvent(new ArtistListUpdateEvent(aArtists));
 
 				doSelectArtist(artistToSelect, aShouldScroll);
 			}

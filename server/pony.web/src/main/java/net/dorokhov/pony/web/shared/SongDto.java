@@ -1,8 +1,6 @@
 package net.dorokhov.pony.web.shared;
 
-public class SongDto {
-
-	private Long id;
+public class SongDto extends AbstractDto<Long> {
 
 	private String url;
 
@@ -33,14 +31,6 @@ public class SongDto {
 	private String albumArtistName;
 
 	private Integer albumYear;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public String getUrl() {
 		return url;
@@ -160,6 +150,16 @@ public class SongDto {
 
 	public void setAlbumYear(Integer aAlbumYear) {
 		albumYear = aAlbumYear;
+	}
+
+	@Override
+	public String toString() {
+		return "SongDto{" +
+				"id=" + getId() +
+				", artistName='" + artistName + '\'' +
+				", albumName='" + albumName + '\'' +
+				", name='" + name + '\'' +
+				'}';
 	}
 
 }

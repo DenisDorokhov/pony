@@ -1,22 +1,12 @@
 package net.dorokhov.pony.web.shared;
 
-public class UserDto {
-
-	private Long id;
+public class UserDto extends AbstractDto<Long> {
 
 	private String name;
 
 	private String email;
 
 	private RoleDto role;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long aId) {
-		id = aId;
-	}
 
 	public String getName() {
 		return name;
