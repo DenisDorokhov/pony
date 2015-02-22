@@ -4,6 +4,17 @@
              xmlns:p="urn:import:net.dorokhov.pony.web.client.control">
 
     <ui:style>
+        .artistView {
+            border-left-width: 0;
+            border-right-width: 0;
+            padding: 10px;
+        }
+        .artistView:first-child {
+            border-top-width: 0;
+        }
+        .artistView:last-child {
+            border-bottom-width: 0;
+        }
         .artwork {
             float: left;
             width: 50px;
@@ -18,7 +29,7 @@
         }
     </ui:style>
 
-    <b:LinkedGroupItem>
+    <b:LinkedGroupItem addStyleNames="{style.artistView}">
         <p:ImageLoader ui:field="artworkImage" addStyleNames="{style.artwork}" />
         <g:Label ui:field="nameLabel" addStyleNames="{style.name}" />
     </b:LinkedGroupItem>
