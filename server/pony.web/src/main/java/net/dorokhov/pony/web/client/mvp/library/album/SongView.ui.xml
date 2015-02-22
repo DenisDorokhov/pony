@@ -4,6 +4,7 @@
     <ui:style>
         .songView {
             width: 350px;
+            height: 25px;
         }
         .trackNumber {
             float: left;
@@ -32,11 +33,9 @@
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.songView}">
-
         <g:Label ui:field="trackNumberLabel" styleName="{style.trackNumber}" />
         <g:Label ui:field="nameLabel" styleName="{style.name}" />
         <g:Label ui:field="durationLabel" styleName="{style.duration}" />
-
     </g:FlowPanel>
 
 </ui:UiBinder>
