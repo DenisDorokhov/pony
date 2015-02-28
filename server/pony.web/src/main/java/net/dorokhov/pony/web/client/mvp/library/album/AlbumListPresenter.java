@@ -7,6 +7,7 @@ import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.event.*;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
+import net.dorokhov.pony.web.client.mvp.common.SelectionMode;
 import net.dorokhov.pony.web.client.service.BusyIndicator;
 import net.dorokhov.pony.web.client.service.PlayListImpl;
 import net.dorokhov.pony.web.client.service.SongService;
@@ -16,8 +17,7 @@ import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.*;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> implements AlbumListUiHandlers,
 		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler,
@@ -33,9 +33,9 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 		public void setAlbums(List<AlbumSongsDto> aAlbums);
 
-		public SongDto getSelectedSong();
+		public Set<SongDto> getSelectedSongs();
 
-		public void setSelectedSong(SongDto aSong);
+		public void setSelectedSongs(Set<SongDto> aSongs);
 
 		public SongDto getActiveSong();
 
@@ -44,6 +44,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		public boolean isPlaying();
 
 		public void setPlaying(boolean aPlaying);
+
+		public void selectSong(SongDto aSong, SelectionMode aSelectionMode);
 
 		public void scrollToTop();
 
@@ -85,8 +87,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 	}
 
 	@Override
-	public void onSongSelection(SongDto aSong) {
-		getEventBus().fireEvent(new SongSelectionEvent(aSong));
+	public void onSongSelection(Set<SongDto> aSongs) {
+		getEventBus().fireEvent(new SongSelectionEvent(aSongs));
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Override
 	public void onSongSelectionRequest(SongSelectionRequestEvent aEvent) {
-		getView().setSelectedSong(aEvent.getSong());
+		getView().selectSong(aEvent.getSong(), aEvent.getSelectionMode());
 		getView().scrollToSong(aEvent.getSong());
 	}
 
@@ -194,8 +196,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 					if (shouldScrollToSong) {
 
-						if (getView().getSelectedSong() != null) {
-							getView().scrollToSong(getView().getSelectedSong());
+						if (getView().getSelectedSongs().size() > 0) {
+							scrollToSongs(getView().getSelectedSongs());
 						} else if (getView().getActiveSong() != null) {
 							getView().scrollToSong(getView().getActiveSong());
 						}
@@ -218,6 +220,15 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		} else {
 			getView().setLoadingState(LoadingState.LOADED);
 		}
+	}
+
+	private void scrollToSongs(Collection<SongDto> aSongs) {
+
+		List<SongDto> songList = new ArrayList<>(aSongs);
+
+		Collections.sort(songList);
+
+		getView().scrollToSong(songList.get(0));
 	}
 
 }

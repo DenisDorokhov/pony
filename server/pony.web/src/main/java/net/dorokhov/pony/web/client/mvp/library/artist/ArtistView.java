@@ -20,20 +20,18 @@ public class ArtistView extends Composite implements HasClickHandlers {
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	@UiField
+	LinkedGroupItem artistView;
+
+	@UiField
 	ArtworkLoader artworkLoader;
 
 	@UiField
 	Label nameLabel;
 
-	private final LinkedGroupItem linkedGroupItem;
-
 	private ArtistDto artist;
 
 	public ArtistView() {
-
-		linkedGroupItem = uiBinder.createAndBindUi(this);
-
-		initWidget(linkedGroupItem);
+		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	public ArtistDto getArtist() {
@@ -48,16 +46,16 @@ public class ArtistView extends Composite implements HasClickHandlers {
 	}
 
 	public boolean isActive() {
-		return linkedGroupItem.isActive();
+		return artistView.isActive();
 	}
 
 	public void setActive(boolean aActive) {
-		linkedGroupItem.setActive(aActive);
+		artistView.setActive(aActive);
 	}
 
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler aHandler) {
-		return linkedGroupItem.addClickHandler(aHandler);
+		return artistView.addClickHandler(aHandler);
 	}
 
 	private void updateArtist() {
@@ -76,7 +74,7 @@ public class ArtistView extends Composite implements HasClickHandlers {
 			artworkValue = getArtist().getArtworkUrl();
 		}
 
-		linkedGroupItem.setTitle(nameValue);
+		artistView.setTitle(nameValue);
 
 		nameLabel.setText(nameValue);
 

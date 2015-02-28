@@ -1,6 +1,8 @@
 package net.dorokhov.pony.web.shared;
 
-public class SongDto extends AbstractDto<Long> {
+import net.dorokhov.pony.web.client.util.ObjectUtils;
+
+public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	private String url;
 
@@ -162,4 +164,42 @@ public class SongDto extends AbstractDto<Long> {
 				'}';
 	}
 
+	@Override
+	@SuppressWarnings("NullableProblems")
+	public int compareTo(SongDto aSong) {
+
+		int result = 0;
+
+		if (!equals(aSong)) {
+
+			result = ObjectUtils.compare(getArtistName(), aSong.getArtistName());
+
+			if (result == 0) {
+				result = ObjectUtils.compare(getAlbumYear(), aSong.getAlbumYear());
+			}
+			if (result == 0) {
+				result = ObjectUtils.compare(getAlbumName(), aSong.getAlbumName());
+			}
+
+			if (result == 0) {
+
+				Integer discNumber1 = getDiscNumber() != null ? getDiscNumber() : 1;
+				Integer discNumber2 = aSong.getDiscNumber() != null ? aSong.getDiscNumber() : 1;
+
+				result = ObjectUtils.compare(discNumber1, discNumber2);
+			}
+			if (result == 0) {
+
+				Integer trackNumber1 = getTrackNumber() != null ? getTrackNumber() : 1;
+				Integer trackNumber2 = aSong.getTrackNumber() != null ? aSong.getTrackNumber() : 1;
+
+				result = ObjectUtils.compare(trackNumber1, trackNumber2);
+			}
+			if (result == 0) {
+				result = ObjectUtils.compare(getName(), aSong.getName());
+			}
+		}
+
+		return result;
+	}
 }

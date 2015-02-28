@@ -1,25 +1,27 @@
 package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.gwt.view.client.SetSelectionModel;
 import net.dorokhov.pony.web.client.control.ArtworkLoader;
+import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
+import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.AlbumSongsDto;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Heading;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class AlbumView extends Composite {
+public class AlbumView extends Composite implements SongSelectionRequestEvent.HasHandler, SongSelectionRequestEvent.Handler,
+		SongStartRequestEvent.HasHandler, SongStartRequestEvent.Handler {
 
 	interface MyUiBinder extends UiBinder<Widget, AlbumView> {}
 
@@ -35,6 +37,11 @@ public class AlbumView extends Composite {
 
 	private final List<SongListView> songListViews = new ArrayList<>();
 
+	private final Map<SongListView, HandlerRegistration> songListViewToSelectionRegistration = new HashMap<>();
+	private final Map<SongListView, HandlerRegistration> songListViewToActivationRegistration = new HashMap<>();
+
+	private final HandlerManager handlerManager = new HandlerManager(this);
+
 	@UiField
 	ArtworkLoader artworkLoader;
 
@@ -48,8 +55,8 @@ public class AlbumView extends Composite {
 
 	private boolean playing;
 
-	private SingleSelectionModel<SongDto> selectionModel;
-	private SingleSelectionModel<SongDto> activationModel;
+	private SetSelectionModel<SongDto> selectionModel;
+	private SetSelectionModel<SongDto> activationModel;
 
 	public AlbumView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -79,11 +86,11 @@ public class AlbumView extends Composite {
 		}
 	}
 
-	public SingleSelectionModel<SongDto> getSelectionModel() {
+	public SetSelectionModel<SongDto> getSelectionModel() {
 		return selectionModel;
 	}
 
-	public void setSelectionModel(SingleSelectionModel<SongDto> aSelectionModel) {
+	public void setSelectionModel(SetSelectionModel<SongDto> aSelectionModel) {
 
 		selectionModel = aSelectionModel;
 
@@ -92,11 +99,11 @@ public class AlbumView extends Composite {
 		}
 	}
 
-	public SingleSelectionModel<SongDto> getActivationModel() {
+	public SetSelectionModel<SongDto> getActivationModel() {
 		return activationModel;
 	}
 
-	public void setActivationModel(SingleSelectionModel<SongDto> aActivationModel) {
+	public void setActivationModel(SetSelectionModel<SongDto> aActivationModel) {
 
 		activationModel = aActivationModel;
 
@@ -109,6 +116,26 @@ public class AlbumView extends Composite {
 		for (SongListView songView : songListViews) {
 			songView.scrollToSong(aSong);
 		}
+	}
+
+	@Override
+	public HandlerRegistration addSongSelectionRequestHandler(SongSelectionRequestEvent.Handler aHandler) {
+		return handlerManager.addHandler(SongSelectionRequestEvent.TYPE, aHandler);
+	}
+
+	@Override
+	public void onSongSelectionRequest(SongSelectionRequestEvent aEvent) {
+		handlerManager.fireEvent(aEvent);
+	}
+
+	@Override
+	public HandlerRegistration addSongStartRequestHandler(SongStartRequestEvent.Handler aHandler) {
+		return handlerManager.addHandler(SongStartRequestEvent.TYPE, aHandler);
+	}
+
+	@Override
+	public void onSongStartRequest(SongStartRequestEvent aEvent) {
+		handlerManager.fireEvent(aEvent);
 	}
 
 	private void updateAlbum() {
@@ -164,6 +191,12 @@ public class AlbumView extends Composite {
 
 			songListView.setSongs(null);
 
+			songListViewToSelectionRegistration.get(songListView).removeHandler();
+			songListViewToSelectionRegistration.remove(songListView);
+
+			songListViewToActivationRegistration.get(songListView).removeHandler();
+			songListViewToActivationRegistration.remove(songListView);
+
 			viewCache.add(songListView);
 		}
 
@@ -173,23 +206,26 @@ public class AlbumView extends Composite {
 
 		for (Map.Entry<Integer, List<SongDto>> entry : albumDiscs.entrySet()) {
 
-			SongListView songView;
+			SongListView songListView;
 
 			if (i < songList.getWidgetCount()) {
-				songView = (SongListView) songList.getWidget(i);
+				songListView = (SongListView) songList.getWidget(i);
 			} else {
 
-				songView = viewCache.size() > 0 ? viewCache.remove(0) : null;
+				songListView = viewCache.size() > 0 ? viewCache.remove(0) : null;
 
-				if (songView == null) {
-					songView = new SongListView();
+				if (songListView == null) {
+					songListView = new SongListView();
 				}
 
-				songView.setSelectionModel(getSelectionModel());
-				songView.setActivationModel(getActivationModel());
-				songView.setPlaying(isPlaying());
+				songListView.setSelectionModel(getSelectionModel());
+				songListView.setActivationModel(getActivationModel());
+				songListView.setPlaying(isPlaying());
 
-				songList.add(songView);
+				songListViewToSelectionRegistration.put(songListView, songListView.addSongSelectionRequestHandler(this));
+				songListViewToActivationRegistration.put(songListView, songListView.addSongStartRequestHandler(this));
+
+				songList.add(songListView);
 			}
 
 			Integer discNumber = entry.getKey();
@@ -198,10 +234,10 @@ public class AlbumView extends Composite {
 				discNumber = null;
 			}
 
-			songView.setSongs(entry.getValue());
-			songView.setCaption(discNumber != null ? Messages.INSTANCE.albumDisc(discNumber) : null);
+			songListView.setSongs(entry.getValue());
+			songListView.setCaption(discNumber != null ? Messages.INSTANCE.albumDisc(discNumber) : null);
 
-			songListViews.add(songView);
+			songListViews.add(songListView);
 
 			i++;
 		}

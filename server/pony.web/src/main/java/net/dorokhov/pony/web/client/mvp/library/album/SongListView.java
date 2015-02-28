@@ -2,6 +2,7 @@ package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -10,7 +11,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.gwt.view.client.SetSelectionModel;
+import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
+import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Heading;
 
@@ -19,7 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SongListView extends Composite implements SelectionChangeEvent.Handler {
+public class SongListView extends Composite implements SelectionChangeEvent.Handler,
+		SongSelectionRequestEvent.HasHandler, SongSelectionRequestEvent.Handler,
+		SongStartRequestEvent.HasHandler, SongStartRequestEvent.Handler {
 
 	interface MyUiBinder extends UiBinder<Widget, SongListView> {}
 
@@ -35,6 +40,11 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 
 	private final Map<Long, SongView> songToView = new HashMap<>();
 
+	private final Map<SongView, HandlerRegistration> songViewToSelectionRegistration = new HashMap<>();
+	private final Map<SongView, HandlerRegistration> songViewToActivationRegistration = new HashMap<>();
+
+	private final HandlerManager handlerManager = new HandlerManager(this);
+
 	@UiField
 	Heading captionHeader;
 
@@ -47,8 +57,8 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 
 	private boolean playing;
 
-	private SingleSelectionModel<SongDto> selectionModel;
-	private SingleSelectionModel<SongDto> activationModel;
+	private SetSelectionModel<SongDto> selectionModel;
+	private SetSelectionModel<SongDto> activationModel;
 
 	private HandlerRegistration selectionRegistration;
 	private HandlerRegistration activationRegistration;
@@ -95,11 +105,11 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 		updateSongViews();
 	}
 
-	public SingleSelectionModel<SongDto> getSelectionModel() {
+	public SetSelectionModel<SongDto> getSelectionModel() {
 		return selectionModel;
 	}
 
-	public void setSelectionModel(SingleSelectionModel<SongDto> aSelectionModel) {
+	public void setSelectionModel(SetSelectionModel<SongDto> aSelectionModel) {
 
 		if (selectionRegistration != null) {
 			selectionRegistration.removeHandler();
@@ -115,11 +125,11 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 		updateSongViews();
 	}
 
-	public SingleSelectionModel<SongDto> getActivationModel() {
+	public SetSelectionModel<SongDto> getActivationModel() {
 		return activationModel;
 	}
 
-	public void setActivationModel(SingleSelectionModel<SongDto> aActivationModel) {
+	public void setActivationModel(SetSelectionModel<SongDto> aActivationModel) {
 
 		if (activationRegistration != null) {
 			activationRegistration.removeHandler();
@@ -154,6 +164,26 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 		updateSongViews();
 	}
 
+	@Override
+	public HandlerRegistration addSongSelectionRequestHandler(SongSelectionRequestEvent.Handler aHandler) {
+		return handlerManager.addHandler(SongSelectionRequestEvent.TYPE, aHandler);
+	}
+
+	@Override
+	public void onSongSelectionRequest(SongSelectionRequestEvent aEvent) {
+		handlerManager.fireEvent(aEvent);
+	}
+
+	@Override
+	public HandlerRegistration addSongStartRequestHandler(SongStartRequestEvent.Handler aHandler) {
+		return handlerManager.addHandler(SongStartRequestEvent.TYPE, aHandler);
+	}
+
+	@Override
+	public void onSongStartRequest(SongStartRequestEvent aEvent) {
+		handlerManager.fireEvent(aEvent);
+	}
+
 	private void updateSongs() {
 
 		while (songList.getWidgetCount() > getSongs().size()) {
@@ -165,6 +195,12 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 			songList.remove(i);
 
 			songView.setSong(null);
+
+			songViewToSelectionRegistration.get(songView).removeHandler();
+			songViewToSelectionRegistration.remove(songView);
+
+			songViewToActivationRegistration.get(songView).removeHandler();
+			songViewToActivationRegistration.remove(songView);
 
 			viewCache.add(songView);
 		}
@@ -186,6 +222,9 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 				if (songView == null) {
 					songView = new SongView();
 				}
+
+				songViewToSelectionRegistration.put(songView, songView.addSongSelectionRequestHandler(this));
+				songViewToActivationRegistration.put(songView, songView.addSongStartRequestHandler(this));
 
 				songList.add(songView);
 			}

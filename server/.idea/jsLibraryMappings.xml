@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{backbone.babysitter.js, backbone.js, backbone.marionette.js, backbone.wreqr.js, bootstrap.js, jquery.js, json2.js, require.js, underscore.js}" />
+    <file url="PROJECT" libraries="{bootstrap.js, jquery.js}" />
   </component>
 </project>
-
