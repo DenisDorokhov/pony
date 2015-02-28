@@ -17,10 +17,4 @@ public interface Images extends ClientBundle {
 	@Source("unknown.png")
 	ImageResource unknown();
 
-	@Source("playing.png")
-	ImageResource playing();
-
-	@Source("paused.png")
-	ImageResource paused();
-
 }
