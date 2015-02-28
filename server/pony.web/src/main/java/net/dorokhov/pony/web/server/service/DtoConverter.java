@@ -314,15 +314,15 @@ public class DtoConverter {
 		dto.setName(aSong.getName());
 
 		dto.setGenre(aSong.getGenre().getId());
-		dto.setGenreName(aSong.getGenre().getName());
+		dto.setGenreName(aSong.getGenreName());
 
 		dto.setArtist(aSong.getAlbum().getArtist().getId());
-		dto.setArtistName(aSong.getAlbum().getArtist().getName());
+		dto.setArtistName(aSong.getArtistName());
 
 		dto.setAlbum(aSong.getAlbum().getId());
-		dto.setAlbumName(aSong.getAlbum().getName());
+		dto.setAlbumName(aSong.getAlbumName());
 		dto.setAlbumArtistName(aSong.getAlbumArtistName());
-		dto.setAlbumYear(aSong.getAlbum().getYear());
+		dto.setAlbumYear(aSong.getYear());
 
 		StoredFile artwork = aSong.getArtwork();
 
