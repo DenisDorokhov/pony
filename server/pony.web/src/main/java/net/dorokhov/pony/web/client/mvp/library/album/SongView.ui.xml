@@ -11,6 +11,7 @@
             position: relative;
             outline: none;
             border-radius: 4px;
+            cursor: pointer;
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
@@ -18,6 +19,9 @@
         }
         .songView:hover, .songView:focus {
             background-color: #f5f5f5;
+        }
+        .withArtist {
+            height: 43px;
         }
         .activated {}
         .playing {}
@@ -57,6 +61,17 @@
         .selected .name {
             color: white;
         }
+        .artist {
+            width: 100%;
+            padding-left: 35px;
+            padding-right: 50px;
+            font-size: 12px;
+            margin-top: -8px;
+            color: #909090;
+        }
+        .selected .artist {
+            color: white;
+        }
         .duration {
             position: absolute;
             right: 0;
@@ -76,6 +91,7 @@
             <g:Label ui:field="trackNumberLabel" styleName="{style.trackNumber}" />
             <g:Label ui:field="durationLabel" styleName="{style.duration}" />
             <g:Label ui:field="nameLabel" styleName="{style.name}" />
+            <g:Label ui:field="artistLabel" styleName="{style.artist}" />
         </g:FlowPanel>
     </g:FocusPanel>
 

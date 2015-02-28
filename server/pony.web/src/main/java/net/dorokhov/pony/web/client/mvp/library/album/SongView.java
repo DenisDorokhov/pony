@@ -27,6 +27,7 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 		String songView();
 
+		String withArtist();
 		String activated();
 		String playing();
 		String paused();
@@ -34,6 +35,7 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 		String trackNumber();
 		String name();
+		String artist();
 		String duration();
 	}
 
@@ -52,6 +54,9 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 	@UiField
 	Label nameLabel;
+
+	@UiField
+	Label artistLabel;
 
 	@UiField
 	Label durationLabel;
@@ -151,12 +156,17 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 	private void updateSong() {
 		trackNumberLabel.setText(song != null ? ObjectUtils.nullSafeToString(song.getTrackNumber()) : null);
 		nameLabel.setText(song != null ? song.getName() : null);
+		artistLabel.setText(hasAlbumArtist() ? song.getAlbumArtistName() : null);
 		durationLabel.setText(song != null ? StringUtils.secondsToMinutes(song.getDuration()) : null);
 	}
 
 	private void updateStyle() {
 
 		songView.setStyleName(style.songView());
+
+		if (hasAlbumArtist()) {
+			songView.addStyleName(style.withArtist());
+		}
 
 		if (isActivated()) {
 
@@ -171,6 +181,22 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 		if (isSelected()) {
 			songView.addStyleName(style.selected());
 		}
+	}
+
+	private boolean hasAlbumArtist() {
+
+		String albumArtist = null;
+
+		if (song != null) {
+
+			albumArtist = song.getAlbumArtistName();
+
+			if (ObjectUtils.nullSafeEquals(song.getArtistName(), albumArtist)) {
+				albumArtist = null;
+			}
+		}
+
+		return albumArtist != null;
 	}
 
 }
