@@ -488,6 +488,7 @@ public class LibraryServiceImpl implements LibraryService {
 			song.setTrackCount(aSongData.getTrackCount());
 
 			song.setName(aSongData.getTitle());
+			song.setGenreName(aSongData.getGenre());
 			song.setArtistName(aSongData.getArtist());
 			song.setAlbumArtistName(aSongData.getAlbumArtist());
 			song.setAlbumName(aSongData.getAlbum());
