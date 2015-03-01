@@ -11,6 +11,8 @@
 
     <title><spring:message code="main.title" /></title>
 
+    <link rel="icon" type="image/png" href="./img/favicon.png">
+
     <style>
         body {
             margin: 0;
@@ -29,6 +31,8 @@
             font-weight: 500;
         }
     </style>
+
+    <script type="text/javascript" src="./js/lib/UnityShim.js"></script>
 
     <script type="text/javascript" src="./pony/pony.nocache.js"></script>
 

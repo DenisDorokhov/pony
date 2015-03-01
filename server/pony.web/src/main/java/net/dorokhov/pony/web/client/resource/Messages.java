@@ -26,13 +26,14 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String toolbarRefresh();
 	public String toolbarSettings();
 
-	public String libraryHeader();
-
 	public String artistUnknown();
 	public String albumUnknown();
 	public String albumDisc(Integer aDisc);
 
 	public String statusLoading();
 	public String statusError();
+
+	public String playerAlertPlaybackWillStop();
+	public String playerUnityNoTitle();
 
 }

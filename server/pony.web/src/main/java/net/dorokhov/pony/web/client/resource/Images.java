@@ -8,6 +8,9 @@ public interface Images extends ClientBundle {
 
 	public static final Images INSTANCE = GWT.create(Images.class);
 
+	@Source("logo.png")
+	ImageResource logo();
+
 	@Source("spinner.gif")
 	ImageResource spinner();
 
