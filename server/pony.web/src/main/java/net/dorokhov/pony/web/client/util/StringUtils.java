@@ -2,6 +2,10 @@ package net.dorokhov.pony.web.client.util;
 
 public class StringUtils {
 
+	public static boolean isNullOrEmpty(String aString) {
+		return aString == null || aString.trim().length() == 0;
+	}
+
 	public static boolean nullSafeNormalizedEquals(String aString1, String aString2) {
 
 		if (aString1 == null && aString2 == null) {

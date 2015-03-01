@@ -187,8 +187,10 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 		String songArtist = null;
 
-		if (song != null && song.getAlbumArtistName() != null &&
+		if (song != null &&
+				!StringUtils.isNullOrEmpty(song.getAlbumArtistName()) &&
 				!StringUtils.nullSafeNormalizedEquals(song.getAlbumArtistName(), song.getArtistName())) {
+
 			songArtist = song.getArtistName();
 		}
 
