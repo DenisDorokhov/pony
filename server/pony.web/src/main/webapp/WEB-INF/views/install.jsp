@@ -11,7 +11,20 @@
 
     <title><spring:message code="install.title" /></title>
 
-    <link href="./css/install.css" rel="stylesheet">
+    <link href="./css/lib/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            outline: none !important;
+        }
+        .installationContainer {
+            padding-top: 25px;
+            margin-top: 30px;
+        }
+        #libraryFolderContainer > div {
+            margin-bottom: 10px;
+        }
+    </style>
 
     <script src="./js/jquery.js"></script>
 

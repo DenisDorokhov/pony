@@ -7,7 +7,7 @@
         .playerView {
             position: relative;
             height: 67px;
-            max-width: 500px;
+            max-width: 700px;
             margin: 0 auto;
         }
         .backwardButton {
@@ -21,13 +21,51 @@
         .forwardButton {
             margin-top: 14px;
         }
-        .progress {
+        .titleContainer {
             position: absolute;
-            bottom: 22px;
+            top: 0;
             left: 148px;
             right: 77px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .titleContainer > div {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .titleContainer > div > span {
+            padding: 3px;
+            border-radius: 4px;
+        }
+        .titleContainer:hover > div > span, .titleContainer:focus > div > span {
+            background-color: #f5f5f5;
+        }
+        .artistLabel {
+            font-weight: bold;
+        }
+        .titleLabel {
+            font-weight: bold;
+        }
+        .progress {
+            position: absolute;
+            left: 148px;
+            right: 77px;
+            bottom: 22px;
             margin-bottom: 0;
             cursor: pointer;
+        }
+        .timeLabel {
+            position: absolute;
+            left: 148px;
+            bottom: 0;
+            color: #909090;
+        }
+        .durationLabel {
+            position: absolute;
+            right: 77px;
+            bottom: 0;
+            color: #909090;
         }
         .artwork {
             position: absolute !important;
@@ -44,9 +82,18 @@
         <b:Button addStyleNames="{style.playButton}" icon="PLAY" size="LARGE" />
         <b:Button addStyleNames="{style.forwardButton}" icon="FAST_FORWARD" />
 
+        <g:FocusPanel addStyleNames="{style.titleContainer}">
+            <g:HTMLPanel>
+                <span><g:InlineLabel addStyleNames="{style.artistLabel}" text="Metallica" /> - <g:InlineLabel addStyleNames="{style.titleLabel}" text="Master Of Puppets" /></span>
+            </g:HTMLPanel>
+        </g:FocusPanel>
+
         <b:Progress addStyleNames="{style.progress}">
             <b:ProgressBar type="INFO" percent="40" />
         </b:Progress>
+
+        <g:Label addStyleNames="{style.timeLabel}" text="00:00" />
+        <g:Label addStyleNames="{style.durationLabel}" text="02:00" />
 
         <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
 

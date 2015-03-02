@@ -32,14 +32,14 @@
             position: absolute;
             top: 0;
             left: 300px;
-            right: 400px;
+            right: 378px;
             bottom: 0;
         }
         .toolbar {
             position: absolute;
             top: 0;
             right: 0;
-            width: 400px;
+            width: 378px;
             bottom: 0;
         }
         .content {

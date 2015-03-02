@@ -14,6 +14,9 @@
     <link rel="icon" type="image/png" href="./img/favicon.png">
 
     <style>
+        * {
+            outline: none !important;
+        }
         body {
             margin: 0;
             padding: 0;
