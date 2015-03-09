@@ -71,7 +71,9 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		playerView.add(audio);
 
-		initPlayer();
+		setUnityCallbacks();
+
+		setSong(null);
 	}
 
 	@Override
@@ -175,17 +177,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		buttonForward.setEnabled(nextSongAvailable);
 	}
 
-	private void initPlayer() {
-
-		initNativeComponents();
-
-		updateUnityOptions();
-		sendUnityState(false);
-
-		setSong(null);
-	}
-
-	private native void initNativeComponents() /*-{
+	private native void setUnityCallbacks() /*-{
         $wnd.UnityMusicShim().setCallbackObject({
             pause: function() {
                 self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onPlayPause()();
@@ -224,11 +216,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		labelTime.setText(StringUtils.secondsToMinutes(0));
 		progressTime.setPercent(0);
 
-		if (songUrl != null) {
-			songUrl += "?x_access_token=" + URL.encode(SecurityStorage.INSTANCE.getAccessToken());
-		}
-
-		audio.setSrc(songUrl);
+		audio.setSrc(addAccessTokenToUrl(songUrl));
 	}
 
 	private void setState(State aState) {
@@ -236,6 +224,10 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		state = aState;
 
 		buttonPlay.setIcon(state == State.PLAYING ? IconType.PAUSE : IconType.PLAY);
+	}
+
+	private String addAccessTokenToUrl(String aUrl) {
+		return aUrl != null ? aUrl + "?x_access_token=" + URL.encode(SecurityStorage.INSTANCE.getAccessToken()) : null;
 	}
 
 	private void updateUnityOptions() {
@@ -257,14 +249,9 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		String artworkUrl = null;
 
 		if (getSong() != null) {
-
 			name = getSong().getName();
 			artist = getSong().getArtistName();
-			artworkUrl = getSong().getArtworkUrl();
-
-			if (artworkUrl != null) {
-				artworkUrl += "?x_access_token=" + URL.encode(SecurityStorage.INSTANCE.getAccessToken());
-			}
+			artworkUrl = addAccessTokenToUrl(getSong().getArtworkUrl());
 		}
 
 		if (artworkUrl == null) {
