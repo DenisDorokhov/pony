@@ -78,22 +78,22 @@
 
 	<g:FlowPanel ui:field="playerView" addStyleNames="{style.playerView}">
 
-        <b:Button addStyleNames="{style.backwardButton}" icon="FAST_BACKWARD" />
-        <b:Button addStyleNames="{style.playButton}" icon="PLAY" size="LARGE" />
-        <b:Button addStyleNames="{style.forwardButton}" icon="FAST_FORWARD" />
+        <b:Button ui:field="buttonBackward" addStyleNames="{style.backwardButton}" icon="FAST_BACKWARD" />
+        <b:Button ui:field="buttonPlay" addStyleNames="{style.playButton}" icon="PLAY" size="LARGE" />
+        <b:Button ui:field="buttonForward" addStyleNames="{style.forwardButton}" icon="FAST_FORWARD" />
 
         <g:FocusPanel addStyleNames="{style.titleContainer}">
             <g:HTMLPanel>
-                <span><g:InlineLabel addStyleNames="{style.artistLabel}" text="Metallica" /> - <g:InlineLabel addStyleNames="{style.titleLabel}" text="Master Of Puppets" /></span>
+                <span><g:InlineLabel ui:field="labelArtist" addStyleNames="{style.artistLabel}" /> - <g:InlineLabel ui:field="labelTitle" addStyleNames="{style.titleLabel}" /></span>
             </g:HTMLPanel>
         </g:FocusPanel>
 
         <b:Progress addStyleNames="{style.progress}">
-            <b:ProgressBar type="INFO" percent="40" />
+            <b:ProgressBar ui:field="progressTime" type="INFO" percent="40" />
         </b:Progress>
 
-        <g:Label addStyleNames="{style.timeLabel}" text="00:00" />
-        <g:Label addStyleNames="{style.durationLabel}" text="02:00" />
+        <g:Label ui:field="labelTime" addStyleNames="{style.timeLabel}" />
+        <g:Label ui:field="labelDuration" addStyleNames="{style.durationLabel}" />
 
         <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
 

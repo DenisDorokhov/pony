@@ -6,10 +6,17 @@ import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import net.dorokhov.pony.web.client.control.ArtworkLoader;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.SecurityStorage;
+import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.SongDto;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ProgressBar;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 
 public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements PlayerPresenter.MyView {
 
@@ -19,6 +26,33 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	@UiField
 	FlowPanel playerView;
+
+	@UiField
+	Button buttonBackward;
+
+	@UiField
+	Button buttonPlay;
+
+	@UiField
+	Button buttonForward;
+
+	@UiField
+	InlineLabel labelArtist;
+
+	@UiField
+	InlineLabel labelTitle;
+
+	@UiField
+	ProgressBar progressTime;
+
+	@UiField
+	Label labelTime;
+
+	@UiField
+	Label labelDuration;
+
+	@UiField
+	ArtworkLoader artworkLoader;
 
 	private final Audio audio;
 
@@ -87,24 +121,28 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		song = aSong;
 
-		if (song != null) {
-			updateSong();
-		}
+		updateSong();
 
 		updateUnityOptions();
 		sendUnityState(false);
 
-		state = State.INACTIVE;
+		setState(State.INACTIVE);
 	}
 
 	@Override
 	public void play() {
 
+		audio.play();
+
+		setState(State.PLAYING);
 	}
 
 	@Override
 	public void pause() {
 
+		audio.pause();
+
+		setState(State.PAUSED);
 	}
 
 	@Override
@@ -118,6 +156,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		previousSongAvailable = aAvailable;
 
 		updateUnityOptions();
+
+		buttonBackward.setEnabled(previousSongAvailable);
 	}
 
 	@Override
@@ -131,6 +171,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		nextSongAvailable = aAvailable;
 
 		updateUnityOptions();
+
+		buttonForward.setEnabled(nextSongAvailable);
 	}
 
 	private void initPlayer() {
@@ -139,6 +181,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		updateUnityOptions();
 		sendUnityState(false);
+
+		setSong(null);
 	}
 
 	private native void initNativeComponents() /*-{
@@ -157,6 +201,41 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	private void updateSong() {
 
+		String songUrl = null;
+		String artistName = Messages.INSTANCE.playerTitle();
+		String songTitle = Messages.INSTANCE.playerSubtitle();
+		String artworkUrl = null;
+
+		int duration = 0;
+
+		if (song != null) {
+			songUrl = song.getUrl();
+			artistName = song.getArtistName() != null ? song.getArtistName() : Messages.INSTANCE.artistUnknown();
+			songTitle = song.getName() != null ? song.getName() : Messages.INSTANCE.songUnknown();
+			artworkUrl = song.getArtworkUrl();
+			duration = song.getDuration() != null ? song.getDuration() : 0;
+		}
+
+		labelArtist.setText(artistName);
+		labelTitle.setText(songTitle);
+		artworkLoader.setUrl(artworkUrl);
+		labelDuration.setText(StringUtils.secondsToMinutes(duration));
+
+		labelTime.setText(StringUtils.secondsToMinutes(0));
+		progressTime.setPercent(0);
+
+		if (songUrl != null) {
+			songUrl += "?x_access_token=" + URL.encode(SecurityStorage.INSTANCE.getAccessToken());
+		}
+
+		audio.setSrc(songUrl);
+	}
+
+	private void setState(State aState) {
+
+		state = aState;
+
+		buttonPlay.setIcon(state == State.PLAYING ? IconType.PAUSE : IconType.PLAY);
 	}
 
 	private void updateUnityOptions() {
@@ -173,8 +252,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	private void sendUnityState(boolean aIsPlaying) {
 
-		String name = Messages.INSTANCE.playerUnityNoTitle();
-		String artist = null;
+		String name = Messages.INSTANCE.playerSubtitle();
+		String artist = Messages.INSTANCE.playerTitle();
 		String artworkUrl = null;
 
 		if (getSong() != null) {
@@ -206,7 +285,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	private void onPlayPause() {
 		if (getSong() != null) {
-			if (state == State.PLAYING) {
+			if (getState() == State.PLAYING) {
 				pause();
 			} else {
 				play();
