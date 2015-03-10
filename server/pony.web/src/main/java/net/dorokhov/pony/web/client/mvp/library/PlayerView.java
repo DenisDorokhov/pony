@@ -1,7 +1,10 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.EndedEvent;
+import com.google.gwt.event.dom.client.EndedHandler;
 import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,7 +24,7 @@ import org.gwtbootstrap3.client.ui.Progress;
 import org.gwtbootstrap3.client.ui.ProgressBar;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 
-public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements PlayerPresenter.MyView, LoadedMetadataHandler, EndedHandler {
+public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements PlayerPresenter.MyView, EndedHandler {
 
 	interface MyUiBinder extends UiBinder<FlowPanel, PlayerView> {}
 
@@ -74,7 +77,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		audio = Audio.createIfSupported();
-		audio.addLoadedMetadataHandler(this);
 		audio.addEndedHandler(this);
 
 		playerView.add(audio);
@@ -219,11 +221,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		updateUnityOptions();
 
 		buttonForward.setEnabled(nextSongAvailable);
-	}
-
-	@Override
-	public void onLoadedMetadata(LoadedMetadataEvent event) {
-		// TODO: implement
 	}
 
 	@Override

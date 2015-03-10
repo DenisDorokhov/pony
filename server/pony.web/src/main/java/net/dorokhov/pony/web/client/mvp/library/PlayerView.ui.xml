@@ -56,6 +56,13 @@
             margin-bottom: 0;
             cursor: pointer;
         }
+        .progressBar {
+            -webkit-transition: none;
+            -moz-transition: none;
+            -ms-transition: none;
+            -o-transition: none;
+            transition: none;
+        }
         .timeLabel {
             position: absolute;
             left: 148px;
@@ -90,7 +97,7 @@
         </g:FocusPanel>
 
         <b:Progress ui:field="progressTime" addStyleNames="{style.progress}">
-            <b:ProgressBar ui:field="progressBarTime" type="INFO" />
+            <b:ProgressBar ui:field="progressBarTime" addStyleNames="{style.progressBar}" type="INFO" />
         </b:Progress>
 
         <g:Label ui:field="labelTime" addStyleNames="{style.timeLabel}" />
