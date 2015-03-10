@@ -36,7 +36,7 @@
             overflow: hidden;
         }
         .titleContainer > div > span {
-            padding: 3px;
+            padding: 3px 5px;
             border-radius: 4px;
         }
         .titleContainer:hover > div > span, .titleContainer:focus > div > span {
@@ -90,7 +90,7 @@
         <b:Button ui:field="buttonPlay" addStyleNames="{style.playButton}" icon="PLAY" size="LARGE" />
         <b:Button ui:field="buttonForward" addStyleNames="{style.forwardButton}" icon="FAST_FORWARD" />
 
-        <g:FocusPanel addStyleNames="{style.titleContainer}">
+        <g:FocusPanel ui:field="titleContainer" addStyleNames="{style.titleContainer}">
             <g:HTMLPanel>
                 <span><g:InlineLabel ui:field="labelArtist" addStyleNames="{style.artistLabel}" /> - <g:InlineLabel ui:field="labelTitle" addStyleNames="{style.titleLabel}" /></span>
             </g:HTMLPanel>

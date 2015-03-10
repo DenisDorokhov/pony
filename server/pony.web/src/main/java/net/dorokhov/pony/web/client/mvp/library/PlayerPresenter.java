@@ -137,7 +137,9 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 
 	@Override
 	public void onSongSelectionRequested() {
-		getEventBus().fireEvent(new SongSelectionRequestEvent(getView().getSong(), SelectionMode.SINGLE));
+		if (getView().getSong() != null) {
+			getEventBus().fireEvent(new SongSelectionRequestEvent(getView().getSong(), SelectionMode.SINGLE));
+		}
 	}
 
 	@Override

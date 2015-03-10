@@ -7,6 +7,7 @@ import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.event.ArtistSelectionEvent;
 import net.dorokhov.pony.web.client.event.ArtistSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
+import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.service.BusyIndicator;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestEvent.Handler {
+public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestEvent.Handler, SongSelectionRequestEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<ArtistListUiHandlers>, HasLoadingState {
 
@@ -68,6 +69,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 		addRegisteredHandler(RefreshRequestEvent.TYPE, this);
 		addRegisteredHandler(ArtistSelectionRequestEvent.TYPE, this);
+		addRegisteredHandler(SongSelectionRequestEvent.TYPE, this);
 	}
 
 	@Override
@@ -94,6 +96,16 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 		artistToSelect = aEvent.getArtistIdOrName();
 		
 		doSelectArtist(artistToSelect, true);
+	}
+
+	@Override
+	public void onSongSelectionRequest(SongSelectionRequestEvent aEvent) {
+
+		ArtistDto artist = artistMap.get(aEvent.getSong().getArtist().toString());
+
+		if (artist != null) {
+			getView().setSelectedArtist(artist, true);
+		}
 	}
 
 	private void loadArtists(boolean aShouldShowLoadingState, final boolean aShouldScroll) {

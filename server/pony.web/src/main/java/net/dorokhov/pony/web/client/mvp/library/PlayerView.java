@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
@@ -41,6 +42,9 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	@UiField
 	Button buttonForward;
+
+	@UiField
+	FocusPanel titleContainer;
 
 	@UiField
 	InlineLabel labelArtist;
@@ -246,6 +250,11 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	@UiHandler("buttonPlay")
 	void onPlayClick(ClickEvent aEvent) {
 		onPlayPause();
+	}
+
+	@UiHandler("titleContainer")
+	void onTitleClick(ClickEvent aEvent) {
+		getUiHandlers().onSongSelectionRequested();
 	}
 
 	private void updateSong() {
