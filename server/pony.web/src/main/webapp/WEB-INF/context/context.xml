@@ -24,10 +24,6 @@
     <context:component-scan base-package="net.dorokhov.pony.web.server.service"/>
     <context:component-scan base-package="net.dorokhov.pony.web.server.security"/>
 
-    <bean id="securityEntryPoint" class="net.dorokhov.pony.web.server.security.SecurityEntryPoint">
-        <property name="jsonResponsePathPrefix" value="/api/" />
-    </bean>
-
     <security:http use-expressions="true"
                    auto-config="false"
                    create-session="stateless"

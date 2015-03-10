@@ -1,7 +1,6 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -11,7 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import net.dorokhov.pony.web.client.control.ArtworkLoader;
 import net.dorokhov.pony.web.client.resource.Messages;
-import net.dorokhov.pony.web.client.service.SecurityStorage;
 import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Button;
@@ -216,7 +214,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		labelTime.setText(StringUtils.secondsToMinutes(0));
 		progressTime.setPercent(0);
 
-		audio.setSrc(addAccessTokenToUrl(songUrl));
+		audio.setSrc(songUrl);
 	}
 
 	private void setState(State aState) {
@@ -224,10 +222,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		state = aState;
 
 		buttonPlay.setIcon(state == State.PLAYING ? IconType.PAUSE : IconType.PLAY);
-	}
-
-	private String addAccessTokenToUrl(String aUrl) {
-		return aUrl != null ? aUrl + "?x_access_token=" + URL.encode(SecurityStorage.INSTANCE.getAccessToken()) : null;
 	}
 
 	private void updateUnityOptions() {
@@ -251,7 +245,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		if (getSong() != null) {
 			name = getSong().getName();
 			artist = getSong().getArtistName();
-			artworkUrl = addAccessTokenToUrl(getSong().getArtworkUrl());
+			artworkUrl = getSong().getArtworkUrl();
 		}
 
 		if (artworkUrl == null) {

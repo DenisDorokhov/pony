@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Service
@@ -26,6 +27,13 @@ public class UserTokenReaderImpl implements UserTokenReader {
 			token = httpRequest.getParameter("x_access_token");
 			if (!StringUtils.isBlank(token)) {
 				return token;
+			}
+
+			if (!httpRequest.getServletPath().startsWith("/api/")) {
+				token = getCookie(httpRequest, "Download-Access-Token");
+				if (!StringUtils.isBlank(token)) {
+					return token;
+				}
 			}
 		}
 
@@ -53,6 +61,17 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 		if (aRequest instanceof HttpServletRequest) {
 			return (HttpServletRequest) aRequest;
+		}
+
+		return null;
+	}
+
+	private String getCookie(HttpServletRequest aRequest, String aName) {
+
+		for (Cookie cookie : aRequest.getCookies()) {
+			if (cookie.getName().equals(aName)) {
+				return cookie.getValue();
+			}
 		}
 
 		return null;

@@ -1,10 +1,10 @@
 package net.dorokhov.pony.web.server.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dorokhov.pony.web.server.service.ResponseBuilder;
 import net.dorokhov.pony.web.shared.ErrorCodes;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.ResponseDto;
-import net.dorokhov.pony.web.server.service.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +26,9 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
 	private ResponseBuilder responseBuilder;
 
-	private String jsonResponsePathPrefix;
-
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
 		responseBuilder = aResponseBuilder;
-	}
-
-	public void setJsonResponsePathPrefix(String aJsonResponsePathPrefix) {
-		jsonResponsePathPrefix = aJsonResponsePathPrefix;
 	}
 
 	@Override
@@ -42,7 +36,7 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 
 		log.warn("Access denied to [" + aRequest.getServletPath() + "].");
 
-		if (jsonResponsePathPrefix != null && aRequest.getServletPath().startsWith(jsonResponsePathPrefix)) {
+		if (aRequest.getServletPath().startsWith("/api/")) {
 
 			ResponseDto error = responseBuilder.build(new ErrorDto(ErrorCodes.ACCESS_DENIED, "Access denied."));
 
