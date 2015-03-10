@@ -6,6 +6,7 @@ import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -16,6 +17,7 @@ import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Progress;
 import org.gwtbootstrap3.client.ui.ProgressBar;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 
@@ -44,7 +46,10 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	InlineLabel labelTitle;
 
 	@UiField
-	ProgressBar progressTime;
+	Progress progressTime;
+
+	@UiField
+	ProgressBar progressBarTime;
 
 	@UiField
 	Label labelTime;
@@ -54,8 +59,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	@UiField
 	ArtworkLoader artworkLoader;
-
-	private final Timer timer;
 
 	private final Audio audio;
 
@@ -80,13 +83,20 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		setSong(null);
 
-		timer = new Timer() {
+		progressTime.sinkEvents(Event.ONCLICK);
+		progressTime.addHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent aEvent) {
+				setProgress((aEvent.getNativeEvent().getClientX() - progressTime.getAbsoluteLeft()) / (double) progressTime.getOffsetWidth());
+			}
+		}, ClickEvent.getType());
+
+		new Timer() {
 			@Override
 			public void run() {
 				updatePosition();
 			}
-		};
-		timer.scheduleRepeating(250);
+		}.scheduleRepeating(250);
 	}
 
 	@Override
@@ -111,7 +121,10 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	@Override
 	public void setPosition(double aPosition) {
+
 		audio.setCurrentTime(aPosition);
+
+		updatePosition();
 	}
 
 	@Override
@@ -132,7 +145,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		double duration = audio.getDuration();
 
 		if (duration != Double.NaN && duration != Double.POSITIVE_INFINITY) {
-			audio.setCurrentTime(aProgress * duration);
+			setPosition(aProgress * duration);
 		}
 	}
 
@@ -261,7 +274,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		labelDuration.setText(StringUtils.secondsToMinutes(duration));
 
 		labelTime.setText(StringUtils.secondsToMinutes(0));
-		progressTime.setPercent(0);
+		progressBarTime.setPercent(0);
 
 		if (songUrl != null) {
 			audio.setSrc(songUrl);
@@ -269,8 +282,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	}
 
 	private void updatePosition() {
-		labelTime.setText(StringUtils.secondsToMinutes((int)Math.round(getPosition())));
-		progressTime.setPercent(getProgress() * 100);
+		labelTime.setText(StringUtils.secondsToMinutes((int) Math.round(getPosition())));
+		progressBarTime.setPercent(getProgress() * 100);
 	}
 
 	private void setState(State aState) {

@@ -89,8 +89,8 @@
             </g:HTMLPanel>
         </g:FocusPanel>
 
-        <b:Progress active="false" addStyleNames="{style.progress}">
-            <b:ProgressBar ui:field="progressTime" type="INFO" />
+        <b:Progress ui:field="progressTime" addStyleNames="{style.progress}">
+            <b:ProgressBar ui:field="progressBarTime" type="INFO" />
         </b:Progress>
 
         <g:Label ui:field="labelTime" addStyleNames="{style.timeLabel}" />
