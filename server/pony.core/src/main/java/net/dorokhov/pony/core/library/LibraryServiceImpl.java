@@ -618,7 +618,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		String albumName = StringUtils.defaultIfEmpty(StringUtils.normalizeSpace(aSongData.getAlbum()), null);
 
-		Album album = albumDao.findByArtistIdAndName(aArtist.getId(), aSongData.getAlbum());
+		Album album = albumDao.findByArtistIdAndName(aArtist.getId(), albumName);
 
 		boolean shouldSave = false;
 
