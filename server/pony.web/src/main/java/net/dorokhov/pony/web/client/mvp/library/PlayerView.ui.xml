@@ -15,6 +15,7 @@
             margin-right: 5px;
         }
         .playButton {
+            width: 49px;
             margin-top: 12px;
             margin-right: 5px;
         }
@@ -88,8 +89,8 @@
             </g:HTMLPanel>
         </g:FocusPanel>
 
-        <b:Progress addStyleNames="{style.progress}">
-            <b:ProgressBar ui:field="progressTime" type="INFO" percent="40" />
+        <b:Progress active="false" addStyleNames="{style.progress}">
+            <b:ProgressBar ui:field="progressTime" type="INFO" />
         </b:Progress>
 
         <g:Label ui:field="labelTime" addStyleNames="{style.timeLabel}" />

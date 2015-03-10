@@ -6,6 +6,7 @@ import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -54,6 +55,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	@UiField
 	ArtworkLoader artworkLoader;
 
+	private final Timer timer;
+
 	private final Audio audio;
 
 	private State state;
@@ -76,6 +79,14 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		setUnityCallbacks();
 
 		setSong(null);
+
+		timer = new Timer() {
+			@Override
+			public void run() {
+				updatePosition();
+			}
+		};
+		timer.scheduleRepeating(250);
 	}
 
 	@Override
@@ -255,6 +266,11 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		if (songUrl != null) {
 			audio.setSrc(songUrl);
 		}
+	}
+
+	private void updatePosition() {
+		labelTime.setText(StringUtils.secondsToMinutes((int)Math.round(getPosition())));
+		progressTime.setPercent(getProgress() * 100);
 	}
 
 	private void setState(State aState) {
