@@ -218,7 +218,11 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 
 	@Override
 	public void onSongStartRequest(SongStartRequestEvent aEvent) {
-		activationModel.setSelected(aEvent.getSong(), true);
+		if (!aEvent.getSong().equals(activationModel.getSelectedObject())) {
+			activationModel.setSelected(aEvent.getSong(), true);
+		} else {
+			getUiHandlers().onSongActivation(aEvent.getSong());
+		}
 	}
 
 	private void updateLoadingState() {

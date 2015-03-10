@@ -51,26 +51,38 @@ public class ArtworkLoader extends Composite {
 	}
 
 	public void setUrl(String aUrl) {
-		if (getState() == State.ERROR || !ObjectUtils.nullSafeEquals(url, aUrl)) {
+		if (aUrl != null) {
+			if (getState() == State.ERROR || !ObjectUtils.nullSafeEquals(url, aUrl)) {
 
-			url = UriUtils.fromString(aUrl).asString();
+				url = UriUtils.fromString(aUrl).asString();
 
-			setState(State.LOADING);
+				setState(State.LOADING);
 
-			loadedImage.setUrl(aUrl);
+				loadedImage.setUrl(aUrl);
+			}
+		} else {
+			clear();
 		}
 	}
 
 	public void setResource(ImageResource aResource) {
+		if (aResource != null) {
 
-		url = loadedImage.getUrl();
+			url = loadedImage.getUrl();
 
-		loadedImage.setResource(aResource);
+			loadedImage.setResource(aResource);
 
-		setState(State.LOADED);
+			setState(State.LOADED);
+
+		} else {
+			clear();
+		}
 	}
 
 	public void clear() {
+
+		url = null;
+
 		setState(State.EMPTY);
 	}
 

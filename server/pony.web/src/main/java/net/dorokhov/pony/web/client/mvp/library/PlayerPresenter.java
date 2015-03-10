@@ -34,6 +34,10 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 
 		public void setPosition(double aPosition);
 
+		public double getProgress();
+
+		public void setProgress(double aProgress);
+
 		public SongDto getSong();
 
 		public void setSong(SongDto aSong);
@@ -61,6 +65,9 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 		super(aEventBus, aView);
 
 		getView().setUiHandlers(this);
+
+		getView().setPreviousSongAvailable(playListNavigator.hasPrevious());
+		getView().setNextSongAvailable(playListNavigator.hasNext());
 	}
 
 	@Override

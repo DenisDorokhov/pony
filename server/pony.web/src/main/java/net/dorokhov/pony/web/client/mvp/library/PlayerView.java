@@ -1,9 +1,11 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -16,7 +18,7 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ProgressBar;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 
-public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements PlayerPresenter.MyView {
+public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements PlayerPresenter.MyView, LoadedMetadataHandler, EndedHandler {
 
 	interface MyUiBinder extends UiBinder<FlowPanel, PlayerView> {}
 
@@ -66,6 +68,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		initWidget(uiBinder.createAndBindUi(this));
 
 		audio = Audio.createIfSupported();
+		audio.addLoadedMetadataHandler(this);
+		audio.addEndedHandler(this);
 
 		playerView.add(audio);
 
@@ -91,6 +95,16 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	@Override
 	public double getPosition() {
+		return audio.getCurrentTime();
+	}
+
+	@Override
+	public void setPosition(double aPosition) {
+		audio.setCurrentTime(aPosition);
+	}
+
+	@Override
+	public double getProgress() {
 
 		double duration = audio.getDuration();
 
@@ -102,12 +116,12 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	}
 
 	@Override
-	public void setPosition(double aPosition) {
+	public void setProgress(double aProgress) {
 
 		double duration = audio.getDuration();
 
 		if (duration != Double.NaN && duration != Double.POSITIVE_INFINITY) {
-			audio.setCurrentTime(aPosition * duration);
+			audio.setCurrentTime(aProgress * duration);
 		}
 	}
 
@@ -134,7 +148,11 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		audio.play();
 
+		sendUnityState(true);
+
 		setState(State.PLAYING);
+
+		getUiHandlers().onPlay();
 	}
 
 	@Override
@@ -142,7 +160,11 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		audio.pause();
 
+		sendUnityState(false);
+
 		setState(State.PAUSED);
+
+		getUiHandlers().onPause();
 	}
 
 	@Override
@@ -175,19 +197,35 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		buttonForward.setEnabled(nextSongAvailable);
 	}
 
-	private native void setUnityCallbacks() /*-{
-        $wnd.UnityMusicShim().setCallbackObject({
-            pause: function() {
-                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onPlayPause()();
-            },
-            next: function() {
-                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onNextRequested()();
-            },
-            previous: function() {
-                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onPreviousRequested()();
-            }
-        });
-	}-*/;
+	@Override
+	public void onLoadedMetadata(LoadedMetadataEvent event) {
+		// TODO: implement
+	}
+
+	@Override
+	public void onEnded(EndedEvent aEvent) {
+
+		setState(State.INACTIVE);
+
+		sendUnityState(false);
+
+		getUiHandlers().onEnd();
+	}
+
+	@UiHandler("buttonBackward")
+	void onBackwardClick(ClickEvent aEvent) {
+		onPreviousRequested();
+	}
+
+	@UiHandler("buttonForward")
+	void onForwardClick(ClickEvent aEvent) {
+		onNextRequested();
+	}
+
+	@UiHandler("buttonPlay")
+	void onPlayClick(ClickEvent aEvent) {
+		onPlayPause();
+	}
 
 	private void updateSong() {
 
@@ -214,7 +252,9 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		labelTime.setText(StringUtils.secondsToMinutes(0));
 		progressTime.setPercent(0);
 
-		audio.setSrc(songUrl);
+		if (songUrl != null) {
+			audio.setSrc(songUrl);
+		}
 	}
 
 	private void setState(State aState) {
@@ -222,6 +262,28 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		state = aState;
 
 		buttonPlay.setIcon(state == State.PLAYING ? IconType.PAUSE : IconType.PLAY);
+	}
+
+	private void onPlayPause() {
+		if (getSong() != null) {
+			if (getState() == State.PLAYING) {
+				pause();
+			} else {
+				play();
+			}
+		}
+	}
+
+	private void onPreviousRequested() {
+		if (getPosition() >= 3) {
+			setPosition(0.0);
+		} else {
+			getUiHandlers().onPreviousSongRequested();
+		}
+	}
+
+	private void onNextRequested() {
+		getUiHandlers().onNextSongRequested();
 	}
 
 	private void updateUnityOptions() {
@@ -264,26 +326,21 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
         });
     }-*/;
 
-	private void onPlayPause() {
-		if (getSong() != null) {
-			if (getState() == State.PLAYING) {
-				pause();
-			} else {
-				play();
-			}
-		}
-	}
+	private native void setUnityCallbacks() /*-{
 
-	private void onPreviousRequested() {
-		if (getPosition() >= 3) {
-			setPosition(0.0);
-		} else {
-			getUiHandlers().onPreviousSongRequested();
-		}
-	}
+		var self = this;
 
-	private void onNextRequested() {
-		getUiHandlers().onNextSongRequested();
-	}
+        $wnd.UnityMusicShim().setCallbackObject({
+            pause: function() {
+                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onPlayPause()();
+            },
+            next: function() {
+                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onNextRequested()();
+            },
+            previous: function() {
+                self.@net.dorokhov.pony.web.client.mvp.library.PlayerView::onPreviousRequested()();
+            }
+        });
+	}-*/;
 
 }
