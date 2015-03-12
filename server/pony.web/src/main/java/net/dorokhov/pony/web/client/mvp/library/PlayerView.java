@@ -267,9 +267,18 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		int duration = 0;
 
 		if (song != null) {
+
 			songUrl = song.getUrl();
-			artistName = song.getArtistName() != null ? song.getArtistName() : Messages.INSTANCE.artistUnknown();
 			songTitle = song.getName() != null ? song.getName() : Messages.INSTANCE.songUnknown();
+
+			artistName = song.getArtistName();
+			if (artistName == null) {
+				artistName = song.getAlbumArtistName();
+			}
+			if (artistName == null) {
+				artistName = Messages.INSTANCE.artistUnknown();
+			}
+
 			artworkUrl = song.getArtworkUrl();
 			duration = song.getDuration() != null ? song.getDuration() : 0;
 		}
