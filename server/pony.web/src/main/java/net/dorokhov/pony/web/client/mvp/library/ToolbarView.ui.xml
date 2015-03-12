@@ -8,25 +8,42 @@
         .container {
             text-align: right;
         }
-        .settingsButton {
+
+        .systemButtonGroup {
             margin-right: 10px;
+        }
+
+        .refreshButton {
+            margin-right: 10px;
+        }
+
+        .dropDown {
+            min-width: 100%;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.container}">
 
-        <b:Button ui:field="refreshButton" addStyleNames="{style.settingsButton}"
+        <b:Button ui:field="refreshButton" addStyleNames="{style.refreshButton}"
                   text="{mes.toolbarRefresh}" icon="REFRESH" iconPosition="RIGHT" />
 
-        <b:Button ui:field="settingsButton" addStyleNames="{style.settingsButton}"
-                  text="{mes.toolbarSettings}" icon="GEAR" iconPosition="RIGHT" />
+        <b:ButtonGroup addStyleNames="{style.systemButtonGroup}">
+            <b:Button ui:field="systemButton" dataToggle="DROPDOWN"
+                      text="{mes.toolbarSystem}" icon="GEAR" iconPosition="RIGHT" />
+            <b:DropDownMenu addStyleNames="{style.dropDown}">
+                <b:AnchorListItem ui:field="configButton" text="{mes.toolbarConfig}" />
+                <b:AnchorListItem ui:field="scanningButton" text="{mes.toolbarScanning}" />
+                <b:AnchorListItem ui:field="logButton" text="{mes.toolbarLog}" />
+                <b:AnchorListItem ui:field="usersButton" text="{mes.toolbarUsers}" />
+            </b:DropDownMenu>
+        </b:ButtonGroup>
 
         <b:ButtonGroup>
             <b:Button ui:field="currentUserButton" dataToggle="DROPDOWN"
                       icon="USER" iconPosition="RIGHT" />
-            <b:DropDownMenu>
-                <b:AnchorListItem ui:field="editProfileButton">Edit Profile</b:AnchorListItem>
-                <b:AnchorListItem ui:field="logoutButton">Sign Out</b:AnchorListItem>
+            <b:DropDownMenu addStyleNames="{style.dropDown}">
+                <b:AnchorListItem ui:field="editProfileButton" text="{mes.toolbarEditProfile}" />
+                <b:AnchorListItem ui:field="logoutButton" text="{mes.toolbarLogout}" />
             </b:DropDownMenu>
         </b:ButtonGroup>
 

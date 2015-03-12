@@ -21,7 +21,7 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	private UserDto currentUser;
 
 	@UiField
-	Button settingsButton;
+	Button systemButton;
 
 	@UiField
 	Button currentUserButton;
@@ -54,7 +54,7 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 		getUiHandlers().onRefreshRequested();
 	}
 
-	@UiHandler("settingsButton")
+	@UiHandler("systemButton")
 	void onSettingsButtonClick(ClickEvent aEvent) {
 		getUiHandlers().onSettingsRequested();
 	}
@@ -70,7 +70,7 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	}
 
 	private void updateUser() {
-		settingsButton.setVisible(currentUser != null && currentUser.getRole() == RoleDto.ADMIN);
+		systemButton.setVisible(currentUser != null && currentUser.getRole() == RoleDto.ADMIN);
 		currentUserButton.setText(currentUser != null ? currentUser.getName() : null);
 	}
 
