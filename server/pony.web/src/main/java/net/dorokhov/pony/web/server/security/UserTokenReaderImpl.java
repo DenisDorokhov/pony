@@ -68,9 +68,11 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 	private String getCookie(HttpServletRequest aRequest, String aName) {
 
-		for (Cookie cookie : aRequest.getCookies()) {
-			if (cookie.getName().equals(aName)) {
-				return cookie.getValue();
+		if (aRequest.getCookies() != null) {
+			for (Cookie cookie : aRequest.getCookies()) {
+				if (cookie.getName().equals(aName)) {
+					return cookie.getValue();
+				}
 			}
 		}
 

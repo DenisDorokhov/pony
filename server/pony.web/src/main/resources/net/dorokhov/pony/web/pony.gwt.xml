@@ -19,6 +19,7 @@
 
 	<set-configuration-property name="gin.ginjector.modules" value="net.dorokhov.pony.web.client.ClientModule" />
     <set-configuration-property name="gwtp.bootstrapper" value="net.dorokhov.pony.web.client.BootstrapperImpl" />
+    <set-configuration-property name="verifyNewerVersion" value="false"/>
 
     <inherits name="org.fusesource.restygwt.RestyGWT" />
 
