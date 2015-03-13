@@ -8,17 +8,15 @@
         .container {
             text-align: right;
         }
-
         .systemButtonGroup {
             margin-right: 10px;
         }
-
         .refreshButton {
             margin-right: 10px;
         }
-
         .dropDown {
             min-width: 100%;
+            width: 100%;
         }
     </ui:style>
 
