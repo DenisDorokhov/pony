@@ -23,12 +23,12 @@ public class FileTypeServiceImpl implements FileTypeService {
 		extensionToMimeType.put("jpg", "image/jpeg");
 		extensionToMimeType.put("jpeg", "image/jpeg");
 		extensionToMimeType.put("png", "image/png");
-		extensionToMimeType.put("mp3", "audio/mpeg3");
+		extensionToMimeType.put("mp3", "audio/mpeg");
 
 		mimeTypeToExtension = new HashMap<>();
 		mimeTypeToExtension.put("image/jpeg", "jpg");
 		mimeTypeToExtension.put("image/png", "png");
-		mimeTypeToExtension.put("audio/mpeg3", "mp3");
+		mimeTypeToExtension.put("audio/mpeg", "mp3");
 
 		imageExtensions = new HashSet<>();
 		imageExtensions.add("jpg");

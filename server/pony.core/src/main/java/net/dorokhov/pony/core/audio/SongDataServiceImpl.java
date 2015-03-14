@@ -114,7 +114,7 @@ public class SongDataServiceImpl implements SongDataService {
 		String mimeType = null;
 
 		if (aHeader.getFormat().equals("MPEG-1 Layer 3")) {
-			mimeType = "audio/mpeg3";
+			mimeType = "audio/mpeg";
 		}
 
 		return mimeType;

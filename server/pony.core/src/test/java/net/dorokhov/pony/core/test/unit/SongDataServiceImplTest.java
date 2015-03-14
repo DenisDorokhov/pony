@@ -155,7 +155,7 @@ public class SongDataServiceImplTest {
 	private void doTestReadData(SongDataReadable aSongData) {
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), aSongData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", aSongData.getFormat());
-		Assert.assertEquals("audio/mpeg3", aSongData.getMimeType());
+		Assert.assertEquals("audio/mpeg", aSongData.getMimeType());
 		Assert.assertEquals(Long.valueOf(24797), aSongData.getSize());
 		Assert.assertEquals(Integer.valueOf(1), aSongData.getDuration());
 		Assert.assertEquals(Long.valueOf(128), aSongData.getBitRate());
@@ -176,7 +176,7 @@ public class SongDataServiceImplTest {
 	private void doTestWrittenData(SongDataReadable aSongData) {
 		Assert.assertEquals(TEST_MP3_FILE.getAbsolutePath(), aSongData.getPath());
 		Assert.assertEquals("MPEG-1 Layer 3", aSongData.getFormat());
-		Assert.assertEquals("audio/mpeg3", aSongData.getMimeType());
+		Assert.assertEquals("audio/mpeg", aSongData.getMimeType());
 		Assert.assertEquals(Long.valueOf(24797), aSongData.getSize());
 		Assert.assertEquals(Integer.valueOf(1), aSongData.getDuration());
 		Assert.assertEquals(Long.valueOf(128), aSongData.getBitRate());

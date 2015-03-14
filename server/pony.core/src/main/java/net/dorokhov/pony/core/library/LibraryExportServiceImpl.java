@@ -18,7 +18,7 @@ public class LibraryExportServiceImpl implements LibraryExportService {
 
 	@Override
 	public String getSingleTaskExportMimeType() {
-		return "audio/mpeg3";
+		return "audio/mpeg";
 	}
 
 	@Override
