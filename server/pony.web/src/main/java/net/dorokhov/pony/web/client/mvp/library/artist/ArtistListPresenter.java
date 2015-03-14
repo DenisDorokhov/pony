@@ -184,16 +184,11 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 		if (artists != null && artists.size() > 0) {
 
 			ArtistDto artistToSelect = findArtist(aArtist);
-
-			if (artistToSelect != null) {
-				getView().setSelectedArtist(artistToSelect, aShouldScroll);
-			} else if (aArtist != null && !aArtist.trim().equals("")) {
-				log.warning("Could not find artist [" + aArtist + "].");
+			if (artistToSelect == null) {
+				artistToSelect = artists.get(0);
 			}
 
-			if (getView().getSelectedArtist() == null) {
-				getView().setSelectedArtist(artists.get(0), aShouldScroll);
-			}
+			getView().setSelectedArtist(artistToSelect, aShouldScroll);
 		}
 	}
 

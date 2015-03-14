@@ -1,14 +1,17 @@
-package net.dorokhov.pony.web.client.control;
+package net.dorokhov.pony.web.client.control.status;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Widget;
 
-public class StatusIndicator extends Composite implements HasText {
+public class BaseStatusIndicator extends Composite implements StatusIndicator {
 
-	interface MyUiBinder extends UiBinder<Widget, StatusIndicator> {}
+	interface MyUiBinder extends UiBinder<Widget, BaseStatusIndicator> {}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -22,9 +25,7 @@ public class StatusIndicator extends Composite implements HasText {
 
 	private String text;
 
-	private String textColor;
-
-	public StatusIndicator() {
+	public BaseStatusIndicator() {
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -32,10 +33,12 @@ public class StatusIndicator extends Composite implements HasText {
 		updateText();
 	}
 
+	@Override
 	public ImageResource getIcon() {
 		return icon;
 	}
 
+	@Override
 	public void setIcon(ImageResource aIcon) {
 
 		icon = aIcon;
@@ -56,17 +59,6 @@ public class StatusIndicator extends Composite implements HasText {
 		updateText();
 	}
 
-	public String getTextColor() {
-		return textColor;
-	}
-
-	public void setTextColor(String aTextColor) {
-
-		textColor = aTextColor;
-
-		updateTextColor();
-	}
-
 	private void updateIcon() {
 		if (icon == null) {
 			image.setVisible(false);
@@ -82,14 +74,6 @@ public class StatusIndicator extends Composite implements HasText {
 		} else {
 			textLabel.setVisible(true);
 			textLabel.setText(text);
-		}
-	}
-
-	private void updateTextColor() {
-		if (textColor == null) {
-			textLabel.getElement().getStyle().clearColor();
-		} else {
-			textLabel.getElement().getStyle().setColor(textColor);
 		}
 	}
 

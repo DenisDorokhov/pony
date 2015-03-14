@@ -13,6 +13,7 @@ import net.dorokhov.pony.web.client.service.PlayListImpl;
 import net.dorokhov.pony.web.client.service.SongService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
+import net.dorokhov.pony.web.client.util.ErrorUtils;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.*;
 
@@ -232,7 +233,11 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 					currentRequest = null;
 
-					getView().setLoadingState(LoadingState.ERROR);
+					if (ErrorUtils.getErrorByCode(aErrors, ErrorCodes.ARTIST_NOT_FOUND) != null) {
+						getView().setLoadingState(LoadingState.EMPTY);
+					} else {
+						getView().setLoadingState(LoadingState.ERROR);
+					}
 				}
 			});
 

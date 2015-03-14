@@ -17,8 +17,8 @@ public class ErrorCodes {
 	public static final String SCAN_JOB_NOT_FOUND = "errorScanJobNotFound";
 	public static final String SCAN_RESULT_NOT_FOUND = "errorScanResultNotFound";
 	public static final String ARTIST_NOT_FOUND = "errorArtistNotFound";
-	public static final String SONG_NOT_FOUND = "errorArtistNotFound";
-	public static final String USER_NOT_FOUND = "errorArtistNotFound";
+	public static final String SONG_NOT_FOUND = "errorSongNotFound";
+	public static final String USER_NOT_FOUND = "errorUserNotFound";
 	public static final String ARTWORK_UPLOAD_NOT_FOUND = "errorArtworkUploadNotFound";
 
 	public static final String ARTWORK_UPLOAD_FORMAT = "errorArtworkUploadFormat";

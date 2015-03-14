@@ -1,0 +1,16 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:p="urn:import:net.dorokhov.pony.web.client.control.status">
+
+    <ui:with field="img" type="net.dorokhov.pony.web.client.resource.Images" />
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
+
+    <ui:style>
+        .emptyIndicator {
+            color: #a94442;
+        }
+    </ui:style>
+
+    <p:BaseStatusIndicator ui:field="statusIndicator" addStyleNames="{style.emptyIndicator}"
+                           icon="{img.error}" text="{mes.statusError}" />
+
+</ui:UiBinder>

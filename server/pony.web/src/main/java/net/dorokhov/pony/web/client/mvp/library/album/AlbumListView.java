@@ -8,7 +8,9 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import net.dorokhov.pony.web.client.control.StatusIndicator;
+import net.dorokhov.pony.web.client.control.status.EmptyIndicator;
+import net.dorokhov.pony.web.client.control.status.ErrorIndicator;
+import net.dorokhov.pony.web.client.control.status.LoadingIndicator;
 import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
@@ -47,13 +49,13 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 	PanelBody albumList;
 
 	@UiField
-	StatusIndicator loadingIndicator;
+	LoadingIndicator loadingIndicator;
 
 	@UiField
-	StatusIndicator errorIndicator;
+	ErrorIndicator errorIndicator;
 
 	@UiField
-	StatusIndicator emptyIndicator;
+	EmptyIndicator emptyIndicator;
 
 	private LoadingState loadingState;
 

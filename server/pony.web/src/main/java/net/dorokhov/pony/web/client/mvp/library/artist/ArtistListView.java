@@ -11,7 +11,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import net.dorokhov.pony.web.client.control.StatusIndicator;
+import net.dorokhov.pony.web.client.control.status.EmptyIndicator;
+import net.dorokhov.pony.web.client.control.status.ErrorIndicator;
+import net.dorokhov.pony.web.client.control.status.LoadingIndicator;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroup;
@@ -37,13 +39,13 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 	LinkedGroup artistList;
 	
 	@UiField
-	StatusIndicator loadingIndicator;
+	LoadingIndicator loadingIndicator;
 	
 	@UiField
-	StatusIndicator errorIndicator;
+	ErrorIndicator errorIndicator;
 
 	@UiField
-	StatusIndicator emptyIndicator;
+	EmptyIndicator emptyIndicator;
 
 	private List<ArtistDto> artists;
 
@@ -98,9 +100,13 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 	@Override
 	public void setSelectedArtist(ArtistDto aArtist, boolean aShouldScroll) {
 
-		selectionModel.setSelected(aArtist, true);
+		if (aArtist != null) {
+			selectionModel.setSelected(aArtist, true);
+		} else {
+			selectionModel.clear();
+		}
 
-		if (aShouldScroll && artists != null) {
+		if (aShouldScroll && aArtist != null) {
 
 			final ArtistView artistView = artistToView.get(aArtist);
 
