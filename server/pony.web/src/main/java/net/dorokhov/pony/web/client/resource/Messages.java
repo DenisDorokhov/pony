@@ -39,6 +39,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String statusLoading();
 	public String statusError();
+	public String statusArtistListEmpty();
+	public String statusAlbumListEmpty();
 
 	public String playerAlertPlaybackWillStop();
 	public String playerTitle();

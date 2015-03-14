@@ -4,10 +4,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
-import net.dorokhov.pony.web.client.event.ArtistSelectionEvent;
-import net.dorokhov.pony.web.client.event.ArtistSelectionRequestEvent;
-import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
-import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
+import net.dorokhov.pony.web.client.event.*;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.service.BusyIndicator;
@@ -133,7 +130,15 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 				doUpdateArtists(aArtists);
 
-				getView().setLoadingState(LoadingState.LOADED);
+				if (aArtists.size() == 0) {
+
+					getView().setLoadingState(LoadingState.EMPTY);
+
+					getEventBus().fireEvent(new EmptyLibraryEvent());
+
+				} else {
+					getView().setLoadingState(LoadingState.LOADED);
+				}
 
 				doSelectArtist(artistToSelect, aShouldScroll);
 			}

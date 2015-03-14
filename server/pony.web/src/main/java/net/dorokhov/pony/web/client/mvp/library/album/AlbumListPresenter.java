@@ -20,7 +20,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> implements AlbumListUiHandlers,
-		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler,
+		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler, EmptyLibraryEvent.Handler,
 		SongSelectionRequestEvent.Handler, SongChangeEvent.Handler, SongStartEvent.Handler, SongPauseEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<AlbumListUiHandlers>, HasLoadingState {
@@ -79,6 +79,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 		addRegisteredHandler(ArtistSelectionEvent.TYPE, this);
 		addRegisteredHandler(RefreshRequestEvent.TYPE, this);
+		addRegisteredHandler(EmptyLibraryEvent.TYPE, this);
 
 		addRegisteredHandler(SongSelectionRequestEvent.TYPE, this);
 		addRegisteredHandler(SongChangeEvent.TYPE, this);
@@ -118,6 +119,24 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		if (getView().getArtist() != null) {
 			doUpdateAlbums(getView().getArtist(), false);
 		}
+	}
+
+	@Override
+	public void onEmptyLibrary(EmptyLibraryEvent aEvent) {
+
+		if (currentRequest != null) {
+
+			currentRequest.cancel();
+
+			BusyIndicator.finishTask();
+		}
+
+		currentRequest = null;
+
+		getView().setArtist(null);
+		getView().setAlbums(null);
+
+		getView().setLoadingState(LoadingState.EMPTY);
 	}
 
 	@Override

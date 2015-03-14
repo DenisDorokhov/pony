@@ -3,12 +3,12 @@ package net.dorokhov.pony.web.client.mvp.library.album;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import net.dorokhov.pony.web.client.control.StatusIndicator;
 import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
@@ -47,10 +47,13 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 	PanelBody albumList;
 
 	@UiField
-	Label loadingLabel;
+	StatusIndicator loadingIndicator;
 
 	@UiField
-	Label errorLabel;
+	StatusIndicator errorIndicator;
+
+	@UiField
+	StatusIndicator emptyIndicator;
 
 	private LoadingState loadingState;
 
@@ -226,8 +229,9 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 	}
 
 	private void updateLoadingState() {
-		loadingLabel.setVisible(getLoadingState() == LoadingState.LOADING);
-		errorLabel.setVisible(getLoadingState() == LoadingState.ERROR);
+		emptyIndicator.setVisible(getLoadingState() == LoadingState.EMPTY);
+		loadingIndicator.setVisible(getLoadingState() == LoadingState.LOADING);
+		errorIndicator.setVisible(getLoadingState() == LoadingState.ERROR);
 		albumList.setVisible(getLoadingState() == LoadingState.LOADED);
 		artistHeaderContainer.setVisible(getLoadingState() == LoadingState.LOADED);
 	}

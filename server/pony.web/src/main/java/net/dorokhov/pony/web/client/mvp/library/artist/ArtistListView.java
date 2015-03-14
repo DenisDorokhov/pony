@@ -7,11 +7,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import net.dorokhov.pony.web.client.control.StatusIndicator;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroup;
@@ -37,10 +37,13 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 	LinkedGroup artistList;
 	
 	@UiField
-	Label loadingLabel;
+	StatusIndicator loadingIndicator;
 	
 	@UiField
-	Label errorLabel;
+	StatusIndicator errorIndicator;
+
+	@UiField
+	StatusIndicator emptyIndicator;
 
 	private List<ArtistDto> artists;
 
@@ -173,8 +176,9 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 	}
 
 	private void updateLoadingState() {
-		loadingLabel.setVisible(getLoadingState() == LoadingState.LOADING);
-		errorLabel.setVisible(getLoadingState() == LoadingState.ERROR);
+		emptyIndicator.setVisible(getLoadingState() == LoadingState.EMPTY);
+		loadingIndicator.setVisible(getLoadingState() == LoadingState.LOADING);
+		errorIndicator.setVisible(getLoadingState() == LoadingState.ERROR);
 		artistList.setVisible(getLoadingState() == LoadingState.LOADED);
 	}
 
