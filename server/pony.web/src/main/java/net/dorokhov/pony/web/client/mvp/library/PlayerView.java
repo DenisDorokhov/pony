@@ -323,6 +323,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 			} else {
 				play();
 			}
+		} else {
+			getUiHandlers().onPlaybackRequested();
 		}
 	}
 

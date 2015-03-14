@@ -143,6 +143,11 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 	}
 
 	@Override
+	public void onPlaybackRequested() {
+		getEventBus().fireEvent(new PlaybackRequestEvent());
+	}
+
+	@Override
 	public void onPlayListChange(PlayListChangeEvent aEvent) {
 
 		playListNavigator.setPlayList(aEvent.getPlayList());

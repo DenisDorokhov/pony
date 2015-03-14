@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> implements AlbumListUiHandlers,
-		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler, EmptyLibraryEvent.Handler,
+		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler, EmptyLibraryEvent.Handler, PlaybackRequestEvent.Handler,
 		SongSelectionRequestEvent.Handler, SongChangeEvent.Handler, SongStartEvent.Handler, SongPauseEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<AlbumListUiHandlers>, HasLoadingState {
@@ -85,6 +85,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		addRegisteredHandler(ArtistSelectionEvent.TYPE, this);
 		addRegisteredHandler(RefreshRequestEvent.TYPE, this);
 		addRegisteredHandler(EmptyLibraryEvent.TYPE, this);
+		addRegisteredHandler(PlaybackRequestEvent.TYPE, this);
 
 		addRegisteredHandler(SongSelectionRequestEvent.TYPE, this);
 		addRegisteredHandler(SongChangeEvent.TYPE, this);
@@ -142,6 +143,34 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		getView().setAlbums(null);
 
 		getView().setLoadingState(LoadingState.EMPTY);
+	}
+
+	@Override
+	public void onPlaybackRequest(PlaybackRequestEvent aEvent) {
+
+		SongDto song = null;
+
+		if (getView().getSelectedSongs().size() > 0) {
+
+			List<SongDto> songList = new ArrayList<>(getView().getSelectedSongs());
+
+			Collections.sort(songList);
+
+			song = songList.get(0);
+		}
+
+		if (song == null) {
+
+			AlbumSongsDto album = getView().getAlbums() != null && getView().getAlbums().size() > 0 ? getView().getAlbums().get(0) : null;
+
+			if (album != null) {
+				song = album.getSongs().size() > 0 ? album.getSongs().get(0) : null;
+			}
+		}
+
+		if (song != null) {
+			getView().setActiveSong(song);
+		}
 	}
 
 	@Override
