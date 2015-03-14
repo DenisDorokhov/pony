@@ -10,9 +10,7 @@ public class AlbumDto extends AbstractDto<Long> {
 
 	private String artworkUrl;
 
-	private Long artist;
-
-	private String artistName;
+	private ArtistDto artist;
 
 	public String getName() {
 		return name;
@@ -46,20 +44,12 @@ public class AlbumDto extends AbstractDto<Long> {
 		artworkUrl = aArtworkUrl;
 	}
 
-	public Long getArtist() {
+	public ArtistDto getArtist() {
 		return artist;
 	}
 
-	public void setArtist(Long aArtist) {
+	public void setArtist(ArtistDto aArtist) {
 		artist = aArtist;
-	}
-
-	public String getArtistName() {
-		return artistName;
-	}
-
-	public void setArtistName(String aArtistName) {
-		artistName = aArtistName;
 	}
 
 }

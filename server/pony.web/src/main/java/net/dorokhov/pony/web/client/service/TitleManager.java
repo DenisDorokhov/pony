@@ -46,7 +46,17 @@ public class TitleManager {
 
 			clearScrolling();
 
-			scroller = new StringScroller(Messages.INSTANCE.libraryTitleSongBody(song.getArtistName(), song.getName()));
+			String artistName = song.getAlbum().getArtist().getName();
+			if (artistName == null) {
+				artistName = Messages.INSTANCE.artistUnknown();
+			}
+
+			String songTitle = song.getTitle();
+			if (songTitle == null) {
+				songTitle = Messages.INSTANCE.songUnknown();
+			}
+
+			scroller = new StringScroller(Messages.INSTANCE.libraryTitleSongBody(artistName, songTitle));
 
 			Window.setTitle(Messages.INSTANCE.libraryTitleSongPrefix() + scroller.getResult());
 

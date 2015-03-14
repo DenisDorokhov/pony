@@ -95,7 +95,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 	@Override
 	public void onSongSelectionRequest(SongSelectionRequestEvent aEvent) {
 
-		ArtistDto artist = artistMap.get(aEvent.getSong().getArtist().toString());
+		ArtistDto artist = artistMap.get(aEvent.getSong().getAlbum().getArtist().getId().toString());
 
 		if (artist != null) {
 			getView().setSelectedArtist(artist, true);

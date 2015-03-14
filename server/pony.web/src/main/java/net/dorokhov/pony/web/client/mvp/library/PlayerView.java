@@ -279,7 +279,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 				artistName = Messages.INSTANCE.artistUnknown();
 			}
 
-			artworkUrl = song.getArtworkUrl();
+			artworkUrl = song.getAlbum().getArtworkUrl();
 			duration = song.getDuration() != null ? song.getDuration() : 0;
 		}
 
@@ -351,7 +351,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		if (getSong() != null) {
 			name = getSong().getName();
 			artist = getSong().getArtistName();
-			artworkUrl = getSong().getArtworkUrl();
+			artworkUrl = getSong().getAlbum().getArtworkUrl();
 		}
 
 		if (artworkUrl == null) {

@@ -26,8 +26,7 @@ public class DtoConverter {
 		dto.setName(aAlbum.getName());
 		dto.setYear(aAlbum.getYear());
 
-		dto.setArtist(aAlbum.getArtist().getId());
-		dto.setArtistName(aAlbum.getArtist().getName());
+		dto.setArtist(artistToDto(aAlbum.getArtist()));
 
 		StoredFile artwork = aAlbum.getArtwork();
 
@@ -308,32 +307,16 @@ public class DtoConverter {
 
 		dto.setId(aSong.getId());
 		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/audio/" + aSong.getId()).build().toUriString());
+		dto.setPath(aSong.getPath());
 		dto.setDuration(aSong.getDuration());
 		dto.setDiscNumber(aSong.getDiscNumber());
 		dto.setTrackNumber(aSong.getTrackNumber());
+		dto.setArtistName(aSong.getArtistName());
+		dto.setAlbumArtistName(aSong.getAlbumArtistName());
 		dto.setName(aSong.getName());
 
-		dto.setGenre(aSong.getGenre().getId());
-		dto.setGenreName(aSong.getGenreName());
-
-		dto.setArtist(aSong.getAlbum().getArtist().getId());
-		dto.setArtistName(aSong.getArtistName());
-
-		dto.setAlbum(aSong.getAlbum().getId());
-		dto.setAlbumName(aSong.getAlbumName());
-		dto.setAlbumArtistName(aSong.getAlbumArtistName());
-		dto.setAlbumYear(aSong.getYear());
-
-		StoredFile artwork = aSong.getArtwork();
-
-		if (artwork == null) {
-			artwork = aSong.getAlbum().getArtwork();
-		}
-
-		if (artwork != null) {
-			dto.setArtwork(artwork.getId());
-			dto.setArtworkUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/" + artwork.getId()).build().toUriString());
-		}
+		dto.setGenre(genreToDto(aSong.getGenre()));
+		dto.setAlbum(albumToDto(aSong.getAlbum()));
 
 		return dto;
 	}

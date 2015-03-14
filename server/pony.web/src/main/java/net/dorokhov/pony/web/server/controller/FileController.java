@@ -112,7 +112,7 @@ public class FileController {
 				HashMap<String, Object> model = new HashMap<>();
 
 				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_LENGTH, song.getSize());
-				model.put(StreamingViewRenderer.DownloadConstants.FILENAME, song.getName());
+				model.put(StreamingViewRenderer.DownloadConstants.FILENAME, new File(song.getPath()).getName());
 				model.put(StreamingViewRenderer.DownloadConstants.LAST_MODIFIED, song.getUpdateDate() != null ? song.getUpdateDate() : song.getCreationDate());
 				model.put(StreamingViewRenderer.DownloadConstants.CONTENT_TYPE, song.getMimeType());
 				model.put(StreamingViewRenderer.DownloadConstants.INPUT_STREAM, new FileInputStream(songFile));

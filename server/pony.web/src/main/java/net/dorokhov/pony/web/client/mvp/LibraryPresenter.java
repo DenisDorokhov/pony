@@ -128,6 +128,8 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 			if (artistName != null) {
 				builder.with(LibraryParams.ARTIST, artistName);
+			} else if (artistId != null) {
+				builder.with(LibraryParams.ARTIST, artistId);
 			}
 
 			placeManager.revealPlace(builder.build());
