@@ -84,6 +84,8 @@ public class ArtworkLoader extends Composite {
 		url = null;
 
 		setState(State.EMPTY);
+
+		loadedImage.setUrl("");
 	}
 
 	public State getState() {
@@ -92,22 +94,25 @@ public class ArtworkLoader extends Composite {
 
 	@UiHandler("loadedImage")
 	void onImageLoaded(LoadEvent aEvent) {
-		setState(State.LOADED);
+		if (getState() == State.LOADING) {
+			setState(State.LOADED);
+		}
 	}
 
 	@UiHandler("loadedImage")
 	void onImageError(ErrorEvent aEvent) {
-		setState(State.ERROR);
+		if (getState() == State.LOADING) {
+
+			setState(State.ERROR);
+
+			loadedImage.setUrl("");
+		}
 	}
 
 	private void setState(State aLoadingState) {
 
 		loadingState = aLoadingState;
 
-		updateLoadingState();
-	}
-
-	private void updateLoadingState() {
 		emptyImage.setVisible(getState() == State.EMPTY);
 		loadingImage.setVisible(getState() == State.LOADING);
 		errorImage.setVisible(getState() == State.ERROR);

@@ -269,7 +269,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		if (song != null) {
 
 			songUrl = song.getUrl();
-			songTitle = song.getName() != null ? song.getName() : Messages.INSTANCE.songUnknown();
+			songTitle = song.getTitle();
+			artworkUrl = song.getAlbum().getArtworkUrl();
 
 			artistName = song.getArtistName();
 			if (artistName == null) {
@@ -279,7 +280,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 				artistName = Messages.INSTANCE.artistUnknown();
 			}
 
-			artworkUrl = song.getAlbum().getArtworkUrl();
 			duration = song.getDuration() != null ? song.getDuration() : 0;
 		}
 
@@ -344,21 +344,26 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 	private void sendUnityState(boolean aIsPlaying) {
 
-		String name = Messages.INSTANCE.playerSubtitle();
-		String artist = Messages.INSTANCE.playerTitle();
+		String songTitle = Messages.INSTANCE.playerSubtitle();
+		String artistName = Messages.INSTANCE.playerTitle();
 		String artworkUrl = null;
 
 		if (getSong() != null) {
-			name = getSong().getName();
-			artist = getSong().getArtistName();
+
+			songTitle = getSong().getTitle();
 			artworkUrl = getSong().getAlbum().getArtworkUrl();
+
+			artistName = getSong().getArtistName();
+			if (artistName == null) {
+				artistName = getSong().getAlbumArtistName();
+			}
 		}
 
 		if (artworkUrl == null) {
 			artworkUrl = GWT.getHostPageBaseURL() + "img/artwork-logo.png";
 		}
 
-		doSendUnityState(aIsPlaying, name, artist, artworkUrl);
+		doSendUnityState(aIsPlaying, songTitle, artistName, artworkUrl);
 	}
 
 	private native void doSendUnityState(boolean aIsPlaying, String aName, String aArtist, String aArtwork) /*-{
