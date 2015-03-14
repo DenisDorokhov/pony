@@ -19,7 +19,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyView> implements ArtistListUiHandlers, RefreshRequestEvent.Handler, ArtistSelectionRequestEvent.Handler, SongSelectionRequestEvent.Handler {
 
@@ -34,8 +33,6 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 		public void setSelectedArtist(ArtistDto aArtist, boolean aShouldScroll);
 
 	}
-
-	private final Logger log = Logger.getLogger(getClass().getName());
 
 	private final SongService songService;
 

@@ -9,6 +9,7 @@ import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.mvp.common.SelectionMode;
 import net.dorokhov.pony.web.client.service.BusyIndicator;
+import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.PlayListImpl;
 import net.dorokhov.pony.web.client.service.SongService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -54,6 +55,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	}
 
+	private final ErrorNotifier errorNotifier;
+
 	private final SongService songService;
 
 	private OperationRequest currentRequest;
@@ -63,10 +66,11 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Inject
 	public AlbumListPresenter(EventBus aEventBus, MyView aView,
-							  SongService aSongService) {
+							  ErrorNotifier aErrorNotifier, SongService aSongService) {
 
 		super(aEventBus, aView);
 
+		errorNotifier = aErrorNotifier;
 		songService = aSongService;
 
 		getView().setUiHandlers(this);
@@ -236,7 +240,10 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 					if (ErrorUtils.getErrorByCode(aErrors, ErrorCodes.ARTIST_NOT_FOUND) != null) {
 						getView().setLoadingState(LoadingState.EMPTY);
 					} else {
+
 						getView().setLoadingState(LoadingState.ERROR);
+
+						errorNotifier.notifyOfErrors(aErrors);
 					}
 				}
 			});
