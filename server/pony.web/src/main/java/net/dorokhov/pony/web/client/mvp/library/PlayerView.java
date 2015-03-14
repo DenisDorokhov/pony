@@ -87,7 +87,12 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		setUnityCallbacks();
 
-		setSong(null);
+		updateSong();
+
+		updateUnityOptions();
+		sendUnityState(false);
+
+		setState(State.INACTIVE);
 
 		progressTime.sinkEvents(Event.ONCLICK);
 		progressTime.addHandler(new ClickHandler() {
@@ -161,16 +166,19 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	}
 
 	@Override
-	public void setSong(SongDto aSong) {
+	public void setSong(SongDto aSong, boolean aPlay) {
 
 		song = aSong;
 
 		updateSong();
 
 		updateUnityOptions();
-		sendUnityState(false);
 
-		setState(State.INACTIVE);
+		if (aPlay) {
+			play();
+		} else {
+			pause();
+		}
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 
 		public SongDto getSong();
 
-		public void setSong(SongDto aSong);
+		public void setSong(SongDto aSong, boolean aPlay);
 
 		public void play();
 		public void pause();
@@ -190,14 +190,12 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 
 	private void doPlaySong(SongDto aSong) {
 
-		getView().setSong(aSong);
-
-		getEventBus().fireEvent(new SongChangeEvent(aSong));
-
 		getView().setPreviousSongAvailable(playListNavigator.hasPrevious());
 		getView().setNextSongAvailable(playListNavigator.hasNext());
 
-		getView().play();
+		getView().setSong(aSong, true);
+
+		getEventBus().fireEvent(new SongChangeEvent(aSong));
 	}
 
 }
