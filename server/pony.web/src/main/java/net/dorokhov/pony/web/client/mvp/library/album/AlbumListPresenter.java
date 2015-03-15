@@ -117,13 +117,13 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Override
 	public void onArtistSelection(ArtistSelectionEvent aEvent) {
-		doUpdateAlbums(aEvent.getArtist(), true);
+		loadAlbums(aEvent.getArtist(), true);
 	}
 
 	@Override
 	public void onRefreshRequest(RefreshRequestEvent aEvent) {
 		if (getView().getArtist() != null) {
-			doUpdateAlbums(getView().getArtist(), getView().getLoadingState() == LoadingState.ERROR);
+			loadAlbums(getView().getArtist(), !getView().getLoadingState().isEmptyOrLoaded());
 		}
 	}
 
@@ -206,7 +206,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		getView().setPlaying(true);
 	}
 
-	private void doUpdateAlbums(ArtistDto aArtist, final boolean aShouldShowLoadingState) {
+	private void loadAlbums(ArtistDto aArtist, final boolean aShouldShowLoadingState) {
 
 		ArtistDto oldArtist = getView().getArtist();
 
@@ -219,7 +219,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 			shouldScrollToSong = true;
 		}
 
-		if (aShouldShowLoadingState || (getView().getLoadingState() != LoadingState.LOADED && getView().getLoadingState() != LoadingState.EMPTY)) {
+		if (aShouldShowLoadingState) {
 			getView().setLoadingState(LoadingState.LOADING);
 		}
 
