@@ -219,7 +219,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 			shouldScrollToSong = true;
 		}
 
-		if (aShouldShowLoadingState || getView().getLoadingState() != LoadingState.LOADED) {
+		if (aShouldShowLoadingState || (getView().getLoadingState() != LoadingState.LOADED && getView().getLoadingState() != LoadingState.EMPTY)) {
 			getView().setLoadingState(LoadingState.LOADING);
 		}
 

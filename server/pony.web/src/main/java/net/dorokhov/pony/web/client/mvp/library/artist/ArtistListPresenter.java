@@ -81,7 +81,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	@Override
 	public void onRefreshRequest(RefreshRequestEvent aEvent) {
-		loadArtists(false, getView().getLoadingState() == LoadingState.ERROR);
+		loadArtists(getView().getLoadingState() == LoadingState.ERROR, false);
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	private void loadArtists(final boolean aShouldShowLoadingState, final boolean aShouldScroll) {
 
-		if (aShouldShowLoadingState || getView().getLoadingState() != LoadingState.LOADED) {
+		if (aShouldShowLoadingState || (getView().getLoadingState() != LoadingState.LOADED && getView().getLoadingState() != LoadingState.EMPTY)) {
 			getView().setLoadingState(LoadingState.LOADING);
 		}
 
