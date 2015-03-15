@@ -206,7 +206,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		getView().setPlaying(true);
 	}
 
-	private void doUpdateAlbums(ArtistDto aArtist, boolean aShouldShowLoadingState) {
+	private void doUpdateAlbums(ArtistDto aArtist, final boolean aShouldShowLoadingState) {
 
 		ArtistDto oldArtist = getView().getArtist();
 
@@ -270,9 +270,15 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 						getView().setLoadingState(LoadingState.EMPTY);
 					} else {
 
-						getView().setLoadingState(LoadingState.ERROR);
-
 						errorNotifier.notifyOfErrors(aErrors);
+
+						if (aShouldShowLoadingState) {
+
+							getView().setArtist(null);
+							getView().setAlbums(null);
+
+							getView().setLoadingState(LoadingState.ERROR);
+						}
 					}
 				}
 			});

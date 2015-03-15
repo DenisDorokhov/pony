@@ -102,7 +102,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 		}
 	}
 
-	private void loadArtists(boolean aShouldShowLoadingState, final boolean aShouldScroll) {
+	private void loadArtists(final boolean aShouldShowLoadingState, final boolean aShouldScroll) {
 
 		if (aShouldShowLoadingState || getView().getLoadingState() != LoadingState.LOADED) {
 			getView().setLoadingState(LoadingState.LOADING);
@@ -147,11 +147,14 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 				currentRequest = null;
 
-				doUpdateArtists(new ArrayList<ArtistDto>());
-
-				getView().setLoadingState(LoadingState.ERROR);
-
 				errorNotifier.notifyOfErrors(aErrors);
+
+				if (aShouldShowLoadingState) {
+
+					doUpdateArtists(new ArrayList<ArtistDto>());
+
+					getView().setLoadingState(LoadingState.ERROR);
+				}
 			}
 		});
 	}
