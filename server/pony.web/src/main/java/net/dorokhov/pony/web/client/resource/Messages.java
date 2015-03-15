@@ -47,5 +47,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String playerSubtitle();
 
 	public String scanningTitle();
+	public String scanningStatus();
+	public String scanningProgress();
+	public String scanningButton();
+	public String scanningStatusInactive();
+	public String scanningStatusStarting();
+	public String scanningStatusSearchingMediaFiles();
+	public String scanningStatusCleaningSongs(String aProgress);
+	public String scanningStatusCleaningArtworks(String aProgress);
+	public String scanningStatusImportingSongs(String aProgress);
+	public String scanningStatusNormalizing(String aProgress);
 
 }

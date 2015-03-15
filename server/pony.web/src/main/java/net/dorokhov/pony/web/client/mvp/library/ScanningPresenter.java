@@ -13,6 +13,18 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	public interface MyView extends PopupView, HasUiHandlers<ScanningUiHandlers> {
 
+		public enum State {
+			INACTIVE, SCANNING
+		}
+
+		public State getState();
+
+		public void setState(State aState);
+
+		public ScanStatusDto getProgress();
+
+		public void setProgress(ScanStatusDto aStatus);
+
 	}
 
 	private final LibraryScanner libraryScanner;
@@ -23,6 +35,8 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		super(aEventBus, aView);
 
 		libraryScanner = aLibraryScanner;
+
+		getView().setUiHandlers(this);
 	}
 
 	@Override
@@ -43,22 +57,23 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	@Override
 	public void onScanRequested() {
-
+		libraryScanner.scan();
 	}
 
 	@Override
 	public void onScanStarted(LibraryScanner aLibraryScanner) {
-
+		getView().setState(MyView.State.SCANNING);
 	}
 
 	@Override
 	public void onScanProgress(LibraryScanner aLibraryScanner, ScanStatusDto aStatus) {
-
+		getView().setProgress(aStatus);
 	}
 
 	@Override
 	public void onScanFinished(LibraryScanner aLibraryScanner) {
-
+		getView().setProgress(null);
+		getView().setState(MyView.State.INACTIVE);
 	}
 
 }
