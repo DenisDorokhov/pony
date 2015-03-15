@@ -151,6 +151,11 @@ public class ApiController {
 		return responseBuilder.build(songServiceFacade.search(query));
 	}
 
+	@RequestMapping(value = "/scanStatus", method = RequestMethod.GET)
+	public ResponseDto<ScanStatusDto> getScanStatus() {
+		return responseBuilder.build(scanServiceFacade.getScanStatus());
+	}
+
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
 	public ResponseDto<List<UserDto>> getUsers() {
 		return responseBuilder.build(userServiceFacade.getAll());
@@ -225,11 +230,6 @@ public class ApiController {
 	@RequestMapping(value = "/admin/scanResults/{aId}", method = RequestMethod.GET)
 	public ResponseDto<ScanResultDto> getScanResult(@PathVariable Long aId) throws ObjectNotFoundException {
 		return responseBuilder.build(scanServiceFacade.getScanResult(aId));
-	}
-
-	@RequestMapping(value = "/admin/scanStatus", method = RequestMethod.GET)
-	public ResponseDto<ScanStatusDto> getScanStatus() {
-		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}
 
 	@RequestMapping(value = "/admin/startScanJob", method = RequestMethod.POST)

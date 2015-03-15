@@ -36,4 +36,12 @@ public interface ApiService extends RestService {
 	@Path("/artistAlbums/{aArtistIdOrName}")
 	Request getArtistSongs(@PathParam("aArtistIdOrName") String aArtistIdOrName, MethodCallback<ResponseDto<ArtistAlbumsDto>> aCallback);
 
+	@GET
+	@Path("/scanStatus")
+	Request getScanStatus(MethodCallback<ResponseDto<ScanStatusDto>> aCallback);
+
+	@POST
+	@Path("/admin/startScanJob")
+	Request startScanJob(MethodCallback<ResponseDto<ScanJobDto>> aCallback);
+
 }
