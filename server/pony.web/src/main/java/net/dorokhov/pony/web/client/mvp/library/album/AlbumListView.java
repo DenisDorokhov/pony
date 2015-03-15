@@ -209,7 +209,7 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 	@Override
 	public void scrollToSong(SongDto aSong) {
 
-		AlbumView view = albumToView.get(aSong.getAlbum());
+		AlbumView view = albumToView.get(aSong.getAlbum().getId());
 
 		if (view != null) {
 			view.scrollToSong(aSong);
