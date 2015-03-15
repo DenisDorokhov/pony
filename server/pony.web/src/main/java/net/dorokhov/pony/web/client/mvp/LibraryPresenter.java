@@ -126,9 +126,9 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 			PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
 
-			if (artistName != null) {
+			if (artistName != null && artistName.matches("[\\u0000-\\u00FF]*")) { // use artist name only if it's non-unicode
 				builder.with(LibraryParams.ARTIST, artistName);
-			} else if (artistId != null) {
+			} else {
 				builder.with(LibraryParams.ARTIST, artistId);
 			}
 
