@@ -29,7 +29,7 @@
             <b:Button ui:field="systemButton" dataToggle="DROPDOWN"
                       text="{mes.toolbarSystem}" icon="GEAR" iconPosition="RIGHT" />
             <b:DropDownMenu addStyleNames="{style.dropDown}">
-                <b:AnchorListItem ui:field="configButton" text="{mes.toolbarConfig}" />
+                <b:AnchorListItem ui:field="settingsButton" text="{mes.toolbarConfig}" />
                 <b:AnchorListItem ui:field="scanningButton" text="{mes.toolbarScanning}" />
                 <b:AnchorListItem ui:field="logButton" text="{mes.toolbarLog}" />
                 <b:AnchorListItem ui:field="usersButton" text="{mes.toolbarUsers}" />

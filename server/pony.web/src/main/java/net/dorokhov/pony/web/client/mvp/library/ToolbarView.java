@@ -54,9 +54,24 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 		getUiHandlers().onRefreshRequested();
 	}
 
-	@UiHandler("systemButton")
+	@UiHandler("settingsButton")
 	void onSettingsButtonClick(ClickEvent aEvent) {
 		getUiHandlers().onSettingsRequested();
+	}
+
+	@UiHandler("scanningButton")
+	void onScanningButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onScanningRequested();
+	}
+
+	@UiHandler("logButton")
+	void onLogButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onLogRequested();
+	}
+
+	@UiHandler("usersButton")
+	void onUsersButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onUsersRequested();
 	}
 
 	@UiHandler("editProfileButton")

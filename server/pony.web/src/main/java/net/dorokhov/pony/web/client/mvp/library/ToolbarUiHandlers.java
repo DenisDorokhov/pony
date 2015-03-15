@@ -7,9 +7,11 @@ public interface ToolbarUiHandlers extends UiHandlers {
 	public void onRefreshRequested();
 	
 	public void onSettingsRequested();
+	public void onScanningRequested();
+	public void onLogRequested();
+	public void onUsersRequested();
 
 	public void onEditProfileRequested();
-
 	public void onLogoutRequested();
 
 }

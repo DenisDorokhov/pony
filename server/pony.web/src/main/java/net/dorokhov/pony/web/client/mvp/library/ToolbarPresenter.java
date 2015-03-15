@@ -27,15 +27,20 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
+	private final ScanningPresenter scanningPresenter;
+
 	private final AuthenticationManager authenticationManager;
 
 	private final ErrorNotifier errorNotifier;
 
 	@Inject
 	public ToolbarPresenter(EventBus aEventBus, MyView aView,
+							ScanningPresenter aScanningPresenter,
 							AuthenticationManager aAuthenticationManager, ErrorNotifier aErrorNotifier) {
 
 		super(aEventBus, aView);
+
+		scanningPresenter = aScanningPresenter;
 
 		authenticationManager = aAuthenticationManager;
 		errorNotifier = aErrorNotifier;
@@ -59,6 +64,21 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	@Override
 	public void onSettingsRequested() {
 		log.info("Settings requested.");
+	}
+
+	@Override
+	public void onScanningRequested() {
+		addToPopupSlot(scanningPresenter);
+	}
+
+	@Override
+	public void onLogRequested() {
+
+	}
+
+	@Override
+	public void onUsersRequested() {
+
 	}
 
 	@Override

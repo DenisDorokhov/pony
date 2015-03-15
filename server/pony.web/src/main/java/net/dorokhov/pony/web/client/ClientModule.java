@@ -30,6 +30,7 @@ public class ClientModule extends AbstractPresenterModule {
 		bindSingletonPresenterWidget(LibraryContentPresenter.class, LibraryContentPresenter.MyView.class, LibraryContentView.class);
 		bindSingletonPresenterWidget(ArtistListPresenter.class, ArtistListPresenter.MyView.class, ArtistListView.class);
 		bindSingletonPresenterWidget(AlbumListPresenter.class, AlbumListPresenter.MyView.class, AlbumListView.class);
+		bindSingletonPresenterWidget(ScanningPresenter.class, ScanningPresenter.MyView.class, ScanningView.class);
 
 		bindPresenter(ErrorPresenter.class, ErrorPresenter.MyView.class, ErrorView.class, ErrorPresenter.MyProxy.class);
 

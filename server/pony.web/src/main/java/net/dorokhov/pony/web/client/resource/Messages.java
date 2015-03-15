@@ -46,4 +46,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String playerTitle();
 	public String playerSubtitle();
 
+	public String scanningTitle();
+
 }
