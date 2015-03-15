@@ -1,9 +1,12 @@
 package net.dorokhov.pony.web.client;
 
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.user.client.DOM;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import net.dorokhov.pony.web.client.resource.Scripts;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.common.NoOpOperationCallback;
@@ -43,6 +46,9 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		Defaults.setDispatcher(dispatcher);
 		Defaults.setDateFormat(null);
 
+		injectScript(Scripts.INSTANCE.growl());
+		injectScript(Scripts.INSTANCE.unity());
+
 		authenticationManager.initialize(new NoOpOperationCallback<UserDto>() {
 			@Override
 			public void onFinish(boolean aSuccess, UserDto aData, List<ErrorDto> aErrors) {
@@ -60,6 +66,10 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		}
 
 		super.onBootstrap();
+	}
+
+	private void injectScript(TextResource aResource) {
+		ScriptInjector.fromString(aResource.getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
 	}
 
 }

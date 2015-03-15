@@ -35,8 +35,6 @@
         }
     </style>
 
-    <script type="text/javascript" src="./js/UnityShim.js"></script>
-
     <script type="text/javascript" src="./pony/pony.nocache.js"></script>
 
 </head>
