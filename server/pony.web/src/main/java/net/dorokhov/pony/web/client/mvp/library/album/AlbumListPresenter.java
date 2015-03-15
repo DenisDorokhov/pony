@@ -117,9 +117,6 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Override
 	public void onArtistSelection(ArtistSelectionEvent aEvent) {
-
-		getView().setArtist(aEvent.getArtist());
-
 		doUpdateAlbums(aEvent.getArtist(), true);
 	}
 
@@ -212,6 +209,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 	private void doUpdateAlbums(ArtistDto aArtist, final boolean aShouldShowLoadingState) {
 
 		ArtistDto oldArtist = getView().getArtist();
+
+		getView().setArtist(aArtist);
 
 		if (!ObjectUtils.nullSafeEquals(aArtist, oldArtist)) {
 
