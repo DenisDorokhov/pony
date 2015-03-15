@@ -4,9 +4,7 @@ import com.google.gwt.user.client.Timer;
 import net.dorokhov.pony.web.client.service.api.ApiService;
 import net.dorokhov.pony.web.client.service.api.MethodCallbackAdapter;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
-import net.dorokhov.pony.web.shared.ErrorDto;
-import net.dorokhov.pony.web.shared.ScanJobDto;
-import net.dorokhov.pony.web.shared.ScanStatusDto;
+import net.dorokhov.pony.web.shared.*;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -35,6 +33,8 @@ public class LibraryScanner {
 
 	private final ErrorNotifier errorNotifier;
 
+	private final AuthenticationManager authenticationManager;
+
 	private final List<Delegate> delegates = new ArrayList<>();
 
 	private boolean scanning;
@@ -44,10 +44,11 @@ public class LibraryScanner {
 	private Timer statusTimer;
 
 	@Inject
-	public LibraryScanner(ApiService aApiService, ErrorNotifier aErrorNotifier) {
+	public LibraryScanner(ApiService aApiService, ErrorNotifier aErrorNotifier, AuthenticationManager aAuthenticationManager) {
 
 		apiService = aApiService;
 		errorNotifier = aErrorNotifier;
+		authenticationManager = aAuthenticationManager;
 
 		scheduleStatusTimer(STATUS_TIMER_INTERVAL_FIRST);
 	}
@@ -152,6 +153,17 @@ public class LibraryScanner {
 	}
 
 	private void updateStatus() {
+
+		UserDto user = authenticationManager.getUser();
+
+		if (user != null) {
+			doUpdateStatus();
+		} else {
+			scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
+		}
+	}
+
+	private void doUpdateStatus() {
 		apiService.getScanStatus(new MethodCallbackAdapter<>(new OperationCallback<ScanStatusDto>() {
 
 			@Override
