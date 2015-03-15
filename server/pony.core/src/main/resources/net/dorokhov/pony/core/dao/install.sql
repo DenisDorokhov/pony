@@ -34,7 +34,7 @@ CREATE TABLE access_token (
 
 	user_id BIGINT NOT NULL,
 
-	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (user_id) REFERENCES user (id),
 
 	PRIMARY KEY (id)
 );
@@ -49,7 +49,7 @@ CREATE TABLE refresh_token (
 
 	user_id BIGINT NOT NULL,
 
-	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (user_id) REFERENCES user (id),
 
 	PRIMARY KEY (id)
 );
@@ -60,7 +60,7 @@ CREATE TABLE user_role (
 
 	value VARCHAR (255) NOT NULL,
 
-	FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (user_id) REFERENCES user (id),
 
 	PRIMARY KEY (user_id, value)
 );
@@ -91,7 +91,7 @@ CREATE TABLE log_message_argument (
 
 	log_message_id BIGINT NOT NULL,
 
-	FOREIGN KEY (log_message_id) REFERENCES log_message (id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (log_message_id) REFERENCES log_message (id)
 );
 
 CREATE TABLE config (
@@ -162,8 +162,8 @@ CREATE TABLE scan_job (
 	log_message_id BIGINT,
 	scan_result_id BIGINT,
 
-	FOREIGN KEY (log_message_id) REFERENCES log_message (id) ON DELETE SET NULL ON UPDATE CASCADE,
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (log_message_id) REFERENCES log_message (id),
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id)
 );
 
 CREATE INDEX index_scan_job_status ON scan_job (status);
@@ -174,7 +174,7 @@ CREATE TABLE scan_result_target_path (
 
 	value VARCHAR (255) NOT NULL,
 
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id),
 
 	PRIMARY KEY (scan_result_id, value)
 );
@@ -185,7 +185,7 @@ CREATE TABLE scan_result_failed_path (
 
 	value VARCHAR (255) NOT NULL,
 
-	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (scan_result_id) REFERENCES scan_result (id),
 
 	PRIMARY KEY (scan_result_id, value)
 );
@@ -222,7 +222,7 @@ CREATE TABLE genre (
 
 	artwork_stored_file_id BIGINT,
 
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id)
 );
 
 CREATE INDEX index_genre_name ON genre(name);
@@ -238,7 +238,7 @@ CREATE TABLE artist (
 
 	artwork_stored_file_id BIGINT,
 
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id)
 );
 
 CREATE INDEX index_artist_name ON artist(name);
@@ -257,8 +257,8 @@ CREATE TABLE album (
 
 	artist_id BIGINT NOT NULL,
 
-	FOREIGN KEY (artist_id) REFERENCES artist (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE
+	FOREIGN KEY (artist_id) REFERENCES artist (id),
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id)
 );
 
 CREATE INDEX index_album_name_artist_id ON album (name, artist_id);
@@ -299,9 +299,9 @@ CREATE TABLE song (
 	album_id BIGINT NOT NULL,
 	genre_id BIGINT NOT NULL,
 
-	FOREIGN KEY (album_id) REFERENCES album (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (genre_id) REFERENCES genre (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id) ON DELETE SET NULL ON UPDATE CASCADE,
+	FOREIGN KEY (album_id) REFERENCES album (id),
+	FOREIGN KEY (genre_id) REFERENCES genre (id),
+	FOREIGN KEY (artwork_stored_file_id) REFERENCES stored_file (id),
 
 	UNIQUE (path)
 );

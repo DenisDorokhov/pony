@@ -11,6 +11,7 @@
 	<logger name="org.jaudiotagger" level="WARN" />
 	<!--logger name="org.hibernate.SQL" level="DEBUG" />
 	<logger name="org.hibernate.type" level="TRACE" /-->
+    <!--logger name="org.springframework.transaction" level="TRACE" /-->
 
     <root level="INFO">
 		<appender-ref ref="STDOUT" />

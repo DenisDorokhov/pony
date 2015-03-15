@@ -1,7 +1,7 @@
 package net.dorokhov.pony.core.installation;
 
 import net.dorokhov.pony.core.config.ConfigService;
-import net.dorokhov.pony.core.dao.InstallationDao;
+import net.dorokhov.pony.core.dao.*;
 import net.dorokhov.pony.core.domain.Installation;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
@@ -9,6 +9,8 @@ import net.dorokhov.pony.core.installation.exception.NotInstalledException;
 import net.dorokhov.pony.core.library.ScanJobService;
 import net.dorokhov.pony.core.library.exception.LibraryNotDefinedException;
 import net.dorokhov.pony.core.logging.LogService;
+import net.dorokhov.pony.core.search.SearchService;
+import net.dorokhov.pony.core.storage.StoredFileService;
 import net.dorokhov.pony.core.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,15 @@ public class InstallationServiceImpl implements InstallationService {
 
 	private LogService logService;
 
+	private StoredFileService storedFileService;
+
+	private SearchService searchService;
+
+	private SongDao songDao;
+	private GenreDao genreDao;
+	private AlbumDao albumDao;
+	private ArtistDao artistDao;
+
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
 		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -69,6 +80,36 @@ public class InstallationServiceImpl implements InstallationService {
 	@Autowired
 	public void setLogService(LogService aLogService) {
 		logService = aLogService;
+	}
+
+	@Autowired
+	public void setStoredFileService(StoredFileService aStoredFileService) {
+		storedFileService = aStoredFileService;
+	}
+
+	@Autowired
+	public void setSearchService(SearchService aSearchService) {
+		searchService = aSearchService;
+	}
+
+	@Autowired
+	public void setSongDao(SongDao aSongDao) {
+		songDao = aSongDao;
+	}
+
+	@Autowired
+	public void setGenreDao(GenreDao aGenreDao) {
+		genreDao = aGenreDao;
+	}
+
+	@Autowired
+	public void setAlbumDao(AlbumDao aAlbumDao) {
+		albumDao = aAlbumDao;
+	}
+
+	@Autowired
+	public void setArtistDao(ArtistDao aArtistDao) {
+		artistDao = aArtistDao;
 	}
 
 	@Override
@@ -135,9 +176,19 @@ public class InstallationServiceImpl implements InstallationService {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
-				installationDao.uninstall();
+
+				searchService.clearIndex();
+
+				songDao.deleteAll();
+				genreDao.deleteAll();
+				albumDao.deleteAll();
+				artistDao.deleteAll();
+
+				storedFileService.deleteAll();
 			}
 		});
+
+		installationDao.uninstall();
 
 		log.info("Successfully uninstalled.");
 	}
