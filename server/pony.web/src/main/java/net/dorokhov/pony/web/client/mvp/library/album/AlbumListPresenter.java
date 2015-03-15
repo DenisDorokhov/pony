@@ -117,13 +117,16 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Override
 	public void onArtistSelection(ArtistSelectionEvent aEvent) {
+
+		getView().setArtist(aEvent.getArtist());
+
 		doUpdateAlbums(aEvent.getArtist(), true);
 	}
 
 	@Override
 	public void onRefreshRequest(RefreshRequestEvent aEvent) {
 		if (getView().getArtist() != null) {
-			doUpdateAlbums(getView().getArtist(), false);
+			doUpdateAlbums(getView().getArtist(), getView().getLoadingState() == LoadingState.ERROR);
 		}
 	}
 
@@ -210,8 +213,6 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 		ArtistDto oldArtist = getView().getArtist();
 
-		getView().setArtist(aArtist);
-
 		if (!ObjectUtils.nullSafeEquals(aArtist, oldArtist)) {
 
 			getView().scrollToTop();
@@ -274,7 +275,6 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 						if (aShouldShowLoadingState) {
 
-							getView().setArtist(null);
 							getView().setAlbums(null);
 
 							getView().setLoadingState(LoadingState.ERROR);

@@ -81,7 +81,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	@Override
 	public void onRefreshRequest(RefreshRequestEvent aEvent) {
-		loadArtists(false, false);
+		loadArtists(false, getView().getLoadingState() == LoadingState.ERROR);
 	}
 
 	@Override
