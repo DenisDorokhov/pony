@@ -8,7 +8,7 @@ import net.dorokhov.pony.web.client.event.*;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.mvp.common.SelectionMode;
-import net.dorokhov.pony.web.client.service.BusyIndicator;
+import net.dorokhov.pony.web.client.service.BusyModeManager;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.PlayListImpl;
 import net.dorokhov.pony.web.client.service.SongService;
@@ -57,6 +57,8 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	private final ErrorNotifier errorNotifier;
 
+	private final BusyModeManager busyModeManager;
+
 	private final SongService songService;
 
 	private OperationRequest currentRequest;
@@ -66,11 +68,12 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Inject
 	public AlbumListPresenter(EventBus aEventBus, MyView aView,
-							  ErrorNotifier aErrorNotifier, SongService aSongService) {
+							  ErrorNotifier aErrorNotifier, BusyModeManager aBusyModeManager, SongService aSongService) {
 
 		super(aEventBus, aView);
 
 		errorNotifier = aErrorNotifier;
+		busyModeManager = aBusyModeManager;
 		songService = aSongService;
 
 		getView().setUiHandlers(this);
@@ -134,7 +137,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 			currentRequest.cancel();
 
-			BusyIndicator.finishTask();
+			busyModeManager.finishTask();
 		}
 
 		currentRequest = null;
@@ -227,18 +230,18 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 			currentRequest.cancel();
 
-			BusyIndicator.finishTask();
+			busyModeManager.finishTask();
 		}
 
 		if (aArtist != null && aArtist.getId() != null) {
 
-			BusyIndicator.startTask();
+			busyModeManager.startTask();
 
 			currentRequest = songService.getArtistSongs(aArtist.getId(), new OperationCallback<ArtistAlbumsDto>() {
 				@Override
 				public void onSuccess(ArtistAlbumsDto aArtistAlbums) {
 
-					BusyIndicator.finishTask();
+					busyModeManager.finishTask();
 
 					currentRequest = null;
 
@@ -262,7 +265,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 				@Override
 				public void onError(List<ErrorDto> aErrors) {
 
-					BusyIndicator.finishTask();
+					busyModeManager.finishTask();
 
 					currentRequest = null;
 

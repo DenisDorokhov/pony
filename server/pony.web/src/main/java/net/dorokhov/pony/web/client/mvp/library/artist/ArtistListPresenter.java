@@ -7,7 +7,7 @@ import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.event.*;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
-import net.dorokhov.pony.web.client.service.BusyIndicator;
+import net.dorokhov.pony.web.client.service.BusyModeManager;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.SongService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -38,6 +38,8 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	private final ErrorNotifier errorNotifier;
 
+	private final BusyModeManager busyModeManager;
+
 	private final HashMap<String, ArtistDto> artistMap = new HashMap<>();
 
 	private String artistToSelect;
@@ -46,12 +48,13 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 	@Inject
 	public ArtistListPresenter(EventBus aEventBus, MyView aView,
-							   SongService aSongService, ErrorNotifier aErrorNotifier) {
+							   SongService aSongService, ErrorNotifier aErrorNotifier, BusyModeManager aBusyModeManager) {
 
 		super(aEventBus, aView);
 
 		songService = aSongService;
 		errorNotifier = aErrorNotifier;
+		busyModeManager = aBusyModeManager;
 
 		getView().setUiHandlers(this);
 		getView().setLoadingState(LoadingState.LOADING);
@@ -113,16 +116,16 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 
 			currentRequest.cancel();
 
-			BusyIndicator.finishTask();
+			busyModeManager.finishTask();
 		}
 
-		BusyIndicator.startTask();
+		busyModeManager.startTask();
 
 		currentRequest = songService.getArtists(new OperationCallback<List<ArtistDto>>() {
 			@Override
 			public void onSuccess(List<ArtistDto> aArtists) {
 
-				BusyIndicator.finishTask();
+				busyModeManager.finishTask();
 
 				currentRequest = null;
 
@@ -144,7 +147,7 @@ public class ArtistListPresenter extends PresenterWidget<ArtistListPresenter.MyV
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				BusyIndicator.finishTask();
+				busyModeManager.finishTask();
 
 				currentRequest = null;
 
