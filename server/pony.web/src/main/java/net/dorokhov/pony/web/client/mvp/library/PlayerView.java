@@ -143,7 +143,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		double duration = audio.getDuration();
 
-		if (duration != Double.NaN && duration != Double.POSITIVE_INFINITY) {
+		if (Double.compare(duration, Double.NaN) != 0 && Double.compare(duration, Double.POSITIVE_INFINITY) != 0) {
 			return audio.getCurrentTime() / duration;
 		} else {
 			return 0;
@@ -155,7 +155,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		double duration = audio.getDuration();
 
-		if (duration != Double.NaN && duration != Double.POSITIVE_INFINITY) {
+		if (Double.compare(duration, Double.NaN) != 0 && Double.compare(duration, Double.POSITIVE_INFINITY) != 0) {
 			setPosition(aProgress * duration);
 		}
 	}
