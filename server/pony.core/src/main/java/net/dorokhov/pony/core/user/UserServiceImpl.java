@@ -1,13 +1,12 @@
 package net.dorokhov.pony.core.user;
 
+import net.dorokhov.pony.core.dao.AccessTokenDao;
 import net.dorokhov.pony.core.dao.RefreshTokenDao;
 import net.dorokhov.pony.core.dao.UserDao;
-import net.dorokhov.pony.core.dao.AccessTokenDao;
+import net.dorokhov.pony.core.domain.AccessToken;
 import net.dorokhov.pony.core.domain.RefreshToken;
 import net.dorokhov.pony.core.domain.User;
-import net.dorokhov.pony.core.domain.AccessToken;
 import net.dorokhov.pony.core.domain.common.BaseToken;
-import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -43,8 +42,6 @@ public class UserServiceImpl implements UserService {
 	private AccessTokenDao accessTokenDao;
 	private RefreshTokenDao refreshTokenDao;
 
-	private InstallationService installationService;
-
 	private PasswordEncoder passwordEncoder;
 
 	private AuthenticationManager authenticationManager;
@@ -67,11 +64,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	public void setRefreshTokenDao(RefreshTokenDao aRefreshTokenDao) {
 		refreshTokenDao = aRefreshTokenDao;
-	}
-
-	@Autowired
-	public void setInstallationService(InstallationService aInstallationService) {
-		installationService = aInstallationService;
 	}
 
 	@Autowired
@@ -373,18 +365,16 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	public void cleanTokens() {
-		if (installationService.getInstallation() != null) {
 
-			log.debug("Cleaning tokens...");
+		log.debug("Cleaning tokens...");
 
-			Date maxAccessTokenDate = new Date(new Date().getTime() - accessTokenLifetime * 1000);
+		Date maxAccessTokenDate = new Date(new Date().getTime() - accessTokenLifetime * 1000);
 
-			accessTokenDao.deleteByCreationDateLessThan(maxAccessTokenDate);
+		accessTokenDao.deleteByCreationDateLessThan(maxAccessTokenDate);
 
-			Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
+		Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
 
-			refreshTokenDao.deleteByCreationDateLessThan(maxRefreshTokenDate);
-		}
+		refreshTokenDao.deleteByCreationDateLessThan(maxRefreshTokenDate);
 	}
 
 	private AccessToken createAccessToken(TokenString aToken, User aUser) {

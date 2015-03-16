@@ -7,7 +7,6 @@ import net.dorokhov.pony.core.domain.LogMessage;
 import net.dorokhov.pony.core.domain.ScanJob;
 import net.dorokhov.pony.core.domain.ScanResult;
 import net.dorokhov.pony.core.domain.ScanType;
-import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.logging.LogService;
 import org.slf4j.Logger;
@@ -54,8 +53,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	private ConfigService configService;
 
-	private InstallationService installationService;
-
 	private ScanService scanService;
 
 	private LogService logService;
@@ -73,11 +70,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Autowired
 	public void setConfigService(ConfigService aConfigService) {
 		configService = aConfigService;
-	}
-
-	@Autowired
-	public void setInstallationService(InstallationService aInstallationService) {
-		installationService = aInstallationService;
 	}
 
 	@Autowired
@@ -179,102 +171,98 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@PostConstruct
 	@Transactional
-	public void markCurrentJobsInterrupted() {
-		if (installationService.getInstallation() != null) {
+	public void interruptCurrentJobs() {
 
-			final AtomicInteger interruptedJobsCount = new AtomicInteger();
+		final AtomicInteger interruptedJobsCount = new AtomicInteger();
 
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-				@Override
-				protected void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
-					PageProcessor.Handler<ScanJob> handler = new PageProcessor.Handler<ScanJob>() {
-						@Override
-						public void process(ScanJob aJob, Page<ScanJob> aPage, int aIndexInPage, long aIndexInAll) {
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus aTransactionStatus) {
+				PageProcessor.Handler<ScanJob> handler = new PageProcessor.Handler<ScanJob>() {
+					@Override
+					public void process(ScanJob aJob, Page<ScanJob> aPage, int aIndexInPage, long aIndexInAll) {
 
-							aJob.setStatus(ScanJob.Status.INTERRUPTED);
+						aJob.setStatus(ScanJob.Status.INTERRUPTED);
 
-							scanJobDao.save(aJob);
+						scanJobDao.save(aJob);
 
-							interruptedJobsCount.incrementAndGet();
-						}
+						interruptedJobsCount.incrementAndGet();
+					}
 
-						@Override
-						public Page<ScanJob> getPage(Pageable aPageable) {
-							return scanJobDao.findByStatusIn(Arrays.asList(ScanJob.Status.STARTING, ScanJob.Status.STARTED), aPageable);
-						}
-					};
-					new PageProcessor<>(INTERRUPTION_BUFFER_SIZE, new Sort("id"), handler).run();
-				}
-			});
-
-			if (interruptedJobsCount.get() > 0) {
-				logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.get() + "] job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.get())));
+					@Override
+					public Page<ScanJob> getPage(Pageable aPageable) {
+						return scanJobDao.findByStatusIn(Arrays.asList(ScanJob.Status.STARTING, ScanJob.Status.STARTED), aPageable);
+					}
+				};
+				new PageProcessor<>(INTERRUPTION_BUFFER_SIZE, new Sort("id"), handler).run();
 			}
+		});
+
+		if (interruptedJobsCount.get() > 0) {
+			logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.get() + "] job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.get())));
 		}
 	}
 
 	@Override
 	@Transactional
 	@Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 5 * 60 * 1000)
-	synchronized public void startAutoScanJobIfNeeded() {
-		if (installationService.getInstallation() != null) {
+	synchronized public void startAutoScanJob() {
 
-			log.trace("Checking if automatic scan needed...");
+		log.trace("Checking if automatic scan needed...");
 
-			boolean shouldScan = false;
+		boolean shouldScan = false;
 
-			List<File> libraryFolders = configService.fetchLibraryFolders();
+		List<File> libraryFolders = configService.fetchLibraryFolders();
 
-			if (libraryFolders.size() > 0) {
+		if (libraryFolders.size() > 0) {
 
-				if (scanService.getStatus() == null) {
+			if (scanService.getStatus() == null) {
 
-					Integer autoScanInterval = configService.getAutoScanInterval();
+				Integer autoScanInterval = configService.getAutoScanInterval();
 
-					if (autoScanInterval != null) {
+				if (autoScanInterval != null) {
 
-						Page<ScanResult> page = scanService.getAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
+					Page<ScanResult> page = scanService.getAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
 
-						ScanResult lastResult = page.getTotalElements() > 0 ? page.getContent().get(0) : null;
+					ScanResult lastResult = page.getTotalElements() > 0 ? page.getContent().get(0) : null;
 
-						if (lastResult != null) {
+					if (lastResult != null) {
 
-							long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
+						long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
 
-							if (secondsSinceLastScan >= autoScanInterval) {
-								shouldScan = true;
-							} else {
-								log.trace("Too early for automatic scan.");
-							}
-
-						} else {
-
-							log.trace("Library was never scanned before.");
-
+						if (secondsSinceLastScan >= autoScanInterval) {
 							shouldScan = true;
+						} else {
+							log.trace("Too early for automatic scan.");
 						}
 
 					} else {
-						log.trace("Automatic scan is off.");
+
+						log.trace("Library was never scanned before.");
+
+						shouldScan = true;
 					}
 
 				} else {
-					log.trace("Library is already being scanned.");
+					log.trace("Automatic scan is off.");
 				}
 
 			} else {
-				log.trace("No library files defined.");
+				log.trace("Library is already being scanned.");
 			}
 
-			if (shouldScan) {
+		} else {
+			log.trace("No library files defined.");
+		}
 
-				log.info("Starting automatic scan...");
+		if (shouldScan) {
 
-				try {
-					doCreateScanJob(libraryFolders);
-				} catch (LibraryNotDefinedException e) {
-					log.warn("Library is not defined.");
-				}
+			log.info("Starting automatic scan...");
+
+			try {
+				doCreateScanJob(libraryFolders);
+			} catch (LibraryNotDefinedException e) {
+				log.warn("Library is not defined.");
 			}
 		}
 	}
