@@ -155,7 +155,7 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 	private void updateSong() {
 		trackNumberLabel.setText(song != null ? ObjectUtils.nullSafeToString(song.getTrackNumber()) : null);
-		nameLabel.setText(song != null ? song.getTitle() : null);
+		nameLabel.setText(song != null ? song.getName() : null);
 		artistLabel.setText(getSongArtist());
 		durationLabel.setText(song != null ? StringUtils.secondsToMinutes(song.getDuration()) : null);
 	}

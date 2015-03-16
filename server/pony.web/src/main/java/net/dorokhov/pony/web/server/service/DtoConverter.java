@@ -307,13 +307,12 @@ public class DtoConverter {
 
 		dto.setId(aSong.getId());
 		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/audio/" + aSong.getId()).build().toUriString());
-		dto.setPath(aSong.getPath());
 		dto.setDuration(aSong.getDuration());
 		dto.setDiscNumber(aSong.getDiscNumber());
 		dto.setTrackNumber(aSong.getTrackNumber());
 		dto.setArtistName(aSong.getArtistName());
 		dto.setAlbumArtistName(aSong.getAlbumArtistName());
-		dto.setName(aSong.getName());
+		dto.setName(aSong.getName() != null ? aSong.getName() : new File(aSong.getPath()).getName());
 
 		dto.setGenre(genreToDto(aSong.getGenre()));
 		dto.setAlbum(albumToDto(aSong.getAlbum()));

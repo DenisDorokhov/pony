@@ -6,8 +6,6 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	private String url;
 
-	private String path;
-
 	private Integer duration;
 
 	private Integer discNumber;
@@ -30,14 +28,6 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	public void setUrl(String aUrl) {
 		url = aUrl;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String aPath) {
-		path = aPath;
 	}
 
 	public Integer getDuration() {
@@ -102,24 +92,6 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	public void setAlbum(AlbumDto aAlbum) {
 		album = aAlbum;
-	}
-
-	public String getTitle() {
-
-		String songTitle = getName();
-
-		if (songTitle == null) {
-
-			int nameStart = getPath().lastIndexOf('/');
-			if (nameStart < 0) {
-				nameStart = 0;
-			}
-			nameStart++;
-
-			songTitle = getPath().substring(nameStart);
-		}
-
-		return songTitle;
 	}
 
 	@Override

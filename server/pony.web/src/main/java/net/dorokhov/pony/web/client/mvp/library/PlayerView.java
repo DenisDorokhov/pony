@@ -269,7 +269,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		String songUrl = null;
 		String artistName = Messages.INSTANCE.playerTitle();
-		String songTitle = Messages.INSTANCE.playerSubtitle();
+		String songName = Messages.INSTANCE.playerSubtitle();
 		String artworkUrl = null;
 
 		int duration = 0;
@@ -277,7 +277,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		if (song != null) {
 
 			songUrl = song.getUrl();
-			songTitle = song.getTitle();
+			songName = song.getName();
 			artworkUrl = song.getAlbum().getArtworkUrl();
 
 			artistName = song.getArtistName();
@@ -292,7 +292,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 		}
 
 		labelArtist.setText(artistName);
-		labelTitle.setText(songTitle);
+		labelTitle.setText(songName);
 		artworkLoader.setUrl(artworkUrl);
 		labelDuration.setText(StringUtils.secondsToMinutes(duration));
 
@@ -360,7 +360,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		if (getSong() != null) {
 
-			songTitle = getSong().getTitle();
+			songTitle = getSong().getName();
 			artworkUrl = getSong().getAlbum().getArtworkUrl();
 
 			artistName = getSong().getArtistName();

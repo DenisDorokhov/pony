@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 public class LibraryScannerListener implements LibraryScanner.Delegate {
 
-	private static final int REFRESH_INTERVAL = 10000;
+	private static final int REFRESH_INTERVAL = 30000;
 
 	private final EventBus eventBus;
 
