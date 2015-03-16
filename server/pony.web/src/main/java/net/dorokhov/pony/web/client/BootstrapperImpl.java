@@ -25,13 +25,16 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 
 	private final AuthenticationManager authenticationManager;
 
+	private final AuthenticationDispatcherFilter authenticationDispatcherFilter;
+
 	@Inject
 	public BootstrapperImpl(PlaceManager aPlaceManager,
-							AuthenticationManager aAuthenticationManager) {
+							AuthenticationManager aAuthenticationManager, AuthenticationDispatcherFilter aAuthenticationDispatcherFilter) {
 
 		super(aPlaceManager);
 
 		authenticationManager = aAuthenticationManager;
+		authenticationDispatcherFilter = aAuthenticationDispatcherFilter;
 	}
 
 	@Override
@@ -41,7 +44,7 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 
 		FilterawareDispatcher dispatcher = DefaultFilterawareDispatcher.singleton();
 
-		dispatcher.addFilter(new AuthenticationDispatcherFilter());
+		dispatcher.addFilter(authenticationDispatcherFilter);
 
 		Defaults.setDispatcher(dispatcher);
 		Defaults.setDateFormat(null);

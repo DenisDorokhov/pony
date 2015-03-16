@@ -42,8 +42,11 @@ public class ClientModule extends AbstractPresenterModule {
 
 		bind(ErrorNotifier.class).to(ErrorNotifierImpl.class).asEagerSingleton();
 
+		bind(SecurityStorage.class).to(SecurityStorageImpl.class).asEagerSingleton();
+
 		bind(AuthenticationManager.class).asEagerSingleton();
 		bind(AuthenticationListener.class).asEagerSingleton();
+		bind(AuthenticationDispatcherFilter.class).asEagerSingleton();
 
 		bind(SongService.class).asEagerSingleton();
 

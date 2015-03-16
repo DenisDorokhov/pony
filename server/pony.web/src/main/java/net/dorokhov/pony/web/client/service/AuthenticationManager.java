@@ -71,11 +71,10 @@ public class AuthenticationManager {
 	private UserDto user;
 
 	@Inject
-	public AuthenticationManager(ApiService aApiService) {
+	public AuthenticationManager(ApiService aApiService, SecurityStorage aSecurityStorage) {
 
 		apiService = aApiService;
-
-		securityStorage = SecurityStorage.INSTANCE;
+		securityStorage = aSecurityStorage;
 
 		checkExternalStatusChangeTimer = new Timer() {
 			@Override
