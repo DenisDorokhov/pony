@@ -5,10 +5,8 @@
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
     <ui:style>
-        .scanningView {
-            overflow-y: auto;
-        }
-        .scanningView > div {
+        @external .modal-dialog;
+        .scanningView .modal-dialog {
             width: 1000px !important;
         }
         .section {
