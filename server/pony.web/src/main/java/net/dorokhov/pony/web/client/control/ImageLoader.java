@@ -5,8 +5,6 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.UriUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -65,7 +63,7 @@ public class ImageLoader extends Composite {
 		if (aUrl != null) {
 			if (getState() == State.ERROR || !ObjectUtils.nullSafeEquals(url, aUrl)) {
 
-				url = UriUtils.fromString(aUrl).asString();
+				url = aUrl;
 
 				setState(State.LOADING);
 
@@ -73,22 +71,6 @@ public class ImageLoader extends Composite {
 					lazyLoad();
 				}
 			}
-		} else {
-			clear();
-		}
-	}
-
-	public void setResource(ImageResource aResource) {
-		if (aResource != null) {
-
-			loadedImage.setResource(aResource);
-
-			url = loadedImage.getUrl();
-
-			cancelTimer();
-
-			setState(State.LOADED);
-
 		} else {
 			clear();
 		}
@@ -166,14 +148,14 @@ public class ImageLoader extends Composite {
 
 	@UiHandler("loadedImage")
 	void onImageLoaded(LoadEvent aEvent) {
-		if (getState() == State.LOADING) {
+		if (getState() == State.LOADING && ObjectUtils.nullSafeEquals(url, loadedImage.getUrl())) {
 			setState(State.LOADED);
 		}
 	}
 
 	@UiHandler("loadedImage")
 	void onImageError(ErrorEvent aEvent) {
-		if (getState() == State.LOADING) {
+		if (getState() == State.LOADING && ObjectUtils.nullSafeEquals(url, loadedImage.getUrl())) {
 
 			setState(State.ERROR);
 
