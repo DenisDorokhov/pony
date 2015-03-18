@@ -32,7 +32,7 @@
 
     <g:FlowPanel addStyleNames="{style.albumView}">
 
-        <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
+        <p:ImageLoader ui:field="imageLoader" addStyleNames="{style.artwork}" />
 
         <g:FlowPanel addStyleNames="{style.songContainer}">
             <b:Heading ui:field="titleHeader" addStyleNames="{style.titleHeader}" size="H4" />

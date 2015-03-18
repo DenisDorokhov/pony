@@ -30,7 +30,7 @@
     </ui:style>
 
     <b:LinkedGroupItem ui:field="artistView" addStyleNames="{style.artistView}">
-        <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
+        <p:ImageLoader ui:field="imageLoader" addStyleNames="{style.artwork}" />
         <g:Label ui:field="nameLabel" addStyleNames="{style.name}" />
     </b:LinkedGroupItem>
 

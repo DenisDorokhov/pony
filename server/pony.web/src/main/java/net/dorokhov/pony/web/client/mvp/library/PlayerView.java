@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.gwtplatform.mvp.client.ViewWithUiHandlers;
-import net.dorokhov.pony.web.client.control.ArtworkLoader;
+import net.dorokhov.pony.web.client.control.ImageLoader;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.SongDto;
@@ -65,7 +65,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	Label labelDuration;
 
 	@UiField
-	ArtworkLoader artworkLoader;
+	ImageLoader imageLoader;
 
 	private final Audio audio;
 
@@ -293,7 +293,7 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		labelArtist.setText(artistName);
 		labelTitle.setText(songName);
-		artworkLoader.setUrl(artworkUrl);
+		imageLoader.setUrl(artworkUrl);
 		labelDuration.setText(StringUtils.secondsToMinutes(duration));
 
 		labelTime.setText(StringUtils.secondsToMinutes(0));

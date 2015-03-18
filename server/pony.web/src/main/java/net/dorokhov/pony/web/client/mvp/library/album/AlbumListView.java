@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.client.mvp.library.album;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -20,7 +21,6 @@ import net.dorokhov.pony.web.shared.AlbumSongsDto;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Heading;
-import org.gwtbootstrap3.client.ui.PanelBody;
 import org.gwtbootstrap3.client.ui.PanelHeader;
 
 import java.util.*;
@@ -46,7 +46,7 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 	Heading artistHeader;
 
 	@UiField
-	PanelBody albumList;
+	FlowPanel albumList;
 
 	@UiField
 	LoadingIndicator loadingIndicator;

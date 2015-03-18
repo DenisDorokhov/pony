@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SetSelectionModel;
-import net.dorokhov.pony.web.client.control.ArtworkLoader;
+import net.dorokhov.pony.web.client.control.ImageLoader;
 import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.client.resource.Messages;
@@ -43,7 +43,7 @@ public class AlbumView extends Composite implements SongSelectionRequestEvent.Ha
 	private final HandlerManager handlerManager = new HandlerManager(this);
 
 	@UiField
-	ArtworkLoader artworkLoader;
+	ImageLoader imageLoader;
 
 	@UiField
 	Heading titleHeader;
@@ -167,9 +167,9 @@ public class AlbumView extends Composite implements SongSelectionRequestEvent.Ha
 		titleHeader.setSubText(yearValue);
 
 		if (artworkValue != null) {
-			artworkLoader.setUrl(artworkValue);
+			imageLoader.setUrl(artworkValue);
 		} else {
-			artworkLoader.clear();
+			imageLoader.clear();
 		}
 	}
 

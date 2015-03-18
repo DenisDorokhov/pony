@@ -103,7 +103,7 @@
         <g:Label ui:field="labelTime" addStyleNames="{style.timeLabel}" />
         <g:Label ui:field="labelDuration" addStyleNames="{style.durationLabel}" />
 
-        <p:ArtworkLoader ui:field="artworkLoader" addStyleNames="{style.artwork}" />
+        <p:ImageLoader ui:field="imageLoader" addStyleNames="{style.artwork}" />
 
     </g:FlowPanel>
 
