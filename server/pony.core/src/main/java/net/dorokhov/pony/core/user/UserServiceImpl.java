@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -363,7 +362,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	public void cleanTokens() {
 
 		log.debug("Cleaning tokens...");

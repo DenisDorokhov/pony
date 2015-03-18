@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -205,7 +204,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 	@Override
 	@Transactional
-	@Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 5 * 60 * 1000)
 	synchronized public void startAutoScanJob() {
 
 		log.trace("Checking if automatic scan needed...");
