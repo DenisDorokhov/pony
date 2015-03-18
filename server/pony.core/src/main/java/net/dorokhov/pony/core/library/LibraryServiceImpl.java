@@ -187,21 +187,32 @@ public class LibraryServiceImpl implements LibraryService {
 					if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
 
 						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-								"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + aStoredFile + "].",
+								"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + externalFilePath + "].",
 								Arrays.asList(aStoredFile.toString(), externalFilePath));
 
 						shouldDelete = true;
 
 					} else {
 
-						File externalFile = new File(externalFilePath);
+						if (storedFileService.getFile(aStoredFile).exists()) {
 
-						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
+							File externalFile = new File(externalFilePath);
 
-						if (shouldDelete) {
-							logService.debug(log, "libraryService.deletingModifiedStoredFile",
-									"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + aStoredFile + "].",
-									Arrays.asList(aStoredFile.toString(), externalFilePath));
+							shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
+
+							if (shouldDelete) {
+								logService.debug(log, "libraryService.deletingModifiedStoredFile",
+										"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
+										Arrays.asList(aStoredFile.toString(), externalFilePath));
+							}
+
+						} else {
+
+							logService.warn(log, "libraryService.deletingNotStoredFile",
+									"Deleting not found stored file [" + aStoredFile + "].",
+									Arrays.asList(aStoredFile.toString()));
+
+							shouldDelete = true;
 						}
 					}
 				}

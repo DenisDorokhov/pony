@@ -66,7 +66,7 @@ public class FileController {
 	}
 
 	@RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
-	public Object getStoredFile(@PathVariable("id") Long aStoredFileId, HttpServletResponse aResponse) throws IOException {
+	public Object getStoredFile(@PathVariable("id") Long aStoredFileId) throws IOException {
 
 		StoredFile storedFile = storedFileService.getById(aStoredFileId);
 

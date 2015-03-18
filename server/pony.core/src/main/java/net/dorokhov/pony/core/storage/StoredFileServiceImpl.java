@@ -124,14 +124,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 	@Override
 	@Transactional(readOnly = true)
 	public File getFile(StoredFile aStoredFile) {
-
-		File file = new File(filesFolder, aStoredFile.getPath());
-
-		if (!file.exists()) {
-			throw new RuntimeException(new FileNotFoundException("File [" + file.getAbsolutePath() + "] not found."));
-		}
-
-		return file;
+		return new File(filesFolder, aStoredFile.getPath());
 	}
 
 	@Override
