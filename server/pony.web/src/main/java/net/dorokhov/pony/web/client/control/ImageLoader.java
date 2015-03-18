@@ -81,9 +81,9 @@ public class ImageLoader extends Composite {
 	public void setResource(ImageResource aResource) {
 		if (aResource != null) {
 
-			url = loadedImage.getUrl();
-
 			loadedImage.setResource(aResource);
+
+			url = loadedImage.getUrl();
 
 			cancelTimer();
 
@@ -101,6 +101,8 @@ public class ImageLoader extends Composite {
 		cancelTimer();
 
 		setState(State.EMPTY);
+
+		loadedImage.setUrl("");
 	}
 
 	public State getState() {
@@ -172,7 +174,10 @@ public class ImageLoader extends Composite {
 	@UiHandler("loadedImage")
 	void onImageError(ErrorEvent aEvent) {
 		if (getState() == State.LOADING) {
+
 			setState(State.ERROR);
+
+			loadedImage.setUrl("");
 		}
 	}
 
