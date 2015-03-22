@@ -55,6 +55,8 @@ public class ClientModule extends AbstractPresenterModule {
 
 		bind(LibraryScanner.class).asEagerSingleton();
 		bind(LibraryScannerListener.class).asEagerSingleton();
+
+		bind(LinkBuilder.class).asEagerSingleton();
 	}
 
 }

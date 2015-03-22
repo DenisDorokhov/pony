@@ -16,6 +16,7 @@ import net.dorokhov.pony.web.client.event.SongChangeEvent;
 import net.dorokhov.pony.web.client.mvp.library.LibraryContentPresenter;
 import net.dorokhov.pony.web.client.mvp.library.PlayerPresenter;
 import net.dorokhov.pony.web.client.mvp.library.ToolbarPresenter;
+import net.dorokhov.pony.web.client.service.LinkBuilder;
 import net.dorokhov.pony.web.client.service.TitleManager;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.client.util.StringUtils;
@@ -37,6 +38,8 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 	
 	private final PlaceManager placeManager;
 
+	private final LinkBuilder linkBuilder;
+
 	private final TitleManager titleManager;
 
 	private final PlayerPresenter playerPresenter;
@@ -47,17 +50,18 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 
 	@Inject
 	public LibraryPresenter(EventBus aEventBus, MyView aView, MyProxy aProxy, PlaceManager aPlaceManager,
+							LinkBuilder aLinkBuilder,
 							TitleManager aTitleManager,
 							PlayerPresenter aPlayerPresenter,
 							ToolbarPresenter aToolbarPresenter,
 							LibraryContentPresenter aLibraryContentPresenter) {
 
 		super(aEventBus, aView, aProxy, RevealType.Root);
-		
+
 		placeManager = aPlaceManager;
-
+		
+		linkBuilder = aLinkBuilder;
 		titleManager = aTitleManager;
-
 		playerPresenter = aPlayerPresenter;
 		toolbarPresenter = aToolbarPresenter;
 		contentPresenter = aLibraryContentPresenter;
@@ -123,16 +127,7 @@ public class LibraryPresenter extends Presenter<LibraryPresenter.MyView, Library
 				!StringUtils.nullSafeNormalizedEquals(currentPlaceRequest.getParameter(LibraryParams.ARTIST, null), artistId);
 
 		if (nameTokenChanged || artistChanged) {
-
-			PlaceRequest.Builder builder = new PlaceRequest.Builder().nameToken(PlaceTokens.LIBRARY);
-
-			if (artistName != null && artistName.matches("[\\u0000-\\u00FF]*")) { // use artist name only if it's non-unicode
-				builder.with(LibraryParams.ARTIST, artistName);
-			} else {
-				builder.with(LibraryParams.ARTIST, artistId);
-			}
-
-			placeManager.revealPlace(builder.build());
+			placeManager.revealPlace(linkBuilder.buildRequestToArtist(aArtist));
 		}
 	}
 	

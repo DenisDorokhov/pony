@@ -53,6 +53,14 @@ public class ArtistView extends Composite implements HasClickHandlers {
 		artistView.setActive(aActive);
 	}
 
+	public String getLink() {
+		return artistView.getHref();
+	}
+
+	public void setLink(String aLink) {
+		artistView.setHref(aLink);
+	}
+
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler aHandler) {
 		return artistView.addClickHandler(aHandler);

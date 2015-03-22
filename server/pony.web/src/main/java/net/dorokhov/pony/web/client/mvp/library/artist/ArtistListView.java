@@ -2,11 +2,13 @@ package net.dorokhov.pony.web.client.mvp.library.artist;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -15,9 +17,11 @@ import net.dorokhov.pony.web.client.control.status.EmptyIndicator;
 import net.dorokhov.pony.web.client.control.status.ErrorIndicator;
 import net.dorokhov.pony.web.client.control.status.LoadingIndicator;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
+import net.dorokhov.pony.web.client.service.LinkBuilder;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import org.gwtbootstrap3.client.ui.LinkedGroup;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,8 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 	private final Map<ArtistDto, ArtistView> artistToView = new HashMap<>();
 
 	private final SingleSelectionModel<ArtistDto> selectionModel = new SingleSelectionModel<>();
+
+	private final LinkBuilder linkBuilder;
 	
 	@UiField
 	LinkedGroup artistList;
@@ -51,14 +57,17 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 
 	private LoadingState loadingState;
 
-	public ArtistListView() {
+	@Inject
+	public ArtistListView(LinkBuilder aLinkBuilder) {
+
+		linkBuilder = aLinkBuilder;
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				
+
 				updateArtistViews();
 
 				ArtistDto artist = selectionModel.getSelectedObject();
@@ -168,6 +177,7 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 			}
 
 			artistView.setArtist(artist);
+			artistView.setLink("#" + linkBuilder.buildLinkToArtist(artist));
 
 			artistToView.put(artist, artistView);
 		}
@@ -195,7 +205,14 @@ public class ArtistListView extends ViewWithUiHandlers<ArtistListUiHandlers> imp
 		artistView.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent aEvent) {
-				selectionModel.setSelected(artistView.getArtist(), true);
+
+				aEvent.preventDefault();
+
+				if (aEvent.getNativeButton() != NativeEvent.BUTTON_MIDDLE) {
+					selectionModel.setSelected(artistView.getArtist(), true);
+				} else {
+					Window.open(artistView.getLink(), "_blank", "");
+				}
 			}
 		});
 
