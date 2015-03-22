@@ -179,9 +179,13 @@ public class ImageLoader extends Composite {
 				@Override
 				public void run() {
 
-					doLazyLoad();
-
 					timer = null;
+
+					if (getOffsetHeight() > 0) { // fix a bug of endless loading when image loader is not rendered yet
+						doLazyLoad();
+					} else {
+						lazyLoad();
+					}
 				}
 			};
 			timer.schedule(50);
