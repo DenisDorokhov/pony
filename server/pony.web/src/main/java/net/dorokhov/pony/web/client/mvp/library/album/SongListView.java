@@ -14,7 +14,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SetSelectionModel;
 import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
-import net.dorokhov.pony.web.client.util.ObjectUtils;
+import net.dorokhov.pony.web.client.util.StringUtils;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Heading;
 
@@ -238,7 +238,7 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 			songToView.put(song.getId(), songView);
 
 			if (!showArtist) {
-				showArtist = !ObjectUtils.nullSafeEquals(song.getArtistName(), song.getAlbum().getArtist().getName());
+				showArtist = !StringUtils.nullSafeNormalizedEquals(song.getArtistName(), song.getAlbum().getArtist().getName());
 			}
 		}
 

@@ -70,6 +70,9 @@
             font-size: 12px;
             margin-top: -8px;
             color: #909090;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
             display: none;
         }
         .withArtist .artist {
