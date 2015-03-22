@@ -2,17 +2,29 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field="img" type="net.dorokhov.pony.web.client.resource.Images" />
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
     <ui:style>
+        .imagePanel {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
         .errorText {
             text-align: center;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.errorText}">
+
+        <g:FlowPanel addStyleNames="{style.imagePanel}">
+            <g:Image resource="{img.logo}" />
+        </g:FlowPanel>
+
         <b:Heading size="H3" text="{mes.errorText}" />
         <b:Button ui:field="homeButton" type="PRIMARY" icon="HOME" text="{mes.errorHomeButton}" />
+
     </g:FlowPanel>
 
 </ui:UiBinder>

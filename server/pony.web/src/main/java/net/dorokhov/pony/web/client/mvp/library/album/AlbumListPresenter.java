@@ -97,6 +97,16 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 	}
 
 	@Override
+	protected void onReveal() {
+
+		super.onReveal();
+
+		if (getView().getArtist() != null) {
+			loadAlbums(getView().getArtist(), true);
+		}
+	}
+
+	@Override
 	public void onSongSelection(Set<SongDto> aSongs) {
 		getEventBus().fireEvent(new SongSelectionEvent(aSongs));
 	}
