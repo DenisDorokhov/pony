@@ -18,7 +18,7 @@ import net.dorokhov.pony.web.client.util.ObjectUtils;
 public class ImageLoader extends Composite {
 
 	public enum State {
-		EMPTY, LOADING, ERROR, LOADED
+		EMPTY, PENDING, LOADING, ERROR, LOADED
 	}
 
 	interface MyUiBinder extends UiBinder<Widget, ImageLoader> {}
@@ -65,7 +65,7 @@ public class ImageLoader extends Composite {
 
 				url = aUrl;
 
-				setState(State.LOADING);
+				setState(State.PENDING);
 
 				if (isAttached()) {
 					lazyLoad();
@@ -148,14 +148,14 @@ public class ImageLoader extends Composite {
 
 	@UiHandler("loadedImage")
 	void onImageLoaded(LoadEvent aEvent) {
-		if (getState() == State.LOADING && ObjectUtils.nullSafeEquals(url, loadedImage.getUrl())) {
+		if (getState() == State.LOADING) {
 			setState(State.LOADED);
 		}
 	}
 
 	@UiHandler("loadedImage")
 	void onImageError(ErrorEvent aEvent) {
-		if (getState() == State.LOADING && ObjectUtils.nullSafeEquals(url, loadedImage.getUrl())) {
+		if (getState() == State.LOADING) {
 
 			setState(State.ERROR);
 
@@ -168,14 +168,13 @@ public class ImageLoader extends Composite {
 		loadingState = aLoadingState;
 
 		emptyImage.setVisible(getState() == State.EMPTY);
-		loadingImage.setVisible(getState() == State.LOADING);
+		loadingImage.setVisible(getState() == State.PENDING || getState() == State.LOADING);
 		errorImage.setVisible(getState() == State.ERROR);
 		loadedImage.setVisible(getState() == State.LOADED);
 	}
 
 	private void lazyLoad() {
-		if (getState() == State.LOADING && timer == null) {
-
+		if (getState() == State.PENDING && timer == null) {
 			timer = new Timer() {
 				@Override
 				public void run() {
@@ -199,12 +198,14 @@ public class ImageLoader extends Composite {
 		}
 
 		if (load) {
+
+			setState(State.LOADING);
+
 			loadedImage.setUrl(getUrl());
 		}
 	}
 
 	private void cancelTimer() {
-
 		if (timer != null) {
 
 			timer.cancel();
