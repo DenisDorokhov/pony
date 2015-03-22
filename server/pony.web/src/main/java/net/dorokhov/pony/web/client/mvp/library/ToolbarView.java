@@ -18,7 +18,8 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private UserDto currentUser;
+	@UiField
+	Button refreshButton;
 
 	@UiField
 	Button systemButton;
@@ -31,6 +32,12 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 
 	@UiField
 	AnchorListItem logoutButton;
+
+	private UserDto currentUser;
+
+	private boolean refreshing;
+
+	private boolean scanning;
 
 	public ToolbarView() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -47,6 +54,32 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 		currentUser = aCurrentUser;
 
 		updateUser();
+	}
+
+	@Override
+	public boolean isRefreshing() {
+		return refreshing;
+	}
+
+	@Override
+	public void setRefreshing(boolean aRefreshing) {
+
+		refreshing = aRefreshing;
+
+		// TODO: animate refresh button (impossible now because of browser rendering bugs related to CSS columns)
+	}
+
+	@Override
+	public boolean isScanning() {
+		return scanning;
+	}
+
+	@Override
+	public void setScanning(boolean aScanning) {
+
+		scanning = aScanning;
+
+		// TODO: animate system button (impossible now because of browser rendering bugs related to CSS columns)
 	}
 
 	@UiHandler("refreshButton")
