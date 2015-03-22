@@ -18,9 +18,13 @@
         * {
             outline: none !important;
         }
-        .installationContainer {
-            padding-top: 25px;
-            margin-top: 30px;
+        .container {
+            max-width: 600px;
+        }
+        #logoContainer {
+            padding-top: 20px;
+            margin-bottom: 15px;
+            text-align: center;
         }
         #libraryFolderContainer > div {
             margin-bottom: 10px;
@@ -110,68 +114,73 @@
 <spring:message code="install.folderPathPlaceholder" var="folderPathPlaceholder" />
 
 <div class="container">
-    <div class="jumbotron installationContainer">
 
-        <h1><spring:message code="install.header" /></h1>
+    <div id="logoContainer">
+        <img src="./img/logo.png" />
+    </div>
 
-        <p><spring:message code="install.description" /></p>
+    <div class="panel panel-default">
 
-        <form:form role="form" method="post" commandName="installCommand">
+        <div class="panel-heading"><h3 class="panel-title"><spring:message code="install.header" /></h3></div>
 
-            <form:errors cssClass="alert alert-danger" role="alert" element="div" />
+        <div class="panel-body">
+            <form:form role="form" method="post" commandName="installCommand">
 
-            <spring:bind path="installCommand.libraryFolders[*">
-                <div class="form-group">
-                    <div class="${status.error ? 'has-error' : ''}">
-                        <label class="control-label"><spring:message code="install.libraryFolders" /></label>
-                    </div>
-                    <div id="libraryFolderContainer">
-                        <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="loopStatus">
-                            <spring:bind path="libraryFolders[${loopStatus.index}].path">
-                                <div class="${status.error ? 'has-error' : ''}">
-                                    <div class="input-group">
-                                        <form:input path="libraryFolders[${loopStatus.index}].path" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
-                                        <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default add">
-                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                            </button>
-                                            <button type="button" class="btn btn-default remove">
-                                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                            </button>
-                                        </span>
+                <form:errors cssClass="alert alert-danger" role="alert" element="div" />
+
+                <spring:bind path="installCommand.libraryFolders[*">
+                    <div class="form-group">
+                        <div class="${status.error ? 'has-error' : ''}">
+                            <label class="control-label"><spring:message code="install.libraryFolders" /></label>
+                        </div>
+                        <div id="libraryFolderContainer">
+                            <c:forEach items="${installCommand.libraryFolders}" var="folder" varStatus="loopStatus">
+                                <spring:bind path="libraryFolders[${loopStatus.index}].path">
+                                    <div class="${status.error ? 'has-error' : ''}">
+                                        <div class="input-group">
+                                            <form:input path="libraryFolders[${loopStatus.index}].path" type="text" class="form-control" placeholder="${folderPathPlaceholder}" />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default add">
+                                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-default remove">
+                                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <form:errors path="libraryFolders[${loopStatus.index}].path" cssClass="help-block" />
                                     </div>
-                                    <form:errors path="libraryFolders[${loopStatus.index}].path" cssClass="help-block" />
-                                </div>
-                            </spring:bind>
-                        </c:forEach>
+                                </spring:bind>
+                            </c:forEach>
+                        </div>
                     </div>
-                </div>
-            </spring:bind>
-            <spring:bind path="userName">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="control-label" for="userName"><spring:message code="install.name" /></label>
-                    <form:input id="userName" path="userName" type="text" class="form-control" placeholder="${namePlaceholder}" />
-                    <form:errors path="userName" cssClass="help-block" />
-                </div>
-            </spring:bind>
-            <spring:bind path="userEmail">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="control-label" for="userEmail"><spring:message code="install.email" /></label>
-                    <form:input id="userEmail" path="userEmail" type="text" class="form-control" placeholder="${emailPlaceholder}" />
-                    <form:errors path="userEmail" cssClass="help-block" />
-                </div>
-            </spring:bind>
-            <spring:bind path="userPassword">
-                <div class="form-group ${status.error ? 'has-error' : ''}">
-                    <label class="control-label" for="userPassword"><spring:message code="install.password" /></label>
-                    <form:input id="userPassword" path="userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
-                    <form:errors path="userPassword" cssClass="help-block" />
-                </div>
-            </spring:bind>
+                </spring:bind>
+                <spring:bind path="userName">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <label class="control-label" for="userName"><spring:message code="install.name" /></label>
+                        <form:input id="userName" path="userName" type="text" class="form-control" placeholder="${namePlaceholder}" />
+                        <form:errors path="userName" cssClass="help-block" />
+                    </div>
+                </spring:bind>
+                <spring:bind path="userEmail">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <label class="control-label" for="userEmail"><spring:message code="install.email" /></label>
+                        <form:input id="userEmail" path="userEmail" type="text" class="form-control" placeholder="${emailPlaceholder}" />
+                        <form:errors path="userEmail" cssClass="help-block" />
+                    </div>
+                </spring:bind>
+                <spring:bind path="userPassword">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <label class="control-label" for="userPassword"><spring:message code="install.password" /></label>
+                        <form:input id="userPassword" path="userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
+                        <form:errors path="userPassword" cssClass="help-block" />
+                    </div>
+                </spring:bind>
 
-            <button type="submit" class="btn btn-primary btn-lg"><spring:message code="install.button" /></button>
+                <button type="submit" class="btn btn-primary"><spring:message code="install.button" /></button>
 
-        </form:form>
+            </form:form>
+        </div>
 
     </div>
 </div>

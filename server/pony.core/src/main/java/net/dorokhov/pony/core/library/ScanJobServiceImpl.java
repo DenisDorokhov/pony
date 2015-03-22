@@ -27,7 +27,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -168,7 +167,6 @@ public class ScanJobServiceImpl implements ScanJobService {
 		return job;
 	}
 
-	@PostConstruct
 	@Transactional
 	public void interruptCurrentJobs() {
 

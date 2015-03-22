@@ -3,12 +3,17 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:p="urn:import:net.dorokhov.pony.web.client.control">
 
+    <ui:with field="img" type="net.dorokhov.pony.web.client.resource.Images" />
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
     <ui:style>
         .loginContainer {
             padding-top: 20px;
             padding-bottom: 20px;
+        }
+        .imagePanel {
+            text-align: center;
+            margin-bottom: 15px;
         }
         .loginPanel {
             width: 400px;
@@ -18,6 +23,11 @@
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.loginContainer}">
+
+        <g:FlowPanel addStyleNames="{style.imagePanel}">
+            <g:Image resource="{img.logo}" />
+        </g:FlowPanel>
+
         <b:Panel addStyleNames="{style.loginPanel}">
 
             <b:PanelHeader>
