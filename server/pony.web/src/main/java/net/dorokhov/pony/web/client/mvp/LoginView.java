@@ -2,8 +2,6 @@ package net.dorokhov.pony.web.client.mvp;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -100,13 +98,6 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	@UiHandler("loginButton")
 	void onSaveClick(ClickEvent aEvent) {
 		requestLogin();
-	}
-
-	@UiHandler(value = {"emailField", "passwordField"})
-	void onKeyUp(KeyUpEvent aEvent) {
-		if (aEvent.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-			requestLogin();
-		}
 	}
 
 	private void updateLoading() {

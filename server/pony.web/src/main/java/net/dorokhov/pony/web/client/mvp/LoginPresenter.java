@@ -97,6 +97,8 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 				getView().setLoading(false);
 				getView().setErrors(aErrors);
 
+				getView().setFocus();
+
 				currentRequest = null;
 			}
 		});
