@@ -3,20 +3,23 @@
 
     <ui:style>
         .loadingIndicator {
-            line-height: 28px;
             margin-top: 2em;
             text-align: center;
         }
         .image {
-            width: 28px;
-            height: 28px;
+            width: 20px;
+            height: 20px;
             margin-right: 10px;
+        }
+        .text {
+            position: relative;
+            top: 1px;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.loadingIndicator}">
         <g:Image ui:field="image" addStyleNames="{style.image}" />
-        <g:InlineLabel ui:field="textLabel" />
+        <g:InlineLabel ui:field="textLabel" addStyleNames="{style.text}" />
     </g:FlowPanel>
 
 </ui:UiBinder>
