@@ -69,6 +69,8 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 	private boolean playing;
 
+	private boolean artistShown;
+
 	public SongView() {
 
 		initWidget(uiBinder.createAndBindUi(this));
@@ -122,6 +124,17 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 		updateStyle();
 	}
 
+	public boolean isArtistShown() {
+		return artistShown;
+	}
+
+	public void setArtistShown(boolean aArtistShown) {
+
+		artistShown = aArtistShown;
+
+		updateStyle();
+	}
+
 	@Override
 	public HandlerRegistration addSongSelectionRequestHandler(SongSelectionRequestEvent.Handler aHandler) {
 		return handlerManager.addHandler(SongSelectionRequestEvent.TYPE, aHandler);
@@ -156,7 +169,7 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 	private void updateSong() {
 		trackNumberLabel.setText(song != null ? ObjectUtils.nullSafeToString(song.getTrackNumber()) : null);
 		nameLabel.setText(song != null ? song.getName() : null);
-		artistLabel.setText(getSongArtist());
+		artistLabel.setText(song != null ? song.getArtistName() : null);
 		durationLabel.setText(song != null ? StringUtils.secondsToMinutes(song.getDuration()) : null);
 	}
 
@@ -164,10 +177,9 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 		songView.setStyleName(style.songView());
 
-		if (getSongArtist() != null) {
+		if (isArtistShown()) {
 			songView.addStyleName(style.withArtist());
 		}
-
 		if (isActivated()) {
 
 			songView.addStyleName(style.activated());
@@ -181,20 +193,6 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 		if (isSelected()) {
 			songView.addStyleName(style.selected());
 		}
-	}
-
-	private String getSongArtist() {
-
-		String songArtist = null;
-
-		if (song != null &&
-				!StringUtils.isNullOrEmpty(song.getAlbumArtistName()) &&
-				!StringUtils.nullSafeNormalizedEquals(song.getAlbumArtistName(), song.getArtistName())) {
-
-			songArtist = song.getArtistName();
-		}
-
-		return songArtist;
 	}
 
 }

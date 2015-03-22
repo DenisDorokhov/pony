@@ -310,9 +310,12 @@ public class DtoConverter {
 		dto.setDuration(aSong.getDuration());
 		dto.setDiscNumber(aSong.getDiscNumber());
 		dto.setTrackNumber(aSong.getTrackNumber());
-		dto.setArtistName(aSong.getArtistName());
-		dto.setAlbumArtistName(aSong.getAlbumArtistName());
 		dto.setName(aSong.getName() != null ? aSong.getName() : new File(aSong.getPath()).getName());
+
+		dto.setArtistName(aSong.getAlbumArtistName());
+		if (aSong.getArtistName() != null) {
+			dto.setArtistName(aSong.getArtistName());
+		}
 
 		dto.setGenre(genreToDto(aSong.getGenre()));
 		dto.setAlbum(albumToDto(aSong.getAlbum()));

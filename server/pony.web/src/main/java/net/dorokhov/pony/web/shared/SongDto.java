@@ -14,8 +14,6 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	private String artistName;
 
-	private String albumArtistName;
-
 	private String name;
 
 	private AlbumDto album;
@@ -60,14 +58,6 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	public void setArtistName(String aArtistName) {
 		artistName = aArtistName;
-	}
-
-	public String getAlbumArtistName() {
-		return albumArtistName;
-	}
-
-	public void setAlbumArtistName(String aAlbumArtistName) {
-		albumArtistName = aAlbumArtistName;
 	}
 
 	public String getName() {

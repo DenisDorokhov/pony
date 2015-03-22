@@ -14,6 +14,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SetSelectionModel;
 import net.dorokhov.pony.web.client.event.SongSelectionRequestEvent;
 import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
+import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.SongDto;
 import org.gwtbootstrap3.client.ui.Heading;
 
@@ -207,6 +208,8 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 
 		songToView.clear();
 
+		boolean showArtist = false;
+
 		for (int i = 0; i < getSongs().size(); i++) {
 
 			SongDto song = getSongs().get(i);
@@ -230,8 +233,17 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 			}
 
 			songView.setSong(song);
+			songView.setArtistShown(false);
 
 			songToView.put(song.getId(), songView);
+
+			if (!showArtist) {
+				showArtist = !ObjectUtils.nullSafeEquals(song.getArtistName(), song.getAlbum().getArtist().getName());
+			}
+		}
+
+		for (Map.Entry<Long, SongView> entry : songToView.entrySet()) {
+			entry.getValue().setArtistShown(showArtist);
 		}
 
 		updateSongViews();
