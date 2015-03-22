@@ -111,6 +111,7 @@
 <spring:message code="install.namePlaceholder" var="namePlaceholder" />
 <spring:message code="install.emailPlaceholder" var="emailPlaceholder"/>
 <spring:message code="install.passwordPlaceholder" var="passwordPlaceholder" />
+<spring:message code="install.passwordRepeatPlaceholder" var="passwordRepeatPlaceholder" />
 <spring:message code="install.folderPathPlaceholder" var="folderPathPlaceholder" />
 
 <div class="container">
@@ -174,6 +175,13 @@
                         <label class="control-label" for="userPassword"><spring:message code="install.password" /></label>
                         <form:input id="userPassword" path="userPassword" type="password" class="form-control" placeholder="${passwordPlaceholder}" />
                         <form:errors path="userPassword" cssClass="help-block" />
+                    </div>
+                </spring:bind>
+                <spring:bind path="userRepeatPassword">
+                    <div class="form-group ${status.error ? 'has-error' : ''}">
+                        <label class="control-label" for="userRepeatPassword"><spring:message code="install.repeatPassword" /></label>
+                        <form:input id="userRepeatPassword" path="userRepeatPassword" type="password" class="form-control" placeholder="${passwordRepeatPlaceholder}" />
+                        <form:errors path="userRepeatPassword" cssClass="help-block" />
                     </div>
                 </spring:bind>
 

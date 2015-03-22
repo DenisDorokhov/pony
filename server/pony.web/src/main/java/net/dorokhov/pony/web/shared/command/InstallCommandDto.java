@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.shared.command;
 
 import net.dorokhov.pony.web.server.validation.FolderExists;
+import net.dorokhov.pony.web.server.validation.RepeatPassword;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+@RepeatPassword
 public class InstallCommandDto {
 
 	private String userName;
@@ -16,6 +18,8 @@ public class InstallCommandDto {
 	private String userEmail;
 
 	private String userPassword;
+
+	private String userRepeatPassword;
 
 	private List<LibraryFolder> libraryFolders;
 
@@ -48,6 +52,14 @@ public class InstallCommandDto {
 
 	public void setUserPassword(String aUserPassword) {
 		userPassword = aUserPassword;
+	}
+
+	public String getUserRepeatPassword() {
+		return userRepeatPassword;
+	}
+
+	public void setUserRepeatPassword(String aUserRepeatPassword) {
+		userRepeatPassword = aUserRepeatPassword;
 	}
 
 	@Valid
