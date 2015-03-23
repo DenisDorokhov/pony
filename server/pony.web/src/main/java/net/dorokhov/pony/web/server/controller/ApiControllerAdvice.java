@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeException;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -201,7 +203,11 @@ public class ApiControllerAdvice {
 
 	@ExceptionHandler(Throwable.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseDto onUnexpectedError(Throwable aException) {
+	public Object onUnexpectedError(Throwable aException) {
+
+		if (aException.getCause() instanceof IOException) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); // avoid logging of broken pipe exceptions
+		}
 
 		log.error("Unexpected error occurred.", aException);
 
