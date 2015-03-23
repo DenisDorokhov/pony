@@ -67,6 +67,8 @@ public class ImageLoader extends Composite {
 
 				setState(State.PENDING);
 
+				loadedImage.setUrl("");
+
 				if (isAttached()) {
 					lazyLoad();
 				}
