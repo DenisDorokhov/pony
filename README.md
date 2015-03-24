@@ -46,6 +46,7 @@ This project was originally started as a playground for development of my skills
 * Edit current user GUI.
 * User CRUD GUI.
 * Log GUI.
+* Export artist / album / song GUI.
 * Search GUI.
 * Edit audio tags GUI.
 * Playback mode GUI: shuffle, repeat, repeat all, etc.
