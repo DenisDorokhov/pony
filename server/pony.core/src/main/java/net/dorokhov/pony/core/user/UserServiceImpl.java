@@ -290,15 +290,17 @@ public class UserServiceImpl implements UserService {
 
 		validateTokenAge(token, refreshTokenLifetime);
 
+		User user = token.getUser();
+
 		refreshTokenDao.delete(token);
 
 		TokenString accessTokenString = new TokenString();
-		AccessToken accessToken = createAccessToken(accessTokenString, token.getUser());
+		AccessToken accessToken = createAccessToken(accessTokenString, user);
 
 		TokenString refreshTokenString = new TokenString();
-		RefreshToken refreshToken = createRefreshToken(accessTokenString, token.getUser());
+		RefreshToken refreshToken = createRefreshToken(accessTokenString, user);
 
-		log.info("Token for user [" + token.getUser().getEmail() + "] has been refreshed.");
+		log.info("Token for user [" + user.getEmail() + "] has been refreshed.");
 
 		AuthenticationImpl authentication = new AuthenticationImpl();
 
@@ -308,7 +310,7 @@ public class UserServiceImpl implements UserService {
 		authentication.setAccessTokenExpiration(getTokenExpiration(accessToken));
 		authentication.setRefreshTokenExpiration(getTokenExpiration(refreshToken));
 
-		authentication.setUser(token.getUser());
+		authentication.setUser(user);
 
 		return authentication;
 	}
@@ -319,13 +321,15 @@ public class UserServiceImpl implements UserService {
 
 		AccessToken token = getAccessTokenByString(aToken);
 
+		User user = token.getUser();
+
 		accessTokenDao.delete(token);
 
 		SecurityContextHolder.clearContext();
 
-		log.info("User [" + token.getUser().getEmail() + "] has logged out.");
+		log.info("User [" + user.getEmail() + "] has logged out.");
 
-		return token.getUser();
+		return user;
 	}
 
 	@Override
