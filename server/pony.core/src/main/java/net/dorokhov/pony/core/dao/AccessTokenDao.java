@@ -7,7 +7,7 @@ import java.util.Date;
 
 public interface AccessTokenDao extends PagingAndSortingRepository<AccessToken, String> {
 
-	public void deleteByUserId(Long aId);
-	public void deleteByCreationDateLessThan(Date aMaxCreationDate);
+	public Long deleteByUserId(Long aId);
+	public Long deleteByCreationDateLessThan(Date aMaxCreationDate);
 
 }
