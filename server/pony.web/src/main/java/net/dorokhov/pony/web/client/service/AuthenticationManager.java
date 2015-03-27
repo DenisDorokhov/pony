@@ -124,6 +124,8 @@ public class AuthenticationManager {
 				@Override
 				public void onSuccess(UserDto aUser) {
 
+					checkTokenExpiration();
+
 					aCallback.onSuccess(aUser);
 
 					propagateInitialization(aUser);
@@ -137,8 +139,6 @@ public class AuthenticationManager {
 					propagateInitialization(null);
 				}
 			});
-
-			checkTokenExpiration();
 
 		} else {
 

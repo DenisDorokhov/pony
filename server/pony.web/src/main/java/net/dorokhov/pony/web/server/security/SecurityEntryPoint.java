@@ -34,7 +34,7 @@ public class SecurityEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest aRequest, HttpServletResponse aResponse, AuthenticationException aException) throws IOException, ServletException {
 
-		log.warn("Access denied to [" + aRequest.getServletPath() + "].");
+		log.debug("Access denied to [" + aRequest.getServletPath() + "].");
 
 		if (aRequest.getServletPath().startsWith("/api/")) {
 
