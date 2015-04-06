@@ -5,7 +5,7 @@
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
-    <ui:style>
+    <ui:style type="net.dorokhov.pony.web.client.mvp.library.ScanningView.MyStyle">
         @external .modal-dialog;
         .scanningView .modal-dialog {
             width: 1000px !important;
@@ -44,6 +44,23 @@
         }
         .jobsView {
             height: 372px;
+        }
+        .jobStatus {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .jobStatusStarting {}
+        .jobStatusStarted {
+            color: #5bc0de;
+        }
+        .jobStatusComplete {
+            color: #5cb85c;
+        }
+        .jobStatusFailed {
+            color: #d9534f;
+        }
+        .jobStatusInterrupted {
+            color: #f0ad4e;
         }
     </ui:style>
 

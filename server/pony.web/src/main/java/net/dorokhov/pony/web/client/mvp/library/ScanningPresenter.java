@@ -25,7 +25,7 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 			INACTIVE, SCANNING
 		}
 
-		public void resetScanJobs();
+		public void reloadScanJobs(boolean aClearData);
 
 		public ScanState getScanState();
 
@@ -42,8 +42,6 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 	private final ScanJobService scanJobService;
 
 	private final ErrorNotifier errorNotifier;
-
-	private OperationRequest currentRequest;
 
 	@Inject
 	public ScanningPresenter(EventBus aEventBus, MyView aView,
@@ -75,21 +73,13 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 	}
 
 	@Override
-	protected void onHide() {
-
-		if (currentRequest != null) {
-			currentRequest.cancel();
-		}
-
-		super.onHide();
-	}
-
-	@Override
 	protected void onReveal() {
 
 		super.onReveal();
 
 		libraryScanner.updateStatus();
+
+		getView().reloadScanJobs(true);
 	}
 
 	@Override
@@ -128,8 +118,11 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	@Override
 	public void onScanFinished(LibraryScanner aLibraryScanner) {
+
 		getView().setProgress(null);
 		getView().setScanState(MyView.ScanState.INACTIVE);
+
+		getView().reloadScanJobs(false);
 	}
 
 }

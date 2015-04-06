@@ -7,7 +7,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.ErrorDto;
@@ -27,7 +30,11 @@ public class PagedListView<T> extends Composite {
 
 		public Column<S, ?> getColumn(int aIndex);
 
+		public String getColumnWidth(int aIndex);
+
 		public String getHeader(int aIndex);
+
+		public String getPagerLabel(PagedListDto<S> aPagedList);
 
 		public OperationRequest requestPagedList(int aPageNumber, OperationCallback<PagedListDto<S>> aCallback);
 
@@ -45,7 +52,13 @@ public class PagedListView<T> extends Composite {
 	Pager pager;
 
 	@UiField
+	Label pagerLabel;
+
+	@UiField
 	DataGrid<T> grid;
+
+	@UiField
+	FlowPanel loadingOverlay;
 
 	private final DataSource<T> dataSource;
 
@@ -64,18 +77,28 @@ public class PagedListView<T> extends Composite {
 		pager.addPreviousClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				requestPagedList(data.getPageNumber() - 1);
+				if (getState() != State.LOADING) {
+					requestPagedList(data.getPageNumber() - 1);
+				}
 			}
 		});
 		pager.addNextClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				requestPagedList(data.getPageNumber() + 1);
+				if (getState() != State.LOADING) {
+					requestPagedList(data.getPageNumber() + 1);
+				}
 			}
 		});
 
 		for (int i = 0; i < dataSource.getColumnCount(); i++) {
+
 			grid.addColumn(dataSource.getColumn(i), dataSource.getHeader(i));
+
+			String width = dataSource.getColumnWidth(i);
+			if (width != null) {
+				grid.setColumnWidth(i, width);
+			}
 		}
 	}
 
@@ -87,19 +110,25 @@ public class PagedListView<T> extends Composite {
 		return data;
 	}
 
-	public void reset() {
-		setData(null);
-		requestPagedList(0);
+	public void reload() {
+		reload(0, true);
 	}
 
-	@Override
-	protected void onAttach() {
+	public void reload(int aPageNumber) {
+		reload(aPageNumber, true);
+	}
 
-		super.onAttach();
+	public void reload(boolean aClearData) {
+		reload(0, aClearData);
+	}
 
-		if (getData() == null) {
-			requestPagedList(0);
+	public void reload(int aPageNumber, boolean aClearData) {
+
+		if (aClearData) {
+			setData(null);
 		}
+
+		requestPagedList(aPageNumber);
 	}
 
 	private void requestPagedList(int aPageNumber) {
@@ -136,7 +165,7 @@ public class PagedListView<T> extends Composite {
 
 		state = aState;
 
-		// TODO: update loading state
+		loadingOverlay.setVisible(getState() == State.LOADING);
 	}
 
 	public void setData(PagedListDto<T> aData) {
@@ -150,21 +179,41 @@ public class PagedListView<T> extends Composite {
 			getPagerPrevious(pager).setEnabled(data.getPageNumber() > 0);
 			getPagerNext(pager).setEnabled(data.getPageNumber() < data.getTotalPages() - 1);
 
+			pagerLabel.setText(dataSource.getPagerLabel(data));
+
 		} else {
 
 			grid.setRowData(new ArrayList<T>());
 
 			getPagerPrevious(pager).setEnabled(false);
 			getPagerNext(pager).setEnabled(false);
+
+			pagerLabel.setText(null);
 		}
 	}
 
 	private AnchorListItem getPagerPrevious(Pager aPager) {
-		return (AnchorListItem)aPager.getWidget(aPager.getWidgetCount() - 2);
+		return getPagerButtons(aPager).get(0);
 	}
 
 	private AnchorListItem getPagerNext(Pager aPager) {
-		return (AnchorListItem)aPager.getWidget(aPager.getWidgetCount() - 1);
+		return getPagerButtons(aPager).get(1);
+	}
+
+	private List<AnchorListItem> getPagerButtons(Pager aPager) {
+
+		List<AnchorListItem> buttons = new ArrayList<>();
+
+		for (int i = 0; i < aPager.getWidgetCount(); i++) {
+
+			Widget widget = aPager.getWidget(i);
+
+			if (widget instanceof AnchorListItem) {
+				buttons.add((AnchorListItem)widget);
+			}
+		}
+
+		return buttons;
 	}
 
 }

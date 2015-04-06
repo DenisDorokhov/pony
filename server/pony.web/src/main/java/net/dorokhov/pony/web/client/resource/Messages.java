@@ -56,10 +56,16 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String scanningStatusCleaningArtworks(String aProgress);
 	public String scanningStatusImportingSongs(String aProgress);
 	public String scanningStatusNormalizing(String aProgress);
+	public String scanningPager(int aPageNumber, int aTotalPages, @Optional int aCount, @Optional long aTotalCount);
 	public String scanningColumnStarted();
 	public String scanningColumnUpdated();
 	public String scanningColumnStatus();
 	public String scanningColumnLastMessage();
+	public String scanningJobStatusStarting();
+	public String scanningJobStatusStarted();
+	public String scanningJobStatusComplete();
+	public String scanningJobStatusFailed();
+	public String scanningJobStatusInterrupted();
 
 	public String pagedListPrevious();
 	public String pagedListNext();

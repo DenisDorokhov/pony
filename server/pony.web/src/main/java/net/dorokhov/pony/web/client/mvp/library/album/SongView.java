@@ -23,6 +23,7 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 	interface MyUiBinder extends UiBinder<FocusPanel, SongView> {}
 
+	@SuppressWarnings("GwtCssResourceErrors")
 	interface MyStyle extends CssResource {
 
 		String songView();
@@ -33,10 +34,6 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 		String paused();
 		String selected();
 
-		String trackNumber();
-		String name();
-		String artist();
-		String duration();
 	}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);

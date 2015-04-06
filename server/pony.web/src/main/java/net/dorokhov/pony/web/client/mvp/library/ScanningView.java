@@ -1,8 +1,11 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,9 +37,26 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 	interface MyUiBinder extends UiBinder<Modal, ScanningView> {}
 
+	@SuppressWarnings("GwtCssResourceErrors")
+	interface MyStyle extends CssResource {
+
+		String jobStatus();
+
+		String jobStatusStarting();
+		String jobStatusStarted();
+		String jobStatusComplete();
+		String jobStatusFailed();
+		String jobStatusInterrupted();
+
+	}
+
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	private static final NumberFormat PROGRESS_FORMAT = NumberFormat.getPercentFormat();
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+
+	@UiField
+	MyStyle style;
 
 	@UiField
 	Label statusLabel;
@@ -68,23 +88,66 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				Messages.INSTANCE.scanningColumnStatus(),
 				Messages.INSTANCE.scanningColumnLastMessage()
 		);
+		final List<String> widths = Arrays.asList(
+				"150px", "150px", "150px", null
+		);
 		final List<TextColumn<ScanJobDto>> columns = Arrays.asList(
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
-						return String.valueOf(aJob.getCreationDate());
+						return DATE_FORMAT.format(aJob.getCreationDate());
 					}
 				},
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
-						return String.valueOf(aJob.getUpdateDate());
+						return DATE_FORMAT.format(aJob.getUpdateDate());
 					}
 				},
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
+
+						switch (aJob.getStatus()) {
+							case STARTING:
+								return Messages.INSTANCE.scanningJobStatusStarting();
+							case STARTED:
+								return Messages.INSTANCE.scanningJobStatusStarted();
+							case COMPLETE:
+								return Messages.INSTANCE.scanningJobStatusComplete();
+							case FAILED:
+								return Messages.INSTANCE.scanningJobStatusFailed();
+							case INTERRUPTED:
+								return Messages.INSTANCE.scanningJobStatusInterrupted();
+						}
+
 						return String.valueOf(aJob.getStatus());
+					}
+
+					@Override
+					public String getCellStyleNames(Cell.Context aContext, ScanJobDto aJob) {
+
+						String result = style.jobStatus() + " ";
+
+						switch (aJob.getStatus()) {
+							case STARTING:
+								result += style.jobStatusStarting();
+								break;
+							case STARTED:
+								result += style.jobStatusStarted();
+								break;
+							case COMPLETE:
+								result += style.jobStatusComplete();
+								break;
+							case FAILED:
+								result += style.jobStatusFailed();
+								break;
+							case INTERRUPTED:
+								result += style.jobStatusInterrupted();
+								break;
+						}
+
+						return result;
 					}
 				},
 				new TextColumn<ScanJobDto>() {
@@ -109,8 +172,18 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 			}
 
 			@Override
+			public String getColumnWidth(int aIndex) {
+				return widths.get(aIndex);
+			}
+
+			@Override
 			public String getHeader(int aIndex) {
 				return headers.get(aIndex);
+			}
+
+			@Override
+			public String getPagerLabel(PagedListDto<ScanJobDto> aPagedList) {
+				return Messages.INSTANCE.scanningPager(aPagedList.getPageNumber() + 1, aPagedList.getTotalPages(), aPagedList.getContent().size(), aPagedList.getTotalElements());
 			}
 
 			@Override
@@ -125,8 +198,8 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	}
 
 	@Override
-	public void resetScanJobs() {
-		jobsView.reset();
+	public void reloadScanJobs(boolean aClearData) {
+		jobsView.reload(aClearData);
 	}
 
 	@Override
