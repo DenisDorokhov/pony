@@ -8,6 +8,10 @@
             border-left-width: 0;
             border-right-width: 0;
             padding: 10px;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .artistView:first-child {
             border-top-width: 0;
