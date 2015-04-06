@@ -40,6 +40,14 @@ public interface ApiService extends RestService {
 	@Path("/scanStatus")
 	Request getScanStatus(MethodCallback<ResponseDto<ScanStatusDto>> aCallback);
 
+	@GET
+	@Path("/admin/scanJobs")
+	Request getScanJobs(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<ScanJobDto>>> aCallback);
+
+	@GET
+	@Path("/admin/scanJobs/{aId}")
+	Request getScanJob(@PathParam("aId") Long aId, MethodCallback<ResponseDto<ScanJobDto>> aCallback);
+
 	@POST
 	@Path("/admin/startScanJob")
 	Request startScanJob(MethodCallback<ResponseDto<ScanJobDto>> aCallback);

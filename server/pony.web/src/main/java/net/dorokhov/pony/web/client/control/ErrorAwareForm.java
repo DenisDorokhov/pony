@@ -4,7 +4,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.resource.Messages;
-import net.dorokhov.pony.web.client.util.ErrorUtils;
+import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Form;
@@ -15,7 +15,10 @@ import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.gwtbootstrap3.client.ui.html.Strong;
 import org.gwtbootstrap3.client.ui.html.UnorderedList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ErrorAwareForm extends Form {
 
@@ -60,7 +63,7 @@ public class ErrorAwareForm extends Form {
 					formGroup.add(helpBlock);
 				}
 
-				helpBlock.setText(ErrorUtils.formatError(error));
+				helpBlock.setText(FormatUtils.formatError(error));
 
 			} else {
 
@@ -81,7 +84,7 @@ public class ErrorAwareForm extends Form {
 					alert.add(new UnorderedList());
 				}
 
-				((UnorderedList)alert.getWidget(1)).add(new ListItem(ErrorUtils.formatError(error)));
+				((UnorderedList)alert.getWidget(1)).add(new ListItem(FormatUtils.formatError(error)));
 			}
 		}
 	}

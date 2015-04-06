@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.client.service;
 
-import net.dorokhov.pony.web.client.util.ErrorUtils;
+import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.ErrorDto;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public class ErrorNotifierImpl implements ErrorNotifier {
 	@Override
 	public void notifyOfErrors(List<ErrorDto> aErrors) {
 		for (ErrorDto error : aErrors) {
-			doNotify(ErrorUtils.formatError(error));
+			doNotify(FormatUtils.formatError(error));
 		}
 	}
 

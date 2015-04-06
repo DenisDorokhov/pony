@@ -2,22 +2,28 @@ package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.web.bindery.event.shared.EventBus;
+import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
+import net.dorokhov.pony.web.client.resource.LogMessages;
 import net.dorokhov.pony.web.client.resource.Messages;
+import net.dorokhov.pony.web.client.util.FormatUtils;
+import net.dorokhov.pony.web.shared.PagedListDto;
+import net.dorokhov.pony.web.shared.ScanJobDto;
 import net.dorokhov.pony.web.shared.ScanStatusDto;
-import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.Modal;
-import org.gwtbootstrap3.client.ui.Progress;
-import org.gwtbootstrap3.client.ui.ProgressBar;
+import org.gwtbootstrap3.client.ui.*;
 import org.gwtbootstrap3.client.ui.constants.ProgressType;
+import org.gwtbootstrap3.client.ui.gwt.DataGrid;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> implements ScanningPresenter.MyView {
 
@@ -39,7 +45,17 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	@UiField
 	Button scanButton;
 
-	private State state;
+	@UiField
+	Pager jobsPager;
+
+	@UiField
+	DataGrid<ScanJobDto> jobsTable;
+
+	private LoadingState loadingState;
+
+	private PagedListDto<ScanJobDto> scanJobs;
+
+	private ScanState scanState;
 
 	private ScanStatusDto progress;
 
@@ -50,20 +66,85 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 		initWidget(uiBinder.createAndBindUi(this));
 
-		setState(State.INACTIVE);
+		setScanState(ScanState.INACTIVE);
+
+		jobsPager.addPreviousClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getUiHandlers().onScanJobsPageRequested(scanJobs.getPageNumber() - 1);
+			}
+		});
+		jobsPager.addNextClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				getUiHandlers().onScanJobsPageRequested(scanJobs.getPageNumber() + 1);
+			}
+		});
+
+		jobsTable.addColumn(new TextColumn<ScanJobDto>() {
+			@Override
+			public String getValue(ScanJobDto aJob) {
+				return String.valueOf(aJob.getCreationDate());
+			}
+		}, "Started");
+		jobsTable.addColumn(new TextColumn<ScanJobDto>() {
+			@Override
+			public String getValue(ScanJobDto aJob) {
+				return String.valueOf(aJob.getUpdateDate());
+			}
+		}, "Updated");
+		jobsTable.addColumn(new TextColumn<ScanJobDto>() {
+			@Override
+			public String getValue(ScanJobDto aJob) {
+				return String.valueOf(aJob.getStatus());
+			}
+		}, "Status");
+		jobsTable.addColumn(new TextColumn<ScanJobDto>() {
+			@Override
+			public String getValue(ScanJobDto aJob) {
+				return FormatUtils.formatMessage(LogMessages.INSTANCE,
+						aJob.getLogMessage().getCode(), aJob.getLogMessage().getArguments(), aJob.getLogMessage().getText());
+			}
+		}, "Last Message");
 	}
 
 	@Override
-	public State getState() {
-		return state;
+	public LoadingState getLoadingState() {
+		return loadingState;
 	}
 
 	@Override
-	public void setState(State aState) {
+	public void setLoadingState(LoadingState aLoadingState) {
 
-		state = aState;
+		loadingState = aLoadingState;
 
-		updateState();
+		updateLoadingState();
+	}
+
+	@Override
+	public PagedListDto<ScanJobDto> getScanJobs() {
+		return scanJobs;
+	}
+
+	@Override
+	public void setScanJobs(PagedListDto<ScanJobDto> aScanJobs) {
+
+		scanJobs = aScanJobs;
+
+		updateScanJobs();
+	}
+
+	@Override
+	public ScanState getScanState() {
+		return scanState;
+	}
+
+	@Override
+	public void setScanState(ScanState aScanState) {
+
+		scanState = aScanState;
+
+		updateScanState();
 	}
 
 	@Override
@@ -76,7 +157,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 		progress = aStatus;
 
-		updateState();
+		updateScanState();
 	}
 
 	@UiHandler("scanButton")
@@ -84,16 +165,38 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 		getUiHandlers().onScanRequested();
 	}
 
-	private void updateState() {
+	private void updateLoadingState() {
 
-		scanButton.setEnabled(getState() == State.INACTIVE);
+
+	}
+
+	private void updateScanJobs() {
+		if (scanJobs != null) {
+
+			jobsTable.setRowData(scanJobs.getContent());
+
+			getPagerPrevious(jobsPager).setEnabled(scanJobs.getPageNumber() > 0);
+			getPagerNext(jobsPager).setEnabled(scanJobs.getPageNumber() < scanJobs.getTotalPages() - 1);
+
+		} else {
+
+			jobsTable.setRowData(new ArrayList<ScanJobDto>());
+
+			getPagerPrevious(jobsPager).setEnabled(false);
+			getPagerNext(jobsPager).setEnabled(false);
+		}
+	}
+
+	private void updateScanState() {
+
+		scanButton.setEnabled(getScanState() == ScanState.INACTIVE);
 
 		progressContainer.setActive(false);
 		progressContainer.setType(ProgressType.DEFAULT);
 
 		progressBar.setPercent(0);
 
-		if (getState() == State.INACTIVE) {
+		if (getScanState() == ScanState.INACTIVE) {
 
 			statusLabel.setText(Messages.INSTANCE.scanningStatusInactive());
 
@@ -140,6 +243,14 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 		}
 
 		return null;
+	}
+
+	private AnchorListItem getPagerPrevious(Pager aPager) {
+		return (AnchorListItem)aPager.getWidget(aPager.getWidgetCount() - 2);
+	}
+
+	private AnchorListItem getPagerNext(Pager aPager) {
+		return (AnchorListItem)aPager.getWidget(aPager.getWidgetCount() - 1);
 	}
 
 }

@@ -53,6 +53,7 @@ public class ClientModule extends AbstractPresenterModule {
 
 		bind(TitleManager.class).asEagerSingleton();
 
+		bind(ScanJobService.class).asEagerSingleton();
 		bind(LibraryScanner.class).asEagerSingleton();
 		bind(LibraryScannerListener.class).asEagerSingleton();
 
