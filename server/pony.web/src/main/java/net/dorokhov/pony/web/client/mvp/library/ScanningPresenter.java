@@ -4,8 +4,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
-import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
-import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.LibraryScanner;
 import net.dorokhov.pony.web.client.service.ScanJobService;
@@ -21,15 +19,13 @@ import java.util.List;
 
 public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView> implements LibraryScanner.Delegate, ScanningUiHandlers {
 
-	public interface MyView extends PopupView, HasUiHandlers<ScanningUiHandlers>, HasLoadingState {
+	public interface MyView extends PopupView, HasUiHandlers<ScanningUiHandlers> {
 
 		public enum ScanState {
 			INACTIVE, SCANNING
 		}
 
-		public PagedListDto<ScanJobDto> getScanJobs();
-
-		public void setScanJobs(PagedListDto<ScanJobDto> aScanJobs);
+		public void resetScanJobs();
 
 		public ScanState getScanState();
 
@@ -85,8 +81,6 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 			currentRequest.cancel();
 		}
 
-		getView().setScanJobs(null);
-
 		super.onHide();
 	}
 
@@ -96,13 +90,25 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		super.onReveal();
 
 		libraryScanner.updateStatus();
-
-		loadScanJobs(0);
 	}
 
 	@Override
-	public void onScanJobsPageRequested(int aPageNumber) {
-		loadScanJobs(aPageNumber);
+	public OperationRequest onScanJobsRequested(int aPageNumber, final OperationCallback<PagedListDto<ScanJobDto>> aCallback) {
+		return scanJobService.getScanJobs(aPageNumber, new OperationCallback<PagedListDto<ScanJobDto>>() {
+
+			@Override
+			public void onSuccess(PagedListDto<ScanJobDto> aPage) {
+				aCallback.onSuccess(aPage);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				errorNotifier.notifyOfErrors(aErrors);
+
+				aCallback.onError(aErrors);
+			}
+		});
 	}
 
 	@Override
@@ -124,38 +130,6 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 	public void onScanFinished(LibraryScanner aLibraryScanner) {
 		getView().setProgress(null);
 		getView().setScanState(MyView.ScanState.INACTIVE);
-	}
-
-	private void loadScanJobs(int aPageNumber) {
-
-		if (currentRequest != null) {
-			currentRequest.cancel();
-		}
-
-		getView().setLoadingState(LoadingState.LOADING);
-
-		currentRequest = scanJobService.getScanJobs(aPageNumber, new OperationCallback<PagedListDto<ScanJobDto>>() {
-
-			@Override
-			public void onSuccess(PagedListDto<ScanJobDto> aPage) {
-
-				currentRequest = null;
-
-				getView().setScanJobs(aPage);
-
-				getView().setLoadingState(LoadingState.LOADED);
-			}
-
-			@Override
-			public void onError(List<ErrorDto> aErrors) {
-
-				currentRequest = null;
-
-				errorNotifier.notifyOfErrors(aErrors);
-
-				getView().setLoadingState(LoadingState.ERROR);
-			}
-		});
 	}
 
 }

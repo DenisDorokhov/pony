@@ -34,7 +34,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String artistUnknown();
 	public String albumUnknown();
-	public String songUnknown();
 	public String albumDisc(Integer aDisc);
 
 	public String statusLoading();
@@ -57,5 +56,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String scanningStatusCleaningArtworks(String aProgress);
 	public String scanningStatusImportingSongs(String aProgress);
 	public String scanningStatusNormalizing(String aProgress);
+	public String scanningColumnStarted();
+	public String scanningColumnUpdated();
+	public String scanningColumnStatus();
+	public String scanningColumnLastMessage();
+
+	public String pagedListPrevious();
+	public String pagedListNext();
 
 }

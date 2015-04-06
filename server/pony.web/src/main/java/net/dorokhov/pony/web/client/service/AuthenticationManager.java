@@ -50,7 +50,7 @@ public class AuthenticationManager {
 	private static final int CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL = 5 * 1000;
 	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 5 * 60 * 1000;
 	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
-	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 24 * 60 * 60 * 1000;
+	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 60 * 60 * 1000;
 
 	private static final String COOKIE_DOWNLOAD_ACCESS_TOKEN = "Download-Access-Token";
 
