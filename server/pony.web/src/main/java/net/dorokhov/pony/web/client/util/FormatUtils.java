@@ -22,10 +22,9 @@ public class FormatUtils {
 
 		String result = null;
 
-		//noinspection EmptyCatchBlock
 		try {
 			result = aConstants.getString(codeToMethod(aCode));
-		} catch (MissingResourceException e) {}
+		} catch (MissingResourceException ignored) {}
 
 		if (result == null) {
 			return aText;

@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.client.service;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.googlecode.gwt.crypto.bouncycastle.util.encoders.Base64;
 import net.dorokhov.pony.web.client.service.api.ApiService;
 import net.dorokhov.pony.web.client.service.api.MethodCallbackAdapter;
 import net.dorokhov.pony.web.client.service.api.RequestAdapter;
@@ -51,8 +52,6 @@ public class AuthenticationManager {
 	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 5 * 60 * 1000;
 	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
 	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 60 * 60 * 1000;
-
-	private static final String COOKIE_DOWNLOAD_ACCESS_TOKEN = "Download-Access-Token";
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -422,9 +421,9 @@ public class AuthenticationManager {
 
 	private void setDownloadAccessToken(String aAccessToken) {
 		if (aAccessToken != null) {
-			Cookies.setCookie(COOKIE_DOWNLOAD_ACCESS_TOKEN, aAccessToken);
+			Cookies.setCookie(SecurityTokens.ACCESS_TOKEN_COOKIE, new String(Base64.encode(aAccessToken.getBytes())));
 		} else {
-			Cookies.removeCookie(COOKIE_DOWNLOAD_ACCESS_TOKEN);
+			Cookies.removeCookie(SecurityTokens.ACCESS_TOKEN_COOKIE);
 		}
 	}
 

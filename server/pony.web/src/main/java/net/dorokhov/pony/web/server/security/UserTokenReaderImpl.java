@@ -1,13 +1,17 @@
 package net.dorokhov.pony.web.server.security;
 
+import net.dorokhov.pony.web.shared.SecurityTokens;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.net.HttpCookie;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 @Service
@@ -24,18 +28,18 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 			String token;
 
-			token = httpRequest.getHeader("X-Access-Token");
+			token = httpRequest.getHeader(SecurityTokens.ACCESS_TOKEN_HEADER);
 			if (!StringUtils.isBlank(token)) {
 				return token;
 			}
 
-			token = httpRequest.getParameter("x_access_token");
+			token = httpRequest.getParameter(SecurityTokens.ACCESS_TOKEN_PARAM);
 			if (!StringUtils.isBlank(token)) {
 				return token;
 			}
 
 			if (!httpRequest.getServletPath().startsWith("/api/")) {
-				token = getCookie(httpRequest, "Download-Access-Token");
+				token = decodeBase64Value(getCookie(httpRequest, SecurityTokens.ACCESS_TOKEN_COOKIE));
 				if (!StringUtils.isBlank(token)) {
 					return token;
 				}
@@ -52,7 +56,7 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 		if (httpRequest != null) {
 
-			String token = httpRequest.getHeader("X-Refresh-Token");
+			String token = httpRequest.getHeader(SecurityTokens.REFRESH_TOKEN_HEADER);
 
 			if (!StringUtils.isBlank(token)) {
 				return token;
@@ -73,24 +77,23 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 	private String getCookie(HttpServletRequest aRequest, String aName) {
 
-		// Parse cookies manually to avoid incorrect cookie values under Apache Tomcat
+		Cookie cookie = WebUtils.getCookie(aRequest, aName);
 
-		String cookieHeader = aRequest.getHeader("Cookie");
+		if (cookie != null) {
+			try {
+				return URLDecoder.decode(cookie.getValue(), "UTF-8");
+			} catch (UnsupportedEncodingException ignored) {}
+		}
 
-		if (cookieHeader != null) {
-			for (String cookieItem : cookieHeader.split(";")) {
-				if (!StringUtils.isEmpty(cookieItem)) {
-					try {
-						for (HttpCookie cookie : HttpCookie.parse(cookieItem)) {
-							if (cookie.getName().equals(aName)) {
-								return URLDecoder.decode(cookie.getValue(), "UTF-8");
-							}
-						}
-					} catch (Exception e) {
-						log.warn("Could not parse cookie: " + cookieItem, e);
-					}
-				}
-			}
+		return null;
+	}
+
+	private String decodeBase64Value(String aValue) {
+
+		if (aValue != null) {
+			try {
+				return new String(Base64.decodeBase64(aValue), "UTF-8");
+			} catch (UnsupportedEncodingException ignored) {}
 		}
 
 		return null;

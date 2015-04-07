@@ -22,6 +22,8 @@
 
     <inherits name="org.fusesource.restygwt.RestyGWT" />
 
+	<inherits name="com.googlecode.gwt.crypto.Crypto"/>
+
 	<source path="client" />
 	<source path="shared" />
 

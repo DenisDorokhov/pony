@@ -55,12 +55,11 @@ public class SqlSplitter {
 			return splitScript(readScript(reader));
 
 		} finally {
-			//noinspection EmptyCatchBlock
 			try {
 				if (reader != null) {
 					reader.close();
 				}
-			} catch (IOException ex) {}
+			} catch (IOException ignored) {}
 		}
 	}
 

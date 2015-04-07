@@ -27,7 +27,7 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/refreshToken")
-	Request refreshToken(@HeaderParam("X-Refresh-Token") String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+	Request refreshToken(@HeaderParam(SecurityTokens.REFRESH_TOKEN_HEADER) String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
 
 	@GET
 	@Path("/artists")

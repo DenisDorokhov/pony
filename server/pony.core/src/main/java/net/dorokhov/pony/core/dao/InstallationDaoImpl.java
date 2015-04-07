@@ -130,10 +130,9 @@ public class InstallationDaoImpl implements InstallationDao {
 			throw new RuntimeException(e);
 		} finally {
 			if (connection != null) {
-				//noinspection EmptyCatchBlock
 				try {
 					connection.close();
-				} catch (Exception e) {}
+				} catch (Exception ignored) {}
 			}
 		}
 	}

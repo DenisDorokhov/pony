@@ -101,10 +101,9 @@ public class SongDataServiceImpl implements SongDataService {
 
 		Integer result = null;
 
-		//noinspection EmptyCatchBlock
 		try {
 			result = Integer.valueOf(aTag.getFirst(aKey));
-		} catch (NumberFormatException e) {}
+		} catch (NumberFormatException ignored) {}
 
 		return result;
 	}
