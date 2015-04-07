@@ -1,16 +1,19 @@
 package net.dorokhov.pony.web.server.security;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import java.net.HttpCookie;
 import java.net.URLDecoder;
 
 @Service
 public class UserTokenReaderImpl implements UserTokenReader {
+
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public String readAccessToken(ServletRequest aRequest) {
@@ -70,13 +73,22 @@ public class UserTokenReaderImpl implements UserTokenReader {
 
 	private String getCookie(HttpServletRequest aRequest, String aName) {
 
-		if (aRequest.getCookies() != null) {
-			for (Cookie cookie : aRequest.getCookies()) {
-				if (cookie.getName().equals(aName)) {
-					//noinspection EmptyCatchBlock
+		// Parse cookies manually to avoid incorrect cookie values under Apache Tomcat
+
+		String cookieHeader = aRequest.getHeader("Cookie");
+
+		if (cookieHeader != null) {
+			for (String cookieItem : cookieHeader.split(";")) {
+				if (!StringUtils.isEmpty(cookieItem)) {
 					try {
-						return URLDecoder.decode(cookie.getValue(), "UTF-8");
-					} catch (UnsupportedEncodingException e) {}
+						for (HttpCookie cookie : HttpCookie.parse(cookieItem)) {
+							if (cookie.getName().equals(aName)) {
+								return URLDecoder.decode(cookie.getValue(), "UTF-8");
+							}
+						}
+					} catch (Exception e) {
+						log.warn("Could not parse cookie: " + cookieItem, e);
+					}
 				}
 			}
 		}
