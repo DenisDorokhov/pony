@@ -168,6 +168,8 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 	@Override
 	public void setSong(SongDto aSong, boolean aPlay) {
 
+		pause();
+
 		song = aSong;
 
 		updateSong();
@@ -176,8 +178,6 @@ public class PlayerView extends ViewWithUiHandlers<PlayerUiHandlers> implements 
 
 		if (aPlay) {
 			play();
-		} else {
-			pause();
 		}
 	}
 

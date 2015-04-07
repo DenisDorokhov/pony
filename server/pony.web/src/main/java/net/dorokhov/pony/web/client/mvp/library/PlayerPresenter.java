@@ -89,9 +89,11 @@ public class PlayerPresenter extends PresenterWidget<PlayerPresenter.MyView> imp
 	@Override
 	protected void onHide() {
 
-		super.onHide();
+		getView().pause();
 
 		closingWindowRegistration.removeHandler();
+
+		super.onHide();
 	}
 
 	@Override
