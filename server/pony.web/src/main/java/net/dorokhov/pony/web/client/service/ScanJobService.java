@@ -26,7 +26,7 @@ public class ScanJobService {
 
 	public OperationRequest getScanJobs(int aPageNumber, final OperationCallback<PagedListDto<ScanJobDto>> aCallback) {
 
-		log.info("Getting scan jobs...");
+		log.info("Getting scan jobs page [" + aPageNumber + "]...");
 
 		return new RequestAdapter(apiService.getScanJobs(aPageNumber, new MethodCallbackAdapter<>(new OperationCallback<PagedListDto<ScanJobDto>>() {
 			@Override

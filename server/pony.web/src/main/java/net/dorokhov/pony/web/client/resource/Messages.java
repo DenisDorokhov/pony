@@ -67,7 +67,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String scanningJobStatusFailed();
 	public String scanningJobStatusInterrupted();
 
+	public String logTitle();
+
 	public String pagedListPrevious();
 	public String pagedListNext();
 
+	public String logColumnDate();
+	public String logColumnType();
+	public String logColumnText();
 }

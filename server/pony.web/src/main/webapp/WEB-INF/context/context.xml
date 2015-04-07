@@ -44,7 +44,7 @@
 
         <security:intercept-url pattern="/api/installation" access="permitAll" />
         <security:intercept-url pattern="/api/authenticate" access="permitAll" />
-        <security:intercept-url pattern="/api/refreshToken/**" access="permitAll" />
+        <security:intercept-url pattern="/api/refreshToken" access="permitAll" />
 
         <security:intercept-url pattern="/api/admin/**" access="hasRole('ADMIN')" />
 

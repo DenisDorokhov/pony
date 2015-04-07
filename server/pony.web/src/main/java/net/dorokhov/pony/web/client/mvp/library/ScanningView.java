@@ -153,8 +153,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
-						return FormatUtils.formatMessage(LogMessages.INSTANCE,
-								aJob.getLogMessage().getCode(), aJob.getLogMessage().getArguments(), aJob.getLogMessage().getText());
+						return FormatUtils.formatLog(aJob.getLogMessage());
 					}
 				}
 		);

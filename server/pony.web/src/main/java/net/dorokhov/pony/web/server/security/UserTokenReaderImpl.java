@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 @Service
 public class UserTokenReaderImpl implements UserTokenReader {
@@ -71,7 +73,10 @@ public class UserTokenReaderImpl implements UserTokenReader {
 		if (aRequest.getCookies() != null) {
 			for (Cookie cookie : aRequest.getCookies()) {
 				if (cookie.getName().equals(aName)) {
-					return cookie.getValue();
+					//noinspection EmptyCatchBlock
+					try {
+						return URLDecoder.decode(cookie.getValue(), "UTF-8");
+					} catch (UnsupportedEncodingException e) {}
 				}
 			}
 		}

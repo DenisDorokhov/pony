@@ -34,7 +34,7 @@ public class ScanJobScheduler {
 	}
 
 	@Transactional
-	@Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 5 * 60 * 1000)
+	@Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 5 * 60 * 1000)
 	synchronized public void startAutoScanJob() {
 		if (installationService.getInstallation() != null) {
 			scanJobService.startAutoScanJob();

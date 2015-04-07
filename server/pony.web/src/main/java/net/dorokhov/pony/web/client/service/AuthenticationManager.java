@@ -389,7 +389,7 @@ public class AuthenticationManager {
 		setUser(aAuthentication.getUser());
 
 		securityStorage.setAccessTokenExpiration(aAuthentication.getAccessTokenExpiration());
-		securityStorage.setRefreshToken(aAuthentication.getAccessToken());
+		securityStorage.setRefreshToken(aAuthentication.getRefreshToken());
 	}
 
 	private void clearAuthentication(boolean aPropagateLogout) {

@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService {
 		AccessToken accessToken = createAccessToken(accessTokenString, userDetails.getUser());
 
 		TokenString refreshTokenString = new TokenString();
-		RefreshToken refreshToken = createRefreshToken(accessTokenString, userDetails.getUser());
+		RefreshToken refreshToken = createRefreshToken(refreshTokenString, userDetails.getUser());
 
 		SecurityContextHolder.getContext().setAuthentication(springAuthentication);
 
@@ -298,7 +298,7 @@ public class UserServiceImpl implements UserService {
 		AccessToken accessToken = createAccessToken(accessTokenString, user);
 
 		TokenString refreshTokenString = new TokenString();
-		RefreshToken refreshToken = createRefreshToken(accessTokenString, user);
+		RefreshToken refreshToken = createRefreshToken(refreshTokenString, user);
 
 		log.info("Token for user [" + user.getEmail() + "] has been refreshed.");
 
@@ -422,7 +422,7 @@ public class UserServiceImpl implements UserService {
 
 		AccessToken token = accessTokenDao.findOne(tokenString.getTokenId());
 
-		if (token == null || !passwordEncoder.matches(token.getSecret(), passwordEncoder.encode(token.getSecret()))) {
+		if (token == null || !passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
 			throw new InvalidTokenException();
 		}
 
@@ -435,7 +435,7 @@ public class UserServiceImpl implements UserService {
 
 		RefreshToken token = refreshTokenDao.findOne(tokenString.getTokenId());
 
-		if (token == null || !passwordEncoder.matches(token.getSecret(), passwordEncoder.encode(token.getSecret()))) {
+		if (token == null || !passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
 			throw new InvalidTokenException();
 		}
 
