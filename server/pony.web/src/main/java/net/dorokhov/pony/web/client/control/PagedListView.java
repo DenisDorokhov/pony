@@ -6,11 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import net.dorokhov.pony.web.client.resource.Messages;
+import com.google.gwt.user.client.ui.*;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.ErrorDto;
@@ -44,6 +40,14 @@ public class PagedListView<T> extends Composite {
 		LOADING, ERROR, LOADED
 	}
 
+	// Scrolling workaround from https://code.google.com/p/google-web-toolkit/issues/detail?id=6865
+	private class MyDataGrid extends DataGrid<T> {
+		public ScrollPanel getScrollPanel() {
+			HeaderPanel header = (HeaderPanel) getWidget();
+			return (ScrollPanel) header.getContentWidget();
+		}
+	}
+
 	interface MyUiBinder extends UiBinder<Widget, PagedListView> {}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -54,8 +58,8 @@ public class PagedListView<T> extends Composite {
 	@UiField
 	Label pagerLabel;
 
-	@UiField
-	DataGrid<T> grid;
+	@UiField(provided = true)
+	MyDataGrid grid;
 
 	@UiField
 	FlowPanel loadingOverlay;
@@ -69,6 +73,8 @@ public class PagedListView<T> extends Composite {
 	private OperationRequest currentRequest;
 
 	public PagedListView(DataSource<T> aDataSource) {
+
+		grid = new MyDataGrid();
 
 		initWidget(uiBinder.createAndBindUi(this));
 
@@ -180,6 +186,8 @@ public class PagedListView<T> extends Composite {
 			getPagerNext(pager).setEnabled(data.getPageNumber() < data.getTotalPages() - 1);
 
 			pagerLabel.setText(dataSource.getPagerLabel(data));
+
+			grid.getScrollPanel().scrollToTop();
 
 		} else {
 
