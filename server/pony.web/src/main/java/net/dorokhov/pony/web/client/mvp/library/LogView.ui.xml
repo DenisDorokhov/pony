@@ -5,17 +5,34 @@
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
-    <ui:style>
+    <ui:style type="net.dorokhov.pony.web.client.mvp.library.LogView.MyStyle">
         @external .modal-dialog;
         .logView .modal-dialog {
             width: 1000px !important;
         }
         .messageView {
             height: 372px;
+            margin-top: 5px;
+        }
+        .messageType {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .messageTypeDebug {
+            color: #337ab7;
+        }
+        .messageTypeInfo {
+            color: #5cb85c;
+        }
+        .messageTypeWarn {
+            color: #f0ad4e;
+        }
+        .messageTypeError {
+            color: #d9534f;
         }
     </ui:style>
 
-    <b:Modal addStyleNames="{style.logView}" title="{mes.scanningTitle}" fade="true">
+    <b:Modal addStyleNames="{style.logView}" title="{mes.logTitle}" fade="true">
         <b:ModalBody>
             <p:PagedListView ui:field="messageView" addStyleNames="{style.messageView}" />
         </b:ModalBody>

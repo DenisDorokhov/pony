@@ -42,16 +42,18 @@
             margin-left: 10px;
             width: 68px;
         }
-        .jobsView {
+        .jobView {
             height: 372px;
+            margin-top: 20px;
         }
         .jobStatus {
             text-transform: uppercase;
             font-weight: bold;
         }
-        .jobStatusStarting {}
+        .jobStatusStarting {
+        }
         .jobStatusStarted {
-            color: #5bc0de;
+            color: #337ab7;
         }
         .jobStatusComplete {
             color: #5cb85c;
@@ -86,7 +88,7 @@
 
             </g:FlowPanel>
 
-            <p:PagedListView ui:field="jobsView" addStyleNames="{style.jobsView}" />
+            <p:PagedListView ui:field="jobView" addStyleNames="{style.jobView}" />
 
         </b:ModalBody>
     </b:Modal>

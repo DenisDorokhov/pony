@@ -16,7 +16,6 @@ import net.dorokhov.pony.web.shared.UserDto;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate {
 
@@ -36,9 +35,8 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	}
 
-	private final Logger log = Logger.getLogger(getClass().getName());
-
 	private final ScanningPresenter scanningPresenter;
+	private final LogPresenter logPresenter;
 
 	private final BusyModeManager busyModeManager;
 
@@ -50,13 +48,14 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	@Inject
 	public ToolbarPresenter(EventBus aEventBus, MyView aView,
-							ScanningPresenter aScanningPresenter,
+							ScanningPresenter aScanningPresenter, LogPresenter aLogPresenter,
 							BusyModeManager aBusyModeManager, LibraryScanner aLibraryScanner,
 							AuthenticationManager aAuthenticationManager, ErrorNotifier aErrorNotifier) {
 
 		super(aEventBus, aView);
 
 		scanningPresenter = aScanningPresenter;
+		logPresenter = aLogPresenter;
 
 		busyModeManager = aBusyModeManager;
 		libraryScanner = aLibraryScanner;
@@ -122,7 +121,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	
 	@Override
 	public void onSettingsRequested() {
-		log.info("Settings requested.");
+		// TODO: implement
 	}
 
 	@Override
@@ -132,17 +131,17 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	@Override
 	public void onLogRequested() {
-
+		addToPopupSlot(logPresenter);
 	}
 
 	@Override
 	public void onUsersRequested() {
-
+		// TODO: implement
 	}
 
 	@Override
 	public void onEditProfileRequested() {
-		log.info("Profile edit requested.");
+		// TODO: implement
 	}
 
 	@Override

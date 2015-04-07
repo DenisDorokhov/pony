@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.web.bindery.event.shared.EventBus;
 import net.dorokhov.pony.web.client.control.PagedListView;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
-import net.dorokhov.pony.web.client.resource.LogMessages;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
@@ -71,7 +70,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	Button scanButton;
 
 	@UiField(provided = true)
-	PagedListView jobsView;
+	PagedListView jobView;
 
 	private ScanState scanState;
 
@@ -158,7 +157,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				}
 		);
 
-		jobsView = new PagedListView<>(new PagedListView.DataSource<ScanJobDto>() {
+		jobView = new PagedListView<>(new PagedListView.DataSource<ScanJobDto>() {
 
 			@Override
 			public int getColumnCount() {
@@ -198,7 +197,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 	@Override
 	public void reloadScanJobs(boolean aClearData) {
-		jobsView.reload(aClearData);
+		jobView.reload(aClearData);
 	}
 
 	@Override

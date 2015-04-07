@@ -11,6 +11,9 @@
         .pagedListView {
             position: relative;
         }
+        .pager {
+            margin-top: 0;
+        }
         .pagerLabel {
             position: absolute;
             top: 0;
@@ -65,7 +68,8 @@
 
     <g:FlowPanel addStyleNames="{style.pagedListView}">
 
-        <b:Pager ui:field="pager" previousText="{mes.pagedListPrevious}" nextText="{mes.pagedListNext}" alignToSides="true"
+        <b:Pager ui:field="pager" addStyleNames="{style.pager}"
+                 previousText="{mes.pagedListPrevious}" nextText="{mes.pagedListNext}" alignToSides="true"
                  previousIcon="ANGLE_DOUBLE_LEFT" nextIcon="ANGLE_DOUBLE_RIGHT" />
 
         <g:Label ui:field="pagerLabel" addStyleNames="{style.pagerLabel}" />
