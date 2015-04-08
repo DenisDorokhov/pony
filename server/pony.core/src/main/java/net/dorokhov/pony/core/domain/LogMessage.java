@@ -88,7 +88,7 @@ public class LogMessage {
 		details = aMessageDetails;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "logMessage")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "logMessage")
 	@OrderBy("sort ASC")
 	public List<LogMessageArgument> getArguments() {
 

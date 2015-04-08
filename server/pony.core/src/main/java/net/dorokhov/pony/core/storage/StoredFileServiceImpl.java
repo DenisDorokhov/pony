@@ -293,7 +293,7 @@ public class StoredFileServiceImpl implements StoredFileService {
 			@Override
 			public void afterCommit() {
 				if (!file.delete()) {
-					log.warn("could not delete file [{}] from file system", file.getAbsolutePath());
+					log.warn("Could not delete file [{}] from file system.", file.getAbsolutePath());
 				}
 			}
 		});

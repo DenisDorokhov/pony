@@ -55,7 +55,7 @@ public class Album extends BaseEntity<Long> implements Comparable<Album> {
 		artwork = aArtwork;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "album")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "album")
 	public List<Song> getSongs() {
 
 		if (songs == null) {

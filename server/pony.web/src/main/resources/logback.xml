@@ -18,6 +18,7 @@
 	<logger name="org.jaudiotagger" level="ERROR" />
 	<logger name="org.hibernate" level="ERROR" />
 	<!-- logger name="org.hibernate.SQL" level="DEBUG" /-->
+	<!-- logger name="org.hibernate.type" level="TRACE" /-->
 	<logger name="org.springframework.web" level="INFO" />
 	<logger name="org.springframework.web.multipart.commons.CommonsMultipartResolver" level="ERROR" />
 	<logger name="net.dorokhov.pony" level="DEBUG" />

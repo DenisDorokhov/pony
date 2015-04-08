@@ -42,7 +42,7 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 		artwork = aArtwork;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "genre")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genre")
 	public List<Song> getSongs() {
 
 		if (songs == null) {

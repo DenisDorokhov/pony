@@ -194,25 +194,14 @@ public class LibraryServiceImpl implements LibraryService {
 
 					} else {
 
-						if (storedFileService.getFile(aStoredFile).exists()) {
+						File externalFile = new File(externalFilePath);
 
-							File externalFile = new File(externalFilePath);
+						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
 
-							shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
-
-							if (shouldDelete) {
-								logService.debug(log, "libraryService.deletingModifiedStoredFile",
-										"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
-										Arrays.asList(aStoredFile.toString(), externalFilePath));
-							}
-
-						} else {
-
-							logService.warn(log, "libraryService.deletingNotStoredFile",
-									"Deleting not found stored file [" + aStoredFile + "].",
-									Arrays.asList(aStoredFile.toString()));
-
-							shouldDelete = true;
+						if (shouldDelete) {
+							logService.debug(log, "libraryService.deletingModifiedStoredFile",
+									"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
+									Arrays.asList(aStoredFile.toString(), externalFilePath));
 						}
 					}
 				}
@@ -239,8 +228,15 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
-		for (final Long id : itemsToDelete) {
-			deleteArtwork(id);
+		// Clear song artworks and delete stored file separately, otherwise Hibernate won't delete all stored files (bug in Hibernate auto flush?)
+		for (Long id : itemsToDelete) {
+			songDao.clearArtworkByArtworkId(id);
+			albumDao.clearArtworkByArtworkId(id);
+			artistDao.clearArtworkByArtworkId(id);
+			genreDao.clearArtworkByArtworkId(id);
+		}
+		for (Long id : itemsToDelete) {
+			storedFileService.delete(id);
 		}
 	}
 
@@ -459,8 +455,7 @@ public class LibraryServiceImpl implements LibraryService {
 					!ObjectUtils.nullSafeEquals(song.getArtistName(), aSongData.getArtist()) ||
 					!ObjectUtils.nullSafeEquals(song.getAlbumArtistName(), aSongData.getAlbumArtist()) ||
 					!ObjectUtils.nullSafeEquals(song.getAlbumName(), aSongData.getAlbum()) ||
-					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear()) ||
-					!ObjectUtils.nullSafeEquals(song.getArtwork(), artwork)) {
+					!ObjectUtils.nullSafeEquals(song.getYear(), aSongData.getYear())) {
 
 				shouldSave = true;
 			}
@@ -838,16 +833,6 @@ public class LibraryServiceImpl implements LibraryService {
 		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre(), song.getArtwork());
 	}
 
-	private void deleteArtwork(Long aId) {
-
-		songDao.clearArtworkByArtworkId(aId);
-		albumDao.clearArtworkByArtworkId(aId);
-		artistDao.clearArtworkByArtworkId(aId);
-		genreDao.clearArtworkByArtworkId(aId);
-
-		storedFileService.delete(aId);
-	}
-
 	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre, StoredFile aArtwork) {
 
 		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
@@ -877,7 +862,12 @@ public class LibraryServiceImpl implements LibraryService {
 					"Deleting not used artwork " + aArtwork + ".",
 					Arrays.asList(aArtwork.toString()));
 
-			deleteArtwork(aArtwork.getId());
+			songDao.clearArtworkByArtworkId(aArtwork.getId());
+			albumDao.clearArtworkByArtworkId(aArtwork.getId());
+			artistDao.clearArtworkByArtworkId(aArtwork.getId());
+			genreDao.clearArtworkByArtworkId(aArtwork.getId());
+
+			storedFileService.delete(aArtwork.getId());
 		}
 	}
 
