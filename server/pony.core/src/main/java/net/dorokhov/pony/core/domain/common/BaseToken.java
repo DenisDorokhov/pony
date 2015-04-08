@@ -30,11 +30,11 @@ public abstract class BaseToken {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "date")
-	public Date getCreationDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setCreationDate(Date aCreationDate) {
+	public void setDate(Date aCreationDate) {
 		date = aCreationDate;
 	}
 
@@ -61,7 +61,7 @@ public abstract class BaseToken {
 
 	@PrePersist
 	public void prePersist() {
-		setCreationDate(new Date());
+		setDate(new Date());
 	}
 
 	@Override
@@ -86,4 +86,13 @@ public abstract class BaseToken {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "BaseToken{" +
+				"id='" + id + '\'' +
+				", date=" + date +
+				", secret='" + secret + '\'' +
+				", user=" + user +
+				'}';
+	}
 }

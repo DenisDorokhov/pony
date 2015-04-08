@@ -8,6 +8,6 @@ import java.util.Date;
 public interface RefreshTokenDao extends PagingAndSortingRepository<RefreshToken, String> {
 
 	public Long deleteByUserId(Long aId);
-	public Long deleteByCreationDateLessThan(Date aMaxCreationDate);
+	public Long deleteByDateLessThan(Date aMaxCreationDate);
 
 }

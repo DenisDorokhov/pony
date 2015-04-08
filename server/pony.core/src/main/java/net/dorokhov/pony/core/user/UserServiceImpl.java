@@ -45,8 +45,8 @@ public class UserServiceImpl implements UserService {
 
 	private AuthenticationManager authenticationManager;
 
-	private int accessTokenLifetime;
-	private int refreshTokenLifetime;
+	private long accessTokenLifetime;
+	private long refreshTokenLifetime;
 
 	private String debugToken;
 
@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Value("${user.accessTokenLifetime}")
-	public void setAccessTokenLifetime(int aAccessTokenLifetime) {
+	public void setAccessTokenLifetime(long aAccessTokenLifetime) {
 		accessTokenLifetime = aAccessTokenLifetime;
 	}
 
 	@Value("${user.refreshTokenLifetime}")
-	public void setRefreshTokenLifetime(int aRefreshTokenLifetime) {
+	public void setRefreshTokenLifetime(long aRefreshTokenLifetime) {
 		refreshTokenLifetime = aRefreshTokenLifetime;
 	}
 
@@ -241,8 +241,8 @@ public class UserServiceImpl implements UserService {
 		authentication.setAccessToken(accessTokenString.toString());
 		authentication.setRefreshToken(refreshTokenString.toString());
 
-		authentication.setAccessTokenExpiration(new Date(accessToken.getCreationDate().getTime() + accessTokenLifetime * 1000));
-		authentication.setRefreshTokenExpiration(new Date(refreshToken.getCreationDate().getTime() + refreshTokenLifetime * 1000));
+		authentication.setAccessTokenExpiration(new Date(accessToken.getDate().getTime() + accessTokenLifetime * 1000));
+		authentication.setRefreshTokenExpiration(new Date(refreshToken.getDate().getTime() + refreshTokenLifetime * 1000));
 
 		authentication.setUser(userDetails.getUser());
 
@@ -372,14 +372,14 @@ public class UserServiceImpl implements UserService {
 
 		Date maxAccessTokenDate = new Date(new Date().getTime() - accessTokenLifetime * 1000);
 
-		Long deletedAccessTokens = accessTokenDao.deleteByCreationDateLessThan(maxAccessTokenDate);
+		Long deletedAccessTokens = accessTokenDao.deleteByDateLessThan(maxAccessTokenDate);
 		if (deletedAccessTokens > 0) {
 			log.debug("Deleted [" + deletedAccessTokens + "] access tokens.");
 		}
 
 		Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
 
-		Long deletedRefreshTokens = refreshTokenDao.deleteByCreationDateLessThan(maxRefreshTokenDate);
+		Long deletedRefreshTokens = refreshTokenDao.deleteByDateLessThan(maxRefreshTokenDate);
 		if (deletedRefreshTokens > 0) {
 			log.debug("Deleted [" + deletedRefreshTokens + "] refresh tokens.");
 		}
@@ -409,9 +409,12 @@ public class UserServiceImpl implements UserService {
 
 	private void validateTokenAge(BaseToken aToken, long aLifetime) throws InvalidTokenException {
 
-		long tokenAge = (new Date().getTime() - aToken.getCreationDate().getTime()) / 1000;
+		long tokenAge = (new Date().getTime() - aToken.getDate().getTime()) / 1000;
 
 		if (tokenAge > aLifetime) {
+
+			log.debug("Token " + aToken + " is too old [" + aToken + "], age is [" + tokenAge + "], lifetime is [" + aLifetime + "].");
+
 			throw new InvalidTokenException();
 		}
 	}
@@ -422,7 +425,17 @@ public class UserServiceImpl implements UserService {
 
 		AccessToken token = accessTokenDao.findOne(tokenString.getTokenId());
 
-		if (token == null || !passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
+		if (token == null) {
+
+			log.debug("Access token not found [" + aTokenString + "].");
+
+			throw new InvalidTokenException();
+		}
+
+		if (!passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
+
+			log.debug("Access token secret does not match [" + aTokenString + "].");
+
 			throw new InvalidTokenException();
 		}
 
@@ -435,7 +448,17 @@ public class UserServiceImpl implements UserService {
 
 		RefreshToken token = refreshTokenDao.findOne(tokenString.getTokenId());
 
-		if (token == null || !passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
+		if (token == null) {
+
+			log.debug("Refresh token not found [" + aTokenString + "].");
+
+			throw new InvalidTokenException();
+		}
+
+		if (!passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
+
+			log.debug("Refresh token secret does not match [" + aTokenString + "].");
+
 			throw new InvalidTokenException();
 		}
 
@@ -443,7 +466,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private Date getTokenExpiration(BaseToken aToken) {
-		return new Date(aToken.getCreationDate().getTime() + accessTokenLifetime * 1000);
+		return new Date(aToken.getDate().getTime() + accessTokenLifetime * 1000);
 	}
 
 	private class AuthenticationImpl implements Authentication {
