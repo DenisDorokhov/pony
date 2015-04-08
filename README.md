@@ -20,7 +20,7 @@ This project was originally started as a playground for development of my skills
 
 ## Known Issues
 
-* Music does not play in IE.
+* Application has several bugs when running in IE.
 * Needs more testing in different browsers. I test mostly in Google Chrome.
 * Needs testing on Windows. I test on Mac OS X and Linux.
 
@@ -42,11 +42,9 @@ This project was originally started as a playground for development of my skills
 
 ## Development TODO
 
-* Scanning GUI.
 * Settings GUI.
 * Edit current user GUI.
 * User CRUD GUI.
-* Log GUI.
 * Export artist / album / song GUI.
 * Search GUI.
 * Edit audio tags GUI.
