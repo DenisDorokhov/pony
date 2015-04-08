@@ -82,9 +82,9 @@
           <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
           <element id="library" level="project" name="Maven: org:jaudiotagger:2.0.3" />
           <element id="library" level="project" name="Maven: net.coobird:thumbnailator:0.4.7" />
+          <element id="library" level="project" name="Maven: org.realityforge.gwt.cache-filter:gwt-cache-filter:0.6" />
           <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA" />
           <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.4" />
-          <element id="library" level="project" name="Maven: com.googlecode.gwt-crypto:gwt-crypto:2.3.0" />
         </element>
       </element>
       <element id="directory" name="META-INF">
