@@ -29,6 +29,7 @@ This project was originally started as a playground for development of my skills
 * Spring MVC
 * Spring Data JPA
 * Hibernate
+* Hibernate Search / Lucene
 * HSQLDB
 * Spring Security
 * Token-based authentication system.
