@@ -157,8 +157,9 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
-	public ResponseDto<List<UserDto>> getUsers() {
-		return responseBuilder.build(userServiceFacade.getAll());
+	public ResponseDto<PagedListDto<UserDto>> getUsers(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+													   @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
+		return responseBuilder.build(userServiceFacade.getAll(aPageNumber, aPageSize));
 	}
 
 	@RequestMapping(value = "/admin/users/{aId}", method = RequestMethod.GET)
@@ -196,10 +197,10 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
 	public ResponseDto<PagedListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessageDto.Type aType,
-													  @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
-													  @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
-													  @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-													  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
+														   @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
+														   @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
+														   @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
+														   @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 
 		LogQueryDto query = new LogQueryDto();
 
@@ -212,7 +213,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanJobs", method = RequestMethod.GET)
 	public ResponseDto<PagedListDto<ScanJobDto>> getScanJobs(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-														@RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
+															 @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 		return responseBuilder.build(scanServiceFacade.getScanJobs(aPageNumber, aPageSize));
 	}
 
@@ -223,7 +224,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/scanResults", method = RequestMethod.GET)
 	public ResponseDto<PagedListDto<ScanResultDto>> getScanResults(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
-															  @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
+																   @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 		return responseBuilder.build(scanServiceFacade.getScanResults(aPageNumber, aPageSize));
 	}
 

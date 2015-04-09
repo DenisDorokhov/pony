@@ -328,6 +328,8 @@ public class DtoConverter {
 		UserDto dto = new UserDto();
 
 		dto.setId(aUser.getId());
+		dto.setCreationDate(aUser.getCreationDate());
+		dto.setUpdateDate(aUser.getUpdateDate());
 		dto.setName(aUser.getName());
 		dto.setEmail(aUser.getEmail());
 

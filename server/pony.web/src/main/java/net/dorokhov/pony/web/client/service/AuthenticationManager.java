@@ -331,6 +331,9 @@ public class AuthenticationManager {
 		boolean scheduleChecking = true;
 
 		if (securityStorage.getAccessTokenExpiration() != null) {
+
+			log.info("Checking token expiration...");
+
 			if (securityStorage.getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
 
 				scheduleChecking = false;
@@ -341,6 +344,9 @@ public class AuthenticationManager {
 						checkTokenExpirationTimer.schedule(CHECK_TOKEN_EXPIRATION_INTERVAL);
 					}
 				});
+
+			} else {
+				log.info("Token refresh is not needed.");
 			}
 		}
 

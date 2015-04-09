@@ -3,21 +3,26 @@ package net.dorokhov.pony.web.server.service;
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.user.UserService;
 import net.dorokhov.pony.core.user.exception.*;
+import net.dorokhov.pony.web.server.exception.InvalidArgumentException;
 import net.dorokhov.pony.web.server.exception.ObjectNotFoundException;
 import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
 public class UserServiceFacadeImpl implements UserServiceFacade {
+
+	private static final int MAX_PAGE_SIZE = 100;
 
 	private UserService userService;
 
@@ -48,8 +53,19 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<UserDto> getAll() {
-		return dtoConverter.listToDto(userService.getAll(), new DtoConverter.ListConverter<User, UserDto>() {
+	public PagedListDto<UserDto> getAll(int aPageNumber, int aPageSize) throws InvalidArgumentException {
+
+		if (aPageNumber < 0) {
+			throw new InvalidArgumentException(ErrorCodes.PAGE_NUMBER_INVALID, "Page number [" + aPageNumber + "] is invalid.", String.valueOf(aPageNumber));
+		}
+		if (aPageSize > MAX_PAGE_SIZE) {
+			throw new InvalidArgumentException(ErrorCodes.PAGE_SIZE_INVALID, "Page size [" + aPageNumber + "] must be less than or equal to [" + MAX_PAGE_SIZE + "]",
+					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
+		}
+
+		Page<User> page = userService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "name", "id"));
+
+		return dtoConverter.pagedListToDto(page, new DtoConverter.ListConverter<User, UserDto>() {
 			@Override
 			public UserDto convert(User aItem) {
 				return dtoConverter.userToDto(aItem);

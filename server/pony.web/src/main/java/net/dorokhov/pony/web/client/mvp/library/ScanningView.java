@@ -52,7 +52,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	private static final NumberFormat PROGRESS_FORMAT = NumberFormat.getPercentFormat();
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(Messages.INSTANCE.dateFormatTechnical());
 
 	@UiField
 	MyStyle style;

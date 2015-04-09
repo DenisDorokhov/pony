@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -105,15 +106,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<User> getAll() {
-
-		List<User> userList = new ArrayList<>();
-
-		for (User user : userDao.findAll()) {
-			userList.add(user);
-		}
-
-		return userList;
+	public Page<User> getAll(Pageable aPageable) {
+		return userDao.findAll(aPageable);
 	}
 
 	@Override

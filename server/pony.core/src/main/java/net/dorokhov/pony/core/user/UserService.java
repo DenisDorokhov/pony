@@ -2,6 +2,8 @@ package net.dorokhov.pony.core.user;
 
 import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.user.exception.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -24,7 +26,7 @@ public interface UserService {
 	public User getById(Long aId);
 	public User getByEmail(String aEmail);
 
-	public List<User> getAll();
+	public Page<User> getAll(Pageable aPageable);
 
 	public User create(User aUser) throws UserExistsException;
 	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException;

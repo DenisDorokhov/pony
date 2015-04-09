@@ -6,6 +6,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public static final Messages INSTANCE = GWT.create(Messages.class);
 
+	public String dateFormatTechnical();
+
 	public String errorTitle();
 	public String errorText();
 	public String errorHomeButton();
@@ -71,6 +73,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String pagedListNext();
 
 	public String logTitle();
+	public String logPager(int aPageNumber, int aTotalPages, @Optional int aSize, @Optional long aTotalElements);
 	public String logColumnDate();
 	public String logColumnType();
 	public String logColumnText();
@@ -78,4 +81,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String logTypeInfo();
 	public String logTypeWarn();
 	public String logTypeError();
+
+	public String userListTitle();
+	public String userListPager(int aPageNumber, int aTotalPages, @Optional int aSize, @Optional long aTotalElements);
+	public String userListColumnCreationDate();
+	public String userListColumnUpdateDate();
+	public String userListColumnName();
+	public String userListColumnEmail();
+	public String userListColumnRole();
+	public String userListRoleUser();
+	public String userListRoleAdmin();
+
 }

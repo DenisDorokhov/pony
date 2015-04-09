@@ -5,34 +5,34 @@ import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
-import net.dorokhov.pony.web.client.service.LogMessageService;
+import net.dorokhov.pony.web.client.service.UserService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.ErrorDto;
-import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
+import net.dorokhov.pony.web.shared.UserDto;
 
 import javax.inject.Inject;
 import java.util.List;
 
-public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implements LogUiHandlers {
+public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView> implements UserListUiHandlers {
 
-	public interface MyView extends PopupView, HasUiHandlers<LogUiHandlers> {
+	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {
 
-		public void reloadLogMessages(boolean aClearData);
+		public void reloadUsers(boolean aClearData);
 
 	}
 
-	private final LogMessageService logService;
+	private final UserService userService;
 
 	private final ErrorNotifier errorNotifier;
 
 	@Inject
-	public LogPresenter(EventBus aEventBus, MyView aView, LogMessageService aLogService, ErrorNotifier aErrorNotifier) {
+	public UserListPresenter(EventBus eventBus, MyView view, UserService aUserService, ErrorNotifier aErrorNotifier) {
 
-		super(aEventBus, aView);
+		super(eventBus, view);
 
-		logService = aLogService;
+		userService = aUserService;
 		errorNotifier = aErrorNotifier;
 
 		getView().setUiHandlers(this);
@@ -43,15 +43,15 @@ public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implement
 
 		super.onReveal();
 
-		getView().reloadLogMessages(true);
+		getView().reloadUsers(true);
 	}
 
 	@Override
-	public OperationRequest onLogMessagesRequested(int aPageNumber, final OperationCallback<PagedListDto<LogMessageDto>> aCallback) {
-		return logService.getLog(aPageNumber, null, null, null, new OperationCallback<PagedListDto<LogMessageDto>>() {
+	public OperationRequest onUsersRequested(int aPageNumber, final OperationCallback<PagedListDto<UserDto>> aCallback) {
+		return userService.getUsers(aPageNumber, new OperationCallback<PagedListDto<UserDto>>() {
 
 			@Override
-			public void onSuccess(PagedListDto<LogMessageDto> aPage) {
+			public void onSuccess(PagedListDto<UserDto> aPage) {
 				aCallback.onSuccess(aPage);
 			}
 
@@ -64,4 +64,5 @@ public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implement
 			}
 		});
 	}
+
 }

@@ -59,4 +59,8 @@ public interface ApiService extends RestService {
 				   @QueryParam("minDate") Date aMinDate, @QueryParam("maxDate") Date aMaxDate,
 				   MethodCallback<ResponseDto<PagedListDto<LogMessageDto>>> aCallback);
 
+	@GET
+	@Path("/admin/users")
+	Request getUsers(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<UserDto>>> aCallback);
+
 }

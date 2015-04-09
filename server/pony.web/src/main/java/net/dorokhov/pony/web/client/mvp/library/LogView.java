@@ -17,7 +17,6 @@ import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
-import net.dorokhov.pony.web.shared.ScanJobDto;
 import org.gwtbootstrap3.client.ui.Modal;
 
 import javax.inject.Inject;
@@ -42,7 +41,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(Messages.INSTANCE.dateFormatTechnical());
 
 	@UiField
 	MyStyle style;
@@ -51,9 +50,9 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 	PagedListView<LogMessageDto> messageView;
 
 	@Inject
-	public LogView(EventBus eventBus) {
+	public LogView(EventBus aEventBus) {
 
-		super(eventBus);
+		super(aEventBus);
 
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.logColumnDate(),
@@ -144,7 +143,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 			@Override
 			public String getPagerLabel(PagedListDto<LogMessageDto> aPagedList) {
-				return Messages.INSTANCE.scanningPager(aPagedList.getPageNumber() + 1, aPagedList.getTotalPages(), aPagedList.getContent().size(), aPagedList.getTotalElements());
+				return Messages.INSTANCE.logPager(aPagedList.getPageNumber() + 1, aPagedList.getTotalPages(), aPagedList.getContent().size(), aPagedList.getTotalElements());
 			}
 
 			@Override

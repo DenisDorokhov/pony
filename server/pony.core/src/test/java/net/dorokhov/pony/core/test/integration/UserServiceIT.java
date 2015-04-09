@@ -8,6 +8,7 @@ import net.dorokhov.pony.core.user.exception.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.PageRequest;
 
 public class UserServiceIT extends AbstractIntegrationCase {
 
@@ -60,7 +61,7 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		userService.create(user);
 
-		Assert.assertEquals(2, userService.getAll().size());
+		Assert.assertEquals(2, userService.getAll(new PageRequest(0, 100)).getNumberOfElements());
 
 		user.setName("TestNew");
 
