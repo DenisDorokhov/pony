@@ -106,6 +106,8 @@ public class PagedListView<T> extends Composite {
 				grid.setColumnWidth(i, width);
 			}
 		}
+
+		setState(State.LOADING);
 	}
 
 	public State getState() {
@@ -116,24 +118,22 @@ public class PagedListView<T> extends Composite {
 		return data;
 	}
 
+	public void clear() {
+
+		setData(null);
+
+		setState(State.LOADING);
+
+		if (currentRequest != null) {
+			currentRequest.cancel();
+		}
+	}
+
 	public void reload() {
-		reload(0, true);
+		reload(0);
 	}
 
 	public void reload(int aPageNumber) {
-		reload(aPageNumber, true);
-	}
-
-	public void reload(boolean aClearData) {
-		reload(0, aClearData);
-	}
-
-	public void reload(int aPageNumber, boolean aClearData) {
-
-		if (aClearData) {
-			setData(null);
-		}
-
 		requestPagedList(aPageNumber);
 	}
 

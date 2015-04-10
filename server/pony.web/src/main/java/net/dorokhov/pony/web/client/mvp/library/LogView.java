@@ -6,6 +6,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.web.bindery.event.shared.EventBus;
@@ -17,6 +18,8 @@ import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
+import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.ui.Modal;
 
 import javax.inject.Inject;
@@ -47,7 +50,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 	MyStyle style;
 
 	@UiField(provided = true)
-	PagedListView<LogMessageDto> messageView;
+	PagedListView<LogMessageDto> logPagedView;
 
 	@Inject
 	public LogView(EventBus aEventBus) {
@@ -60,7 +63,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 				Messages.INSTANCE.logColumnText()
 		);
 		final List<String> widths = Arrays.asList(
-				"150px", "150px", null
+				"150px", "80px", null
 		);
 		final List<TextColumn<LogMessageDto>> columns = Arrays.asList(
 				new TextColumn<LogMessageDto>() {
@@ -119,7 +122,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 				}
 		);
 
-		messageView = new PagedListView<>(new PagedListView.DataSource<LogMessageDto>() {
+		logPagedView = new PagedListView<>(new PagedListView.DataSource<LogMessageDto>() {
 
 			@Override
 			public int getColumnCount() {
@@ -155,9 +158,14 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	@Override
-	public void reloadLogMessages(boolean aClearData) {
-		messageView.reload(aClearData);
+	@UiHandler("logView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		logPagedView.clear();
+	}
+
+	@UiHandler("logView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		logPagedView.reload();
 	}
 
 }

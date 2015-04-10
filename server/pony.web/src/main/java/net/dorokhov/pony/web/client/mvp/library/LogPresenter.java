@@ -17,11 +17,7 @@ import java.util.List;
 
 public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implements LogUiHandlers {
 
-	public interface MyView extends PopupView, HasUiHandlers<LogUiHandlers> {
-
-		public void reloadLogMessages(boolean aClearData);
-
-	}
+	public interface MyView extends PopupView, HasUiHandlers<LogUiHandlers> {}
 
 	private final LogMessageService logService;
 
@@ -36,14 +32,6 @@ public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implement
 		errorNotifier = aErrorNotifier;
 
 		getView().setUiHandlers(this);
-	}
-
-	@Override
-	protected void onReveal() {
-
-		super.onReveal();
-
-		getView().reloadLogMessages(true);
 	}
 
 	@Override

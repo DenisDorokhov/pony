@@ -42,7 +42,7 @@
             margin-left: 10px;
             width: 68px;
         }
-        .jobView {
+        .jobPagedView {
             height: 372px;
             margin-top: 20px;
         }
@@ -66,7 +66,7 @@
         }
     </ui:style>
 
-    <b:Modal addStyleNames="{style.scanningView}" title="{mes.scanningTitle}" fade="true">
+    <b:Modal ui:field="scanningView" addStyleNames="{style.scanningView}" title="{mes.scanningTitle}" fade="true">
         <b:ModalBody>
 
             <g:FlowPanel addStyleNames="{style.section}">
@@ -88,7 +88,7 @@
 
             </g:FlowPanel>
 
-            <p:PagedListView ui:field="jobView" addStyleNames="{style.jobView}" />
+            <p:PagedListView ui:field="jobPagedView" addStyleNames="{style.jobPagedView}" />
 
         </b:ModalBody>
     </b:Modal>

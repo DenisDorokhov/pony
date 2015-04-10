@@ -22,6 +22,8 @@ import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import net.dorokhov.pony.web.shared.ScanJobDto;
 import net.dorokhov.pony.web.shared.ScanStatusDto;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
+import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.Progress;
@@ -70,7 +72,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	Button scanButton;
 
 	@UiField(provided = true)
-	PagedListView jobView;
+	PagedListView jobPagedView;
 
 	private ScanState scanState;
 
@@ -88,7 +90,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				Messages.INSTANCE.scanningColumnLastMessage()
 		);
 		final List<String> widths = Arrays.asList(
-				"150px", "150px", "150px", null
+				"150px", "150px", "100px", null
 		);
 		final List<TextColumn<ScanJobDto>> columns = Arrays.asList(
 				new TextColumn<ScanJobDto>() {
@@ -100,7 +102,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
-						return DATE_FORMAT.format(aJob.getUpdateDate());
+						return aJob.getUpdateDate() != null ? DATE_FORMAT.format(aJob.getUpdateDate()) : "";
 					}
 				},
 				new TextColumn<ScanJobDto>() {
@@ -157,7 +159,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				}
 		);
 
-		jobView = new PagedListView<>(new PagedListView.DataSource<ScanJobDto>() {
+		jobPagedView = new PagedListView<>(new PagedListView.DataSource<ScanJobDto>() {
 
 			@Override
 			public int getColumnCount() {
@@ -196,8 +198,8 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	}
 
 	@Override
-	public void reloadScanJobs(boolean aClearData) {
-		jobView.reload(aClearData);
+	public void reloadScanJobs() {
+		jobPagedView.reload();
 	}
 
 	@Override
@@ -229,6 +231,16 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	@UiHandler("scanButton")
 	void onScanButtonClick(ClickEvent aEvent) {
 		getUiHandlers().onScanRequested();
+	}
+
+	@UiHandler("scanningView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		jobPagedView.clear();
+	}
+
+	@UiHandler("scanningView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		jobPagedView.reload();
 	}
 
 	private void updateScanState() {

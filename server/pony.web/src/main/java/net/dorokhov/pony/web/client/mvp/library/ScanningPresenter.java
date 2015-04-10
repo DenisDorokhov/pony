@@ -25,7 +25,7 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 			INACTIVE, SCANNING
 		}
 
-		public void reloadScanJobs(boolean aClearData);
+		public void reloadScanJobs();
 
 		public ScanState getScanState();
 
@@ -78,8 +78,6 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		super.onReveal();
 
 		libraryScanner.updateStatus();
-
-		getView().reloadScanJobs(true);
 	}
 
 	@Override
@@ -122,7 +120,7 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		getView().setProgress(null);
 		getView().setScanState(MyView.ScanState.INACTIVE);
 
-		getView().reloadScanJobs(false);
+		getView().reloadScanJobs();
 	}
 
 }

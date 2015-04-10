@@ -10,7 +10,7 @@
         .logView .modal-dialog {
             width: 1000px !important;
         }
-        .messageView {
+        .logPagedView {
             height: 372px;
             margin-top: 5px;
         }
@@ -32,9 +32,9 @@
         }
     </ui:style>
 
-    <b:Modal addStyleNames="{style.logView}" title="{mes.logTitle}" fade="true">
+    <b:Modal ui:field="logView" addStyleNames="{style.logView}" title="{mes.logTitle}" fade="true">
         <b:ModalBody>
-            <p:PagedListView ui:field="messageView" addStyleNames="{style.messageView}" />
+            <p:PagedListView ui:field="logPagedView" addStyleNames="{style.logPagedView}" />
         </b:ModalBody>
     </b:Modal>
 

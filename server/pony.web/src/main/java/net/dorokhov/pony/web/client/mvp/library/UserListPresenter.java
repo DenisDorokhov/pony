@@ -17,11 +17,7 @@ import java.util.List;
 
 public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView> implements UserListUiHandlers {
 
-	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {
-
-		public void reloadUsers(boolean aClearData);
-
-	}
+	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {}
 
 	private final UserService userService;
 
@@ -36,14 +32,6 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 		errorNotifier = aErrorNotifier;
 
 		getView().setUiHandlers(this);
-	}
-
-	@Override
-	protected void onReveal() {
-
-		super.onReveal();
-
-		getView().reloadUsers(true);
 	}
 
 	@Override

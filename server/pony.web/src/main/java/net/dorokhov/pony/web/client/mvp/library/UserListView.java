@@ -6,6 +6,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.web.bindery.event.shared.EventBus;
@@ -17,6 +18,8 @@ import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import net.dorokhov.pony.web.shared.UserDto;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
+import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Modal;
 
@@ -46,7 +49,7 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 	MyStyle style;
 
 	@UiField(provided = true)
-	PagedListView<UserDto> userView;
+	PagedListView<UserDto> userPagedView;
 
 	@Inject
 	public UserListView(EventBus aEventBus) {
@@ -122,7 +125,7 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 				}
 		);
 
-		userView = new PagedListView<>(new PagedListView.DataSource<UserDto>() {
+		userPagedView = new PagedListView<>(new PagedListView.DataSource<UserDto>() {
 
 			@Override
 			public int getColumnCount() {
@@ -158,9 +161,14 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	@Override
-	public void reloadUsers(boolean aClearData) {
-		userView.reload(aClearData);
+	@UiHandler("userListView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		userPagedView.clear();
+	}
+
+	@UiHandler("userListView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		userPagedView.reload();
 	}
 
 }

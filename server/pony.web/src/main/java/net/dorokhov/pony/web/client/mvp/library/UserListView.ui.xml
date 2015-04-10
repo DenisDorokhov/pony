@@ -24,9 +24,9 @@
         }
     </ui:style>
 
-    <b:Modal addStyleNames="{style.userListView}" title="{mes.userListTitle}" fade="true">
+    <b:Modal ui:field="userListView" addStyleNames="{style.userListView}" title="{mes.userListTitle}" fade="true">
         <b:ModalBody>
-            <p:PagedListView ui:field="userView" addStyleNames="{style.userView}" />
+            <p:PagedListView ui:field="userPagedView" addStyleNames="{style.userView}" />
         </b:ModalBody>
     </b:Modal>
 
