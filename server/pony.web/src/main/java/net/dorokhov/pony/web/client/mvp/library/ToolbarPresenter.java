@@ -4,6 +4,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
+import net.dorokhov.pony.web.client.event.EmptyLibraryEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.BusyModeManager;
@@ -17,7 +18,7 @@ import net.dorokhov.pony.web.shared.UserDto;
 import javax.inject.Inject;
 import java.util.List;
 
-public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate {
+public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate, EmptyLibraryEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<ToolbarUiHandlers> {
 
@@ -71,6 +72,8 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	protected void onBind() {
 
 		super.onBind();
+
+		addRegisteredHandler(EmptyLibraryEvent.TYPE, this);
 
 		busyModeManager.addDelegate(this);
 		libraryScanner.addDelegate(this);
@@ -149,6 +152,11 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 				errorNotifier.notifyOfErrors(aErrors);
 			}
 		});
+	}
+
+	@Override
+	public void onEmptyLibrary(EmptyLibraryEvent aEvent) {
+		addToPopupSlot(scanningPresenter);
 	}
 
 }
