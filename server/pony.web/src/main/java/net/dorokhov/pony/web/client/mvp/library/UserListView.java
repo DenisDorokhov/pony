@@ -1,7 +1,9 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -22,6 +24,9 @@ import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
 import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -56,15 +61,51 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 
 		super(aEventBus);
 
+		initGrid();
+
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	@UiHandler("userListView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		userPagedView.clear();
+	}
+
+	@UiHandler("userListView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		userPagedView.reload();
+	}
+
+	@UiHandler("userAddButton")
+	void onAddButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onUserCreationRequested();
+	}
+
+	private void initGrid() {
+
+		Column<UserDto, String> editColumn = new Column<UserDto, String>(new ButtonCell(ButtonType.DEFAULT, IconType.EDIT)) {
+			@Override
+			public String getValue(UserDto aUser) {
+				return Messages.INSTANCE.userListButtonEdit();
+			}
+		};
+		editColumn.setFieldUpdater(new FieldUpdater<UserDto, String>() {
+			@Override
+			public void update(int aIndex, UserDto aUser, String aValue) {
+				getUiHandlers().onUserModificationRequester(aUser);
+			}
+		});
+
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.userListColumnCreationDate(),
 				Messages.INSTANCE.userListColumnUpdateDate(),
 				Messages.INSTANCE.userListColumnName(),
 				Messages.INSTANCE.userListColumnEmail(),
-				Messages.INSTANCE.userListColumnRole()
+				Messages.INSTANCE.userListColumnRole(),
+				Messages.INSTANCE.userListColumnEdit()
 		);
 		final List<String> widths = Arrays.asList(
-				"150px", "150px", null, "250px", "80px"
+				"150px", "150px", null, "250px", "80px", "120px"
 		);
 		final List<Column<UserDto, ?>> columns = Arrays.asList(
 				new TextColumn<UserDto>() {
@@ -122,7 +163,8 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 
 						return result;
 					}
-				}
+				},
+				editColumn
 		);
 
 		userPagedView = new PagedListView<>(new PagedListView.DataSource<UserDto>() {
@@ -157,18 +199,6 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 				return getUiHandlers().onUsersRequested(aPageNumber, aCallback);
 			}
 		});
-
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@UiHandler("userListView")
-	void onPagedListHidden(ModalHiddenEvent aEvent) {
-		userPagedView.clear();
-	}
-
-	@UiHandler("userListView")
-	void onPagedListShown(ModalShownEvent aEvent) {
-		userPagedView.reload();
 	}
 
 }

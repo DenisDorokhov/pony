@@ -17,11 +17,10 @@
         .pagerLabel {
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
+            left: 100px;
+            right: 100px;
             height: 32px;
             line-height: 32px;
-            pointer-events: none;
             text-align: center;
         }
         .gridContainer {
@@ -29,7 +28,7 @@
             top: 52px;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: 44px;
         }
         .grid .table {
             margin-bottom: 0 !important;
@@ -64,6 +63,14 @@
             border-top: 0;
             pointer-events: none;
         }
+        .bottomContainer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 44px;
+            padding-top: 10px;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.pagedListView}">
@@ -86,6 +93,10 @@
 
             <g:FlowPanel addStyleNames="{style.borderOverlay}" />
 
+        </g:FlowPanel>
+
+        <g:FlowPanel ui:field="bottomContainer" addStyleNames="{style.bottomContainer}">
+            <b:Button ui:field="refreshButton" type="DEFAULT" icon="REFRESH" text="{mes.pagedListRefresh}" />
         </g:FlowPanel>
 
     </g:FlowPanel>

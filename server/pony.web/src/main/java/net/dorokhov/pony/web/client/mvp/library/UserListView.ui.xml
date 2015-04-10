@@ -14,6 +14,13 @@
             height: 372px;
             margin-top: 5px;
         }
+        .addButton {
+            float: right;
+        }
+        /* TODO: remove this after upgrade of gwtbootstrap3 (this is a workaround for incorrect USER_PLUS icon) */
+        .addButton i:before {
+            content: "\f234";
+        }
         .userRole {
             text-transform: uppercase;
             font-weight: bold;
@@ -26,7 +33,10 @@
 
     <b:Modal ui:field="userListView" addStyleNames="{style.userListView}" title="{mes.userListTitle}" fade="true">
         <b:ModalBody>
-            <p:PagedListView ui:field="userPagedView" addStyleNames="{style.userView}" />
+            <p:PagedListView ui:field="userPagedView" addStyleNames="{style.userView}">
+                <b:Button ui:field="userAddButton" addStyleNames="{style.addButton}"
+                          type="DEFAULT" icon="USER_PLUS" text="{mes.userListButtonAdd}" />
+            </p:PagedListView>
         </b:ModalBody>
     </b:Modal>
 

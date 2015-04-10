@@ -83,6 +83,61 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 		super(aEventBus);
 
+		initGrid();
+
+		initWidget(uiBinder.createAndBindUi(this));
+
+		setScanState(ScanState.INACTIVE);
+	}
+
+	@Override
+	public void reloadScanJobs() {
+		jobPagedView.reload();
+	}
+
+	@Override
+	public ScanState getScanState() {
+		return scanState;
+	}
+
+	@Override
+	public void setScanState(ScanState aScanState) {
+
+		scanState = aScanState;
+
+		updateScanState();
+	}
+
+	@Override
+	public ScanStatusDto getProgress() {
+		return progress;
+	}
+
+	@Override
+	public void setProgress(ScanStatusDto aStatus) {
+
+		progress = aStatus;
+
+		updateScanState();
+	}
+
+	@UiHandler("scanButton")
+	void onScanButtonClick(ClickEvent aEvent) {
+		getUiHandlers().onScanRequested();
+	}
+
+	@UiHandler("scanningView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		jobPagedView.clear();
+	}
+
+	@UiHandler("scanningView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		jobPagedView.reload();
+	}
+
+	private void initGrid() {
+
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.scanningColumnStarted(),
 				Messages.INSTANCE.scanningColumnUpdated(),
@@ -191,56 +246,6 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				return getUiHandlers().onScanJobsRequested(aPageNumber, aCallback);
 			}
 		});
-
-		initWidget(uiBinder.createAndBindUi(this));
-
-		setScanState(ScanState.INACTIVE);
-	}
-
-	@Override
-	public void reloadScanJobs() {
-		jobPagedView.reload();
-	}
-
-	@Override
-	public ScanState getScanState() {
-		return scanState;
-	}
-
-	@Override
-	public void setScanState(ScanState aScanState) {
-
-		scanState = aScanState;
-
-		updateScanState();
-	}
-
-	@Override
-	public ScanStatusDto getProgress() {
-		return progress;
-	}
-
-	@Override
-	public void setProgress(ScanStatusDto aStatus) {
-
-		progress = aStatus;
-
-		updateScanState();
-	}
-
-	@UiHandler("scanButton")
-	void onScanButtonClick(ClickEvent aEvent) {
-		getUiHandlers().onScanRequested();
-	}
-
-	@UiHandler("scanningView")
-	void onPagedListHidden(ModalHiddenEvent aEvent) {
-		jobPagedView.clear();
-	}
-
-	@UiHandler("scanningView")
-	void onPagedListShown(ModalShownEvent aEvent) {
-		jobPagedView.reload();
 	}
 
 	private void updateScanState() {

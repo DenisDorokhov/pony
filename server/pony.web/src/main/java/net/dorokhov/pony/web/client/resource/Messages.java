@@ -70,6 +70,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String pagedListPrevious();
 	public String pagedListNext();
+	public String pagedListRefresh();
 
 	public String logTitle();
 	public String logPager(int aPageNumber, int aTotalPages, @Optional int aSize, @Optional long aTotalElements);
@@ -88,7 +89,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String userListColumnName();
 	public String userListColumnEmail();
 	public String userListColumnRole();
+	public String userListColumnEdit();
 	public String userListRoleUser();
 	public String userListRoleAdmin();
+	public String userListButtonAdd();
+	public String userListButtonEdit();
 
 }

@@ -57,6 +57,23 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 		super(aEventBus);
 
+		initGrid();
+
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	@UiHandler("logView")
+	void onPagedListHidden(ModalHiddenEvent aEvent) {
+		logPagedView.clear();
+	}
+
+	@UiHandler("logView")
+	void onPagedListShown(ModalShownEvent aEvent) {
+		logPagedView.reload();
+	}
+
+	private void initGrid() {
+
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.logColumnDate(),
 				Messages.INSTANCE.logColumnType(),
@@ -154,18 +171,6 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 				return getUiHandlers().onLogMessagesRequested(aPageNumber, aCallback);
 			}
 		});
-
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	@UiHandler("logView")
-	void onPagedListHidden(ModalHiddenEvent aEvent) {
-		logPagedView.clear();
-	}
-
-	@UiHandler("logView")
-	void onPagedListShown(ModalShownEvent aEvent) {
-		logPagedView.reload();
 	}
 
 }

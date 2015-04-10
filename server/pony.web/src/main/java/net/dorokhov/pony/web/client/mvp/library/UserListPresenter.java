@@ -53,4 +53,14 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 		});
 	}
 
+	@Override
+	public void onUserCreationRequested() {
+		// TODO: implement
+	}
+
+	@Override
+	public void onUserModificationRequester(UserDto aUser) {
+		// TODO: implement
+	}
+
 }

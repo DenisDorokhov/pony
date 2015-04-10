@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.*;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -16,9 +17,10 @@ import org.gwtbootstrap3.client.ui.Pager;
 import org.gwtbootstrap3.client.ui.gwt.DataGrid;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class PagedListView<T> extends Composite {
+public class PagedListView<T> extends Composite implements HasWidgets {
 
 	public interface DataSource<S> {
 
@@ -63,6 +65,9 @@ public class PagedListView<T> extends Composite {
 
 	@UiField
 	FlowPanel loadingOverlay;
+
+	@UiField
+	FlowPanel bottomContainer;
 
 	private final DataSource<T> dataSource;
 
@@ -135,6 +140,26 @@ public class PagedListView<T> extends Composite {
 
 	public void reload(int aPageNumber) {
 		requestPagedList(aPageNumber);
+	}
+
+	@Override
+	public void add(Widget aWidget) {
+		bottomContainer.add(aWidget);
+	}
+
+	@Override
+	public Iterator<Widget> iterator() {
+		return bottomContainer.iterator();
+	}
+
+	@Override
+	public boolean remove(Widget aWidget) {
+		return bottomContainer.remove(aWidget);
+	}
+
+	@UiHandler("refreshButton")
+	void onRefreshClick(ClickEvent aEvent) {
+		requestPagedList(getData() != null ? getData().getPageNumber() : 0);
 	}
 
 	private void requestPagedList(int aPageNumber) {
