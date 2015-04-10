@@ -40,7 +40,6 @@
             <b:Button ui:field="currentUserButton" dataToggle="DROPDOWN"
                       icon="USER" iconPosition="RIGHT" />
             <b:DropDownMenu addStyleNames="{style.dropDown}">
-                <b:AnchorListItem ui:field="editProfileButton" text="{mes.toolbarEditProfile}" />
                 <b:AnchorListItem ui:field="logoutButton" text="{mes.toolbarLogout}" />
             </b:DropDownMenu>
         </b:ButtonGroup>

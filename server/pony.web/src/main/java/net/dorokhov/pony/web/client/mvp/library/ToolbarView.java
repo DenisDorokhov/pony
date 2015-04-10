@@ -28,9 +28,6 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	Button currentUserButton;
 
 	@UiField
-	AnchorListItem editProfileButton;
-
-	@UiField
 	AnchorListItem logoutButton;
 
 	private UserDto currentUser;
@@ -105,11 +102,6 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	@UiHandler("usersButton")
 	void onUsersButtonClick(ClickEvent aEvent) {
 		getUiHandlers().onUsersRequested();
-	}
-
-	@UiHandler("editProfileButton")
-	void onEditProfileButtonClick(ClickEvent aEvent) {
-		getUiHandlers().onEditProfileRequested();
 	}
 
 	@UiHandler("logoutButton")

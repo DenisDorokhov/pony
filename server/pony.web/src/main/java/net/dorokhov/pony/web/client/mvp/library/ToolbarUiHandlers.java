@@ -11,7 +11,6 @@ public interface ToolbarUiHandlers extends UiHandlers {
 	public void onLogRequested();
 	public void onUsersRequested();
 
-	public void onEditProfileRequested();
 	public void onLogoutRequested();
 
 }

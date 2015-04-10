@@ -142,11 +142,6 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	}
 
 	@Override
-	public void onEditProfileRequested() {
-		// TODO: implement
-	}
-
-	@Override
 	public void onLogoutRequested() {
 		authenticationManager.logout(new NoOpOperationCallback<UserDto>() {
 			@Override

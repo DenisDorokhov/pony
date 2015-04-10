@@ -595,7 +595,7 @@ public class ScanServiceImpl implements ScanService {
 		scanResult.setFailedPaths(new ArrayList<>(failedPaths));
 
 		scanResult.setScanType(aType);
-		scanResult.setDuration(endTime - startTime);
+		scanResult.setDuration((endTime - startTime) / 1000000);
 
 		scanResult.setSongSize(ObjectUtils.defaultIfNull(songDao.sumSize(), 0L));
 		scanResult.setArtworkSize(storedFileService.getSizeByTag(StoredFile.TAG_ARTWORK_EMBEDDED) + storedFileService.getSizeByTag(StoredFile.TAG_ARTWORK_FILE));

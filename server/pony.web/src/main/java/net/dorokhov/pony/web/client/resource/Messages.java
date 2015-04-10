@@ -31,7 +31,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String toolbarScanning();
 	public String toolbarLog();
 	public String toolbarUsers();
-	public String toolbarEditProfile();
 	public String toolbarLogout();
 
 	public String artistUnknown();

@@ -335,7 +335,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 				ScanJob job = scanJobDao.findOne(aJobId);
 
 				job.setStatus(ScanJob.Status.STARTED);
-				job.setLogMessage(logService.info(log, "scanJobService.scanJobStarted", "Started scan job for " + aTargetFolders + "...", targetPaths));
+				job.setLogMessage(logService.info(log, "scanJobService.scanJobStarted", "Started scan job for " + aTargetFolders + ".", targetPaths));
 
 				return scanJobDao.save(job);
 			}
