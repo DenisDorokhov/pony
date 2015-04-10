@@ -10,7 +10,7 @@
         .userListView .modal-dialog {
             width: 1000px !important;
         }
-        .userView {
+        .userPagedView {
             height: 372px;
             margin-top: 5px;
         }
@@ -33,7 +33,7 @@
 
     <b:Modal ui:field="userListView" addStyleNames="{style.userListView}" title="{mes.userListTitle}" fade="true">
         <b:ModalBody>
-            <p:PagedListView ui:field="userPagedView" addStyleNames="{style.userView}">
+            <p:PagedListView ui:field="userPagedView" addStyleNames="{style.userPagedView}">
                 <b:Button ui:field="userAddButton" addStyleNames="{style.addButton}"
                           type="DEFAULT" icon="USER_PLUS" text="{mes.userListButtonAdd}" />
             </p:PagedListView>

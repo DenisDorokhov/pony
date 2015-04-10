@@ -19,15 +19,19 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 
 	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {}
 
+	private final UserEditPresenter userEditPresenter;
+
 	private final UserService userService;
 
 	private final ErrorNotifier errorNotifier;
 
 	@Inject
-	public UserListPresenter(EventBus eventBus, MyView view, UserService aUserService, ErrorNotifier aErrorNotifier) {
+	public UserListPresenter(EventBus aEventBus, MyView aView,
+							 UserEditPresenter aUserEditPresenter, UserService aUserService, ErrorNotifier aErrorNotifier) {
 
-		super(eventBus, view);
+		super(aEventBus, aView);
 
+		userEditPresenter = aUserEditPresenter;
 		userService = aUserService;
 		errorNotifier = aErrorNotifier;
 
@@ -55,12 +59,18 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 
 	@Override
 	public void onUserCreationRequested() {
-		// TODO: implement
+
+		userEditPresenter.setUser(null);
+
+		addToPopupSlot(userEditPresenter);
 	}
 
 	@Override
 	public void onUserModificationRequester(UserDto aUser) {
-		// TODO: implement
+
+		userEditPresenter.setUser(aUser);
+
+		addToPopupSlot(userEditPresenter);
 	}
 
 }

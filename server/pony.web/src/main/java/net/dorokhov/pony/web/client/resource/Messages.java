@@ -95,4 +95,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String userListButtonAdd();
 	public String userListButtonEdit();
 
+	public String userEditCreationTitle();
+	public String userEditModificationTitle();
+
 }
