@@ -1,10 +1,10 @@
 package net.dorokhov.pony.core.user.exception;
 
-public class UserSelfDeletionException extends Exception {
+public class SelfDeletionException extends Exception {
 
 	private final Long userId;
 
-	public UserSelfDeletionException(Long aUserId) {
+	public SelfDeletionException(Long aUserId) {
 
 		super("User cannot delete itself.");
 

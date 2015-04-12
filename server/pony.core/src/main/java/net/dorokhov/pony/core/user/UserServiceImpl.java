@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public User update(final User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException {
+	public User update(final User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		if (aUser.getId() == null) {
 			throw new IllegalArgumentException("User identifier must be null.");
@@ -171,6 +171,8 @@ public class UserServiceImpl implements UserService {
 			aUser.setPassword(currentUser.getPassword());
 		}
 
+		boolean rolesModified = false;
+
 		// Avoid using first-level cache to check changes in property values
 		User storedUser = transactionTemplate.execute(new TransactionCallback<User>() {
 			@Override
@@ -179,10 +181,11 @@ public class UserServiceImpl implements UserService {
 			}
 		});
 		if (storedUser != null && !ListUtils.isEqualList(aUser.getRoles(), storedUser.getRoles())) {
+
+			rolesModified = true;
+
 			aUser.setUpdateDate(new Date()); // @PreUpdate is not called when changing @ElementCollection contents
 		}
-
-		User updatedUser = userDao.save(aUser);
 
 		User authenticatedUser = null;
 		try {
@@ -191,15 +194,19 @@ public class UserServiceImpl implements UserService {
 			// User is not authenticated
 		}
 
-		if (authenticatedUser != null) {
-			if (updatedUser.getId().equals(authenticatedUser.getId())) {
+		if (authenticatedUser != null && aUser.getId().equals(authenticatedUser.getId()) && rolesModified) {
+			throw new SelfRoleModificationException(aUser.getId());
+		}
 
-				UserDetailsImpl userDetails = new UserDetailsImpl(updatedUser);
+		User updatedUser = userDao.save(aUser);
 
-				org.springframework.security.core.Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		if (authenticatedUser != null && updatedUser.getId().equals(authenticatedUser.getId())) {
 
-				SecurityContextHolder.getContext().setAuthentication(token);
-			}
+			UserDetailsImpl userDetails = new UserDetailsImpl(updatedUser);
+
+			org.springframework.security.core.Authentication token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+			SecurityContextHolder.getContext().setAuthentication(token);
 		}
 
 		return updatedUser;
@@ -207,7 +214,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException {
+	public void delete(Long aId) throws UserNotFoundException, SelfDeletionException {
 
 		User currentUser = userDao.findOne(aId);
 
@@ -224,7 +231,7 @@ public class UserServiceImpl implements UserService {
 
 		if (authenticatedUser != null) {
 			if (currentUser.getId().equals(authenticatedUser.getId())) {
-				throw new UserSelfDeletionException(aId);
+				throw new SelfDeletionException(aId);
 			}
 		}
 
@@ -371,7 +378,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		User authenticatedUser = getAuthenticatedUser();
 

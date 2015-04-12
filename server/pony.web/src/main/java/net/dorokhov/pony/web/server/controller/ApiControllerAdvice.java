@@ -103,9 +103,9 @@ public class ApiControllerAdvice {
 		return responseBuilder.build(new ErrorDto(ErrorCodes.USER_NOT_FOUND, aException.getMessage(), Arrays.asList(userId)));
 	}
 
-	@ExceptionHandler(UserSelfDeletionException.class)
+	@ExceptionHandler(SelfDeletionException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ResponseDto onUserSelfDeletion(UserSelfDeletionException aException) {
+	public ResponseDto onUserSelfDeletion(SelfDeletionException aException) {
 
 		log.debug(aException.getMessage());
 
@@ -115,6 +115,20 @@ public class ApiControllerAdvice {
 		}
 
 		return responseBuilder.build(new ErrorDto(ErrorCodes.USER_SELF_DELETION, aException.getMessage(), Arrays.asList(userId)));
+	}
+
+	@ExceptionHandler(SelfRoleModificationException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseDto onUserSelfRoleModification(SelfRoleModificationException aException) {
+
+		log.debug(aException.getMessage());
+
+		String userId = null;
+		if (aException.getUserId() != null) {
+			userId = aException.getUserId().toString();
+		}
+
+		return responseBuilder.build(new ErrorDto(ErrorCodes.USER_SELF_ROLE_MODIFICATION, aException.getMessage(), Arrays.asList(userId)));
 	}
 
 	@ExceptionHandler(LibraryNotDefinedException.class)

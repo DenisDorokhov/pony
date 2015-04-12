@@ -117,7 +117,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/currentUser", method = RequestMethod.PUT)
 	public ResponseDto<UserDto> updateCurrentUser(@Valid @RequestBody UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException {
 		return responseBuilder.build(userServiceFacade.updateAuthenticatedUser(aCommand));
 	}
 
@@ -168,7 +168,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users/{aId}", method = RequestMethod.DELETE)
-	public ResponseDto<Void> deleteUser(@PathVariable Long aId) throws UserNotFoundException, UserSelfDeletionException {
+	public ResponseDto<Void> deleteUser(@PathVariable Long aId) throws UserNotFoundException, SelfDeletionException {
 
 		userServiceFacade.delete(aId);
 
@@ -181,7 +181,7 @@ public class ApiController {
 	}
 
 	@RequestMapping(value = "/admin/users", method = RequestMethod.PUT)
-	public ResponseDto<UserDto> updateUser(@Valid @RequestBody UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException {
+	public ResponseDto<UserDto> updateUser(@Valid @RequestBody UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException, SelfRoleModificationException {
 		return responseBuilder.build(userServiceFacade.update(aCommand));
 	}
 

@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
-import java.util.List;
 
 public interface UserService {
 
@@ -29,9 +28,9 @@ public interface UserService {
 	public Page<User> getAll(Pageable aPageable);
 
 	public User create(User aUser) throws UserExistsException;
-	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException;
+	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException, SelfRoleModificationException;
 
-	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException;
+	public void delete(Long aId) throws UserNotFoundException, SelfDeletionException;
 
 	public Authentication authenticate(String aEmail, String aPassword) throws InvalidCredentialsException;
 
@@ -43,7 +42,7 @@ public interface UserService {
 	public User getAuthenticatedUser() throws NotAuthenticatedException;
 
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException;
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException;
 
 	public void cleanTokens();
 }

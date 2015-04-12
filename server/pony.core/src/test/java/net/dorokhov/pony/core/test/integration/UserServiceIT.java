@@ -146,11 +146,25 @@ public class UserServiceIT extends AbstractIntegrationCase {
 
 		try {
 			userService.delete(user.getId());
-		} catch (UserSelfDeletionException e) {
+		} catch (SelfDeletionException e) {
 			isExceptionThrown = true;
 		}
 
 		Assert.assertTrue(isExceptionThrown);
+
+		isExceptionThrown = false;
+
+		user.getRoles().add("anotherRole");
+
+		try {
+			userService.updateAuthenticatedUser(user, "password2", null);
+		} catch (SelfRoleModificationException e) {
+			isExceptionThrown = true;
+		}
+
+		Assert.assertTrue(isExceptionThrown);
+
+		user.getRoles().remove("anotherRole");
 
 		isExceptionThrown = false;
 

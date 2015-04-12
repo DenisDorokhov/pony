@@ -90,7 +90,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException {
+	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		User user = userService.getById(aCommand.getId());
 
@@ -107,7 +107,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 
 	@Override
 	@Transactional
-	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException {
+	public void delete(Long aId) throws UserNotFoundException, SelfDeletionException {
 		userService.delete(aId);
 	}
 
@@ -137,7 +137,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	@Override
 	@Transactional
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException {
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		User user = userService.getById(userService.getAuthenticatedUser().getId());
 

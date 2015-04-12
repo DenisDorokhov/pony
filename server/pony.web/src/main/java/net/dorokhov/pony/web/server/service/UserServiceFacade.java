@@ -11,8 +11,6 @@ import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 
-import java.util.List;
-
 public interface UserServiceFacade {
 
 	public UserDto getById(Long aId) throws ObjectNotFoundException;
@@ -20,9 +18,9 @@ public interface UserServiceFacade {
 	public PagedListDto<UserDto> getAll(int aPageNumber, int aPageSize) throws InvalidArgumentException;
 
 	public UserDto create(CreateUserCommandDto aCommand) throws UserExistsException;
-	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException;
+	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException, SelfRoleModificationException;
 
-	public void delete(Long aId) throws UserNotFoundException, UserSelfDeletionException;
+	public void delete(Long aId) throws UserNotFoundException, SelfDeletionException;
 
 	public AuthenticationDto authenticate(CredentialsDto aCredentials) throws InvalidCredentialsException;
 
@@ -33,6 +31,6 @@ public interface UserServiceFacade {
 	public UserDto getAuthenticatedUser() throws NotAuthenticatedException;
 
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
-			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException;
+			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException;
 
 }

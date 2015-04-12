@@ -28,6 +28,7 @@ public class ErrorCodes {
 	public static final String MAX_UPLOAD_SIZE_EXCEEDED = "errorMaxUploadSizeExceeded";
 
 	public static final String USER_SELF_DELETION = "errorUserSelfDeletion";
+	public static final String USER_SELF_ROLE_MODIFICATION = "errorUserSelfRoleModification";
 
 	public static final String PAGE_NUMBER_INVALID = "errorPageNumberInvalid";
 	public static final String PAGE_SIZE_INVALID = "errorPageSizeInvalid";
