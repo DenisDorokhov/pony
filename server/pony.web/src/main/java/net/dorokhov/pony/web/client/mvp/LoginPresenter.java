@@ -63,6 +63,7 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 		Window.setTitle(Messages.INSTANCE.loginTitle());
 
+		getView().clearForm();
 		getView().setFocus();
 	}
 
@@ -81,7 +82,6 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 
 				getView().setEnabled(true);
 
-				getView().clearForm();
 				getView().setErrors(null);
 
 				currentRequest = null;

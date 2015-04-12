@@ -14,7 +14,14 @@
         .refreshButton {
             margin-right: 10px;
         }
-        .dropDown {
+        .currentUserButton {
+            min-width: 90px;
+            max-width: 210px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .currentUserDropDown {
             min-width: 100%;
             width: 100%;
         }
@@ -25,10 +32,10 @@
         <b:Button ui:field="refreshButton" addStyleNames="{style.refreshButton}"
                   text="{mes.toolbarRefresh}" icon="REFRESH" iconPosition="RIGHT" />
 
-        <b:ButtonGroup addStyleNames="{style.systemButtonGroup}">
+        <b:ButtonGroup ui:field="systemButtonGroup" addStyleNames="{style.systemButtonGroup}">
             <b:Button ui:field="systemButton" dataToggle="DROPDOWN"
                       text="{mes.toolbarSystem}" icon="GEAR" iconPosition="RIGHT" />
-            <b:DropDownMenu addStyleNames="{style.dropDown}">
+            <b:DropDownMenu addStyleNames="{style.currentUserDropDown}">
                 <b:AnchorListItem ui:field="settingsButton" text="{mes.toolbarConfig}" />
                 <b:AnchorListItem ui:field="scanningButton" text="{mes.toolbarScanning}" />
                 <b:AnchorListItem ui:field="logButton" text="{mes.toolbarLog}" />
@@ -37,9 +44,9 @@
         </b:ButtonGroup>
 
         <b:ButtonGroup>
-            <b:Button ui:field="currentUserButton" dataToggle="DROPDOWN"
+            <b:Button ui:field="currentUserButton" addStyleNames="{style.currentUserButton}" dataToggle="DROPDOWN"
                       icon="USER" iconPosition="RIGHT" />
-            <b:DropDownMenu addStyleNames="{style.dropDown}">
+            <b:DropDownMenu addStyleNames="{style.currentUserDropDown}">
                 <b:AnchorListItem ui:field="logoutButton" text="{mes.toolbarLogout}" />
             </b:DropDownMenu>
         </b:ButtonGroup>

@@ -43,6 +43,8 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	private final ErrorNotifier errorNotifier;
 
+	private boolean reloadJobsOnProgress = false;
+
 	@Inject
 	public ScanningPresenter(EventBus aEventBus, MyView aView,
 							 LibraryScanner aLibraryScanner, ScanJobService aScanJobService, ErrorNotifier aErrorNotifier) {
@@ -106,12 +108,23 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	@Override
 	public void onScanStarted(LibraryScanner aLibraryScanner) {
+
 		getView().setScanState(MyView.ScanState.SCANNING);
+
+		reloadJobsOnProgress = true;
 	}
 
 	@Override
 	public void onScanProgress(LibraryScanner aLibraryScanner, ScanStatusDto aStatus) {
+
 		getView().setProgress(aStatus);
+
+		if (isVisible() && reloadJobsOnProgress) {
+
+			getView().reloadScanJobs();
+
+			reloadJobsOnProgress = false;
+		}
 	}
 
 	@Override
@@ -121,6 +134,8 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		getView().setScanState(MyView.ScanState.INACTIVE);
 
 		getView().reloadScanJobs();
+
+		reloadJobsOnProgress = false;
 	}
 
 }

@@ -18,6 +18,7 @@ import net.dorokhov.pony.web.shared.RoleDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
+import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
 import org.gwtbootstrap3.client.ui.*;
 
 import java.util.ArrayList;
@@ -144,6 +145,11 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 		updateErrors();
 	}
 
+	@Override
+	public void setFocus() {
+		nameField.setFocus(true);
+	}
+
 	@UiHandler("saveButton")
 	void onSaveClick(ClickEvent aEvent) {
 		if (getUser() != null) {
@@ -156,6 +162,12 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 	@UiHandler("deleteButton")
 	void onDeleteClick(ClickEvent aEvent) {
 		getUiHandlers().onDeletionRequested();
+	}
+
+	@SuppressWarnings("GwtUiHandlerErrors")
+	@UiHandler("userEditView")
+	void onViewShown(ModalShownEvent aEvent) {
+		setFocus();
 	}
 
 	private void updateLoadingState() {

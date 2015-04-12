@@ -38,6 +38,8 @@ public class UserEditPresenter extends PresenterWidget<UserEditPresenter.MyView>
 
 		public void setErrors(List<ErrorDto> aErrors);
 
+		public void setFocus();
+
 	}
 
 	private final UserService userService;
@@ -79,7 +81,6 @@ public class UserEditPresenter extends PresenterWidget<UserEditPresenter.MyView>
 			public void onSuccess(UserDto aUser) {
 
 				getView().setErrors(null);
-				getView().setUser(aUser);
 
 				getView().setEnabled(true);
 
@@ -96,6 +97,7 @@ public class UserEditPresenter extends PresenterWidget<UserEditPresenter.MyView>
 				getView().setErrors(aErrors);
 
 				getView().setEnabled(true);
+				getView().setFocus();
 			}
 		});
 	}
@@ -110,7 +112,6 @@ public class UserEditPresenter extends PresenterWidget<UserEditPresenter.MyView>
 			public void onSuccess(UserDto aUser) {
 
 				getView().setErrors(null);
-				getView().setUser(aUser);
 
 				getView().setEnabled(true);
 
@@ -127,6 +128,7 @@ public class UserEditPresenter extends PresenterWidget<UserEditPresenter.MyView>
 				getView().setErrors(aErrors);
 
 				getView().setEnabled(true);
+				getView().setFocus();
 			}
 		});
 	}

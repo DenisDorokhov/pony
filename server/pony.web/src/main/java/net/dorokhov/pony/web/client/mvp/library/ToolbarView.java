@@ -11,6 +11,7 @@ import net.dorokhov.pony.web.shared.RoleDto;
 import net.dorokhov.pony.web.shared.UserDto;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.ButtonGroup;
 
 public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implements ToolbarPresenter.MyView {
 
@@ -22,7 +23,7 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	Button refreshButton;
 
 	@UiField
-	Button systemButton;
+	ButtonGroup systemButtonGroup;
 
 	@UiField
 	Button currentUserButton;
@@ -110,7 +111,7 @@ public class ToolbarView extends ViewWithUiHandlers<ToolbarUiHandlers> implement
 	}
 
 	private void updateUser() {
-		systemButton.setVisible(currentUser != null && currentUser.getRole() == RoleDto.ADMIN);
+		systemButtonGroup.setVisible(currentUser != null && currentUser.getRole() == RoleDto.ADMIN);
 		currentUserButton.setText(currentUser != null ? currentUser.getName() : null);
 	}
 

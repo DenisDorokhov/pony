@@ -145,7 +145,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 				Messages.INSTANCE.scanningColumnLastMessage()
 		);
 		final List<String> widths = Arrays.asList(
-				"150px", "150px", "100px", null
+				"150px", "150px", "120px", null
 		);
 		final List<TextColumn<ScanJobDto>> columns = Arrays.asList(
 				new TextColumn<ScanJobDto>() {

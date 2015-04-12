@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.domain.User;
 import net.dorokhov.pony.core.domain.common.BaseToken;
 import net.dorokhov.pony.core.security.UserDetailsImpl;
 import net.dorokhov.pony.core.user.exception.*;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,15 +28,25 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
+
+	private TransactionTemplate transactionTemplate;
 
 	private UserDao userDao;
 
@@ -50,6 +61,11 @@ public class UserServiceImpl implements UserService {
 	private long refreshTokenLifetime;
 
 	private String debugToken;
+
+	@Autowired
+	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
+		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+	}
 
 	@Autowired
 	public void setUserDao(UserDao aUserDao) {
@@ -131,28 +147,39 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public User update(User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException {
+	public User update(final User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException {
 
 		if (aUser.getId() == null) {
 			throw new IllegalArgumentException("User identifier must be null.");
 		}
 
-		User currentUser = userDao.findOne(aUser.getId());
+		User currentUser = getById(aUser.getId());
 
 		if (currentUser == null) {
 			throw new UserNotFoundException(aUser.getId());
 		}
 
-		User existingUser = getByEmail(aUser.getEmail());
+		User sameEmailUser = getByEmail(aUser.getEmail());
 
-		if (!existingUser.getId().equals(aUser.getId())) {
+		if (sameEmailUser != null && !sameEmailUser.getId().equals(aUser.getId())) {
 			throw new UserExistsException(aUser.getEmail());
 		}
 
 		if (aNewPassword != null) {
 			aUser.setPassword(passwordEncoder.encode(aNewPassword));
 		} else {
-			aUser.setPassword(existingUser.getPassword());
+			aUser.setPassword(currentUser.getPassword());
+		}
+
+		// Avoid using first-level cache to check changes in property values
+		User storedUser = transactionTemplate.execute(new TransactionCallback<User>() {
+			@Override
+			public User doInTransaction(TransactionStatus status) {
+				return getById(aUser.getId());
+			}
+		});
+		if (storedUser != null && !ListUtils.isEqualList(aUser.getRoles(), storedUser.getRoles())) {
+			aUser.setUpdateDate(new Date()); // @PreUpdate is not called when changing @ElementCollection contents
 		}
 
 		User updatedUser = userDao.save(aUser);

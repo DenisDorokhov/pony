@@ -13,12 +13,15 @@ public class LibraryScannerListener implements LibraryScanner.Delegate {
 
 	private final EventBus eventBus;
 
+	private final AuthenticationManager authenticationManager;
+
 	private Timer refreshTimer;
 
 	@Inject
-	public LibraryScannerListener(EventBus aEventBus, LibraryScanner aLibraryScanner) {
+	public LibraryScannerListener(EventBus aEventBus, LibraryScanner aLibraryScanner, AuthenticationManager aAuthenticationManager) {
 
 		eventBus = aEventBus;
+		authenticationManager = aAuthenticationManager;
 
 		aLibraryScanner.addDelegate(this);
 	}
@@ -33,7 +36,9 @@ public class LibraryScannerListener implements LibraryScanner.Delegate {
 		refreshTimer = new Timer() {
 			@Override
 			public void run() {
-				requestRefresh();
+				if (authenticationManager.isAuthenticated()) {
+					requestRefresh();
+				}
 			}
 		};
 		refreshTimer.scheduleRepeating(REFRESH_INTERVAL);
