@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.shared.command;
 
+import net.dorokhov.pony.web.server.validation.RepeatPassword;
 import net.dorokhov.pony.web.server.validation.UniqueUserEmail;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
@@ -7,6 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @UniqueUserEmail
+@RepeatPassword
 public class UpdateCurrentUserCommandDto {
 
 	private String name;
@@ -16,6 +18,8 @@ public class UpdateCurrentUserCommandDto {
 	private String oldPassword;
 
 	private String newPassword;
+
+	private String repeatNewPassword;
 
 	@NotBlank
 	@Size(max = 255)
@@ -54,6 +58,14 @@ public class UpdateCurrentUserCommandDto {
 
 	public void setNewPassword(String aNewPassword) {
 		newPassword = aNewPassword;
+	}
+
+	public String getRepeatNewPassword() {
+		return repeatNewPassword;
+	}
+
+	public void setRepeatNewPassword(String aRepeatNewPassword) {
+		repeatNewPassword = aRepeatNewPassword;
 	}
 
 }

@@ -97,5 +97,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
 	public String userEditCreationTitle();
 	public String userEditModificationTitle();
+	public String userEditName();
+	public String userEditEmail();
+	public String userEditPassword();
+	public String userEditRepeatPassword();
+	public String userEditRole();
+	public String userEditSaveButton();
+	public String userEditDeleteButton();
+	public String userEditRoleUser();
+	public String userEditRoleAdmin();
+	public String userEditDeletionConfirmation();
 
 }

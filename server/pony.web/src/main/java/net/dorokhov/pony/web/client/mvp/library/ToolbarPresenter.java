@@ -18,7 +18,7 @@ import net.dorokhov.pony.web.shared.UserDto;
 import javax.inject.Inject;
 import java.util.List;
 
-public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate, EmptyLibraryEvent.Handler {
+public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate, AuthenticationManager.Delegate, EmptyLibraryEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<ToolbarUiHandlers> {
 
@@ -47,6 +47,8 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	private final AuthenticationManager authenticationManager;
 
 	private final ErrorNotifier errorNotifier;
+
+	private boolean didShowScanningWithEmptyLibrary = false;
 
 	@Inject
 	public ToolbarPresenter(EventBus aEventBus, MyView aView,
@@ -77,6 +79,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 		busyModeManager.addDelegate(this);
 		libraryScanner.addDelegate(this);
+		authenticationManager.addDelegate(this);
 	}
 
 	@Override
@@ -84,6 +87,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 		busyModeManager.removeDelegate(this);
 		libraryScanner.removeDelegate(this);
+		authenticationManager.removeDelegate(this);
 
 		super.onUnbind();
 	}
@@ -92,6 +96,8 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	protected void onReveal() {
 
 		super.onReveal();
+
+		didShowScanningWithEmptyLibrary = false;
 
 		getView().setUser(authenticationManager.getUser());
 	}
@@ -117,6 +123,26 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	@Override
 	public void onScanFinished(LibraryScanner aLibraryScanner) {
 		getView().setScanning(false);
+	}
+
+	@Override
+	public void onInitialization(UserDto aUser) {
+		getView().setUser(aUser);
+	}
+
+	@Override
+	public void onAuthentication(UserDto aUser) {
+		getView().setUser(aUser);
+	}
+
+	@Override
+	public void onStatusUpdate(UserDto aUser) {
+		getView().setUser(aUser);
+	}
+
+	@Override
+	public void onLogout(UserDto aUser, boolean aExplicit) {
+		getView().setUser(null);
 	}
 
 	@Override
@@ -156,7 +182,12 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	@Override
 	public void onEmptyLibrary(EmptyLibraryEvent aEvent) {
-		addToPopupSlot(scanningPresenter);
+		if (!didShowScanningWithEmptyLibrary) {
+
+			addToPopupSlot(scanningPresenter);
+
+			didShowScanningWithEmptyLibrary = true;
+		}
 	}
 
 }

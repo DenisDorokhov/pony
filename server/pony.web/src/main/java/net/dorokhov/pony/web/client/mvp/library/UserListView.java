@@ -66,6 +66,11 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	@Override
+	public void reloadUsers() {
+		userPagedView.reload();
+	}
+
 	@UiHandler("userListView")
 	void onPagedListHidden(ModalHiddenEvent aEvent) {
 		userPagedView.clear();

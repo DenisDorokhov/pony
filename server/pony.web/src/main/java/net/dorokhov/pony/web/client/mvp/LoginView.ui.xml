@@ -48,7 +48,7 @@
                             <b:Input ui:field="passwordField" type="PASSWORD" b:id="loginView.passwordField" />
                         </p:FieldAwareFormGroup>
 
-                        <b:SubmitButton ui:field="loginButton" text="{mes.loginViewLoginButton}" />
+                        <b:SubmitButton ui:field="loginButton" type="PRIMARY" text="{mes.loginViewLoginButton}" />
 
                     </b:FieldSet>
                 </p:ErrorAwareForm>

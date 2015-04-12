@@ -22,8 +22,6 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	private boolean loading;
-
 	private List<ErrorDto> errors;
 
 	@UiField
@@ -46,16 +44,13 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	}
 
 	@Override
-	public boolean isLoading() {
-		return loading;
+	public boolean isEnabled() {
+		return fieldSet.isEnabled();
 	}
 
 	@Override
-	public void setLoading(boolean aLoading) {
-
-		loading = aLoading;
-
-		updateLoading();
+	public void setEnabled(boolean aEnabled) {
+		fieldSet.setEnabled(aEnabled);
 	}
 
 	@Override
@@ -83,14 +78,6 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	}
 
 	@Override
-	public void clearErrors() {
-
-		getErrors().clear();
-
-		updateErrors();
-	}
-
-	@Override
 	public void setFocus() {
 		emailField.setFocus(true);
 	}
@@ -98,10 +85,6 @@ public class LoginView extends ViewWithUiHandlers<LoginUiHandlers> implements Lo
 	@UiHandler("loginButton")
 	void onSaveClick(ClickEvent aEvent) {
 		requestLogin();
-	}
-
-	private void updateLoading() {
-		fieldSet.setEnabled(!isLoading());
 	}
 
 	private void updateErrors() {

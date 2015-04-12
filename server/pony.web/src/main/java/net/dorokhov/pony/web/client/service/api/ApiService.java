@@ -2,6 +2,8 @@ package net.dorokhov.pony.web.client.service.api;
 
 import com.google.gwt.http.client.Request;
 import net.dorokhov.pony.web.shared.*;
+import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.fusesource.restygwt.client.MethodCallback;
 import org.fusesource.restygwt.client.Options;
 import org.fusesource.restygwt.client.RestService;
@@ -62,5 +64,21 @@ public interface ApiService extends RestService {
 	@GET
 	@Path("/admin/users")
 	Request getUsers(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<UserDto>>> aCallback);
+
+	@POST
+	@Path("/admin/users")
+	Request createUser(CreateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
+
+	@PUT
+	@Path("/admin/users")
+	Request updateUser(UpdateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
+
+	@GET
+	@Path("/admin/users/{aId}")
+	Request getUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<UserDto>> aCallback);
+
+	@DELETE
+	@Path("/admin/users/{aId}")
+	Request deleteUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<Object>> aCallback);
 
 }

@@ -106,7 +106,7 @@ public class UniqueUserEmailValidator implements ConstraintValidator<UniqueUserE
 		User existingUser = userService.getByEmail(aEmail != null ? aEmail.trim() : null);
 
 		if (aUser != null) {
-			return (existingUser == null || !existingUser.getId().equals(aUser.getId()));
+			return (existingUser == null || existingUser.getId().equals(aUser.getId()));
 		} else {
 			return (existingUser == null);
 		}

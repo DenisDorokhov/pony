@@ -63,7 +63,7 @@ public class AuthenticationManager {
 	private final Timer checkTokenExpirationTimer;
 	private final Timer checkStatusTimer;
 
-	private final Set<Delegate> delegates = new TreeSet<>();
+	private final Set<Delegate> delegates = new LinkedHashSet<>();
 
 	private String lastAccessToken;
 

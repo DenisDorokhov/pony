@@ -8,6 +8,8 @@ import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import net.dorokhov.pony.web.shared.UserDto;
+import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
+import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -41,6 +43,98 @@ public class UserService {
 			public void onError(List<ErrorDto> aErrors) {
 
 				log.info("Could not get users.");
+
+				aCallback.onError(aErrors);
+			}
+		})));
+	}
+
+	public OperationRequest getUser(final Long aId, final OperationCallback<UserDto> aCallback) {
+
+		log.info("Getting user [" + aId + "]...");
+
+		return new RequestAdapter(apiService.getUser(aId, new MethodCallbackAdapter<>(new OperationCallback<UserDto>() {
+			@Override
+			public void onSuccess(UserDto aUser) {
+
+				log.info("User [" + aUser.getId() + "] returned.");
+
+				aCallback.onSuccess(aUser);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				log.severe("Could not get user [" + aId + "].");
+
+				aCallback.onError(aErrors);
+			}
+		})));
+	}
+
+	public OperationRequest createUser(CreateUserCommandDto aCommand, final OperationCallback<UserDto> aCallback) {
+
+		log.info("Creating user...");
+
+		return new RequestAdapter(apiService.createUser(aCommand, new MethodCallbackAdapter<>(new OperationCallback<UserDto>() {
+			@Override
+			public void onSuccess(UserDto aUser) {
+
+				log.info("User [" + aUser.getId() + "] created.");
+
+				aCallback.onSuccess(aUser);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				log.severe("Could not create user.");
+
+				aCallback.onError(aErrors);
+			}
+		})));
+	}
+
+	public OperationRequest updateUser(final UpdateUserCommandDto aCommand, final OperationCallback<UserDto> aCallback) {
+
+		log.info("Updating user [" + aCommand.getId() + "]...");
+
+		return new RequestAdapter(apiService.updateUser(aCommand, new MethodCallbackAdapter<>(new OperationCallback<UserDto>() {
+			@Override
+			public void onSuccess(UserDto aUser) {
+
+				log.info("User [" + aUser.getId() + "] updated.");
+
+				aCallback.onSuccess(aUser);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				log.severe("Could not update user [" + aCommand.getId() + "].");
+
+				aCallback.onError(aErrors);
+			}
+		})));
+	}
+
+	public OperationRequest deleteUser(final Long aId, final OperationCallback<Void> aCallback) {
+
+		log.info("Deleting user [" + aId + "]...");
+
+		return new RequestAdapter(apiService.deleteUser(aId, new MethodCallbackAdapter<>(new OperationCallback<Object>() {
+			@Override
+			public void onSuccess(Object aData) {
+
+				log.info("User [" + aId + "] deleted.");
+
+				aCallback.onSuccess(null);
+			}
+
+			@Override
+			public void onError(List<ErrorDto> aErrors) {
+
+				log.severe("Could not delete user [" + aId + "].");
 
 				aCallback.onError(aErrors);
 			}

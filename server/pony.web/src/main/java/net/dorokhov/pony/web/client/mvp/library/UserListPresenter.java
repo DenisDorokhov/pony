@@ -4,6 +4,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
+import net.dorokhov.pony.web.client.event.UserCreationEvent;
+import net.dorokhov.pony.web.client.event.UserDeletionEvent;
+import net.dorokhov.pony.web.client.event.UserUpdateEvent;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.UserService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -15,9 +18,14 @@ import net.dorokhov.pony.web.shared.UserDto;
 import javax.inject.Inject;
 import java.util.List;
 
-public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView> implements UserListUiHandlers {
+public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView> implements UserListUiHandlers,
+		UserCreationEvent.Handler, UserUpdateEvent.Handler, UserDeletionEvent.Handler {
 
-	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {}
+	public interface MyView extends PopupView, HasUiHandlers<UserListUiHandlers> {
+
+		public void reloadUsers();
+
+	}
 
 	private final UserEditPresenter userEditPresenter;
 
@@ -36,6 +44,16 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 		errorNotifier = aErrorNotifier;
 
 		getView().setUiHandlers(this);
+	}
+
+	@Override
+	protected void onBind() {
+
+		super.onBind();
+
+		addRegisteredHandler(UserCreationEvent.TYPE, this);
+		addRegisteredHandler(UserUpdateEvent.TYPE, this);
+		addRegisteredHandler(UserDeletionEvent.TYPE, this);
 	}
 
 	@Override
@@ -71,6 +89,21 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 		userEditPresenter.setUser(aUser);
 
 		addToPopupSlot(userEditPresenter);
+	}
+
+	@Override
+	public void onUserCreation(UserCreationEvent aEvent) {
+		getView().reloadUsers();
+	}
+
+	@Override
+	public void onUserUpdate(UserUpdateEvent aEvent) {
+		getView().reloadUsers();
+	}
+
+	@Override
+	public void onUserDeletion(UserDeletionEvent aEvent) {
+		getView().reloadUsers();
 	}
 
 }

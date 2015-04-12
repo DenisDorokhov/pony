@@ -9,6 +9,7 @@ import net.dorokhov.pony.web.shared.*;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -101,7 +102,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 		user.setEmail(aCommand.getEmail());
 		user.setRoles(dtoToRoles(aCommand.getRole()));
 
-		return dtoConverter.userToDto(userService.update(user, aCommand.getPassword()));
+		return dtoConverter.userToDto(userService.update(user, !StringUtils.isEmpty(aCommand.getPassword()) ? aCommand.getPassword() : null));
 	}
 
 	@Override

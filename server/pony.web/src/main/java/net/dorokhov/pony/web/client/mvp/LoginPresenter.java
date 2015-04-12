@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.client.mvp;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.Presenter;
@@ -28,18 +29,13 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 	@NameToken(PlaceTokens.LOGIN)
 	public interface MyProxy extends ProxyPlace<LoginPresenter> {}
 
-	public interface MyView extends View, HasUiHandlers<LoginUiHandlers> {
-
-		public boolean isLoading();
-
-		public void setLoading(boolean aLoading);
+	public interface MyView extends View, HasUiHandlers<LoginUiHandlers>, HasEnabled {
 
 		public List<ErrorDto> getErrors();
 
 		public void setErrors(List<ErrorDto> aErrors);
 
 		public void clearForm();
-		public void clearErrors();
 
 		public void setFocus();
 
@@ -77,16 +73,16 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 			currentRequest.cancel();
 		}
 
-		getView().setLoading(true);
+		getView().setEnabled(false);
 
 		currentRequest = authenticationManager.authenticate(aCredentials, new OperationCallback<UserDto>() {
 			@Override
 			public void onSuccess(UserDto aUser) {
 
-				getView().setLoading(false);
+				getView().setEnabled(true);
 
 				getView().clearForm();
-				getView().clearErrors();
+				getView().setErrors(null);
 
 				currentRequest = null;
 			}
@@ -94,7 +90,7 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				getView().setLoading(false);
+				getView().setEnabled(true);
 				getView().setErrors(aErrors);
 
 				getView().setFocus();

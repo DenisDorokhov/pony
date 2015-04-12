@@ -6,7 +6,7 @@ public class UserSelfDeletionException extends Exception {
 
 	public UserSelfDeletionException(Long aUserId) {
 
-		super("User [" + aUserId + "] must not delete itself.");
+		super("User cannot delete itself.");
 
 		userId = aUserId;
 	}

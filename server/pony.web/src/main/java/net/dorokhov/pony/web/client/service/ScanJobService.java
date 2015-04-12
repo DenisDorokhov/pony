@@ -63,7 +63,7 @@ public class ScanJobService {
 			@Override
 			public void onError(List<ErrorDto> aErrors) {
 
-				log.info("Could not get scan job [" + aId + "].");
+				log.severe("Could not get scan job [" + aId + "].");
 
 				aCallback.onError(aErrors);
 			}

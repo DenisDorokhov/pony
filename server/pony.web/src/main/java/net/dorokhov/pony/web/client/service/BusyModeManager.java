@@ -1,8 +1,8 @@
 package net.dorokhov.pony.web.client.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class BusyModeManager {
 
@@ -18,7 +18,7 @@ public class BusyModeManager {
 
 	private boolean busy = false;
 
-	private final Set<Delegate> delegates = new TreeSet<>();
+	private final Set<Delegate> delegates = new LinkedHashSet<>();
 
 	public void addDelegate(Delegate aDelegate) {
 		delegates.add(aDelegate);
