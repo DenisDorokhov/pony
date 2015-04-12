@@ -19,7 +19,10 @@ import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
-import org.gwtbootstrap3.client.ui.*;
+import org.gwtbootstrap3.client.ui.FieldSet;
+import org.gwtbootstrap3.client.ui.Input;
+import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.Modal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,9 +64,6 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 
 	@UiField
 	ListBox roleField;
-
-	@UiField
-	Button deleteButton;
 
 	private LoadingState loadingState;
 
@@ -191,8 +191,6 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 		} else {
 			roleField.setSelectedIndex(roleToIndex.get(RoleDto.USER));
 		}
-
-		deleteButton.setVisible(getUser() != null);
 	}
 
 	private void updateErrors() {

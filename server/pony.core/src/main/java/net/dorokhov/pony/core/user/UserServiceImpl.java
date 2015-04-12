@@ -127,7 +127,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
 	public User create(User aUser) throws UserExistsException {
 
 		if (aUser.getId() != null) {
@@ -146,7 +145,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {UserNotFoundException.class, UserExistsException.class, SelfRoleModificationException.class})
 	public User update(final User aUser, String aNewPassword) throws UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		if (aUser.getId() == null) {
@@ -376,7 +375,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {NotAuthenticatedException.class, NotAuthorizedException.class, InvalidPasswordException.class, UserNotFoundException.class, UserExistsException.class, SelfRoleModificationException.class})
 	public User updateAuthenticatedUser(User aUser, String aOldPassword, String aNewPassword) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException {
 

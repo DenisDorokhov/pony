@@ -75,7 +75,6 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	}
 
 	@Override
-	@Transactional
 	public UserDto create(CreateUserCommandDto aCommand) throws UserExistsException {
 
 		User user = new User();
@@ -89,7 +88,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {UserNotFoundException.class, UserExistsException.class, SelfRoleModificationException.class})
 	public UserDto update(UpdateUserCommandDto aCommand) throws UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
 		User user = userService.getById(aCommand.getId());
@@ -135,7 +134,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = {NotAuthenticatedException.class, NotAuthorizedException.class, InvalidPasswordException.class, UserNotFoundException.class, UserExistsException.class, SelfRoleModificationException.class})
 	public UserDto updateAuthenticatedUser(UpdateCurrentUserCommandDto aCommand) throws NotAuthenticatedException,
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException {
 
