@@ -127,6 +127,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = {UserExistsException.class})
 	public User create(User aUser) throws UserExistsException {
 
 		if (aUser.getId() != null) {

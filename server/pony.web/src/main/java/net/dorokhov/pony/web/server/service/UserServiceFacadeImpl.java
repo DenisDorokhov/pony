@@ -75,6 +75,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	}
 
 	@Override
+	@Transactional(rollbackFor = {UserExistsException.class})
 	public UserDto create(CreateUserCommandDto aCommand) throws UserExistsException {
 
 		User user = new User();
