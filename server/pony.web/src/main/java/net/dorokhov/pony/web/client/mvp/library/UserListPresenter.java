@@ -7,6 +7,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import net.dorokhov.pony.web.client.event.UserCreationEvent;
 import net.dorokhov.pony.web.client.event.UserDeletionEvent;
 import net.dorokhov.pony.web.client.event.UserUpdateEvent;
+import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.UserService;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -33,15 +34,18 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 
 	private final ErrorNotifier errorNotifier;
 
+	private final AuthenticationManager authenticationManager;
+
 	@Inject
 	public UserListPresenter(EventBus aEventBus, MyView aView,
-							 UserEditPresenter aUserEditPresenter, UserService aUserService, ErrorNotifier aErrorNotifier) {
+							 UserEditPresenter aUserEditPresenter, UserService aUserService, ErrorNotifier aErrorNotifier, AuthenticationManager aAuthenticationManager) {
 
 		super(aEventBus, aView);
 
 		userEditPresenter = aUserEditPresenter;
 		userService = aUserService;
 		errorNotifier = aErrorNotifier;
+		authenticationManager = aAuthenticationManager;
 
 		getView().setUiHandlers(this);
 	}
@@ -73,6 +77,11 @@ public class UserListPresenter extends PresenterWidget<UserListPresenter.MyView>
 				aCallback.onError(aErrors);
 			}
 		});
+	}
+
+	@Override
+	public boolean isCurrentUser(UserDto aUser) {
+		return aUser.equals(authenticationManager.getUser());
 	}
 
 	@Override

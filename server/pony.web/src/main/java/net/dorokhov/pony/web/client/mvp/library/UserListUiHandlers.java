@@ -10,6 +10,8 @@ public interface UserListUiHandlers extends UiHandlers {
 
 	public OperationRequest onUsersRequested(int aPageNumber, OperationCallback<PagedListDto<UserDto>> aCallback);
 
+	public boolean isCurrentUser(UserDto aUser);
+
 	public void onUserCreationRequested();
 	public void onUserModificationRequester(UserDto aUser);
 

@@ -20,9 +20,12 @@
         .addButton i:before {
             content: "\f234";
         }
+        .userNameOther {}
+        .userNameCurrent {
+            text-decoration: underline;
+        }
         .userRole {
             text-transform: uppercase;
-            font-weight: bold;
         }
         .userRoleUser {}
         .userRoleAdmin {

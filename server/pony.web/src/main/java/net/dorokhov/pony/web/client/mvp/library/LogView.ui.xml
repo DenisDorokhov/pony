@@ -15,7 +15,6 @@
         }
         .messageType {
             text-transform: uppercase;
-            font-weight: bold;
         }
         .messageTypeDebug {
             color: #337ab7;

@@ -44,6 +44,9 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 		String userRoleUser();
 		String userRoleAdmin();
 
+		String userNameOther();
+		String userNameCurrent();
+
 	}
 
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -130,6 +133,11 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 					public String getValue(UserDto aUser) {
 						return aUser.getName();
 					}
+
+					@Override
+					public String getCellStyleNames(Cell.Context aContext, UserDto aUser) {
+						return getUiHandlers().isCurrentUser(aUser) ? style.userNameCurrent() : style.userNameOther();
+					}
 				},
 				new Column<UserDto, Anchor>(new AnchorCell()) {
 					@Override
@@ -138,7 +146,6 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 					}
 				},
 				new TextColumn<UserDto>() {
-
 					@Override
 					public String getValue(UserDto aUser) {
 
