@@ -25,9 +25,11 @@
             margin-left: 90px;
             line-height: 34px;
         }
+        .progressLabel {
+            margin-top: -8px;
+        }
         .progress {
-            float: left;
-            width: 800px;
+            margin-left: 90px;
             margin-top: 7px;
             margin-bottom: 0;
         }
@@ -39,12 +41,12 @@
             transition: none;
         }
         .scanButton {
+            float: right;
             margin-left: 10px;
-            width: 68px;
         }
         .jobPagedView {
             height: 440px;
-            margin-top: 20px;
+            margin-top: 15px;
         }
         .jobStatus {
             text-transform: uppercase;
@@ -78,17 +80,17 @@
 
             <g:FlowPanel addStyleNames="{style.section}">
 
-                <g:Label addStyleNames="{style.label}" text="{mes.scanningProgress}" />
+                <g:Label addStyleNames="{style.label} {style.progressLabel}" text="{mes.scanningProgress}" />
 
                 <b:Progress ui:field="progressContainer" addStyleNames="{style.progress}">
                     <b:ProgressBar ui:field="progressBar" addStyleNames="{style.progressBar}" type="INFO" />
                 </b:Progress>
 
-                <b:Button ui:field="scanButton" addStyleNames="{style.scanButton}" type="PRIMARY" text="{mes.scanningButton}" />
-
             </g:FlowPanel>
 
-            <p:PagedListView ui:field="jobPagedView" addStyleNames="{style.jobPagedView}" />
+            <p:PagedListView ui:field="jobPagedView" addStyleNames="{style.jobPagedView}">
+                <b:Button ui:field="scanButton" addStyleNames="{style.scanButton}" type="PRIMARY" text="{mes.scanningButton}" />
+            </p:PagedListView>
 
         </b:ModalBody>
     </b:Modal>

@@ -11,24 +11,12 @@
         .pagedListView {
             position: relative;
         }
-        .pager {
-            margin-top: 0;
-        }
-        .pagerLabel {
-            position: absolute;
-            top: 0;
-            left: 100px;
-            right: 100px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-        }
         .gridContainer {
             position: absolute;
-            top: 52px;
+            top: 49px;
             left: 0;
             right: 0;
-            bottom: 44px;
+            bottom: 47px;
         }
         .grid .table {
             margin-bottom: 0 !important;
@@ -63,23 +51,29 @@
             border-top: 0;
             pointer-events: none;
         }
-        .bottomContainer {
+        .pager {
             position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
-            height: 44px;
-            padding-top: 10px;
+            margin: 0;
+        }
+        .pagerLabel {
+            position: absolute;
+            left: 100px;
+            right: 100px;
+            bottom: 0;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
         }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.pagedListView}">
 
-        <b:Pager ui:field="pager" addStyleNames="{style.pager}"
-                 previousText="{mes.pagedListPrevious}" nextText="{mes.pagedListNext}" alignToSides="true"
-                 previousIcon="ANGLE_DOUBLE_LEFT" nextIcon="ANGLE_DOUBLE_RIGHT" />
-
-        <g:Label ui:field="pagerLabel" addStyleNames="{style.pagerLabel}" />
+        <g:FlowPanel ui:field="childrenContainer">
+            <b:Button ui:field="refreshButton" type="DEFAULT" icon="REFRESH" text="{mes.pagedListRefresh}" />
+        </g:FlowPanel>
 
         <g:FlowPanel addStyleNames="{style.gridContainer}">
 
@@ -95,9 +89,11 @@
 
         </g:FlowPanel>
 
-        <g:FlowPanel ui:field="bottomContainer" addStyleNames="{style.bottomContainer}">
-            <b:Button ui:field="refreshButton" type="DEFAULT" icon="REFRESH" text="{mes.pagedListRefresh}" />
-        </g:FlowPanel>
+        <b:Pager ui:field="pager" addStyleNames="{style.pager}"
+                 previousText="{mes.pagedListPrevious}" nextText="{mes.pagedListNext}" alignToSides="true"
+                 previousIcon="ANGLE_DOUBLE_LEFT" nextIcon="ANGLE_DOUBLE_RIGHT" />
+
+        <g:Label ui:field="pagerLabel" addStyleNames="{style.pagerLabel}" />
 
     </g:FlowPanel>
 

@@ -67,7 +67,7 @@ public class PagedListView<T> extends Composite implements HasWidgets {
 	FlowPanel loadingOverlay;
 
 	@UiField
-	FlowPanel bottomContainer;
+	FlowPanel childrenContainer;
 
 	private final DataSource<T> dataSource;
 
@@ -144,17 +144,17 @@ public class PagedListView<T> extends Composite implements HasWidgets {
 
 	@Override
 	public void add(Widget aWidget) {
-		bottomContainer.add(aWidget);
+		childrenContainer.add(aWidget);
 	}
 
 	@Override
 	public Iterator<Widget> iterator() {
-		return bottomContainer.iterator();
+		return childrenContainer.iterator();
 	}
 
 	@Override
 	public boolean remove(Widget aWidget) {
-		return bottomContainer.remove(aWidget);
+		return childrenContainer.remove(aWidget);
 	}
 
 	@UiHandler("refreshButton")

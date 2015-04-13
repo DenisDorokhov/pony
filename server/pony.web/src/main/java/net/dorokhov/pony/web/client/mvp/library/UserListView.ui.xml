@@ -12,7 +12,6 @@
         }
         .userPagedView {
             height: 440px;
-            margin-top: 5px;
         }
         .addButton {
             float: right;

@@ -12,7 +12,6 @@
         }
         .logPagedView {
             height: 440px;
-            margin-top: 5px;
         }
         .messageType {
             text-transform: uppercase;
