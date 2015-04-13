@@ -43,7 +43,7 @@
             width: 68px;
         }
         .jobPagedView {
-            height: 372px;
+            height: 440px;
             margin-top: 20px;
         }
         .jobStatus {
