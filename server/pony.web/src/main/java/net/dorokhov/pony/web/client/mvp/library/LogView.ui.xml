@@ -1,6 +1,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
+             xmlns:be="urn:import:org.gwtbootstrap3.extras.datetimepicker.client.ui"
              xmlns:p="urn:import:net.dorokhov.pony.web.client.control">
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
@@ -28,11 +29,40 @@
         .messageTypeError {
             color: #d9534f;
         }
+        .controlContainer {
+            float: right;
+        }
+        .label {
+            float: left;
+            line-height: 34px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .control {
+            float: left;
+            display: inline;
+            width: 150px;
+        }
+        .typeFilter {
+            text-transform: uppercase;
+            width: 100px;
+        }
     </ui:style>
 
     <b:Modal ui:field="logView" addStyleNames="{style.logView}" title="{mes.logTitle}" fade="true">
         <b:ModalBody>
-            <p:PagedListView ui:field="logPagedView" addStyleNames="{style.logPagedView}" />
+            <p:PagedListView ui:field="logPagedView" addStyleNames="{style.logPagedView}">
+                <g:FlowPanel addStyleNames="{style.controlContainer}">
+                    <b:FormLabel addStyleNames="{style.label}" for="logView.typeField" text="{mes.logFilterType}" />
+                    <b:ListBox ui:field="typeFilter" addStyleNames="{style.control} {style.typeFilter}" b:id="logView.typeField" />
+                    <b:FormLabel addStyleNames="{style.label}" for="logView.minDateField" text="{mes.logFilterMinDate}" />
+                    <be:DateTimePicker ui:field="minDateFilter" addStyleNames="{style.control}" b:id="logView.minDateField"
+                                       format="yyyy.dd.mm hh:ii" autoClose="true" showTodayButton="true" />
+                    <b:FormLabel addStyleNames="{style.label}" for="logView.maxDateField" text="{mes.logFilterMaxDate}" />
+                    <be:DateTimePicker ui:field="maxDateFilter" addStyleNames="{style.control}" b:id="logView.maxDateField"
+                                       format="yyyy.dd.mm hh:ii" autoClose="true" showTodayButton="true" />
+                </g:FlowPanel>
+            </p:PagedListView>
         </b:ModalBody>
     </b:Modal>
 

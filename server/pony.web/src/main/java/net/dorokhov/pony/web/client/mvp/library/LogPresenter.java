@@ -13,11 +13,19 @@ import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
 
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implements LogUiHandlers {
 
-	public interface MyView extends PopupView, HasUiHandlers<LogUiHandlers> {}
+	public interface MyView extends PopupView, HasUiHandlers<LogUiHandlers> {
+
+		public LogMessageDto.Type getType();
+
+		public Date getMinDate();
+		public Date getMaxDate();
+
+	}
 
 	private final LogMessageService logService;
 
@@ -36,7 +44,7 @@ public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implement
 
 	@Override
 	public OperationRequest onLogMessagesRequested(int aPageNumber, final OperationCallback<PagedListDto<LogMessageDto>> aCallback) {
-		return logService.getLog(aPageNumber, null, null, null, new OperationCallback<PagedListDto<LogMessageDto>>() {
+		return logService.getLog(aPageNumber, getView().getType(), getView().getMinDate(), getView().getMaxDate(), new OperationCallback<PagedListDto<LogMessageDto>>() {
 
 			@Override
 			public void onSuccess(PagedListDto<LogMessageDto> aPage) {

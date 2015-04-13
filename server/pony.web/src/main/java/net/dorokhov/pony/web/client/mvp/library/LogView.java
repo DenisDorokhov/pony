@@ -2,6 +2,7 @@ package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,11 +21,13 @@ import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
 import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
+import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
+import org.gwtbootstrap3.extras.datetimepicker.client.ui.base.events.ChangeDateEvent;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements LogPresenter.MyView {
 
@@ -52,6 +55,17 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 	@UiField(provided = true)
 	PagedListView<LogMessageDto> logPagedView;
 
+	@UiField
+	ListBox typeFilter;
+
+	@UiField
+	DateTimePicker minDateFilter;
+
+	@UiField
+	DateTimePicker maxDateFilter;
+
+	private final Map<Integer, LogMessageDto.Type> indexToType = new HashMap<>();
+
 	@Inject
 	public LogView(EventBus aEventBus) {
 
@@ -60,6 +74,31 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 		initGrid();
 
 		initWidget(uiBinder.createAndBindUi(this));
+
+		typeFilter.addItem(Messages.INSTANCE.logTypeDebug());
+		typeFilter.addItem(Messages.INSTANCE.logTypeInfo());
+		typeFilter.addItem(Messages.INSTANCE.logTypeWarn());
+		typeFilter.addItem(Messages.INSTANCE.logTypeError());
+
+		indexToType.put(0, LogMessageDto.Type.DEBUG);
+		indexToType.put(1, LogMessageDto.Type.INFO);
+		indexToType.put(2, LogMessageDto.Type.WARN);
+		indexToType.put(3, LogMessageDto.Type.ERROR);
+	}
+
+	@Override
+	public LogMessageDto.Type getType() {
+		return indexToType.get(typeFilter.getSelectedIndex());
+	}
+
+	@Override
+	public Date getMinDate() {
+		return minDateFilter.getValue();
+	}
+
+	@Override
+	public Date getMaxDate() {
+		return maxDateFilter.getValue();
 	}
 
 	@UiHandler("logView")
@@ -69,6 +108,16 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 	@UiHandler("logView")
 	void onPagedListShown(ModalShownEvent aEvent) {
+		logPagedView.reload();
+	}
+
+	@UiHandler("typeFilter")
+	void onTypeChange(ChangeEvent aEvent) {
+		logPagedView.reload();
+	}
+
+	@UiHandler({"minDateFilter", "maxDateFilter"})
+	void onDateChange(ChangeDateEvent aEvent) {
 		logPagedView.reload();
 	}
 

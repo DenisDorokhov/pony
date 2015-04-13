@@ -14,7 +14,6 @@ import net.dorokhov.pony.web.shared.command.ScanEditCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateCurrentUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -197,16 +196,16 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/log", method = RequestMethod.GET)
 	public ResponseDto<PagedListDto<LogMessageDto>> getLog(@RequestParam(value = "type", required = false) LogMessageDto.Type aType,
-														   @RequestParam(value = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMinDate,
-														   @RequestParam(value = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date aMaxDate,
+														   @RequestParam(value = "minDate", required = false) Long aMinDate,
+														   @RequestParam(value = "maxDate", required = false) Long aMaxDate,
 														   @RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 														   @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {
 
 		LogQueryDto query = new LogQueryDto();
 
 		query.setType(aType);
-		query.setMinDate(aMinDate);
-		query.setMaxDate(aMaxDate);
+		query.setMinDate(aMinDate != null ? new Date(aMinDate) : null);
+		query.setMaxDate(aMaxDate != null ? new Date(aMaxDate) : null);
 
 		return responseBuilder.build(logServiceFacade.getByQuery(query, aPageNumber, aPageSize));
 	}

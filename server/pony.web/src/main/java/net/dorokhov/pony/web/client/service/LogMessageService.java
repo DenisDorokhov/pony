@@ -31,23 +31,24 @@ public class LogMessageService {
 
 		log.info("Getting log messages page [" + aPageNumber + "]...");
 
-		return new RequestAdapter(apiService.getLog(aPageNumber, aType, aMinDate, aMaxDate, new MethodCallbackAdapter<>(new OperationCallback<PagedListDto<LogMessageDto>>() {
-			@Override
-			public void onSuccess(PagedListDto<LogMessageDto> aPage) {
+		return new RequestAdapter(apiService.getLog(aPageNumber, aType, aMinDate != null ? aMinDate.getTime() : null, aMaxDate != null ? aMaxDate.getTime() : null,
+				new MethodCallbackAdapter<>(new OperationCallback<PagedListDto<LogMessageDto>>() {
+					@Override
+					public void onSuccess(PagedListDto<LogMessageDto> aPage) {
 
-				log.info("[" + aPage.getContent().size() + "] of [" + aPage.getTotalElements() + "] log messages returned.");
+						log.info("[" + aPage.getContent().size() + "] of [" + aPage.getTotalElements() + "] log messages returned.");
 
-				aCallback.onSuccess(aPage);
-			}
+						aCallback.onSuccess(aPage);
+					}
 
-			@Override
-			public void onError(List<ErrorDto> aErrors) {
+					@Override
+					public void onError(List<ErrorDto> aErrors) {
 
-				log.info("Could not get log.");
+						log.info("Could not get log.");
 
-				aCallback.onError(aErrors);
-			}
-		})));
+						aCallback.onError(aErrors);
+					}
+				})));
 	}
 
 }

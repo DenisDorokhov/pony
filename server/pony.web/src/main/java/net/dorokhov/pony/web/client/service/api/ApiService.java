@@ -58,7 +58,7 @@ public interface ApiService extends RestService {
 	@GET
 	@Path("/admin/log")
 	Request getLog(@QueryParam("pageNumber") int aPageNumber, @QueryParam("type") LogMessageDto.Type aType,
-				   @QueryParam("minDate") Date aMinDate, @QueryParam("maxDate") Date aMaxDate,
+				   @QueryParam("minDate") Long aMinDate, @QueryParam("maxDate") Long aMaxDate,
 				   MethodCallback<ResponseDto<PagedListDto<LogMessageDto>>> aCallback);
 
 	@GET

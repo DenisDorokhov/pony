@@ -81,6 +81,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String logTypeInfo();
 	public String logTypeWarn();
 	public String logTypeError();
+	public String logFilterType();
+	public String logFilterMinDate();
+	public String logFilterMaxDate();
 
 	public String userListTitle();
 	public String userListPager(int aPageNumber, int aTotalPages, @Optional int aSize, @Optional long aTotalElements);
