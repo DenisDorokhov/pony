@@ -8,7 +8,6 @@ import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.ErrorDto;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
-import net.dorokhov.pony.web.shared.ScanJobDto;
 
 import javax.inject.Inject;
 import java.util.Date;

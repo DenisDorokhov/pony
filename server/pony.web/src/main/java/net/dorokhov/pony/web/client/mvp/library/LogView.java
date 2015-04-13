@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.client.mvp.library;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -118,6 +119,11 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 	@UiHandler({"minDateFilter", "maxDateFilter"})
 	void onDateChange(ChangeDateEvent aEvent) {
+		logPagedView.reload();
+	}
+
+	@UiHandler("applyFilterButton")
+	void onApplyFilterClick(ClickEvent aEvent) {
 		logPagedView.reload();
 	}
 

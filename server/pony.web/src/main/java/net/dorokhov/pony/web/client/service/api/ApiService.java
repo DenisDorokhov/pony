@@ -9,7 +9,6 @@ import org.fusesource.restygwt.client.Options;
 import org.fusesource.restygwt.client.RestService;
 
 import javax.ws.rs.*;
-import java.util.Date;
 import java.util.List;
 
 @Options(expect = {200, 201, 204, 1223, 400, 401, 404, 500})
