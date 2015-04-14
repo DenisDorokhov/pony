@@ -111,7 +111,9 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 		getView().setScanState(MyView.ScanState.SCANNING);
 
-		reloadJobsOnProgress = true;
+		if (isVisible()) { // Scan request can be sent but scan job may be not yet created, delay reloading of scan jobs
+			reloadJobsOnProgress = true;
+		}
 	}
 
 	@Override
