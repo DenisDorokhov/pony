@@ -11,6 +11,10 @@
         .userEditView .modal-dialog {
             width: 350px !important;
         }
+        @external .modal-body;
+        .userEditView .modal-body {
+            min-height: 434px;
+        }
         .deleteButton {
             float: right;
         }

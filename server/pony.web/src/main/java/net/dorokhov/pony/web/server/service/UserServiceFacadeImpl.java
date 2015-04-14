@@ -64,7 +64,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
-		Page<User> page = userService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "name", "id"));
+		Page<User> page = userService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.ASC, "name", "email"));
 
 		return dtoConverter.pagedListToDto(page, new DtoConverter.ListConverter<User, UserDto>() {
 			@Override

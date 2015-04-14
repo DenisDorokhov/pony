@@ -24,6 +24,9 @@ CREATE TABLE user (
 	UNIQUE (email)
 );
 
+CREATE INDEX index_user_name ON user (name);
+CREATE INDEX index_user_name_email ON user (name, email);
+
 CREATE TABLE access_token (
 
 	id VARCHAR (255) NOT NULL,
