@@ -1,7 +1,6 @@
 package net.dorokhov.pony.web.shared;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ public class ConfigDto {
 
 	private List<LibraryFolderDto> libraryFolders;
 
-	@NotNull
 	public Integer getAutoScanInterval() {
 		return autoScanInterval;
 	}

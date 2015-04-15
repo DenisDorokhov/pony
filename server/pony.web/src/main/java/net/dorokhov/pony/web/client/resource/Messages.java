@@ -112,4 +112,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String userEditRoleAdmin();
 	public String userEditDeletionConfirmation();
 
+	public String settingsTitle();
+	public String settingsAutoScanInterval();
+	public String settingsAutoScanEveryHour();
+	public String settingsAutoScanEveryDay();
+	public String settingsAutoScanEveryWeek();
+	public String settingsAutoScanOff();
+	public String settingsSaveButton();
+
 }

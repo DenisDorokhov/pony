@@ -39,6 +39,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	private final ScanningPresenter scanningPresenter;
 	private final LogPresenter logPresenter;
 	private final UserListPresenter userListPresenter;
+	private final SettingsPresenter settingsPresenter;
 
 	private final BusyModeManager busyModeManager;
 
@@ -52,7 +53,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 	@Inject
 	public ToolbarPresenter(EventBus aEventBus, MyView aView,
-							ScanningPresenter aScanningPresenter, LogPresenter aLogPresenter, UserListPresenter aUserListPresenter,
+							ScanningPresenter aScanningPresenter, LogPresenter aLogPresenter, UserListPresenter aUserListPresenter, SettingsPresenter aSettingsPresenter,
 							BusyModeManager aBusyModeManager, LibraryScanner aLibraryScanner,
 							AuthenticationManager aAuthenticationManager, ErrorNotifier aErrorNotifier) {
 
@@ -61,6 +62,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 		scanningPresenter = aScanningPresenter;
 		logPresenter = aLogPresenter;
 		userListPresenter = aUserListPresenter;
+		settingsPresenter = aSettingsPresenter;
 
 		busyModeManager = aBusyModeManager;
 		libraryScanner = aLibraryScanner;
@@ -152,7 +154,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	
 	@Override
 	public void onSettingsRequested() {
-		// TODO: implement
+		addToPopupSlot(settingsPresenter);
 	}
 
 	@Override
