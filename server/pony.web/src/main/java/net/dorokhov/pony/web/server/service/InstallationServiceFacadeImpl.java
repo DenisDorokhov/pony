@@ -6,6 +6,7 @@ import net.dorokhov.pony.core.installation.InstallCommand;
 import net.dorokhov.pony.core.installation.InstallationService;
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
 import net.dorokhov.pony.web.shared.InstallationDto;
+import net.dorokhov.pony.web.shared.LibraryFolderDto;
 import net.dorokhov.pony.web.shared.RoleDto;
 import net.dorokhov.pony.web.shared.command.InstallCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +51,14 @@ public class InstallationServiceFacadeImpl implements InstallationServiceFacade 
 
 		command.setAutoScanInterval(AUTO_SCAN_INTERVAL);
 
-		for (InstallCommandDto.LibraryFolder folder : aCommand.getLibraryFolders()) {
+		for (LibraryFolderDto folder : aCommand.getLibraryFolders()) {
+			if (folder != null && folder.getPath() != null) {
 
-			String normalizedPath = folder.getPath().trim();
+				String normalizedPath = folder.getPath().trim();
 
-			if (normalizedPath.length() > 0) {
-				command.getLibraryFolders().add(new File(normalizedPath));
+				if (normalizedPath.length() > 0) {
+					command.getLibraryFolders().add(new File(normalizedPath));
+				}
 			}
 		}
 

@@ -1,7 +1,7 @@
 package net.dorokhov.pony.web.shared.command;
 
-import net.dorokhov.pony.web.server.validation.FolderExists;
 import net.dorokhov.pony.web.server.validation.RepeatPassword;
+import net.dorokhov.pony.web.shared.LibraryFolderDto;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -21,7 +21,7 @@ public class InstallCommandDto {
 
 	private String userRepeatPassword;
 
-	private List<LibraryFolder> libraryFolders;
+	private List<LibraryFolderDto> libraryFolders;
 
 	@NotBlank
 	@Size(max = 255)
@@ -63,7 +63,7 @@ public class InstallCommandDto {
 	}
 
 	@Valid
-	public List<LibraryFolder> getLibraryFolders() {
+	public List<LibraryFolderDto> getLibraryFolders() {
 
 		if (libraryFolders == null) {
 			libraryFolders = new ArrayList<>();
@@ -72,22 +72,8 @@ public class InstallCommandDto {
 		return libraryFolders;
 	}
 
-	public void setLibraryFolders(List<LibraryFolder> aLibraryFolders) {
+	public void setLibraryFolders(List<LibraryFolderDto> aLibraryFolders) {
 		libraryFolders = aLibraryFolders;
-	}
-
-	public static class LibraryFolder {
-
-		private String path;
-
-		@FolderExists
-		public String getPath() {
-			return path;
-		}
-
-		public void setPath(String aPath) {
-			path = aPath;
-		}
 	}
 
 }

@@ -52,4 +52,5 @@ public interface LogService {
 	public LogMessage error(Logger aLogger, String aCode, String aText, String aDetails, List<String> aArguments);
 
 	public void deleteAll();
+
 }

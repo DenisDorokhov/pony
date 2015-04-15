@@ -45,4 +45,5 @@ public interface UserService {
 			NotAuthorizedException, InvalidPasswordException, UserNotFoundException, UserExistsException, SelfRoleModificationException;
 
 	public void cleanTokens();
+	
 }

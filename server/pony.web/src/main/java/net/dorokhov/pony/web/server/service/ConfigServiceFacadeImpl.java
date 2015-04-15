@@ -2,6 +2,7 @@ package net.dorokhov.pony.web.server.service;
 
 import net.dorokhov.pony.core.config.ConfigService;
 import net.dorokhov.pony.web.shared.ConfigDto;
+import net.dorokhov.pony.web.shared.LibraryFolderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class ConfigServiceFacadeImpl implements ConfigServiceFacade {
 		dto.setAutoScanInterval(configService.getAutoScanInterval());
 
 		for (File folder : configService.fetchLibraryFolders()) {
-			dto.getLibraryFolders().add(folder.getAbsolutePath());
+			dto.getLibraryFolders().add(new LibraryFolderDto(folder.getAbsolutePath()));
 		}
 
 		return dto;
@@ -42,12 +43,14 @@ public class ConfigServiceFacadeImpl implements ConfigServiceFacade {
 		configService.saveAutoScanInterval(aConfig.getAutoScanInterval());
 
 		List<File> libraryFolders = new ArrayList<>();
-		for (String path : aConfig.getLibraryFolders()) {
+		for (LibraryFolderDto folder : aConfig.getLibraryFolders()) {
+			if (folder != null && folder.getPath() != null) {
 
-			String normalizedPath = path.trim();
+				String normalizedPath = folder.getPath().trim();
 
-			if (normalizedPath.length() > 0) {
-				libraryFolders.add(new File(normalizedPath));
+				if (normalizedPath.length() > 0) {
+					libraryFolders.add(new File(normalizedPath));
+				}
 			}
 		}
 		configService.saveLibraryFolders(libraryFolders);

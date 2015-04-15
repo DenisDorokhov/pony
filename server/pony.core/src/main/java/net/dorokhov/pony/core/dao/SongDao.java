@@ -64,4 +64,5 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Song s SET s.artwork = NULL WHERE s.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
+
 }

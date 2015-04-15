@@ -30,4 +30,5 @@ public interface StoredFileService {
 
 	public void delete(Long aId);
 	public void deleteAll();
+
 }

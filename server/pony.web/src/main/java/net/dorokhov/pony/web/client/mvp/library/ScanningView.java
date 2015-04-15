@@ -41,13 +41,13 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 	@SuppressWarnings("GwtCssResourceErrors")
 	interface MyStyle extends CssResource {
 
-		String jobStatus();
+		public String jobStatus();
 
-		String jobStatusStarting();
-		String jobStatusStarted();
-		String jobStatusComplete();
-		String jobStatusFailed();
-		String jobStatusInterrupted();
+		public String jobStatusStarting();
+		public String jobStatusStarted();
+		public String jobStatusComplete();
+		public String jobStatusFailed();
+		public String jobStatusInterrupted();
 
 	}
 

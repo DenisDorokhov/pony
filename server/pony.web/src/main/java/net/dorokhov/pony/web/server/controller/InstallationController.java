@@ -1,8 +1,9 @@
 package net.dorokhov.pony.web.server.controller;
 
 import net.dorokhov.pony.core.installation.exception.AlreadyInstalledException;
-import net.dorokhov.pony.web.shared.command.InstallCommandDto;
 import net.dorokhov.pony.web.server.service.InstallationServiceFacade;
+import net.dorokhov.pony.web.shared.LibraryFolderDto;
+import net.dorokhov.pony.web.shared.command.InstallCommandDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +29,7 @@ public class InstallationController {
 
 		InstallCommandDto command = new InstallCommandDto();
 
-		command.getLibraryFolders().add(new InstallCommandDto.LibraryFolder());
+		command.getLibraryFolders().add(new LibraryFolderDto());
 
 		aModel.addAttribute("installCommand", command);
 

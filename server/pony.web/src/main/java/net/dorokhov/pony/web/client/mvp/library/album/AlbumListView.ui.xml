@@ -22,6 +22,10 @@
         .panel {
             margin-bottom: 0;
         }
+        .header {
+            position: relative;
+            z-index: 1;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.container}">
@@ -31,7 +35,7 @@
             <s:ErrorIndicator ui:field="errorIndicator" />
             <s:EmptyIndicator ui:field="emptyIndicator" text="{mes.statusAlbumListEmpty}" />
 
-            <b:PanelHeader ui:field="artistHeaderContainer">
+            <b:PanelHeader ui:field="artistHeaderContainer" addStyleNames="{style.header}">
                 <b:Heading ui:field="artistHeader" size="H3" />
             </b:PanelHeader>
 

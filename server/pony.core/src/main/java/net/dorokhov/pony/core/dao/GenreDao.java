@@ -22,4 +22,5 @@ public interface GenreDao extends PagingAndSortingRepository<Genre, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Genre g SET g.artwork = NULL WHERE g.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
+
 }

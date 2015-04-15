@@ -1,5 +1,6 @@
 package net.dorokhov.pony.web.shared;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ public class ConfigDto {
 
 	private Integer autoScanInterval;
 
-	private List<String> libraryFolders;
+	private List<LibraryFolderDto> libraryFolders;
 
 	@NotNull
 	public Integer getAutoScanInterval() {
@@ -19,7 +20,8 @@ public class ConfigDto {
 		autoScanInterval = aAutoScanInterval;
 	}
 
-	public List<String> getLibraryFolders() {
+	@Valid
+	public List<LibraryFolderDto> getLibraryFolders() {
 
 		if (libraryFolders == null) {
 			libraryFolders = new ArrayList<>();
@@ -28,7 +30,7 @@ public class ConfigDto {
 		return libraryFolders;
 	}
 
-	public void setLibraryFolders(List<String> aLibraryFolders) {
+	public void setLibraryFolders(List<LibraryFolderDto> aLibraryFolders) {
 		libraryFolders = aLibraryFolders;
 	}
 

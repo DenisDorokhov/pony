@@ -1,6 +1,6 @@
 package net.dorokhov.pony.web.test;
 
-import net.dorokhov.pony.web.client.service.StringScroller;
+import net.dorokhov.pony.web.client.service.common.StringScroller;
 import org.junit.Assert;
 import org.junit.Test;
 

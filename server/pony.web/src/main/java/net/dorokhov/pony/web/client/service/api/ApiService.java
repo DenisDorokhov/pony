@@ -16,68 +16,76 @@ public interface ApiService extends RestService {
 
 	@POST
 	@Path("/authenticate")
-	Request authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+	public Request authenticate(CredentialsDto aCredentials, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
 
 	@POST
 	@Path("/logout")
-	Request logout(MethodCallback<ResponseDto<UserDto>> aCallback);
+	public Request logout(MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@GET
 	@Path("/currentUser")
-	Request getCurrentUser(MethodCallback<ResponseDto<UserDto>> aCallback);
+	public Request getCurrentUser(MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@POST
 	@Path("/refreshToken")
-	Request refreshToken(@HeaderParam(SecurityTokens.REFRESH_TOKEN_HEADER) String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
+	public Request refreshToken(@HeaderParam(SecurityTokens.REFRESH_TOKEN_HEADER) String aRefreshToken, MethodCallback<ResponseDto<AuthenticationDto>> aCallback);
 
 	@GET
 	@Path("/artists")
-	Request getArtists(MethodCallback<ResponseDto<List<ArtistDto>>> aCallback);
+	public Request getArtists(MethodCallback<ResponseDto<List<ArtistDto>>> aCallback);
 
 	@GET
 	@Path("/artistAlbums/{aArtistIdOrName}")
-	Request getArtistSongs(@PathParam("aArtistIdOrName") String aArtistIdOrName, MethodCallback<ResponseDto<ArtistAlbumsDto>> aCallback);
+	public Request getArtistSongs(@PathParam("aArtistIdOrName") String aArtistIdOrName, MethodCallback<ResponseDto<ArtistAlbumsDto>> aCallback);
 
 	@GET
 	@Path("/scanStatus")
-	Request getScanStatus(MethodCallback<ResponseDto<ScanStatusDto>> aCallback);
+	public Request getScanStatus(MethodCallback<ResponseDto<ScanStatusDto>> aCallback);
 
 	@GET
 	@Path("/admin/scanJobs")
-	Request getScanJobs(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<ScanJobDto>>> aCallback);
+	public Request getScanJobs(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<ScanJobDto>>> aCallback);
 
 	@GET
 	@Path("/admin/scanJobs/{aId}")
-	Request getScanJob(@PathParam("aId") Long aId, MethodCallback<ResponseDto<ScanJobDto>> aCallback);
+	public Request getScanJob(@PathParam("aId") Long aId, MethodCallback<ResponseDto<ScanJobDto>> aCallback);
 
 	@POST
 	@Path("/admin/startScanJob")
-	Request startScanJob(MethodCallback<ResponseDto<ScanJobDto>> aCallback);
+	public Request startScanJob(MethodCallback<ResponseDto<ScanJobDto>> aCallback);
 
 	@GET
 	@Path("/admin/log")
-	Request getLog(@QueryParam("pageNumber") int aPageNumber, @QueryParam("type") LogMessageDto.Type aType,
+	public Request getLog(@QueryParam("pageNumber") int aPageNumber, @QueryParam("type") LogMessageDto.Type aType,
 				   @QueryParam("minDate") Long aMinDate, @QueryParam("maxDate") Long aMaxDate,
 				   MethodCallback<ResponseDto<PagedListDto<LogMessageDto>>> aCallback);
 
 	@GET
 	@Path("/admin/users")
-	Request getUsers(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<UserDto>>> aCallback);
+	public Request getUsers(@QueryParam("pageNumber") int aPageNumber, MethodCallback<ResponseDto<PagedListDto<UserDto>>> aCallback);
 
 	@POST
 	@Path("/admin/users")
-	Request createUser(CreateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
+	public Request createUser(CreateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@PUT
 	@Path("/admin/users")
-	Request updateUser(UpdateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
+	public Request updateUser(UpdateUserCommandDto aCommand, MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@GET
 	@Path("/admin/users/{aId}")
-	Request getUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<UserDto>> aCallback);
+	public Request getUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<UserDto>> aCallback);
 
 	@DELETE
 	@Path("/admin/users/{aId}")
-	Request deleteUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<Object>> aCallback);
+	public Request deleteUser(@PathParam("aId") Long aId, MethodCallback<ResponseDto<Object>> aCallback);
+
+	@GET
+	@Path("/admin/config")
+	public Request getConfig(MethodCallback<ResponseDto<ConfigDto>> aCallback);
+
+	@PUT
+	@Path("/admin/config")
+	public Request saveConfig(ConfigDto aConfig, MethodCallback<ResponseDto<ConfigDto>> aCallback);
 
 }

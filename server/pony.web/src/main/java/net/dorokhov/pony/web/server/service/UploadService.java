@@ -16,4 +16,5 @@ public interface UploadService {
 	public File getArtworkUploadFile(Long aId) throws ArtworkUploadNotFoundException;
 
 	public void cleanUploads();
+
 }

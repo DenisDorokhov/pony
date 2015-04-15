@@ -44,22 +44,23 @@ public class ClientModule extends AbstractPresenterModule {
 		bind(ApiService.class).asEagerSingleton();
 
 		bind(ErrorNotifier.class).to(ErrorNotifierImpl.class).asEagerSingleton();
-		bind(BusyModeManager.class).asEagerSingleton();
-
 		bind(SecurityStorage.class).to(SecurityStorageImpl.class).asEagerSingleton();
 
 		bind(AuthenticationManager.class).asEagerSingleton();
 		bind(AuthenticationListener.class).asEagerSingleton();
 		bind(AuthenticationDispatcherFilter.class).asEagerSingleton();
 
-		bind(SongService.class).asEagerSingleton();
-
-		bind(TitleManager.class).asEagerSingleton();
-
-		bind(ScanJobService.class).asEagerSingleton();
 		bind(LibraryScanner.class).asEagerSingleton();
 		bind(LibraryScannerListener.class).asEagerSingleton();
 
+		bind(SongService.class).asEagerSingleton();
+		bind(ConfigService.class).asEagerSingleton();
+		bind(ScanJobService.class).asEagerSingleton();
+		bind(LogMessageService.class).asEagerSingleton();
+		bind(UserService.class).asEagerSingleton();
+
+		bind(BusyModeManager.class).asEagerSingleton();
+		bind(TitleManager.class).asEagerSingleton();
 		bind(LinkBuilder.class).asEagerSingleton();
 	}
 

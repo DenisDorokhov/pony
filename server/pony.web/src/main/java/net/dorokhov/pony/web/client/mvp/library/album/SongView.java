@@ -26,13 +26,13 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 	@SuppressWarnings("GwtCssResourceErrors")
 	interface MyStyle extends CssResource {
 
-		String songView();
+		public String songView();
 
-		String withArtist();
-		String activated();
-		String playing();
-		String paused();
-		String selected();
+		public String withArtist();
+		public String activated();
+		public String playing();
+		public String paused();
+		public String selected();
 
 	}
 

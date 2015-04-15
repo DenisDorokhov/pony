@@ -37,12 +37,12 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 	@SuppressWarnings("GwtCssResourceErrors")
 	interface MyStyle extends CssResource {
 
-		String messageType();
+		public String messageType();
 
-		String messageTypeDebug();
-		String messageTypeInfo();
-		String messageTypeWarn();
-		String messageTypeError();
+		public String messageTypeDebug();
+		public String messageTypeInfo();
+		public String messageTypeWarn();
+		public String messageTypeError();
 
 	}
 

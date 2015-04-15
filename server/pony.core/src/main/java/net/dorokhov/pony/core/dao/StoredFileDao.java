@@ -22,4 +22,5 @@ public interface StoredFileDao extends PagingAndSortingRepository<StoredFile, Lo
 	public List<StoredFile> findByChecksum(String aChecksum);
 
 	public StoredFile findByTagAndChecksum(String aTag, String aChecksum);
+
 }

@@ -12,4 +12,5 @@ public interface ConfigService {
 	public List<File> fetchLibraryFolders();
 
 	public void saveLibraryFolders(List<File> aValue);
+
 }

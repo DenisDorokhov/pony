@@ -26,4 +26,5 @@ public interface AlbumDao extends PagingAndSortingRepository<Album, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Album al SET al.artwork = NULL WHERE al.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
+
 }

@@ -12,4 +12,5 @@ public interface LogMessageDao extends PagingAndSortingRepository<LogMessage, Lo
 	public Page<LogMessage> findByTypeGreaterThanEqual(LogMessage.Type aType, Pageable aPageable);
 
 	public Page<LogMessage> findByTypeGreaterThanEqualAndDateBetween(LogMessage.Type aType, Date aMinDate, Date aMaxDate, Pageable aPageable);
+
 }

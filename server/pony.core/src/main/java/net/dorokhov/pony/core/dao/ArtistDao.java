@@ -28,4 +28,5 @@ public interface ArtistDao extends PagingAndSortingRepository<Artist, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Artist ar SET ar.artwork = NULL WHERE ar.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
+
 }

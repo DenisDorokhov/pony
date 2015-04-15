@@ -39,13 +39,13 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 	@SuppressWarnings("GwtCssResourceErrors")
 	interface MyStyle extends CssResource {
 
-		String userRole();
+		public String userRole();
 
-		String userRoleUser();
-		String userRoleAdmin();
+		public String userRoleUser();
+		public String userRoleAdmin();
 
-		String userNameOther();
-		String userNameCurrent();
+		public String userNameOther();
+		public String userNameCurrent();
 
 	}
 

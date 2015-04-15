@@ -1,4 +1,4 @@
-package net.dorokhov.pony.web.client.service;
+package net.dorokhov.pony.web.client.service.common;
 
 public class StringScroller {
 

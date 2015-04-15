@@ -3,6 +3,7 @@ package net.dorokhov.pony.web.client.service;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import net.dorokhov.pony.web.client.resource.Messages;
+import net.dorokhov.pony.web.client.service.common.StringScroller;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.SongDto;
 
