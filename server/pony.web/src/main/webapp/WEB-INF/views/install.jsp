@@ -40,8 +40,6 @@
 
                 this.libraryFolderContainer = $('#libraryFolderContainer');
 
-                this.lastFolderId = this.libraryFolderContainer.children().length;
-
                 this._refreshLibraryFolderControls();
             }
 
@@ -60,8 +58,6 @@
                 $itemInput.focus();
 
                 this._refreshLibraryFolderControls();
-
-                this.lastFolderId++;
             };
 
             InstallationGui.prototype.removeLibraryFolder = function(index) {
@@ -72,6 +68,12 @@
             };
 
             InstallationGui.prototype._refreshLibraryFolderControls = function() {
+
+                if (this.libraryFolderContainer.children().length < 5) {
+                    this.libraryFolderContainer.find('button.add').removeAttr('disabled');
+                } else {
+                    this.libraryFolderContainer.find('button.add').attr('disabled', '');
+                }
 
                 if (this.libraryFolderContainer.children().length > 1) {
                     this.libraryFolderContainer.find('button.remove').removeAttr('disabled');

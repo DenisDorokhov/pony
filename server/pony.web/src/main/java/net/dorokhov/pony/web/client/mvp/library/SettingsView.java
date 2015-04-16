@@ -2,11 +2,15 @@ package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import net.dorokhov.pony.web.client.control.ErrorAwareForm;
+import net.dorokhov.pony.web.client.control.FieldAwareFormGroup;
 import net.dorokhov.pony.web.client.control.status.ErrorIndicator;
 import net.dorokhov.pony.web.client.control.status.LoadingIndicator;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
@@ -14,9 +18,9 @@ import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.shared.ConfigDto;
 import net.dorokhov.pony.web.shared.ErrorDto;
-import org.gwtbootstrap3.client.ui.FieldSet;
-import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.Modal;
+import net.dorokhov.pony.web.shared.LibraryFolderDto;
+import org.gwtbootstrap3.client.ui.*;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -45,8 +49,14 @@ public class SettingsView extends ModalViewWithUiHandlers<SettingsUiHandlers> im
 	@UiField
 	ListBox autoScanField;
 
+	@UiField
+	FlowPanel libraryFolderContainer;
+
 	private final Map<Integer, Integer> autoScanIntervalToIndex = new HashMap<>();
 	private final Map<Integer, Integer> indexToAutoScanInterval = new HashMap<>();
+
+	private final List<LibraryFolderField> libraryFolderFields = new ArrayList<>();
+	private final List<HandlerRegistration> libraryFolderHandlers = new ArrayList<>();
 
 	private LoadingState loadingState;
 
@@ -150,6 +160,87 @@ public class SettingsView extends ModalViewWithUiHandlers<SettingsUiHandlers> im
 		}
 
 		autoScanField.setSelectedIndex(indexToSelect);
+
+		libraryFolderContainer.clear();
+		libraryFolderFields.clear();
+
+		if (getConfig() != null) {
+
+			int i = 0;
+
+			do {
+
+				LibraryFolderField field = buildLibraryFolderFormGroup();
+
+				if (i < getConfig().getLibraryFolders().size()) {
+
+					LibraryFolderDto folder = getConfig().getLibraryFolders().get(i);
+
+					field.getTextBox().setText(folder.getPath());
+				}
+
+				libraryFolderContainer.add(field.getFormGroup());
+				libraryFolderFields.add(field);
+
+				i++;
+
+			} while (i < getConfig().getLibraryFolders().size());
+		}
+
+		refreshLibraryFolderFields();
+	}
+
+	private void refreshLibraryFolderFields() {
+
+		while (libraryFolderHandlers.size() > 0) {
+			libraryFolderHandlers.get(0).removeHandler();
+			libraryFolderHandlers.remove(0);
+		}
+
+		for (int i = 0; i < libraryFolderFields.size(); i++) {
+
+			final LibraryFolderField field = libraryFolderFields.get(i);
+
+			field.getAddButton().setEnabled(libraryFolderFields.size() < 5);
+			field.getRemoveButton().setEnabled(libraryFolderFields.size() > 1);
+
+			field.getFormGroup().setFieldName("libraryFolders[" + i + "].path");
+
+			libraryFolderHandlers.add(field.getAddButton().addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					addLibraryFolder();
+				}
+			}));
+			libraryFolderHandlers.add(field.getRemoveButton().addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					removeLibraryFolder(field);
+				}
+			}));
+		}
+	}
+
+	private void addLibraryFolder() {
+
+		LibraryFolderField field = buildLibraryFolderFormGroup();
+
+		libraryFolderContainer.add(field.getFormGroup());
+		libraryFolderFields.add(field);
+
+		field.getTextBox().setFocus(true);
+
+		refreshLibraryFolderFields();
+	}
+
+	private void removeLibraryFolder(LibraryFolderField aField) {
+
+		int index = libraryFolderFields.indexOf(aField);
+
+		libraryFolderContainer.remove(index);
+		libraryFolderFields.remove(index);
+
+		refreshLibraryFolderFields();
 	}
 
 	private void updateErrors() {
@@ -167,10 +258,78 @@ public class SettingsView extends ModalViewWithUiHandlers<SettingsUiHandlers> im
 
 		config.setAutoScanInterval(intervalValue);
 
-		// TODO: set library folders
-		config.setLibraryFolders(getConfig().getLibraryFolders());
+		for (LibraryFolderField field : libraryFolderFields) {
+			config.getLibraryFolders().add(new LibraryFolderDto(field.getTextBox().getText()));
+		}
 
 		getUiHandlers().onSaveRequested(config);
+	}
+
+	private LibraryFolderField buildLibraryFolderFormGroup() {
+
+		FieldAwareFormGroup formGroup = new FieldAwareFormGroup();
+
+		TextBox textBox = new TextBox();
+
+		textBox.setPlaceholder(Messages.INSTANCE.settingsLibraryFolderPlaceholder());
+
+		InputGroupButton groupButton = new InputGroupButton();
+
+		Button addButton = new Button();
+
+		addButton.setIcon(IconType.PLUS);
+
+		Button removeButton = new Button();
+
+		removeButton.setIcon(IconType.MINUS);
+
+		groupButton.add(addButton);
+		groupButton.add(removeButton);
+
+		InputGroup inputGroup = new InputGroup();
+
+		inputGroup.add(textBox);
+
+		inputGroup.add(groupButton);
+
+		formGroup.add(inputGroup);
+
+		return new LibraryFolderField(formGroup, textBox, addButton, removeButton);
+	}
+
+	private class LibraryFolderField {
+
+		private final FieldAwareFormGroup formGroup;
+
+		private final TextBox textBox;
+
+		private final Button addButton;
+
+		private final Button removeButton;
+
+		public LibraryFolderField(FieldAwareFormGroup aFormGroup, TextBox aTextBox, Button aAddButton, Button aRemoveButton) {
+			formGroup = aFormGroup;
+			textBox = aTextBox;
+			addButton = aAddButton;
+			removeButton = aRemoveButton;
+		}
+
+		public FieldAwareFormGroup getFormGroup() {
+			return formGroup;
+		}
+
+		public TextBox getTextBox() {
+			return textBox;
+		}
+
+		public Button getAddButton() {
+			return addButton;
+		}
+
+		public Button getRemoveButton() {
+			return removeButton;
+		}
+
 	}
 
 }

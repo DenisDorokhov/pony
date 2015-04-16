@@ -11,6 +11,19 @@
         .settingsView .modal-dialog {
             width: 500px !important;
         }
+        @external .modal-body;
+        .settingsView .modal-body {
+            min-height: 212px;
+        }
+        .libraryFolderLabelContainer {
+            margin-bottom: 0;
+        }
+        .libraryFolderContainer {
+            margin-bottom: 15px;
+        }
+        .libraryFolderContainer > div {
+            margin-bottom: 10px;
+        }
     </ui:style>
 
     <b:Modal addStyleNames="{style.settingsView}" title="{mes.settingsTitle}" fade="true">
@@ -23,9 +36,15 @@
                 <b:FieldSet ui:field="fieldSet">
 
                     <p:FieldAwareFormGroup fieldName="autoScanInterval">
-                        <b:FormLabel for="settingsView.autoScanIntervalField" text="{mes.settingsAutoScanInterval}" />
+                        <b:FormLabel for="settingsView.autoScanIntervalField" text="{mes.settingsAutoScan}" />
                         <b:ListBox ui:field="autoScanField" b:id="settingsView.autoScanIntervalField" />
                     </p:FieldAwareFormGroup>
+
+                    <b:FormGroup addStyleNames="{style.libraryFolderLabelContainer}">
+                        <b:FormLabel text="{mes.settingsLibraryFolders}" />
+                    </b:FormGroup>
+
+                    <g:FlowPanel ui:field="libraryFolderContainer" addStyleNames="{style.libraryFolderContainer}" />
 
                     <b:SubmitButton ui:field="saveButton" type="PRIMARY" text="{mes.settingsSaveButton}" />
 

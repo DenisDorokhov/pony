@@ -51,11 +51,11 @@ public class SecurityFilter extends GenericFilterBean {
 				try {
 					userService.authenticateToken(token);
 				} catch (InvalidTokenException e) {
-					log.info("Token [" + token + "] is invalid.");
+					log.trace("Token [" + token + "] is invalid.");
 				}
 			}
 		} catch (Throwable e) {
-			log.info("Could not authenticate.", e);
+			log.error("Could not authenticate.", e);
 		}
 
 		aFilterChain.doFilter(aServletRequest, aServletResponse);
