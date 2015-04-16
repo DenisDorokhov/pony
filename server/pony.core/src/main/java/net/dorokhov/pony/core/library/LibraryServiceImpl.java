@@ -126,7 +126,12 @@ public class LibraryServiceImpl implements LibraryService {
 			songPaths.add(songFile.getFile().getAbsolutePath());
 		}
 
-		final List<Long> itemsToDelete = new ArrayList<>();
+		final Set<Long> songsToDelete = new HashSet<>();
+
+		final Set<Long> albumsToCheck = new HashSet<>();
+		final Set<Long> artistsToCheck = new HashSet<>();
+		final Set<Long> genresToCheck = new HashSet<>();
+		final Set<Long> artworksToCheck = new HashSet<>();
 
 		PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
 
@@ -135,7 +140,15 @@ public class LibraryServiceImpl implements LibraryService {
 
 				if (!songPaths.contains(aSong.getPath())) {
 
-					itemsToDelete.add(aSong.getId());
+					songsToDelete.add(aSong.getId());
+
+					albumsToCheck.add(aSong.getAlbum().getId());
+					artistsToCheck.add(aSong.getAlbum().getArtist().getId());
+					genresToCheck.add(aSong.getGenre().getId());
+
+					if (aSong.getArtwork() != null) {
+						artworksToCheck.add(aSong.getArtwork().getId());
+					}
 
 					logService.debug(log, "libraryService.deletingNotFoundSong",
 							"Deleting song [" + aSong + "], song file not found [" + aSong.getPath() + "].",
@@ -154,8 +167,23 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
-		for (Long id : itemsToDelete) {
-			deleteSong(id);
+		// Delete songs and related entities separately, otherwise Hibernate won't delete everything (bug in Hibernate auto flush?)
+
+		for (Long id : songsToDelete) {
+			songDao.delete(id);
+		}
+
+		for (Long id : albumsToCheck) {
+			deleteAlbumWithoutSongs(albumDao.findOne(id));
+		}
+		for (Long id : artistsToCheck) {
+			deleteArtistWithoutSongs(artistDao.findOne(id));
+		}
+		for (Long id : genresToCheck) {
+			deleteGenreWithoutSongs(genreDao.findOne(id));
+		}
+		for (Long id : artworksToCheck) {
+			deleteArtworkWithoutSongs(storedFileService.getById(id));
 		}
 	}
 
@@ -168,7 +196,7 @@ public class LibraryServiceImpl implements LibraryService {
 			imagePaths.add(imageFile.getFile().getAbsolutePath());
 		}
 
-		final List<Long> itemsToDelete = new ArrayList<>();
+		final Set<Long> itemsToDelete = new HashSet<>();
 
 		PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
 
@@ -228,13 +256,15 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
-		// Clear song artworks and delete stored file separately, otherwise Hibernate won't delete all stored files (bug in Hibernate auto flush?)
+		// Clear song artworks and delete stored files separately, otherwise Hibernate won't delete everything (bug in Hibernate auto flush?)
+
 		for (Long id : itemsToDelete) {
 			songDao.clearArtworkByArtworkId(id);
 			albumDao.clearArtworkByArtworkId(id);
 			artistDao.clearArtworkByArtworkId(id);
 			genreDao.clearArtworkByArtworkId(id);
 		}
+
 		for (Long id : itemsToDelete) {
 			storedFileService.delete(id);
 		}
@@ -516,7 +546,10 @@ public class LibraryServiceImpl implements LibraryService {
 						Arrays.asList(song.toString()));
 			}
 
-			deleteEntitiesWithoutSongs(overriddenAlbum, overriddenAlbum != null ? overriddenAlbum.getArtist() : null, overriddenGenre, overriddenArtwork);
+			deleteAlbumWithoutSongs(overriddenAlbum);
+			deleteArtistWithoutSongs(overriddenAlbum != null ? overriddenAlbum.getArtist() : null);
+			deleteGenreWithoutSongs(overriddenGenre);
+			deleteArtworkWithoutSongs(overriddenArtwork);
 
 			song.setAlbum(albumDao.findOne(song.getAlbum().getId()));
 
@@ -824,17 +857,7 @@ public class LibraryServiceImpl implements LibraryService {
 		return command;
 	}
 
-	private void deleteSong(Long aId) {
-
-		Song song = songDao.findOne(aId);
-
-		songDao.delete(song);
-
-		deleteEntitiesWithoutSongs(song.getAlbum(), song.getAlbum().getArtist(), song.getGenre(), song.getArtwork());
-	}
-
-	private void deleteEntitiesWithoutSongs(Album aAlbum, Artist aArtist, Genre aGenre, StoredFile aArtwork) {
-
+	private void deleteAlbumWithoutSongs(Album aAlbum) {
 		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
 
 			albumDao.delete(aAlbum);
@@ -842,6 +865,9 @@ public class LibraryServiceImpl implements LibraryService {
 			logService.debug(log, "libraryService.deletingAlbum", "Deleting album without songs " + aAlbum + ".",
 					Arrays.asList(aAlbum.toString()));
 		}
+	}
+
+	private void deleteArtistWithoutSongs(Artist aArtist) {
 		if (aArtist != null && albumDao.countByArtistId(aArtist.getId()) == 0) {
 
 			artistDao.delete(aArtist);
@@ -849,6 +875,9 @@ public class LibraryServiceImpl implements LibraryService {
 			logService.debug(log, "libraryService.deletingArtist", "Deleting artist without albums " + aArtist + ".",
 					Arrays.asList(aArtist.toString()));
 		}
+	}
+
+	private void deleteGenreWithoutSongs(Genre aGenre) {
 		if (aGenre != null && songDao.countByGenreId(aGenre.getId()) == 0) {
 
 			genreDao.delete(aGenre);
@@ -856,6 +885,9 @@ public class LibraryServiceImpl implements LibraryService {
 			logService.debug(log, "libraryService.deletingGenre", "Deleting genre without songs " + aGenre + ".",
 					Arrays.asList(aGenre.toString()));
 		}
+	}
+
+	private void deleteArtworkWithoutSongs(StoredFile aArtwork) {
 		if (aArtwork != null && songDao.countByArtworkId(aArtwork.getId()) == 0) {
 
 			logService.debug(log, "libraryService.deletingNotUsedArtwork",
