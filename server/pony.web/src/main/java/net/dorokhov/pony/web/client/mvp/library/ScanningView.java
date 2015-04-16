@@ -294,9 +294,17 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 			case "searchingMediaFiles":
 				return Messages.INSTANCE.scanningStatusSearchingMediaFiles();
 			case "cleaningSongs":
-				return Messages.INSTANCE.scanningStatusCleaningSongs(PROGRESS_FORMAT.format(aStatus.getProgress()));
+				if (aStatus.getProgress() >= 0) {
+					return Messages.INSTANCE.scanningStatusCleaningSongs(PROGRESS_FORMAT.format(aStatus.getProgress()));
+				} else {
+					return Messages.INSTANCE.scanningStatusCleaningSongsUnknownProgress();
+				}
 			case "cleaningArtworks":
-				return Messages.INSTANCE.scanningStatusCleaningArtworks(PROGRESS_FORMAT.format(aStatus.getProgress()));
+				if (aStatus.getProgress() >= 0) {
+					return Messages.INSTANCE.scanningStatusCleaningArtworks(PROGRESS_FORMAT.format(aStatus.getProgress()));
+				} else {
+					return Messages.INSTANCE.scanningStatusCleaningArtworksUnknownProgress();
+				}
 			case "importingSongs":
 				return Messages.INSTANCE.scanningStatusImportingSongs(PROGRESS_FORMAT.format(aStatus.getProgress()));
 			case "normalizing":

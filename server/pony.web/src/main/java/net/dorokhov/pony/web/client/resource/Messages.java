@@ -54,7 +54,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String scanningStatusStarting();
 	public String scanningStatusSearchingMediaFiles();
 	public String scanningStatusCleaningSongs(String aProgress);
+	public String scanningStatusCleaningSongsUnknownProgress();
 	public String scanningStatusCleaningArtworks(String aProgress);
+	public String scanningStatusCleaningArtworksUnknownProgress();
 	public String scanningStatusImportingSongs(String aProgress);
 	public String scanningStatusNormalizing(String aProgress);
 	public String scanningPager(int aPageNumber, int aTotalPages, @Optional int aCount, @Optional long aTotalCount);
@@ -120,6 +122,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String settingsAutoScanOff();
 	public String settingsLibraryFolders();
 	public String settingsLibraryFolderPlaceholder();
+	public String settingsConfirmScanAfterLibraryChange();
 	public String settingsSaveButton();
 
 }

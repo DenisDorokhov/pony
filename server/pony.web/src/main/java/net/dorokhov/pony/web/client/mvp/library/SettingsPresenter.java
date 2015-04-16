@@ -5,6 +5,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
+import net.dorokhov.pony.web.client.event.ConfigUpdateEvent;
 import net.dorokhov.pony.web.client.mvp.common.HasLoadingState;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.service.ConfigService;
@@ -70,7 +71,7 @@ public class SettingsPresenter extends PresenterWidget<SettingsPresenter.MyView>
 
 				getView().setEnabled(true);
 
-				// TODO: fire config save event and offer scanning?
+				getEventBus().fireEvent(new ConfigUpdateEvent(getView().getConfig(), aConfig));
 
 				getView().hide();
 			}

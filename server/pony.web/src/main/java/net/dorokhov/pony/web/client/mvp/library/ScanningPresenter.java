@@ -1,9 +1,13 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.HasUiHandlers;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
+import net.dorokhov.pony.web.client.event.ConfigUpdateEvent;
+import net.dorokhov.pony.web.client.event.ScanRequestEvent;
+import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
 import net.dorokhov.pony.web.client.service.LibraryScanner;
 import net.dorokhov.pony.web.client.service.ScanJobService;
@@ -15,9 +19,10 @@ import net.dorokhov.pony.web.shared.ScanJobDto;
 import net.dorokhov.pony.web.shared.ScanStatusDto;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.List;
 
-public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView> implements LibraryScanner.Delegate, ScanningUiHandlers {
+public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView> implements ScanningUiHandlers, LibraryScanner.Delegate, ConfigUpdateEvent.Handler {
 
 	public interface MyView extends PopupView, HasUiHandlers<ScanningUiHandlers> {
 
@@ -63,6 +68,8 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 		super.onBind();
 
+		addRegisteredHandler(ConfigUpdateEvent.TYPE, this);
+
 		libraryScanner.addDelegate(this);
 	}
 
@@ -80,6 +87,10 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		super.onReveal();
 
 		libraryScanner.updateStatus();
+	}
+
+	public void scan() {
+		libraryScanner.scan();
 	}
 
 	@Override
@@ -103,7 +114,7 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 
 	@Override
 	public void onScanRequested() {
-		libraryScanner.scan();
+		scan();
 	}
 
 	@Override
@@ -138,6 +149,15 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		getView().reloadScanJobs();
 
 		reloadJobsOnProgress = false;
+	}
+
+	@Override
+	public void onConfigUpdate(ConfigUpdateEvent aEvent) {
+		if (!Arrays.equals(aEvent.getOldConfig().getLibraryFolders().toArray(), aEvent.getNewConfig().getLibraryFolders().toArray())) {
+			if (Window.confirm(Messages.INSTANCE.settingsConfirmScanAfterLibraryChange())) {
+				getEventBus().fireEvent(new ScanRequestEvent());
+			}
+		}
 	}
 
 }

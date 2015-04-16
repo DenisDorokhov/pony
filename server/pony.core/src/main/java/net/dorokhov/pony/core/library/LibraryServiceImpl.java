@@ -167,6 +167,10 @@ public class LibraryServiceImpl implements LibraryService {
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 
+		if (aDelegate != null) {
+			aDelegate.onProgress(-1.0);
+		}
+
 		// Delete songs and related entities separately, otherwise Hibernate won't delete everything (bug in Hibernate auto flush?)
 
 		for (Long id : songsToDelete) {
@@ -255,6 +259,10 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 		};
 		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+
+		if (aDelegate != null) {
+			aDelegate.onProgress(-1.0);
+		}
 
 		// Clear song artworks and delete stored files separately, otherwise Hibernate won't delete everything (bug in Hibernate auto flush?)
 

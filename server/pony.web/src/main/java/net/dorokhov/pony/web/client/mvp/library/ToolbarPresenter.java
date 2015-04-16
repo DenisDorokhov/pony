@@ -6,6 +6,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 import net.dorokhov.pony.web.client.event.EmptyLibraryEvent;
 import net.dorokhov.pony.web.client.event.RefreshRequestEvent;
+import net.dorokhov.pony.web.client.event.ScanRequestEvent;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.BusyModeManager;
 import net.dorokhov.pony.web.client.service.ErrorNotifier;
@@ -18,7 +19,9 @@ import net.dorokhov.pony.web.shared.UserDto;
 import javax.inject.Inject;
 import java.util.List;
 
-public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers, BusyModeManager.Delegate, LibraryScanner.Delegate, AuthenticationManager.Delegate, EmptyLibraryEvent.Handler {
+public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> implements ToolbarUiHandlers,
+		BusyModeManager.Delegate, LibraryScanner.Delegate, AuthenticationManager.Delegate,
+		EmptyLibraryEvent.Handler, ScanRequestEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<ToolbarUiHandlers> {
 
@@ -78,6 +81,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 		super.onBind();
 
 		addRegisteredHandler(EmptyLibraryEvent.TYPE, this);
+		addRegisteredHandler(ScanRequestEvent.TYPE, this);
 
 		busyModeManager.addDelegate(this);
 		libraryScanner.addDelegate(this);
@@ -190,6 +194,14 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 
 			didShowScanningWithEmptyLibrary = true;
 		}
+	}
+
+	@Override
+	public void onScanRequest(ScanRequestEvent aEvent) {
+
+		addToPopupSlot(scanningPresenter);
+
+		scanningPresenter.scan();
 	}
 
 }
