@@ -16,7 +16,7 @@ This project was originally started as a playground for development of my skills
 * Display of music artworks - both MP3-embedded and file based.
 * Multi-user system.
 * Fully automatic installation.
-* Support of multimedia keys in Google Chrome browser with the help of "Media Keys by Sway.fm" extension.
+* Multimedia keys support in Google Chrome browser with the help of "Media Keys by Sway.fm" extension.
 
 ## Known Issues
 
@@ -28,9 +28,8 @@ This project was originally started as a playground for development of my skills
 
 * Spring MVC
 * Spring Data JPA
-* Hibernate
+* JPA / Hibernate / HSQLDB
 * Hibernate Search / Lucene
-* HSQLDB
 * Spring Security
 * Token-based authentication system.
 * JSR 303 Bean Validation (Hibernate Validator)
@@ -38,13 +37,11 @@ This project was originally started as a playground for development of my skills
 * Google Web Toolkit
 * GWT-Platform
 * RestyGWT
-* Twitter Bootstrap
+* Twitter Bootstrap (gwtbootstrap3)
 
-## Development TODO
+## Development Roadmap
 
-* Settings GUI.
 * Edit current user GUI.
-* User CRUD GUI.
 * Export artist / album / song GUI.
 * Search GUI.
 * Edit audio tags GUI.
