@@ -65,7 +65,7 @@
                     <b:FormLabel addStyleNames="{style.label}" for="logView.maxDateField" text="{mes.logFilterMaxDate}" />
                     <be:DateTimePicker ui:field="maxDateFilter" addStyleNames="{style.control}" b:id="logView.maxDateField"
                                        format="yyyy.dd.mm hh:ii" autoClose="true" showTodayButton="true" />
-                    <b:Button ui:field="applyFilterButton" addStyleNames="{style.applyFilterButton}" text="{mes.logFilterApply}" />
+                    <b:Button ui:field="applyFilterButton" addStyleNames="{style.applyFilterButton}" type="PRIMARY" text="{mes.logFilterApply}" />
                 </g:FlowPanel>
             </p:PagedListView>
         </b:ModalBody>

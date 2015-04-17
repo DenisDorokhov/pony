@@ -11,10 +11,12 @@ import net.dorokhov.pony.web.shared.UserDto;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
-public class LibraryScanner {
+public class LibraryScanner implements AuthenticationManager.Delegate {
 
 	public static interface Delegate {
 
@@ -38,7 +40,7 @@ public class LibraryScanner {
 
 	private final AuthenticationManager authenticationManager;
 
-	private final List<Delegate> delegates = new ArrayList<>();
+	private final Set<Delegate> delegates = new LinkedHashSet<>();
 
 	private boolean scanning;
 
@@ -52,6 +54,8 @@ public class LibraryScanner {
 		apiService = aApiService;
 		errorNotifier = aErrorNotifier;
 		authenticationManager = aAuthenticationManager;
+
+		authenticationManager.addDelegate(this);
 
 		scheduleStatusTimer(STATUS_TIMER_INTERVAL_FIRST);
 	}
@@ -75,10 +79,7 @@ public class LibraryScanner {
 	}
 
 	public void updateStatus() {
-
-		UserDto user = authenticationManager.getUser();
-
-		if (user != null) {
+		if (authenticationManager.getUser() != null) {
 			doUpdateStatus();
 		} else {
 			scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
@@ -90,6 +91,22 @@ public class LibraryScanner {
 			doGetStatusAndScan();
 		}
 	}
+
+	@Override
+	public void onInitialization(UserDto aUser) {
+		updateStatus();
+	}
+
+	@Override
+	public void onAuthentication(UserDto aUser) {
+		updateStatus();
+	}
+
+	@Override
+	public void onStatusUpdate(UserDto aUser) {}
+
+	@Override
+	public void onLogout(UserDto aUser, boolean aExplicit) {}
 
 	private void scheduleStatusTimer(int aTime) {
 

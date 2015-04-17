@@ -81,14 +81,6 @@ public class ScanningPresenter extends PresenterWidget<ScanningPresenter.MyView>
 		super.onUnbind();
 	}
 
-	@Override
-	protected void onReveal() {
-
-		super.onReveal();
-
-		libraryScanner.updateStatus();
-	}
-
 	public void scan() {
 		libraryScanner.scan();
 	}
