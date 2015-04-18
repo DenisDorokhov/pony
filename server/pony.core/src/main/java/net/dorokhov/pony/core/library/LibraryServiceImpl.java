@@ -169,11 +169,11 @@ public class LibraryServiceImpl implements LibraryService {
 
 		final MutableInt i = new MutableInt();
 
-		for (final List<Long> idChunk : Partition.partition(songsToDelete, CLEANING_BUFFER_SIZE)) {
+		for (final List<Long> chunk : Partition.partition(songsToDelete, CLEANING_BUFFER_SIZE)) {
 			newTransactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
-					for (Long id : idChunk) {
+					for (Long id : chunk) {
 
 						Song song = songDao.findOne(id);
 
