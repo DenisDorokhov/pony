@@ -50,7 +50,8 @@ public class LibraryServiceImpl implements LibraryService {
 
 	private final Object lock = new Object();
 
-	private TransactionTemplate transactionTemplate;
+	private TransactionTemplate newTransactionTemplate;
+	private TransactionTemplate readOnlyTransactionTemplate;
 
 	private LogService logService;
 
@@ -72,7 +73,14 @@ public class LibraryServiceImpl implements LibraryService {
 
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager aTransactionManager) {
-		transactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+
+		newTransactionTemplate = new TransactionTemplate(aTransactionManager, new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+
+		DefaultTransactionDefinition readOnlyDefinition = new DefaultTransactionDefinition();
+
+		readOnlyDefinition.setReadOnly(true);
+
+		readOnlyTransactionTemplate = new TransactionTemplate(aTransactionManager, readOnlyDefinition);
 	}
 
 	@Autowired
@@ -135,20 +143,14 @@ public class LibraryServiceImpl implements LibraryService {
 
 		final List<Long> songsToDelete = new ArrayList<>();
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		readOnlyTransactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
-
 					@Override
 					public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
 						if (!songPaths.contains(aSong.getPath())) {
-
 							songsToDelete.add(aSong.getId());
-
-							logService.debug(log, "libraryService.deletingNotFoundSong",
-									"Deleting song [" + aSong + "], song file not found [" + aSong.getPath() + "].",
-									Arrays.asList(aSong.toString(), aSong.getPath()));
 						}
 					}
 
@@ -168,19 +170,26 @@ public class LibraryServiceImpl implements LibraryService {
 		final MutableInt i = new MutableInt();
 
 		for (final List<Long> idChunk : Partition.partition(songsToDelete, CLEANING_BUFFER_SIZE)) {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			newTransactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
 					for (Long id : idChunk) {
 
 						Song song = songDao.findOne(id);
 
-						songDao.delete(song);
+						if (song != null) {
 
-						deleteGenreIfNotUsed(song.getGenre());
-						deleteAlbumIfNotUsed(song.getAlbum());
-						deleteArtistIfNotUsed(song.getAlbum().getArtist());
-						deleteArtworkIfNotUsed(song.getArtwork());
+							logService.debug(log, "libraryService.deletingNotFoundSong",
+									"Deleting song [" + song + "], song file not found [" + song.getPath() + "].",
+									Arrays.asList(song.toString(), song.getPath()));
+
+							songDao.delete(song);
+
+							deleteGenreIfNotUsed(song.getGenre());
+							deleteAlbumIfNotUsed(song.getAlbum());
+							deleteArtistIfNotUsed(song.getAlbum().getArtist());
+							deleteArtworkIfNotUsed(song.getArtwork());
+						}
 
 						if (aDelegate != null) {
 							aDelegate.onProgress((i.getValue() + 1) / (double) songsToDelete.size());
@@ -206,61 +215,34 @@ public class LibraryServiceImpl implements LibraryService {
 			imagePaths.add(imageFile.getFile().getAbsolutePath());
 		}
 
-		final List<Long> artworksToDelete = new ArrayList<>();
+		final List<ExternalArtworkDeletionTask> artworksToDelete = new ArrayList<>();
 
-		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		readOnlyTransactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
 			protected void doInTransactionWithoutResult(TransactionStatus status) {
 				PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
-
 					@Override
 					public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
 
-						boolean shouldDelete = false;
+						String externalFilePath = aStoredFile.getUserData();
 
-						if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
+						if (!imagePaths.contains(externalFilePath)) {
 
-							String externalFilePath = null;
-							if (aStoredFile.getUserData() != null) {
-								externalFilePath = aStoredFile.getUserData();
+							artworksToDelete.add(new ExternalArtworkDeletionTask(aStoredFile.getId(), externalFilePath, ExternalArtworkDeletionReason.NOT_FOUND));
+
+						} else {
+
+							File externalFile = new File(externalFilePath);
+
+							if (aStoredFile.getDate().getTime() < externalFile.lastModified()) {
+								artworksToDelete.add(new ExternalArtworkDeletionTask(aStoredFile.getId(), externalFilePath, ExternalArtworkDeletionReason.MODIFIED));
 							}
-
-							if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
-
-								logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-										"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + externalFilePath + "].",
-										Arrays.asList(aStoredFile.toString(), externalFilePath));
-
-								shouldDelete = true;
-
-							} else {
-
-								File externalFile = new File(externalFilePath);
-
-								shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
-
-								if (shouldDelete) {
-									logService.debug(log, "libraryService.deletingModifiedStoredFile",
-											"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
-											Arrays.asList(aStoredFile.toString(), externalFilePath));
-								}
-							}
-						}
-
-						if (!shouldDelete && aStoredFile.getTag() != null) {
-							if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
-								shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
-							}
-						}
-
-						if (shouldDelete) {
-							artworksToDelete.add(aStoredFile.getId());
 						}
 					}
 
 					@Override
 					public Page<StoredFile> getPage(Pageable aPageable) {
-						return storedFileService.getAll(aPageable);
+						return storedFileService.getByTag(StoredFile.TAG_ARTWORK_FILE, aPageable);
 					}
 				};
 				new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
@@ -273,18 +255,33 @@ public class LibraryServiceImpl implements LibraryService {
 
 		final MutableInt i = new MutableInt();
 
-		for (final List<Long> chunk : Partition.partition(artworksToDelete, CLEANING_BUFFER_SIZE)) {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		for (final List<ExternalArtworkDeletionTask> chunk : Partition.partition(artworksToDelete, CLEANING_BUFFER_SIZE)) {
+			newTransactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				@Override
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
-					for (Long id : chunk) {
+					for (ExternalArtworkDeletionTask task : chunk) {
 
-						songDao.clearArtworkByArtworkId(id);
-						albumDao.clearArtworkByArtworkId(id);
-						artistDao.clearArtworkByArtworkId(id);
-						genreDao.clearArtworkByArtworkId(id);
+						StoredFile storedFile = storedFileService.getById(task.getId());
 
-						storedFileService.delete(id);
+						switch (task.getReason()) {
+							case NOT_FOUND:
+								logService.debug(log, "libraryService.deletingNotFoundStoredFile",
+										"Deleting file artwork [" + storedFile + "], artwork file not found [" + task.getPath() + "].",
+										Arrays.asList(storedFile.toString(), task.getPath()));
+								break;
+							case MODIFIED:
+								logService.debug(log, "libraryService.deletingModifiedStoredFile",
+										"Deleting file artwork [" + storedFile + "], artwork file modified [" + task.getPath() + "].",
+										Arrays.asList(storedFile.toString(), task.getPath()));
+								break;
+						}
+
+						songDao.clearArtworkByArtworkId(task.getId());
+						albumDao.clearArtworkByArtworkId(task.getId());
+						artistDao.clearArtworkByArtworkId(task.getId());
+						genreDao.clearArtworkByArtworkId(task.getId());
+
+						storedFileService.delete(task.getId());
 
 						if (aDelegate != null) {
 							aDelegate.onProgress((i.getValue() + 1) / (double) artworksToDelete.size());
@@ -408,7 +405,7 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 
 			synchronized (lock) {
-				song = transactionTemplate.execute(new TransactionCallback<Song>() {
+				song = newTransactionTemplate.execute(new TransactionCallback<Song>() {
 					@Override
 					public Song doInTransaction(TransactionStatus status) {
 						return importSong(aSongFile, songData);
@@ -419,7 +416,7 @@ public class LibraryServiceImpl implements LibraryService {
 		} else {
 			if (song.getArtwork() == null) {
 				synchronized (lock) {
-					song = transactionTemplate.execute(new TransactionCallback<Song>() {
+					song = newTransactionTemplate.execute(new TransactionCallback<Song>() {
 						@Override
 						public Song doInTransaction(TransactionStatus status) {
 
@@ -456,7 +453,7 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 
 			synchronized (lock) {
-				song = transactionTemplate.execute(new TransactionCallback<Song>() {
+				song = newTransactionTemplate.execute(new TransactionCallback<Song>() {
 					@Override
 					public Song doInTransaction(TransactionStatus status) {
 						return importSong(aSongFile, updatedSongData);
@@ -927,6 +924,37 @@ public class LibraryServiceImpl implements LibraryService {
 			genreDao.clearArtworkByArtworkId(aArtwork.getId());
 
 			storedFileService.delete(aArtwork.getId());
+		}
+	}
+
+	private enum ExternalArtworkDeletionReason {
+		NOT_FOUND, MODIFIED
+	}
+
+	private class ExternalArtworkDeletionTask {
+
+		private final Long id;
+
+		private final String path;
+
+		private final ExternalArtworkDeletionReason reason;
+
+		public ExternalArtworkDeletionTask(Long aId, String aPath, ExternalArtworkDeletionReason aReason) {
+			id = aId;
+			path = aPath;
+			reason = aReason;
+		}
+
+		public Long getId() {
+			return id;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public ExternalArtworkDeletionReason getReason() {
+			return reason;
 		}
 	}
 
