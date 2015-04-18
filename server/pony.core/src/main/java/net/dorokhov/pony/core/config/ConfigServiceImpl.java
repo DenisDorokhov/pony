@@ -16,7 +16,7 @@ public class ConfigServiceImpl implements ConfigService {
 	public static final String CONFIG_AUTO_SCAN_INTERVAL = "autoScanInterval";
 
 	public static final String CONFIG_LIBRARY_FOLDERS = "libraryFolders";
-	public static final String CONFIG_LIBRARY_FOLDERS_SEPARATOR = ":";
+	public static final String CONFIG_LIBRARY_FOLDERS_SEPARATOR = ":::";
 
 	private ConfigDao configDao;
 
