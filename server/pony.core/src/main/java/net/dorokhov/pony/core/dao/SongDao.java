@@ -61,7 +61,7 @@ public interface SongDao extends PagingAndSortingRepository<Song, Long> {
 	public Page<Song> findByGenreIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
 	public Page<Song> findByAlbumIdAndArtworkNotNull(Long aGenreId, Pageable aPageable);
 
-	@Modifying(clearAutomatically = true)
+	@Modifying
 	@Query("UPDATE Song s SET s.artwork = NULL WHERE s.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
 

@@ -8,7 +8,6 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,20 +39,6 @@ public class Genre extends BaseEntity<Long> implements Comparable<Genre> {
 
 	public void setArtwork(StoredFile aArtwork) {
 		artwork = aArtwork;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genre")
-	public List<Song> getSongs() {
-
-		if (songs == null) {
-			songs = new ArrayList<>();
-		}
-
-		return songs;
-	}
-
-	public void setSongs(List<Song> aSongs) {
-		songs = aSongs;
 	}
 
 	@Override

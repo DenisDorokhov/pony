@@ -19,7 +19,7 @@ public interface GenreDao extends PagingAndSortingRepository<Genre, Long> {
 
 	public Page<Genre> findByArtworkId(Long aStoredFileId, Pageable aPageable);
 
-	@Modifying(clearAutomatically = true)
+	@Modifying
 	@Query("UPDATE Genre g SET g.artwork = NULL WHERE g.artwork.id = ?1")
 	public void clearArtworkByArtworkId(Long aStoredFileId);
 
