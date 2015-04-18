@@ -18,6 +18,7 @@ import net.dorokhov.pony.core.storage.StoreFileCommand;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
@@ -165,7 +165,7 @@ public class LibraryServiceImpl implements LibraryService {
 			aDelegate.onProgress(0.0);
 		}
 
-		final AtomicInteger i = new AtomicInteger();
+		final MutableInt i = new MutableInt();
 
 		for (final List<Long> idChunk : Partition.partition(songsToDelete, CLEANING_BUFFER_SIZE)) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -183,10 +183,10 @@ public class LibraryServiceImpl implements LibraryService {
 						deleteArtworkIfNotUsed(song.getArtwork());
 
 						if (aDelegate != null) {
-							aDelegate.onProgress((i.get() + 1) / (double) songsToDelete.size());
+							aDelegate.onProgress((i.getValue() + 1) / (double) songsToDelete.size());
 						}
 
-						i.incrementAndGet();
+						i.increment();
 					}
 				}
 			});
@@ -271,7 +271,7 @@ public class LibraryServiceImpl implements LibraryService {
 			aDelegate.onProgress(0.0);
 		}
 
-		final AtomicInteger i = new AtomicInteger();
+		final MutableInt i = new MutableInt();
 
 		for (final List<Long> chunk : Partition.partition(artworksToDelete, CLEANING_BUFFER_SIZE)) {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -287,10 +287,10 @@ public class LibraryServiceImpl implements LibraryService {
 						storedFileService.delete(id);
 
 						if (aDelegate != null) {
-							aDelegate.onProgress((i.get() + 1) / (double) artworksToDelete.size());
+							aDelegate.onProgress((i.getValue() + 1) / (double) artworksToDelete.size());
 						}
 
-						i.incrementAndGet();
+						i.increment();
 					}
 				}
 			});

@@ -9,6 +9,7 @@ import net.dorokhov.pony.core.domain.ScanResult;
 import net.dorokhov.pony.core.domain.ScanType;
 import net.dorokhov.pony.core.library.exception.*;
 import net.dorokhov.pony.core.logging.LogService;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ScanJobServiceImpl implements ScanJobService {
@@ -170,7 +170,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 	@Transactional
 	public void interruptCurrentJobs() {
 
-		final AtomicInteger interruptedJobsCount = new AtomicInteger();
+		final MutableInt interruptedJobsCount = new MutableInt();
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
@@ -183,7 +183,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 						scanJobDao.save(aJob);
 
-						interruptedJobsCount.incrementAndGet();
+						interruptedJobsCount.increment();
 					}
 
 					@Override
@@ -195,8 +195,8 @@ public class ScanJobServiceImpl implements ScanJobService {
 			}
 		});
 
-		if (interruptedJobsCount.get() > 0) {
-			logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.get() + "] job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.get())));
+		if (interruptedJobsCount.getValue() > 0) {
+			logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.getValue() + "] job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.getValue())));
 		}
 	}
 
