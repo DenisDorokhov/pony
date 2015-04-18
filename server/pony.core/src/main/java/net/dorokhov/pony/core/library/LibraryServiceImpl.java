@@ -4,6 +4,7 @@ import net.dorokhov.pony.core.audio.SongDataService;
 import net.dorokhov.pony.core.audio.data.SongDataReadable;
 import net.dorokhov.pony.core.audio.data.SongDataWritable;
 import net.dorokhov.pony.core.common.PageProcessor;
+import net.dorokhov.pony.core.common.Partition;
 import net.dorokhov.pony.core.dao.AlbumDao;
 import net.dorokhov.pony.core.dao.ArtistDao;
 import net.dorokhov.pony.core.dao.GenreDao;
@@ -32,11 +33,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
@@ -118,140 +121,179 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void cleanSongs(List<LibrarySong> aSongFiles, final ProgressDelegate aDelegate) {
+
+		if (aDelegate != null) {
+			aDelegate.onProgress(-1.0);
+		}
 
 		final Set<String> songPaths = new HashSet<>();
 		for (LibrarySong songFile : aSongFiles) {
 			songPaths.add(songFile.getFile().getAbsolutePath());
 		}
 
-		final Set<Long> songsToDelete = new HashSet<>();
+		final List<Long> songsToDelete = new ArrayList<>();
 
-		PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
-
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
-			public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				PageProcessor.Handler<Song> handler = new PageProcessor.Handler<Song>() {
 
-				if (!songPaths.contains(aSong.getPath())) {
+					@Override
+					public void process(Song aSong, Page<Song> aPage, int aIndexInPage, long aIndexInAll) {
+						if (!songPaths.contains(aSong.getPath())) {
 
-					songsToDelete.add(aSong.getId());
+							songsToDelete.add(aSong.getId());
 
-					logService.debug(log, "libraryService.deletingNotFoundSong",
-							"Deleting song [" + aSong + "], song file not found [" + aSong.getPath() + "].",
-							Arrays.asList(aSong.toString(), aSong.getPath()));
-				}
+							logService.debug(log, "libraryService.deletingNotFoundSong",
+									"Deleting song [" + aSong + "], song file not found [" + aSong.getPath() + "].",
+									Arrays.asList(aSong.toString(), aSong.getPath()));
+						}
+					}
 
-				if (aDelegate != null) {
-					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
-				}
+					@Override
+					public Page<Song> getPage(Pageable aPageable) {
+						return songDao.findAll(aPageable);
+					}
+				};
+				new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 			}
-
-			@Override
-			public Page<Song> getPage(Pageable aPageable) {
-				return songDao.findAll(aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+		});
 
 		if (aDelegate != null) {
-			aDelegate.onProgress(-1.0);
+			aDelegate.onProgress(0.0);
 		}
 
-		for (Long id : songsToDelete) {
+		final AtomicInteger i = new AtomicInteger();
 
-			Song song = songDao.findOne(id);
+		for (final List<Long> idChunk : Partition.partition(songsToDelete, CLEANING_BUFFER_SIZE)) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					for (Long id : idChunk) {
 
-			songDao.delete(song);
+						Song song = songDao.findOne(id);
 
-			deleteGenreIfNotUsed(song.getGenre());
-			deleteAlbumIfNotUsed(song.getAlbum());
-			deleteArtistIfNotUsed(song.getAlbum().getArtist());
-			deleteArtworkIfNotUsed(song.getArtwork());
+						songDao.delete(song);
+
+						deleteGenreIfNotUsed(song.getGenre());
+						deleteAlbumIfNotUsed(song.getAlbum());
+						deleteArtistIfNotUsed(song.getAlbum().getArtist());
+						deleteArtworkIfNotUsed(song.getArtwork());
+
+						if (aDelegate != null) {
+							aDelegate.onProgress((i.get() + 1) / (double) songsToDelete.size());
+						}
+
+						i.incrementAndGet();
+					}
+				}
+			});
 		}
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void cleanArtworks(List<LibraryImage> aImageFiles, final ProgressDelegate aDelegate) {
+
+		if (aDelegate != null) {
+			aDelegate.onProgress(-1.0);
+		}
 
 		final Set<String> imagePaths = new HashSet<>();
 		for (LibraryImage imageFile : aImageFiles) {
 			imagePaths.add(imageFile.getFile().getAbsolutePath());
 		}
 
-		final Set<Long> itemsToDelete = new HashSet<>();
+		final List<Long> artworksToDelete = new ArrayList<>();
 
-		PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
-
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 			@Override
-			public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+				PageProcessor.Handler<StoredFile> handler = new PageProcessor.Handler<StoredFile>() {
 
-				boolean shouldDelete = false;
+					@Override
+					public void process(StoredFile aStoredFile, Page<StoredFile> aPage, int aIndexInPage, long aIndexInAll) {
 
-				if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
+						boolean shouldDelete = false;
 
-					String externalFilePath = null;
-					if (aStoredFile.getUserData() != null) {
-						externalFilePath = aStoredFile.getUserData();
-					}
+						if (aStoredFile.getTag() != null && aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
 
-					if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
+							String externalFilePath = null;
+							if (aStoredFile.getUserData() != null) {
+								externalFilePath = aStoredFile.getUserData();
+							}
 
-						logService.debug(log, "libraryService.deletingNotFoundStoredFile",
-								"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + externalFilePath + "].",
-								Arrays.asList(aStoredFile.toString(), externalFilePath));
+							if (externalFilePath == null || !imagePaths.contains(externalFilePath)) {
 
-						shouldDelete = true;
+								logService.debug(log, "libraryService.deletingNotFoundStoredFile",
+										"Deleting file artwork [" + aStoredFile + "], artwork file not found [" + externalFilePath + "].",
+										Arrays.asList(aStoredFile.toString(), externalFilePath));
 
-					} else {
+								shouldDelete = true;
 
-						File externalFile = new File(externalFilePath);
+							} else {
 
-						shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
+								File externalFile = new File(externalFilePath);
+
+								shouldDelete = (aStoredFile.getDate().getTime() < externalFile.lastModified());
+
+								if (shouldDelete) {
+									logService.debug(log, "libraryService.deletingModifiedStoredFile",
+											"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
+											Arrays.asList(aStoredFile.toString(), externalFilePath));
+								}
+							}
+						}
+
+						if (!shouldDelete && aStoredFile.getTag() != null) {
+							if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
+								shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
+							}
+						}
 
 						if (shouldDelete) {
-							logService.debug(log, "libraryService.deletingModifiedStoredFile",
-									"Deleting file artwork [" + aStoredFile + "], artwork file modified [" + externalFilePath + "].",
-									Arrays.asList(aStoredFile.toString(), externalFilePath));
+							artworksToDelete.add(aStoredFile.getId());
 						}
 					}
-				}
 
-				if (!shouldDelete && aStoredFile.getTag() != null) {
-					if (aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_EMBEDDED) || aStoredFile.getTag().equals(StoredFile.TAG_ARTWORK_FILE)) {
-						shouldDelete = (songDao.countByArtworkId(aStoredFile.getId()) == 0);
+					@Override
+					public Page<StoredFile> getPage(Pageable aPageable) {
+						return storedFileService.getAll(aPageable);
 					}
-				}
-
-				if (shouldDelete) {
-					itemsToDelete.add(aStoredFile.getId());
-				}
-
-				if (aDelegate != null) {
-					aDelegate.onProgress((aIndexInAll + 1) / (double) aPage.getTotalElements());
-				}
+				};
+				new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
 			}
-
-			@Override
-			public Page<StoredFile> getPage(Pageable aPageable) {
-				return storedFileService.getAll(aPageable);
-			}
-		};
-		new PageProcessor<>(CLEANING_BUFFER_SIZE, new Sort("id"), handler).run();
+		});
 
 		if (aDelegate != null) {
-			aDelegate.onProgress(-1.0);
+			aDelegate.onProgress(0.0);
 		}
 
-		for (Long id : itemsToDelete) {
+		final AtomicInteger i = new AtomicInteger();
 
-			songDao.clearArtworkByArtworkId(id);
-			albumDao.clearArtworkByArtworkId(id);
-			artistDao.clearArtworkByArtworkId(id);
-			genreDao.clearArtworkByArtworkId(id);
+		for (final List<Long> chunk : Partition.partition(artworksToDelete, CLEANING_BUFFER_SIZE)) {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				@Override
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					for (Long id : chunk) {
 
-			storedFileService.delete(id);
+						songDao.clearArtworkByArtworkId(id);
+						albumDao.clearArtworkByArtworkId(id);
+						artistDao.clearArtworkByArtworkId(id);
+						genreDao.clearArtworkByArtworkId(id);
+
+						storedFileService.delete(id);
+
+						if (aDelegate != null) {
+							aDelegate.onProgress((i.get() + 1) / (double) artworksToDelete.size());
+						}
+
+						i.incrementAndGet();
+					}
+				}
+			});
 		}
 	}
 
