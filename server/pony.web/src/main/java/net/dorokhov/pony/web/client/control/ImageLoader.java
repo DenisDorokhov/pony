@@ -5,17 +5,18 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 
-public class ImageLoader extends Composite {
+public class ImageLoader extends Composite implements LoadHandler, ErrorHandler {
 
 	public enum State {
 		EMPTY, PENDING, LOADING, ERROR, LOADED
@@ -23,7 +24,22 @@ public class ImageLoader extends Composite {
 
 	interface MyUiBinder extends UiBinder<Widget, ImageLoader> {}
 
+	@SuppressWarnings("GwtCssResourceErrors")
+	interface MyStyle extends CssResource {
+
+		public String image();
+
+		public String loadedImage();
+
+	}
+
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+
+	@UiField
+	MyStyle style;
+
+	@UiField
+	FlowPanel imageContainer;
 
 	@UiField
 	Image emptyImage;
@@ -34,7 +50,6 @@ public class ImageLoader extends Composite {
 	@UiField
 	Image errorImage;
 
-	@UiField
 	Image loadedImage;
 
 	private String url;
@@ -45,6 +60,9 @@ public class ImageLoader extends Composite {
 
 	private HandlerRegistration scrollRegistration;
 	private HandlerRegistration resizeRegistration;
+
+	private HandlerRegistration loadRegistration;
+	private HandlerRegistration errorRegistration;
 
 	private Timer timer;
 
@@ -67,7 +85,7 @@ public class ImageLoader extends Composite {
 
 				setState(State.PENDING);
 
-				loadedImage.setUrl("");
+				removeLoadedImage();
 
 				if (isAttached()) {
 					lazyLoad();
@@ -86,7 +104,7 @@ public class ImageLoader extends Composite {
 
 		setState(State.EMPTY);
 
-		loadedImage.setUrl("");
+		removeLoadedImage();
 	}
 
 	public State getState() {
@@ -148,21 +166,18 @@ public class ImageLoader extends Composite {
 		super.onDetach();
 	}
 
-	@UiHandler("loadedImage")
-	void onImageLoaded(LoadEvent aEvent) {
-		if (getState() == State.LOADING) {
-			setState(State.LOADED);
-		}
+	public void onLoad(LoadEvent aEvent) {
+
+		setState(State.LOADED);
+
+		loadedImage.setVisible(true);
 	}
 
-	@UiHandler("loadedImage")
-	void onImageError(ErrorEvent aEvent) {
-		if (getState() == State.LOADING) {
+	public void onError(ErrorEvent aEvent) {
 
-			setState(State.ERROR);
+		setState(State.ERROR);
 
-			loadedImage.setUrl("");
-		}
+		removeLoadedImage();
 	}
 
 	private void setState(State aLoadingState) {
@@ -172,7 +187,6 @@ public class ImageLoader extends Composite {
 		emptyImage.setVisible(getState() == State.EMPTY);
 		loadingImage.setVisible(getState() == State.PENDING || getState() == State.LOADING);
 		errorImage.setVisible(getState() == State.ERROR);
-		loadedImage.setVisible(getState() == State.LOADED);
 	}
 
 	private void lazyLoad() {
@@ -207,6 +221,17 @@ public class ImageLoader extends Composite {
 
 			setState(State.LOADING);
 
+			loadedImage = new Image();
+			loadedImage.setVisible(false);
+
+			loadedImage.addStyleName(style.image());
+			loadedImage.addStyleName(style.loadedImage());
+
+			imageContainer.add(loadedImage);
+
+			loadRegistration = loadedImage.addLoadHandler(this);
+			errorRegistration = loadedImage.addErrorHandler(this);
+
 			loadedImage.setUrl(getUrl());
 		}
 	}
@@ -217,6 +242,22 @@ public class ImageLoader extends Composite {
 			timer.cancel();
 
 			timer = null;
+		}
+	}
+
+	private void removeLoadedImage() {
+
+		if (loadedImage != null) {
+
+			loadRegistration.removeHandler();
+			errorRegistration.removeHandler();
+
+			imageContainer.remove(loadedImage);
+
+			loadedImage = null;
+
+			loadRegistration = null;
+			errorRegistration = null;
 		}
 	}
 

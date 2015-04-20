@@ -3,7 +3,7 @@
 
     <ui:with field="img" type="net.dorokhov.pony.web.client.resource.Images" />
 
-    <ui:style>
+    <ui:style type="net.dorokhov.pony.web.client.control.ImageLoader.MyStyle">
         .imageLoader {
             position: relative;
             background-color: #FFF;
@@ -27,11 +27,10 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.imageLoader}">
+    <g:FlowPanel ui:field="imageContainer" addStyleNames="{style.imageLoader}">
         <g:Image ui:field="emptyImage" addStyleNames="{style.image} {style.status}" resource="{img.unknown}" />
         <g:Image ui:field="loadingImage" addStyleNames="{style.image} {style.status}" resource="{img.spinner}" />
         <g:Image ui:field="errorImage" addStyleNames="{style.image} {style.status}" resource="{img.error}" />
-        <g:Image ui:field="loadedImage" addStyleNames="{style.image} {style.loadedImage}" />
     </g:FlowPanel>
 
 </ui:UiBinder>
