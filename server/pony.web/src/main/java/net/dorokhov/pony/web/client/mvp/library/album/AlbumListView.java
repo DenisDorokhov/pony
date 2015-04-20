@@ -1,10 +1,8 @@
 package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -205,13 +203,7 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 
 	@Override
 	public void scrollToTop() {
-		// Delay scrolling, otherwise in IE scrolling will happen before showing loading spinner
-		Scheduler.get().scheduleFinally(new Command() {
-			@Override
-			public void execute() {
-				albumList.getElement().setScrollTop(0);
-			}
-		});
+		albumList.getElement().setScrollTop(0);
 	}
 
 	@Override
