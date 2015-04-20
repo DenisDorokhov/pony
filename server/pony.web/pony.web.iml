@@ -115,6 +115,7 @@
     <orderEntry type="library" name="Maven: org:jaudiotagger:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: net.coobird:thumbnailator:0.4.7" level="project" />
     <orderEntry type="library" name="Maven: org.realityforge.gwt.cache-filter:gwt-cache-filter:0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.samaxes.filter:cachefilter:2.3.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-user:2.6.1" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:sources:1.0.0.GA" level="project" />

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: org.fusesource.restygwt:restygwt:2.0.3-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150410.200608-5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150418.200631-6.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150410.200608-5-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150418.200631-6-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150410.200608-5-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/fusesource/restygwt/restygwt/2.0.3-SNAPSHOT/restygwt-2.0.3-20150418.200631-6-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

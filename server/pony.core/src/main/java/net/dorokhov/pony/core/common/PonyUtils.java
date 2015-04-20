@@ -48,6 +48,7 @@ public class PonyUtils {
 		RESERVED_FILENAME_CHARACTERS.add('<');
 		RESERVED_FILENAME_CHARACTERS.add('>');
 		RESERVED_FILENAME_CHARACTERS.add('|');
+		RESERVED_FILENAME_CHARACTERS.add('"');
 	}
 
 	public static String sanitizeFileName(String aName) {
