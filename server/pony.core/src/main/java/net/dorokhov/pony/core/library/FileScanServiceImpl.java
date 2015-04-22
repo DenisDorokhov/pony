@@ -91,19 +91,21 @@ public class FileScanServiceImpl implements FileScanService {
 
 		if (fileList != null) {
 			for (File childFile : fileList) {
-				if (childFile.isDirectory()) {
-					currentFolder.getChildFoldersMutable().add(doScanFolder(childFile, currentFolder));
-				} else {
+				if (childFile.exists()) { // Check file existence to avoid rare SMB-related problems
+					if (childFile.isDirectory()) {
+						currentFolder.getChildFoldersMutable().add(doScanFolder(childFile, currentFolder));
+					} else {
 
-					LibraryFile libraryFile = doScanFile(childFile, currentFolder);
+						LibraryFile libraryFile = doScanFile(childFile, currentFolder);
 
-					if (libraryFile != null) {
-						if (libraryFile instanceof LibraryImage) {
-							currentFolder.getChildImagesMutable().add((LibraryImage) libraryFile);
-						} else if (libraryFile instanceof LibrarySong) {
-							currentFolder.getChildSongsMutable().add((LibrarySong) libraryFile);
-						} else {
-							throw new RuntimeException("Unknown file type.");
+						if (libraryFile != null) {
+							if (libraryFile instanceof LibraryImage) {
+								currentFolder.getChildImagesMutable().add((LibraryImage) libraryFile);
+							} else if (libraryFile instanceof LibrarySong) {
+								currentFolder.getChildSongsMutable().add((LibrarySong) libraryFile);
+							} else {
+								throw new RuntimeException("Unknown file type.");
+							}
 						}
 					}
 				}

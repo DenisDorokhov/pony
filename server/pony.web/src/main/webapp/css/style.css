@@ -1,0 +1,9 @@
+* {
+    outline: none !important;
+}
+/* Disable rounded corners in IE for better performance */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .panel {
+        border-radius: 0 !important;
+    }
+}

@@ -12,12 +12,10 @@
     <title><spring:message code="install.title" /></title>
 
     <link rel="icon" type="image/png" href="./img/favicon.png">
-    <link href="./css/lib/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./css/lib/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 
     <style>
-        * {
-            outline: none !important;
-        }
         .container {
             max-width: 600px;
         }

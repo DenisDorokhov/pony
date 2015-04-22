@@ -441,7 +441,7 @@ public class UserServiceImpl implements UserService {
 
 		if (tokenAge > aLifetime) {
 
-			log.debug("Token " + aToken + " is too old [" + aToken + "], age is [" + tokenAge + "], lifetime is [" + aLifetime + "].");
+			log.debug("Token is too old [" + aToken + "], age is [" + tokenAge + "], lifetime is [" + aLifetime + "].");
 
 			throw new InvalidTokenException();
 		}

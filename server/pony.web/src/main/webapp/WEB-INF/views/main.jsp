@@ -12,11 +12,9 @@
     <title><spring:message code="main.title" /></title>
 
     <link rel="icon" type="image/png" href="./img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 
     <style>
-        * {
-            outline: none !important;
-        }
         body {
             margin: 0;
             padding: 0;
