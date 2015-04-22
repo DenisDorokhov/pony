@@ -14,4 +14,7 @@ public interface Scripts extends ClientBundle {
 	@Source("UnityShim.js")
 	TextResource unity();
 
+	@Source("ua-parser.js")
+	TextResource uaParser();
+
 }

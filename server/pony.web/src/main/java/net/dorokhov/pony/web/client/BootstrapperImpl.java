@@ -51,6 +51,7 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 
 		injectScript(Scripts.INSTANCE.growl());
 		injectScript(Scripts.INSTANCE.unity());
+		injectScript(Scripts.INSTANCE.uaParser());
 
 		authenticationManager.initialize(new NoOpOperationCallback<UserDto>() {
 			@Override

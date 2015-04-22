@@ -1,8 +1,10 @@
 package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -17,6 +19,7 @@ import net.dorokhov.pony.web.client.event.SongStartRequestEvent;
 import net.dorokhov.pony.web.client.mvp.common.LoadingState;
 import net.dorokhov.pony.web.client.mvp.common.SelectionMode;
 import net.dorokhov.pony.web.client.resource.Messages;
+import net.dorokhov.pony.web.client.util.UserAgentUtils;
 import net.dorokhov.pony.web.shared.AlbumSongsDto;
 import net.dorokhov.pony.web.shared.ArtistDto;
 import net.dorokhov.pony.web.shared.SongDto;
@@ -203,7 +206,19 @@ public class AlbumListView extends ViewWithUiHandlers<AlbumListUiHandlers> imple
 
 	@Override
 	public void scrollToTop() {
-		albumList.getElement().setScrollTop(0);
+
+		String browser = UserAgentUtils.getInfo().getBrowserName();
+
+		if (browser.equals("IE")) { // HACK: fix IE bug when scroll happens before loading indicator is shown
+			Scheduler.get().scheduleFinally(new Command() {
+				@Override
+				public void execute() {
+					albumList.getElement().setScrollTop(0);
+				}
+			});
+		} else {
+			albumList.getElement().setScrollTop(0);
+		}
 	}
 
 	@Override
