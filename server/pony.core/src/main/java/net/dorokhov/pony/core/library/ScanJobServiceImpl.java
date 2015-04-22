@@ -218,13 +218,18 @@ public class ScanJobServiceImpl implements ScanJobService {
 
 				if (autoScanInterval != null) {
 
-					Page<ScanResult> page = scanService.getAll(new PageRequest(0, 1, Sort.Direction.DESC, "date"));
+					Page<ScanJob> page = getAll(new PageRequest(0, 1, Sort.Direction.DESC, "creationDate", "updateDate"));
 
-					ScanResult lastResult = page.getTotalElements() > 0 ? page.getContent().get(0) : null;
+					ScanJob lastJob = page.getTotalElements() > 0 ? page.getContent().get(0) : null;
 
-					if (lastResult != null) {
+					if (lastJob != null) {
 
-						long secondsSinceLastScan = (new Date().getTime() - lastResult.getDate().getTime()) / 1000;
+						Date jobDate = lastJob.getUpdateDate();
+						if (jobDate == null) {
+							jobDate = lastJob.getCreationDate();
+						}
+
+						long secondsSinceLastScan = (new Date().getTime() - jobDate.getTime()) / 1000;
 
 						if (secondsSinceLastScan >= autoScanInterval) {
 							shouldScan = true;

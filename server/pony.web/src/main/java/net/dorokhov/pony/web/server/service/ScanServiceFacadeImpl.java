@@ -127,7 +127,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 					String.valueOf(aPageSize), String.valueOf(MAX_PAGE_SIZE));
 		}
 
-		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "updateDate"));
+		Page<ScanJob> page = scanJobService.getAll(new PageRequest(aPageNumber, aPageSize, Sort.Direction.DESC, "creationDate", "updateDate"));
 
 		return dtoConverter.pagedListToDto(page, new DtoConverter.ListConverter<ScanJob, ScanJobDto>() {
 			@Override

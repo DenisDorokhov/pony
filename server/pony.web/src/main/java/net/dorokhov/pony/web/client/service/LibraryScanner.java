@@ -29,7 +29,7 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 	}
 
 	private static final int STATUS_TIMER_INTERVAL_NOT_SCANNING = 15000;
-	private static final int STATUS_TIMER_INTERVAL_SCANNING = 500;
+	private static final int STATUS_TIMER_INTERVAL_SCANNING = 1000;
 	private static final int STATUS_TIMER_INTERVAL_FIRST = 500;
 
 	private final Logger log = Logger.getLogger(getClass().getName());
@@ -78,14 +78,6 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 		return status;
 	}
 
-	public void updateStatus() {
-		if (authenticationManager.getUser() != null) {
-			doUpdateStatus();
-		} else {
-			scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
-		}
-	}
-
 	public void scan() {
 		if (!isScanning()) {
 			doGetStatusAndScan();
@@ -107,6 +99,14 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 	@Override
 	public void onLogout(UserDto aUser, boolean aExplicit) {}
+
+	private void updateStatus() {
+		if (authenticationManager.getUser() != null) {
+			doUpdateStatus();
+		} else {
+			scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
+		}
+	}
 
 	private void scheduleStatusTimer(int aTime) {
 

@@ -49,7 +49,7 @@ public class AuthenticationManager {
 	}
 
 	private static final int CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL = 5 * 1000;
-	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 5 * 60 * 1000;
+	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 15 * 1000;
 	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
 	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 60 * 60 * 1000;
 
@@ -331,9 +331,6 @@ public class AuthenticationManager {
 		boolean scheduleChecking = true;
 
 		if (securityStorage.getAccessTokenExpiration() != null) {
-
-			log.info("Checking token expiration...");
-
 			if (securityStorage.getAccessTokenExpiration().getTime() - new Date().getTime() <= REFRESH_TOKEN_BEFORE_EXPIRATION) {
 
 				scheduleChecking = false;
@@ -344,9 +341,6 @@ public class AuthenticationManager {
 						checkTokenExpirationTimer.schedule(CHECK_TOKEN_EXPIRATION_INTERVAL);
 					}
 				});
-
-			} else {
-				log.info("Token refresh is not needed.");
 			}
 		}
 
