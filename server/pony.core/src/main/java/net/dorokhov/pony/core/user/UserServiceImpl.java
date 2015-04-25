@@ -455,14 +455,14 @@ public class UserServiceImpl implements UserService {
 
 		if (token == null) {
 
-			log.debug("Access token not found [" + aTokenString + "].");
+			log.trace("Access token not found [" + aTokenString + "].");
 
 			throw new InvalidTokenException();
 		}
 
 		if (!passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
 
-			log.debug("Access token secret does not match [" + aTokenString + "].");
+			log.trace("Access token secret does not match [" + aTokenString + "].");
 
 			throw new InvalidTokenException();
 		}
@@ -478,14 +478,14 @@ public class UserServiceImpl implements UserService {
 
 		if (token == null) {
 
-			log.debug("Refresh token not found [" + aTokenString + "].");
+			log.trace("Refresh token not found [" + aTokenString + "].");
 
 			throw new InvalidTokenException();
 		}
 
 		if (!passwordEncoder.matches(tokenString.getTokenSecret(), token.getSecret())) {
 
-			log.debug("Refresh token secret does not match [" + aTokenString + "].");
+			log.trace("Refresh token secret does not match [" + aTokenString + "].");
 
 			throw new InvalidTokenException();
 		}

@@ -60,4 +60,5 @@ public class LogPresenter extends PresenterWidget<LogPresenter.MyView> implement
 			}
 		});
 	}
+
 }

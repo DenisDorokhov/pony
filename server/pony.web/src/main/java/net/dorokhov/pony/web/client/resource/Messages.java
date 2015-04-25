@@ -125,4 +125,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 	public String settingsConfirmScanAfterLibraryChange();
 	public String settingsSaveButton();
 
+	public String logMessageColumnDetails();
+
+	public String logMessageTitle();
+	public String logMessageDate();
+	public String logMessageType();
+	public String logMessageText();
+	public String logMessageDetails();
+
 }

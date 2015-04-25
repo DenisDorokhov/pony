@@ -71,10 +71,8 @@
         <b:ModalBody>
 
             <g:FlowPanel addStyleNames="{style.section}">
-
                 <g:Label addStyleNames="{style.label}" text="{mes.scanningStatus}" />
-                <g:Label ui:field="statusLabel" addStyleNames="{style.status}" text="inactive" />
-
+                <g:Label ui:field="statusLabel" addStyleNames="{style.status}" />
             </g:FlowPanel>
 
             <g:FlowPanel addStyleNames="{style.section}">

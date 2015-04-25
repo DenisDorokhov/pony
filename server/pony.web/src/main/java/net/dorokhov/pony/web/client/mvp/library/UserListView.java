@@ -11,9 +11,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
-import net.dorokhov.pony.web.client.control.AnchorCell;
 import net.dorokhov.pony.web.client.control.PagedListView;
+import net.dorokhov.pony.web.client.control.WidgetCell;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
@@ -139,9 +140,9 @@ public class UserListView extends ModalViewWithUiHandlers<UserListUiHandlers> im
 						return getUiHandlers().isCurrentUser(aUser) ? style.userNameCurrent() : style.userNameOther();
 					}
 				},
-				new Column<UserDto, Anchor>(new AnchorCell()) {
+				new Column<UserDto, Widget>(new WidgetCell()) {
 					@Override
-					public Anchor getValue(UserDto aUser) {
+					public Widget getValue(UserDto aUser) {
 						return new Anchor(aUser.getEmail(), "mailto:" + aUser.getEmail());
 					}
 				},

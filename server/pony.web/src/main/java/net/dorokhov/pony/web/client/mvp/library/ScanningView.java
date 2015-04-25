@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -12,13 +13,16 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import net.dorokhov.pony.web.client.control.AnchorWidgetCell;
 import net.dorokhov.pony.web.client.control.PagedListView;
+import net.dorokhov.pony.web.client.mvp.common.LogMessageCellView;
+import net.dorokhov.pony.web.client.mvp.common.LogMessageView;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
-import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import net.dorokhov.pony.web.shared.ScanJobDto;
 import net.dorokhov.pony.web.shared.ScanStatusDto;
@@ -138,6 +142,19 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 	private void initGrid() {
 
+		Column<ScanJobDto, Widget> logMessageColumn = new Column<ScanJobDto, Widget>(new AnchorWidgetCell()) {
+			@Override
+			public Widget getValue(ScanJobDto aJob) {
+				return new LogMessageCellView(aJob.getLogMessage());
+			}
+		};
+		logMessageColumn.setFieldUpdater(new FieldUpdater<ScanJobDto, Widget>() {
+			@Override
+			public void update(int aIndex, ScanJobDto aJob, Widget aValue) {
+				new LogMessageView(aJob.getLogMessage()).show();
+			}
+		});
+
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.scanningColumnStarted(),
 				Messages.INSTANCE.scanningColumnUpdated(),
@@ -147,7 +164,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 		final List<String> widths = Arrays.asList(
 				"150px", "150px", "120px", null
 		);
-		final List<TextColumn<ScanJobDto>> columns = Arrays.asList(
+		final List<Column<ScanJobDto, ?>> columns = Arrays.asList(
 				new TextColumn<ScanJobDto>() {
 					@Override
 					public String getValue(ScanJobDto aJob) {
@@ -206,12 +223,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 						return result;
 					}
 				},
-				new TextColumn<ScanJobDto>() {
-					@Override
-					public String getValue(ScanJobDto aJob) {
-						return FormatUtils.formatLog(aJob.getLogMessage());
-					}
-				}
+				logMessageColumn
 		);
 
 		jobPagedView = new PagedListView<>(new PagedListView.DataSource<ScanJobDto>() {
@@ -222,7 +234,7 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 			}
 
 			@Override
-			public Column<ScanJobDto, String> getColumn(int aIndex) {
+			public Column<ScanJobDto, ?> getColumn(int aIndex) {
 				return columns.get(aIndex);
 			}
 

@@ -1,0 +1,64 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
+
+    <ui:style>
+        @external .modal-dialog;
+        .logMessageView .modal-dialog {
+            width: 800px !important;
+        }
+        @external .modal-body;
+        .logMessageView .modal-body {
+            max-height: 500px;
+            overflow-x: auto;
+        }
+        .section {
+            clear: both;
+        }
+        .label {
+            float: left;
+            width: 80px;
+            margin-right: 10px;
+            text-align: right;
+            line-height: 34px;
+            font-weight: bold;
+        }
+        .value {
+            margin-left: 90px;
+            padding-top: 7px;
+            padding-right: 5px;
+        }
+        .details {
+            white-space: pre;
+        }
+    </ui:style>
+
+    <b:Modal ui:field="logMessageView" addStyleNames="{style.logMessageView}" title="{mes.logMessageTitle}" fade="true">
+        <b:ModalBody>
+
+            <g:FlowPanel addStyleNames="{style.section}">
+                <g:Label addStyleNames="{style.label}" text="{mes.logMessageDate}" />
+                <g:Label ui:field="dateLabel" addStyleNames="{style.value}" />
+            </g:FlowPanel>
+
+            <g:FlowPanel addStyleNames="{style.section}">
+                <g:Label addStyleNames="{style.label}" text="{mes.logMessageType}" />
+                <g:Label ui:field="typeLabel" addStyleNames="{style.value}" />
+            </g:FlowPanel>
+
+            <g:FlowPanel addStyleNames="{style.section}">
+                <g:Label addStyleNames="{style.label}" text="{mes.logMessageText}" />
+                <g:Label ui:field="textLabel" addStyleNames="{style.value}" />
+            </g:FlowPanel>
+
+            <g:FlowPanel addStyleNames="{style.section}">
+                <g:Label addStyleNames="{style.label}" text="{mes.logMessageDetails}" />
+                <g:Label ui:field="detailsLabel" addStyleNames="{style.value} {style.details}" />
+            </g:FlowPanel>
+
+        </b:ModalBody>
+    </b:Modal>
+
+</ui:UiBinder>

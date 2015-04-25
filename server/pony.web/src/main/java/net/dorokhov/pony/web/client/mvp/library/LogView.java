@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.client.mvp.library;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,13 +12,16 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import net.dorokhov.pony.web.client.control.AnchorWidgetCell;
 import net.dorokhov.pony.web.client.control.PagedListView;
+import net.dorokhov.pony.web.client.mvp.common.LogMessageCellView;
+import net.dorokhov.pony.web.client.mvp.common.LogMessageView;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
 import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
-import net.dorokhov.pony.web.client.util.FormatUtils;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import net.dorokhov.pony.web.shared.PagedListDto;
 import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
@@ -129,6 +133,19 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 
 	private void initGrid() {
 
+		Column<LogMessageDto, Widget> messageTextColumn = new Column<LogMessageDto, Widget>(new AnchorWidgetCell()) {
+			@Override
+			public Widget getValue(LogMessageDto aMessage) {
+				return new LogMessageCellView(aMessage);
+			}
+		};
+		messageTextColumn.setFieldUpdater(new FieldUpdater<LogMessageDto, Widget>() {
+			@Override
+			public void update(int aIndex, LogMessageDto aMessage, Widget aValue) {
+				new LogMessageView(aMessage).show();
+			}
+		});
+
 		final List<String> headers = Arrays.asList(
 				Messages.INSTANCE.logColumnDate(),
 				Messages.INSTANCE.logColumnType(),
@@ -137,7 +154,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 		final List<String> widths = Arrays.asList(
 				"150px", "80px", null
 		);
-		final List<TextColumn<LogMessageDto>> columns = Arrays.asList(
+		final List<Column<LogMessageDto, ?>> columns = Arrays.asList(
 				new TextColumn<LogMessageDto>() {
 					@Override
 					public String getValue(LogMessageDto aMessage) {
@@ -186,12 +203,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 						return result;
 					}
 				},
-				new TextColumn<LogMessageDto>() {
-					@Override
-					public String getValue(LogMessageDto aMessage) {
-						return FormatUtils.formatLog(aMessage);
-					}
-				}
+				messageTextColumn
 		);
 
 		logPagedView = new PagedListView<>(new PagedListView.DataSource<LogMessageDto>() {
@@ -202,7 +214,7 @@ public class LogView extends ModalViewWithUiHandlers<LogUiHandlers> implements L
 			}
 
 			@Override
-			public Column<LogMessageDto, String> getColumn(int aIndex) {
+			public Column<LogMessageDto, ?> getColumn(int aIndex) {
 				return columns.get(aIndex);
 			}
 
