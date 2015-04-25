@@ -2,7 +2,6 @@ package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -144,23 +143,24 @@ public class SongView extends Composite implements SongSelectionRequestEvent.Has
 
 	@UiHandler("songView")
 	void onClick(ClickEvent aEvent) {
+		if (isSelected()) {
 
-		SelectionMode selectionType;
+			handlerManager.fireEvent(new SongStartRequestEvent(getSong()));
 
-		if (aEvent.isMetaKeyDown()) {
-			selectionType = SelectionMode.ADD;
-		} else if (aEvent.isShiftKeyDown()) {
-			selectionType = SelectionMode.GROUP;
 		} else {
-			selectionType = SelectionMode.SINGLE;
+
+			SelectionMode selectionType;
+
+			if (aEvent.isMetaKeyDown()) {
+				selectionType = SelectionMode.ADD;
+			} else if (aEvent.isShiftKeyDown()) {
+				selectionType = SelectionMode.GROUP;
+			} else {
+				selectionType = SelectionMode.SINGLE;
+			}
+
+			handlerManager.fireEvent(new SongSelectionRequestEvent(getSong(), selectionType));
 		}
-
-		handlerManager.fireEvent(new SongSelectionRequestEvent(getSong(), selectionType));
-	}
-
-	@UiHandler("songView")
-	void onDoubleClick(DoubleClickEvent aEvent) {
-		handlerManager.fireEvent(new SongStartRequestEvent(getSong()));
 	}
 
 	private void updateSong() {
