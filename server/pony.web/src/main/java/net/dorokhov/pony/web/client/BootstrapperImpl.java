@@ -40,7 +40,7 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 	@Override
 	public void onBootstrap() {
 
-		Defaults.setServiceRoot("/api");
+		Defaults.setServiceRoot("api");
 
 		FilterawareDispatcher dispatcher = DefaultFilterawareDispatcher.singleton();
 
