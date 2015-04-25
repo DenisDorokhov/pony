@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
 
 		SecurityContextHolder.getContext().setAuthentication(springAuthentication);
 
-		log.info("User [" + userDetails.getUser().getEmail() + "] has authenticated with email and password.");
+		log.debug("User [" + userDetails.getUser().getEmail() + "] has authenticated with email and password.");
 
 		AuthenticationImpl authentication = new AuthenticationImpl();
 
@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
 		TokenString refreshTokenString = new TokenString();
 		RefreshToken refreshToken = createRefreshToken(refreshTokenString, user);
 
-		log.info("Token for user [" + user.getEmail() + "] has been refreshed.");
+		log.debug("Token for user [" + user.getEmail() + "] has been refreshed.");
 
 		AuthenticationImpl authentication = new AuthenticationImpl();
 
@@ -355,7 +355,7 @@ public class UserServiceImpl implements UserService {
 
 		SecurityContextHolder.clearContext();
 
-		log.info("User [" + user.getEmail() + "] has logged out.");
+		log.debug("User [" + user.getEmail() + "] has logged out.");
 
 		return user;
 	}
@@ -441,7 +441,7 @@ public class UserServiceImpl implements UserService {
 
 		if (tokenAge > aLifetime) {
 
-			log.debug("Token is too old [" + aToken + "], age is [" + tokenAge + "], lifetime is [" + aLifetime + "].");
+			log.trace("Token is too old [" + aToken + "], age is [" + tokenAge + "], lifetime is [" + aLifetime + "].");
 
 			throw new InvalidTokenException();
 		}
