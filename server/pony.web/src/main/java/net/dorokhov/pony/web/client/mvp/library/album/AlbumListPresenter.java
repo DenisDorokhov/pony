@@ -23,7 +23,7 @@ import java.util.*;
 
 public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyView> implements AlbumListUiHandlers,
 		ArtistSelectionEvent.Handler, RefreshRequestEvent.Handler, EmptyLibraryEvent.Handler, PlaybackRequestEvent.Handler,
-		SongSelectionRequestEvent.Handler, SongChangeEvent.Handler, SongStartEvent.Handler, SongPauseEvent.Handler {
+		SongSelectionRequestEvent.Handler, SongChangeEvent.Handler, SongStartEvent.Handler, SongPauseEvent.Handler, SongEndEvent.Handler {
 
 	public interface MyView extends View, HasUiHandlers<AlbumListUiHandlers>, HasLoadingState {
 
@@ -94,6 +94,7 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 		addRegisteredHandler(SongChangeEvent.TYPE, this);
 		addRegisteredHandler(SongStartEvent.TYPE, this);
 		addRegisteredHandler(SongPauseEvent.TYPE, this);
+		addRegisteredHandler(SongEndEvent.TYPE, this);
 	}
 
 	@Override
@@ -204,6 +205,11 @@ public class AlbumListPresenter extends PresenterWidget<AlbumListPresenter.MyVie
 
 	@Override
 	public void onSongPause(SongPauseEvent aEvent) {
+		getView().setPlaying(false);
+	}
+
+	@Override
+	public void onSongEnd(SongEndEvent aEvent) {
 		getView().setPlaying(false);
 	}
 
