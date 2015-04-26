@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
 		TokenString refreshTokenString = new TokenString();
 		RefreshToken refreshToken = createRefreshToken(refreshTokenString, user);
 
-		log.debug("Token for user [" + user.getEmail() + "] has been refreshed.");
+		log.trace("Token for user [" + user.getEmail() + "] has been refreshed.");
 
 		AuthenticationImpl authentication = new AuthenticationImpl();
 
@@ -396,20 +396,20 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void cleanTokens() {
 
-		log.debug("Cleaning tokens...");
+		log.trace("Cleaning tokens...");
 
 		Date maxAccessTokenDate = new Date(new Date().getTime() - accessTokenLifetime * 1000);
 
 		Long deletedAccessTokens = accessTokenDao.deleteByDateLessThan(maxAccessTokenDate);
 		if (deletedAccessTokens > 0) {
-			log.debug("Deleted [" + deletedAccessTokens + "] access tokens.");
+			log.trace("Deleted [" + deletedAccessTokens + "] access tokens.");
 		}
 
 		Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
 
 		Long deletedRefreshTokens = refreshTokenDao.deleteByDateLessThan(maxRefreshTokenDate);
 		if (deletedRefreshTokens > 0) {
-			log.debug("Deleted [" + deletedRefreshTokens + "] refresh tokens.");
+			log.trace("Deleted [" + deletedRefreshTokens + "] refresh tokens.");
 		}
 	}
 

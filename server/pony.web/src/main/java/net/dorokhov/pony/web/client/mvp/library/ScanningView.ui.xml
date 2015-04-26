@@ -16,6 +16,7 @@
         }
         .progress {
             margin-top: 15px;
+            padding-top: 0;
         }
         .progressBar {
             -webkit-transition: none;
