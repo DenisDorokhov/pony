@@ -6,7 +6,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,6 +20,7 @@ import net.dorokhov.pony.web.client.mvp.common.LogMessageCellView;
 import net.dorokhov.pony.web.client.mvp.common.LogMessageView;
 import net.dorokhov.pony.web.client.mvp.common.ModalViewWithUiHandlers;
 import net.dorokhov.pony.web.client.resource.Messages;
+import net.dorokhov.pony.web.client.resource.Styles;
 import net.dorokhov.pony.web.client.service.common.OperationCallback;
 import net.dorokhov.pony.web.client.service.common.OperationRequest;
 import net.dorokhov.pony.web.shared.PagedListDto;
@@ -42,26 +42,10 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 
 	interface MyUiBinder extends UiBinder<Modal, ScanningView> {}
 
-	@SuppressWarnings("GwtCssResourceErrors")
-	interface MyStyle extends CssResource {
-
-		public String jobStatus();
-
-		public String jobStatusStarting();
-		public String jobStatusStarted();
-		public String jobStatusComplete();
-		public String jobStatusFailed();
-		public String jobStatusInterrupted();
-
-	}
-
 	private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
 	private static final NumberFormat PROGRESS_FORMAT = NumberFormat.getPercentFormat();
 	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(Messages.INSTANCE.dateFormatTechnical());
-
-	@UiField
-	MyStyle style;
 
 	@UiField
 	Label statusLabel;
@@ -200,23 +184,23 @@ public class ScanningView extends ModalViewWithUiHandlers<ScanningUiHandlers> im
 					@Override
 					public String getCellStyleNames(Cell.Context aContext, ScanJobDto aJob) {
 
-						String result = style.jobStatus() + " ";
+						String result = Styles.INSTANCE.commonStyle().scanJobStatus() + " ";
 
 						switch (aJob.getStatus()) {
 							case STARTING:
-								result += style.jobStatusStarting();
+								result += Styles.INSTANCE.commonStyle().scanJobStatusStarting();
 								break;
 							case STARTED:
-								result += style.jobStatusStarted();
+								result += Styles.INSTANCE.commonStyle().scanJobStatusStarted();
 								break;
 							case COMPLETE:
-								result += style.jobStatusComplete();
+								result += Styles.INSTANCE.commonStyle().scanJobStatusComplete();
 								break;
 							case FAILED:
-								result += style.jobStatusFailed();
+								result += Styles.INSTANCE.commonStyle().scanJobStatusFailed();
 								break;
 							case INTERRUPTED:
-								result += style.jobStatusInterrupted();
+								result += Styles.INSTANCE.commonStyle().scanJobStatusInterrupted();
 								break;
 						}
 

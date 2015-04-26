@@ -7,6 +7,7 @@ import com.google.gwt.user.client.DOM;
 import com.gwtplatform.mvp.client.DefaultBootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import net.dorokhov.pony.web.client.resource.Scripts;
+import net.dorokhov.pony.web.client.resource.Styles;
 import net.dorokhov.pony.web.client.service.AuthenticationDispatcherFilter;
 import net.dorokhov.pony.web.client.service.AuthenticationManager;
 import net.dorokhov.pony.web.client.service.common.NoOpOperationCallback;
@@ -52,6 +53,8 @@ public class BootstrapperImpl extends DefaultBootstrapper {
 		injectScript(Scripts.INSTANCE.growl());
 		injectScript(Scripts.INSTANCE.unity());
 		injectScript(Scripts.INSTANCE.uaParser());
+
+		Styles.INSTANCE.commonStyle().ensureInjected();
 
 		authenticationManager.initialize(new NoOpOperationCallback<UserDto>() {
 			@Override

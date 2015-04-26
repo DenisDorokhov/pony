@@ -6,28 +6,13 @@
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
 
-    <ui:style type="net.dorokhov.pony.web.client.mvp.library.LogView.MyStyle">
+    <ui:style>
         @external .modal-dialog;
         .logView .modal-dialog {
             width: 1000px !important;
         }
         .logPagedView {
             height: 440px;
-        }
-        .messageType {
-            text-transform: uppercase;
-        }
-        .messageTypeDebug {
-            color: #337ab7;
-        }
-        .messageTypeInfo {
-            color: #5cb85c;
-        }
-        .messageTypeWarn {
-            color: #f0ad4e;
-        }
-        .messageTypeError {
-            color: #d9534f;
         }
         .controlContainer {
             float: right;

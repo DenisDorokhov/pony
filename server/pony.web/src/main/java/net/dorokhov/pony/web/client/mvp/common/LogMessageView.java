@@ -4,14 +4,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import net.dorokhov.pony.web.client.resource.Messages;
+import net.dorokhov.pony.web.client.resource.Styles;
 import net.dorokhov.pony.web.shared.LogMessageDto;
 import org.gwtbootstrap3.client.ui.Modal;
 
-public class LogMessageView implements IsWidget {
+public class LogMessageView {
 
 	interface MyUiBinder extends UiBinder<Modal, LogMessageView> {}
 
@@ -66,32 +65,36 @@ public class LogMessageView implements IsWidget {
 		logMessageView.hide();
 	}
 
-	@Override
-	public Widget asWidget() {
-		return logMessageView;
-	}
-
 	private void updateLogMessage() {
+
 		dateLabel.setText(getLogMessage() != null ? DATE_FORMAT.format(getLogMessage().getDate()) : null);
-		typeLabel.setText(getLogMessage() != null ? typeToString(getLogMessage().getType()) : null);
 		textLabel.setText(getLogMessage() != null ? getLogMessage().getText() : null);
 		detailsLabel.setText(getLogMessage() != null ? getLogMessage().getDetails() : null);
-	}
 
-	private String typeToString(LogMessageDto.Type aType) {
+		String typeStyle = Styles.INSTANCE.commonStyle().propertyValue() + " " + Styles.INSTANCE.commonStyle().logMessageType() + " ";
 
-		switch (aType) {
-			case DEBUG:
-				return Messages.INSTANCE.logTypeDebug();
-			case INFO:
-				return Messages.INSTANCE.logTypeInfo();
-			case WARN:
-				return Messages.INSTANCE.logTypeWarn();
-			case ERROR:
-				return Messages.INSTANCE.logTypeError();
+		if (getLogMessage() != null) {
+			switch (getLogMessage().getType()) {
+				case DEBUG:
+					typeLabel.setText(Messages.INSTANCE.logTypeDebug());
+					typeStyle += Styles.INSTANCE.commonStyle().logMessageTypeDebug();
+					break;
+				case INFO:
+					typeLabel.setText(Messages.INSTANCE.logTypeInfo());
+					typeStyle += Styles.INSTANCE.commonStyle().logMessageTypeInfo();
+					break;
+				case WARN:
+					typeLabel.setText(Messages.INSTANCE.logTypeWarn());
+					typeStyle += Styles.INSTANCE.commonStyle().logMessageTypeWarn();
+					break;
+				case ERROR:
+					typeLabel.setText(Messages.INSTANCE.logTypeError());
+					typeStyle += Styles.INSTANCE.commonStyle().logMessageTypeError();
+					break;
+			}
 		}
 
-		return String.valueOf(aType);
+		typeLabel.setStyleName(typeStyle);
 	}
 
 }

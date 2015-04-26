@@ -3,32 +3,17 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
+    <ui:with field="stl" type="net.dorokhov.pony.web.client.resource.Styles" />
 
     <ui:style>
         @external .modal-dialog;
         .logMessageView .modal-dialog {
-            width: 800px !important;
+            width: 900px !important;
         }
         @external .modal-body;
         .logMessageView .modal-body {
-            max-height: 500px;
+            max-height: 450px;
             overflow-x: auto;
-        }
-        .section {
-            clear: both;
-        }
-        .label {
-            float: left;
-            width: 80px;
-            margin-right: 10px;
-            text-align: right;
-            line-height: 34px;
-            font-weight: bold;
-        }
-        .value {
-            margin-left: 90px;
-            padding-top: 7px;
-            padding-right: 5px;
         }
         .details {
             white-space: pre;
@@ -38,24 +23,24 @@
     <b:Modal ui:field="logMessageView" addStyleNames="{style.logMessageView}" title="{mes.logMessageTitle}" fade="true">
         <b:ModalBody>
 
-            <g:FlowPanel addStyleNames="{style.section}">
-                <g:Label addStyleNames="{style.label}" text="{mes.logMessageDate}" />
-                <g:Label ui:field="dateLabel" addStyleNames="{style.value}" />
+            <g:FlowPanel addStyleNames="{stl.commonStyle.propertySection}">
+                <g:Label addStyleNames="{stl.commonStyle.propertyLabel}" text="{mes.logMessageDate}" />
+                <g:Label ui:field="dateLabel" addStyleNames="{stl.commonStyle.propertyValue}" />
             </g:FlowPanel>
 
-            <g:FlowPanel addStyleNames="{style.section}">
-                <g:Label addStyleNames="{style.label}" text="{mes.logMessageType}" />
-                <g:Label ui:field="typeLabel" addStyleNames="{style.value}" />
+            <g:FlowPanel addStyleNames="{stl.commonStyle.propertySection}">
+                <g:Label addStyleNames="{stl.commonStyle.propertyLabel}" text="{mes.logMessageType}" />
+                <g:Label ui:field="typeLabel" addStyleNames="{stl.commonStyle.propertyValue}" />
             </g:FlowPanel>
 
-            <g:FlowPanel addStyleNames="{style.section}">
-                <g:Label addStyleNames="{style.label}" text="{mes.logMessageText}" />
-                <g:Label ui:field="textLabel" addStyleNames="{style.value}" />
+            <g:FlowPanel addStyleNames="{stl.commonStyle.propertySection}">
+                <g:Label addStyleNames="{stl.commonStyle.propertyLabel}" text="{mes.logMessageText}" />
+                <g:Label ui:field="textLabel" addStyleNames="{stl.commonStyle.propertyValue}" />
             </g:FlowPanel>
 
-            <g:FlowPanel addStyleNames="{style.section}">
-                <g:Label addStyleNames="{style.label}" text="{mes.logMessageDetails}" />
-                <g:Label ui:field="detailsLabel" addStyleNames="{style.value} {style.details}" />
+            <g:FlowPanel addStyleNames="{stl.commonStyle.propertySection}">
+                <g:Label addStyleNames="{stl.commonStyle.propertyLabel}" text="{mes.logMessageDetails}" />
+                <g:Label ui:field="detailsLabel" addStyleNames="{stl.commonStyle.propertyValue} {style.details}" />
             </g:FlowPanel>
 
         </b:ModalBody>
