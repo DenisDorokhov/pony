@@ -22,7 +22,7 @@ import net.dorokhov.pony.web.shared.UserDto;
 import javax.inject.Inject;
 import java.util.List;
 
-public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresenter.MyProxy> implements LoginUiHandlers {
+public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresenter.MyProxy> implements LoginUiHandlers, AuthenticationManager.Delegate {
 
 	@ProxyStandard
 	@NoGatekeeper
@@ -68,6 +68,22 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 	}
 
 	@Override
+	protected void onBind() {
+
+		super.onBind();
+
+		authenticationManager.addDelegate(this);
+	}
+
+	@Override
+	protected void onUnbind() {
+
+		authenticationManager.removeDelegate(this);
+
+		super.onUnbind();
+	}
+
+	@Override
 	public void onLoginRequested(CredentialsDto aCredentials) {
 
 		if (currentRequest != null) {
@@ -79,8 +95,6 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 		currentRequest = authenticationManager.authenticate(aCredentials, new OperationCallback<UserDto>() {
 			@Override
 			public void onSuccess(UserDto aUser) {
-
-				getView().setEnabled(true);
 
 				getView().setErrors(null);
 
@@ -98,6 +112,22 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 				currentRequest = null;
 			}
 		});
+	}
+
+	@Override
+	public void onInitialization(UserDto aUser) {}
+
+	@Override
+	public void onAuthentication(UserDto aUser) {
+		getView().setEnabled(false);
+	}
+
+	@Override
+	public void onStatusUpdate(UserDto aUser) {}
+
+	@Override
+	public void onLogout(UserDto aUser, boolean aExplicit) {
+		getView().setEnabled(true);
 	}
 
 }
