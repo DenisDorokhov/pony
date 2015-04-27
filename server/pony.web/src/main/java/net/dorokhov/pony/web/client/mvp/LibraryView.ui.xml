@@ -11,7 +11,7 @@
             left: 20px;
             right: 20px;
             bottom: 20px;
-            min-width: 1100px;
+            min-width: 1200px;
         }
         .header {
             position: absolute;
@@ -24,13 +24,13 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 300px;
+            width: 430px;
             bottom: 0;
         }
         .player {
             position: absolute;
             top: 0;
-            left: 300px;
+            left: 430px;
             right: 430px;
             bottom: 0;
         }
