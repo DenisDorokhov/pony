@@ -40,12 +40,12 @@
                     </p:FieldAwareFormGroup>
 
                     <p:FieldAwareFormGroup fieldName="password">
-                        <b:FormLabel for="userEditView.passwordField" text="{mes.userEditPassword}" />
+                        <b:FormLabel ui:field="passwordLabel" for="userEditView.passwordField" />
                         <b:Input ui:field="passwordField" type="PASSWORD" b:id="userEditView.passwordField" />
                     </p:FieldAwareFormGroup>
 
                     <p:FieldAwareFormGroup fieldName="repeatPassword">
-                        <b:FormLabel for="userEditView.repeatPasswordField" text="{mes.userEditRepeatPassword}" />
+                        <b:FormLabel ui:field="repeatPasswordLabel" for="userEditView.repeatPasswordField" />
                         <b:Input ui:field="repeatPasswordField" type="PASSWORD" b:id="userEditView.repeatPasswordField" />
                     </p:FieldAwareFormGroup>
 

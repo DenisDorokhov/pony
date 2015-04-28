@@ -19,10 +19,7 @@ import net.dorokhov.pony.web.shared.UserDto;
 import net.dorokhov.pony.web.shared.command.CreateUserCommandDto;
 import net.dorokhov.pony.web.shared.command.UpdateUserCommandDto;
 import org.gwtbootstrap3.client.shared.event.ModalShownEvent;
-import org.gwtbootstrap3.client.ui.FieldSet;
-import org.gwtbootstrap3.client.ui.Input;
-import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +54,13 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 	Input emailField;
 
 	@UiField
+	FormLabel passwordLabel;
+
+	@UiField
 	Input passwordField;
+
+	@UiField
+	FormLabel repeatPasswordLabel;
 
 	@UiField
 	Input repeatPasswordField;
@@ -178,7 +181,15 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 
 	private void updateUser() {
 
-		userEditView.setTitle(getUser() != null ? Messages.INSTANCE.userEditModificationTitle() : Messages.INSTANCE.userEditCreationTitle());
+		if (getUser() != null) {
+			userEditView.setTitle(Messages.INSTANCE.userEditModificationTitle());
+			passwordLabel.setText(Messages.INSTANCE.userEditNewPassword());
+			repeatPasswordLabel.setText(Messages.INSTANCE.userEditRepeatNewPassword());
+		} else {
+			userEditView.setTitle(Messages.INSTANCE.userEditCreationTitle());
+			passwordLabel.setText(Messages.INSTANCE.userEditPassword());
+			repeatPasswordLabel.setText(Messages.INSTANCE.userEditRepeatPassword());
+		}
 
 		nameField.setText(getUser() != null ? getUser().getName() : "");
 		emailField.setText(getUser() != null ? getUser().getEmail() : "");
