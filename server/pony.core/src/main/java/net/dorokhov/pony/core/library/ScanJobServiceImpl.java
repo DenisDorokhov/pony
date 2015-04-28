@@ -196,7 +196,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 		});
 
 		if (interruptedJobsCount.getValue() > 0) {
-			logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.getValue() + "] job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.getValue())));
+			logService.warn(log, "scanJobService.scanJobInterrupting", "Interrupted [" + interruptedJobsCount.getValue() + "] scan job(s).", Arrays.asList(String.valueOf(interruptedJobsCount.getValue())));
 		}
 	}
 

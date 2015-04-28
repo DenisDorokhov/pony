@@ -110,12 +110,7 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 	private void scheduleStatusTimer(int aTime) {
 
-		if (statusTimer != null) {
-
-			statusTimer.cancel();
-
-			statusTimer = null;
-		}
+		unscheduleStatusTimer();
 
 		statusTimer = new Timer() {
 			@Override
@@ -126,13 +121,23 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 				updateStatus();
 			}
 		};
-
 		statusTimer.schedule(aTime);
+	}
+
+	private void unscheduleStatusTimer() {
+		if (statusTimer != null) {
+
+			statusTimer.cancel();
+
+			statusTimer = null;
+		}
 	}
 
 	private void doGetStatusAndScan() {
 
 		scanning = true;
+
+		unscheduleStatusTimer(); // avoid race condition with check status timer
 
 		propagateScanStarted();
 
@@ -145,9 +150,9 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 					doScan();
 				} else {
 
-					propagateScanProgress(status);
-
 					scheduleStatusTimer(STATUS_TIMER_INTERVAL_SCANNING);
+
+					propagateScanProgress(status);
 				}
 			}
 
@@ -157,6 +162,8 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 				scanning = false;
 
 				errorNotifier.notifyOfErrors(aErrors);
+
+				scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
 
 				propagateScanFinished();
 			}
@@ -178,6 +185,8 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 				errorNotifier.notifyOfErrors(aErrors);
 
+				scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
+
 				propagateScanFinished();
 			}
 		}));
@@ -193,6 +202,8 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 				if (status != null) {
 
+					scheduleStatusTimer(STATUS_TIMER_INTERVAL_SCANNING);
+
 					if (!isScanning()) {
 
 						scanning = true;
@@ -202,9 +213,9 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 					propagateScanProgress(status);
 
-					scheduleStatusTimer(STATUS_TIMER_INTERVAL_SCANNING);
-
 				} else {
+
+					scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
 
 					if (isScanning()) {
 
@@ -212,8 +223,6 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 
 						propagateScanFinished();
 					}
-
-					scheduleStatusTimer(STATUS_TIMER_INTERVAL_NOT_SCANNING);
 				}
 			}
 

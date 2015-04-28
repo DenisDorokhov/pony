@@ -2,6 +2,7 @@
   <dictionary name="fester">
     <words>
       <w>deserialized</w>
+      <w>unschedule</w>
     </words>
   </dictionary>
 </component>
