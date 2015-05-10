@@ -15,6 +15,7 @@ import net.dorokhov.pony.core.logging.LogService;
 import net.dorokhov.pony.core.storage.StoredFileService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,7 +239,7 @@ public class ScanServiceImpl implements ScanService {
 
 		try {
 
-			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_SCAN_THREADS));
+			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_SCAN_THREADS, new BasicThreadFactory.Builder().namingPattern("pony-scan-import-%d").build()));
 
 			ScanResult scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
 				@Override
@@ -347,7 +348,7 @@ public class ScanServiceImpl implements ScanService {
 
 		try {
 
-			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_EDIT_THREADS));
+			executorReference.set(Executors.newFixedThreadPool(NUMBER_OF_EDIT_THREADS, new BasicThreadFactory.Builder().namingPattern("pony-edit-import-%d").build()));
 
 			ScanResult scanResult = transactionTemplate.execute(new TransactionCallback<ScanResult>() {
 				@Override
@@ -480,6 +481,7 @@ public class ScanServiceImpl implements ScanService {
 				throw new RuntimeException(e);
 			}
 		}
+		executor.shutdown();
 
 		logService.info(log, "libraryScanService.normalizing", "Normalizing...");
 		updateStatus(StatusImpl.buildScanStatus(aTargetFolders, STEP_SCAN_NORMALIZING, STEP_CODE_SCAN_NORMALIZING, 0.0));
@@ -516,6 +518,7 @@ public class ScanServiceImpl implements ScanService {
 				throw new RuntimeException(e);
 			}
 		}
+		executor.shutdown();
 
 		logService.info(log, "libraryScanService.normalizing", "Normalizing...");
 		updateStatus(StatusImpl.buildScanStatus(targetFiles, STEP_EDIT_NORMALIZING, STEP_CODE_EDIT_NORMALIZING, 0.0));

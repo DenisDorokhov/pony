@@ -127,7 +127,7 @@ public class ApiController {
 
 	@RequestMapping(value = "/artistAlbums/{aArtistIdOrName}", method = RequestMethod.GET)
 	public ResponseDto<ArtistAlbumsDto> getArtistSongs(@PathVariable String aArtistIdOrName) throws ObjectNotFoundException {
-		return responseBuilder.build(songServiceFacade.getArtistSongs(aArtistIdOrName));
+		return responseBuilder.build(songServiceFacade.getArtistAlbums(aArtistIdOrName));
 	}
 
 	@RequestMapping(value = "/randomSongs", method = RequestMethod.GET)

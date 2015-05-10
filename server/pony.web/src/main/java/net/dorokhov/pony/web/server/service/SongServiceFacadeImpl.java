@@ -74,7 +74,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	}
 
 	@Override
-	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) throws ObjectNotFoundException {
+	public ArtistAlbumsDto getArtistAlbums(String aArtistIdOrName) throws ObjectNotFoundException {
 
 		Artist artist = null;
 

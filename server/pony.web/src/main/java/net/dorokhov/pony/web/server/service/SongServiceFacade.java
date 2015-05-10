@@ -10,7 +10,7 @@ public interface SongServiceFacade {
 
 	public List<ArtistDto> getArtists();
 
-	public ArtistAlbumsDto getArtistSongs(String aArtistIdOrName) throws ObjectNotFoundException;
+	public ArtistAlbumsDto getArtistAlbums(String aArtistIdOrName) throws ObjectNotFoundException;
 
 	public SearchDto search(SearchQueryDto aQuery);
 

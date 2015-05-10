@@ -573,9 +573,13 @@ public class LibraryServiceImpl implements LibraryService {
 			deleteAlbumIfNotUsed(overriddenAlbum);
 			deleteArtistIfNotUsed(overriddenAlbum != null ? overriddenAlbum.getArtist() : null);
 			deleteGenreIfNotUsed(overriddenGenre);
-			deleteArtworkIfNotUsed(overriddenArtwork);
 
-			song.setAlbum(albumDao.findOne(song.getAlbum().getId()));
+			if (deleteArtworkIfNotUsed(overriddenArtwork) && ObjectUtils.nullSafeEquals(song.getAlbum().getArtwork(), overriddenArtwork)) {
+
+				song.getAlbum().setArtwork(null);
+
+				albumDao.save(song.getAlbum());
+			}
 
 			if (artwork != null && song.getAlbum().getArtwork() == null) {
 
@@ -881,37 +885,53 @@ public class LibraryServiceImpl implements LibraryService {
 		return command;
 	}
 
-	private void deleteAlbumIfNotUsed(Album aAlbum) {
+	private boolean deleteAlbumIfNotUsed(Album aAlbum) {
+
 		if (aAlbum != null && songDao.countByAlbumId(aAlbum.getId()) == 0) {
 
 			albumDao.delete(aAlbum);
 
 			logService.debug(log, "libraryService.deletingAlbum", "Deleting album without songs " + aAlbum + ".",
 					Arrays.asList(aAlbum.toString()));
+
+			return true;
 		}
+
+		return false;
 	}
 
-	private void deleteArtistIfNotUsed(Artist aArtist) {
+	private boolean deleteArtistIfNotUsed(Artist aArtist) {
+
 		if (aArtist != null && albumDao.countByArtistId(aArtist.getId()) == 0) {
 
 			artistDao.delete(aArtist);
 
 			logService.debug(log, "libraryService.deletingArtist", "Deleting artist without albums " + aArtist + ".",
 					Arrays.asList(aArtist.toString()));
+
+			return true;
 		}
+
+		return false;
 	}
 
-	private void deleteGenreIfNotUsed(Genre aGenre) {
+	private boolean deleteGenreIfNotUsed(Genre aGenre) {
+
 		if (aGenre != null && songDao.countByGenreId(aGenre.getId()) == 0) {
 
 			genreDao.delete(aGenre);
 
 			logService.debug(log, "libraryService.deletingGenre", "Deleting genre without songs " + aGenre + ".",
 					Arrays.asList(aGenre.toString()));
+
+			return true;
 		}
+
+		return false;
 	}
 
-	private void deleteArtworkIfNotUsed(StoredFile aArtwork) {
+	private boolean deleteArtworkIfNotUsed(StoredFile aArtwork) {
+
 		if (aArtwork != null && songDao.countByArtworkId(aArtwork.getId()) == 0) {
 
 			logService.debug(log, "libraryService.deletingNotUsedArtwork",
@@ -924,7 +944,11 @@ public class LibraryServiceImpl implements LibraryService {
 			genreDao.clearArtworkByArtworkId(aArtwork.getId());
 
 			storedFileService.delete(aArtwork.getId());
+
+			return true;
 		}
+
+		return false;
 	}
 
 	private enum ExternalArtworkDeletionReason {

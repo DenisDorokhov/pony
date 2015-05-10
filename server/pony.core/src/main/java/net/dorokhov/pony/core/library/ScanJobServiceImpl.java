@@ -321,7 +321,7 @@ public class ScanJobServiceImpl implements ScanJobService {
 					}));
 				}
 			}
-		}).start();
+		}, "pony-scan-job").start();
 
 		return job;
 	}
