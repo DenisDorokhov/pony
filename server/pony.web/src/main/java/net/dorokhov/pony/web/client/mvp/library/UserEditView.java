@@ -68,6 +68,9 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 	@UiField
 	ListBox roleField;
 
+	@UiField
+	Button deleteButton;
+
 	private LoadingState loadingState;
 
 	private UserDto user;
@@ -202,6 +205,8 @@ public class UserEditView extends ModalViewWithUiHandlers<UserEditUiHandlers> im
 		} else {
 			roleField.setSelectedIndex(roleToIndex.get(RoleDto.USER));
 		}
+
+		deleteButton.setVisible(getUser() != null);
 	}
 
 	private void updateErrors() {

@@ -7,17 +7,18 @@
     <ui:style>
         .container {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            min-width: 1150px;
-        }
-        .header {
-            position: absolute;
             top: 0;
             left: 0;
             right: 0;
+            bottom: 0;
+            min-width: 1150px;
+            min-height: 250px;
+        }
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
             height: 85px;
         }
         .title {
@@ -31,22 +32,22 @@
             position: absolute;
             top: 0;
             left: 400px;
-            right: 430px;
+            right: 400px;
             bottom: 0;
         }
         .toolbar {
             position: absolute;
             top: 0;
             right: 0;
-            width: 430px;
+            width: 400px;
             bottom: 0;
         }
         .content {
             position: absolute;
-            top: 85px;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 105px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
         }
     </ui:style>
 
