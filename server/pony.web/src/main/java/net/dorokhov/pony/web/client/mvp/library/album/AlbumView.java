@@ -253,7 +253,7 @@ public class AlbumView extends Composite implements SongSelectionRequestEvent.Ha
 
 			Integer discNumber = song.getDiscNumber();
 
-			if (discNumber == null) {
+			if (discNumber == null || discNumber == 0) {
 				discNumber = 1;
 			}
 
