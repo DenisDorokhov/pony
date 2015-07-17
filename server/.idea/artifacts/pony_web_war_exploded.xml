@@ -80,7 +80,7 @@
           <element id="library" level="project" name="Maven: org.apache.lucene:lucene-smartcn:3.6.2" />
           <element id="library" level="project" name="Maven: org.apache.lucene:lucene-stempel:3.6.2" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-validator:4.3.2.Final" />
-          <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.2" />
+          <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.3" />
           <element id="library" level="project" name="Maven: org:jaudiotagger:2.0.3" />
           <element id="library" level="project" name="Maven: net.coobird:thumbnailator:0.4.7" />
           <element id="library" level="project" name="Maven: org.realityforge.gwt.cache-filter:gwt-cache-filter:0.6" />
