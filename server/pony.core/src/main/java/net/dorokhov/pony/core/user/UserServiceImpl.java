@@ -402,15 +402,17 @@ public class UserServiceImpl implements UserService {
 
 		Long deletedAccessTokens = accessTokenDao.deleteByDateLessThan(maxAccessTokenDate);
 		if (deletedAccessTokens > 0) {
-			log.trace("Deleted [" + deletedAccessTokens + "] access tokens.");
+			log.debug("Deleting [" + deletedAccessTokens + "] access tokens.");
 		}
 
 		Date maxRefreshTokenDate = new Date(new Date().getTime() - refreshTokenLifetime * 1000);
 
 		Long deletedRefreshTokens = refreshTokenDao.deleteByDateLessThan(maxRefreshTokenDate);
 		if (deletedRefreshTokens > 0) {
-			log.trace("Deleted [" + deletedRefreshTokens + "] refresh tokens.");
+			log.debug("Deleting [" + deletedRefreshTokens + "] refresh tokens.");
 		}
+
+		log.trace("Tokens have been cleaned.");
 	}
 
 	private AccessToken createAccessToken(TokenString aToken, User aUser) {

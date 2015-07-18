@@ -128,6 +128,17 @@ public class UserServiceIT extends AbstractIntegrationCase {
 		UserService.Authentication authentication = userService.authenticate("test1@test.com", "password1");
 
 		userService.authenticateToken(authentication.getAccessToken());
+		userService.refreshToken(authentication.getRefreshToken());
+
+		isExceptionThrown = false;
+
+		try {
+			userService.refreshToken(authentication.getRefreshToken());
+		} catch (InvalidTokenException e) {
+			isExceptionThrown = true;
+		}
+
+		Assert.assertTrue(isExceptionThrown);
 
 		User user = userService.getAuthenticatedUser();
 

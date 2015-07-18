@@ -136,9 +136,11 @@ public class UploadServiceImpl implements UploadService {
 	public void cleanUploads() {
 		if (installationService.getInstallation() != null) {
 
-			log.debug("Cleaning uploads...");
+			log.trace("Cleaning uploads...");
 
 			doCleanUploads();
+
+			log.trace("Uploads have been cleaned.");
 		}
 	}
 
