@@ -19,11 +19,11 @@
 
     <bean class="org.slf4j.bridge.SLF4JBridgeHandler" init-method="install" depends-on="slf4JBridgeHandler"/>
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:${user.home}/${storage.path}/db/pony" />
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+    <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
+        <constructor-arg value="jdbc:h2:${user.home}/${storage.path}/db/pony" />
+        <constructor-arg value="sa" />
+        <constructor-arg value="" />
+        <property name="maxConnections" value="50" />
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
