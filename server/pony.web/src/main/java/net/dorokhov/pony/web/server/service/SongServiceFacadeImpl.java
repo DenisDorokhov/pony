@@ -59,6 +59,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<ArtistDto> getArtists() {
 
 		List<Artist> artistList = artistDao.findAll(new Sort("name"));
@@ -74,6 +75,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public ArtistAlbumsDto getArtistAlbums(String aArtistIdOrName) throws ObjectNotFoundException {
 
 		Artist artist = null;

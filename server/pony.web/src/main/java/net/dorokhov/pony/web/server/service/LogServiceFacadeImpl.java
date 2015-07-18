@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -35,6 +36,7 @@ public class LogServiceFacadeImpl implements LogServiceFacade {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PagedListDto<LogMessageDto> getByQuery(LogQueryDto aQuery, int aPageNumber, int aPageSize) throws InvalidArgumentException {
 
 		if (aPageNumber < 0) {

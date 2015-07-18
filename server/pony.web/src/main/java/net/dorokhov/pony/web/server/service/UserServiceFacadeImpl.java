@@ -118,6 +118,7 @@ public class UserServiceFacadeImpl implements UserServiceFacade {
 	}
 
 	@Override
+	@Transactional
 	public AuthenticationDto refreshToken(String aRefreshToken) throws InvalidTokenException {
 		return authenticationToDto(userService.refreshToken(aRefreshToken));
 	}
