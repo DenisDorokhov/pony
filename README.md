@@ -90,7 +90,7 @@ Pony is still in development and if you want to install Pony there is no other w
 * Spring MVC
 * RESTful JSON API
 * Spring Data JPA
-* JPA / Hibernate / HSQLDB
+* JPA / Hibernate / H2
 * Hibernate Search / Lucene
 * Spring Security
 * Token-based authentication system.
