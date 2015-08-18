@@ -6,7 +6,7 @@
     <parent>
         <artifactId>pony.server</artifactId>
         <groupId>net.dorokhov.pony</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1</version>
         <relativePath>../pony.server/pom.xml</relativePath>
     </parent>
 

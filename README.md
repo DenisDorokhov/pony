@@ -5,7 +5,7 @@ Pony - Music Streamer
 
 This project was originally started as a playground for development of my skills in Java and modern web interfaces. Later it turned into something that I really like to use myself. If you have an MP3 collection that you want to listen in your web browser, then probably it's a project for you. This is the second version of Pony Music Streamer and I've finally decided to finish it as a ready-to-use application. I hope somebody else finds it useful ;-)
 
-<b>Status:</b> version 0.1 is currently being tested.
+<b>Status:</b> version 0.1 is ready.
 
 ## Features
 

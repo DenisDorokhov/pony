@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Maven: net.dorokhov.pony:pony.core:1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/dorokhov/pony/pony.core/1.0-SNAPSHOT/pony.core-1.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/pony.core/pony.core-1.0-SNAPSHOT-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/dorokhov/pony/pony.core/1.0-SNAPSHOT/pony.core-1.0-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/pony.core/pony.core-1.0-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/net/dorokhov/pony/pony.core/1.0-SNAPSHOT/pony.core-1.0-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
