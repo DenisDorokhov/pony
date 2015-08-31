@@ -173,7 +173,7 @@ public class SongDataServiceImpl implements SongDataService {
 
 		Artwork artwork = aTag.getFirstArtwork();
 
-		if (artwork != null) {
+		if (artwork != null && artwork.getBinaryData() != null) {
 
 			SongDataReadable.Artwork songDataArtwork = new SongDataReadable.Artwork();
 

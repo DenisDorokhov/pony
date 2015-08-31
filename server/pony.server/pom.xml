@@ -8,7 +8,7 @@
     <groupId>net.dorokhov.pony</groupId>
     <artifactId>pony.server</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>0.1.1</version>
 
     <modules>
         <module>../pony.core</module>
@@ -94,13 +94,13 @@
             <dependency>
                 <groupId>net.dorokhov.pony</groupId>
                 <artifactId>pony.core</artifactId>
-                <version>0.1</version>
+                <version>0.1.1</version>
                 <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>net.dorokhov.pony</groupId>
                 <artifactId>pony.web</artifactId>
-                <version>0.1</version>
+                <version>0.1.1</version>
                 <type>war</type>
             </dependency>
 
