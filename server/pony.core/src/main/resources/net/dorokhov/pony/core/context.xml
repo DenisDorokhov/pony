@@ -16,7 +16,8 @@
         http://www.springframework.org/schema/security
         http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <context:property-placeholder location="classpath:net/dorokhov/pony/version.properties"/>
+    <context:property-placeholder location="classpath:net/dorokhov/pony/version.properties"
+                                  ignore-unresolvable="true" order="0" />
 
     <bean id="slf4JBridgeHandler" class="org.slf4j.bridge.SLF4JBridgeHandler" init-method="removeHandlersForRootLogger"/>
 

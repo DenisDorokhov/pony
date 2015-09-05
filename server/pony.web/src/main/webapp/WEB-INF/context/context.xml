@@ -15,7 +15,7 @@
 
     <context:property-placeholder location="file:${user.home}/.pony/pony.properties"
                                   ignore-unresolvable="true" ignore-resource-not-found="true"/>
-    <context:property-placeholder location="/WEB-INF/pony.properties"/>
+    <context:property-placeholder location="/WEB-INF/pony.properties" />
 
     <import resource="classpath:net/dorokhov/pony/core/context.xml"/>
 
