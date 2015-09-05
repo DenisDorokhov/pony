@@ -1,34 +1,18 @@
 package net.dorokhov.pony.core.upgrade;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
-import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.SystemPropertyUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupService, ApplicationContextAware {
 
 	private static final String VERSION_SEPARATOR_REGEX = "\\.";
-	private static final int VERSION_PARTS_COUNT = 3;
-	private static final Comparator<String[]> VERSION_COMPARATOR = new VersionComparator();
-
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private static final Comparator<int[]> VERSION_COMPARATOR = new VersionComparator();
 
 	private ApplicationContext context;
 
@@ -38,158 +22,65 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 	}
 
 	@Override
-	public List<UpgradeWorker> lookupUpgradeWorkers(String aPackage, String aVersion) {
+	public List<UpgradeWorker> lookupUpgradeWorkers(String aFromVersion, String aToVersion) {
 
-		String[] version = stringToVersion(aVersion);
+		int[] fromVersion = stringToVersion(aFromVersion);
+		int[] toVersion = stringToVersion(aToVersion);
 
-		List<VersionWorker> versionWorkers = findAvailableWorkers(aPackage);
+		List<UpgradeWorker> allWorkers = new ArrayList<>();
+		for (Map.Entry<String, UpgradeWorker> entry : context.getBeansOfType(UpgradeWorker.class).entrySet()) {
+			allWorkers.add(entry.getValue());
+		}
 
-		Collections.sort(versionWorkers);
+		Collections.sort(allWorkers, new Comparator<UpgradeWorker>() {
+			@Override
+			public int compare(UpgradeWorker o1, UpgradeWorker o2) {
+				return VERSION_COMPARATOR.compare(stringToVersion(o1.getVersion()), stringToVersion(o2.getVersion()));
+			}
+		});
 
 		List<UpgradeWorker> workersToPerform = new ArrayList<>();
-		for (VersionWorker worker : versionWorkers) {
-			if (VERSION_COMPARATOR.compare(worker.getVersion(), version) > 0) {
+		for (UpgradeWorker worker : allWorkers) {
 
-				String workerName = worker.getWorker().getSimpleName();
-				String beanName = workerName.substring(0, 1).toLowerCase() + workerName.substring(1);
+			int[] workerVersion = stringToVersion(worker.getVersion());
 
-				workersToPerform.add(context.getBean(beanName, UpgradeWorker.class));
+			if (VERSION_COMPARATOR.compare(workerVersion, toVersion) <= 0 && VERSION_COMPARATOR.compare(workerVersion, fromVersion) > 0) {
+				workersToPerform.add(worker);
 			}
 		}
 
 		return workersToPerform;
 	}
 
-	private String[] stringToVersion(String aVersion) throws IllegalArgumentException {
+	private int[] stringToVersion(String aVersion) throws IllegalArgumentException {
 
-		if (aVersion == null) {
-			throw new IllegalArgumentException("Version must not be null.");
-		}
+		List<Integer> version = new ArrayList<>();
 
-		String[] version = aVersion.split(VERSION_SEPARATOR_REGEX);
-		if (version.length != VERSION_PARTS_COUNT) {
-			throw new IllegalArgumentException("Version must consist of " + VERSION_PARTS_COUNT + " parts.");
-		}
-		for (String part : version) {
-			if (!part.matches("[0-9]+")) {
-				throw new IllegalArgumentException("Version parts must be numeric.");
-			}
-		}
+		for (String part : aVersion.split(VERSION_SEPARATOR_REGEX)) {
 
-		return version;
-	}
+			String buf = "";
 
-	private List<VersionWorker> findAvailableWorkers(String aPackage) {
-
-		ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-		MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-
-		String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
-				ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders(aPackage)) + "/*.class";
-
-		Resource[] resourceList = null;
-		try {
-			resourceList = resourcePatternResolver.getResources(packageSearchPath);
-		} catch (IOException e) {
-			log.error("Could not fetch package resources.", e);
-		}
-
-		List<VersionWorker> result = new ArrayList<>();
-
-		if (resourceList != null) {
-			for (Resource resource : resourceList) {
-				if (resource.isReadable()) {
-
-					MetadataReader metadataReader = null;
-					try {
-						metadataReader = metadataReaderFactory.getMetadataReader(resource);
-					} catch (IOException e) {
-						log.warn("Could not read resource [{}].", resource.toString(), e);
-					}
-
-					if (metadataReader != null) {
-						VersionWorker versionWorker = classToVersionWorker(metadataReader.getClassMetadata().getClassName());
-						if (versionWorker != null) {
-							result.add(versionWorker);
-						}
-					}
+			for (char symbol : part.toCharArray()) {
+				if (Character.isDigit(symbol)) {
+					buf += symbol;
+				} else {
+					break;
 				}
 			}
-		}
 
-		return result;
-	}
-
-	private VersionWorker classToVersionWorker(String aClass) {
-
-		Class<?> clazz = null;
-
-		try {
-			clazz = Class.forName(aClass);
-		} catch (ClassNotFoundException e) {
-			log.warn("Class [{}] not found.", aClass, e);
-		}
-
-		if (clazz != null && UpgradeWorker.class.isAssignableFrom(clazz)) {
-
-			UpgradeWorker.Version versionAnnotation = clazz.getAnnotation(UpgradeWorker.Version.class);
-			if (versionAnnotation != null && versionAnnotation.value() != null) {
-
-				String[] version = null;
-
-				try {
-					version = stringToVersion(versionAnnotation.value());
-				} catch (IllegalArgumentException e) {
-					log.warn("Upgrade worker [{}] version [{}] is invalid.", clazz, versionAnnotation.value());
-				}
-
-				if (version != null) {
-					return new VersionWorker(clazz, version);
-				}
-
+			if (buf.length() > 0) {
+				version.add(Integer.valueOf(buf));
 			} else {
-				log.warn("Upgrade worker [{}] does not have a version defined.", clazz);
+				version.add(0);
 			}
 		}
 
-		return null;
+		return ArrayUtils.toPrimitive(version.toArray(new Integer[version.size()]));
 	}
 
-	private static class VersionWorker implements Comparable<VersionWorker> {
+	private static class VersionComparator implements Comparator<int[]> {
 
-		private final Class worker;
-
-		private final String[] version;
-
-		public VersionWorker(Class aWorker, String[] aVersion) {
-			worker = aWorker;
-			version = aVersion;
-		}
-
-		public Class getWorker() {
-			return worker;
-		}
-
-		public String[] getVersion() {
-			return version;
-		}
-
-		@Override
-		@SuppressWarnings("NullableProblems")
-		public int compareTo(VersionWorker aWorker) {
-
-			if (aWorker == null) {
-				return 1;
-			}
-
-			return VERSION_COMPARATOR.compare(getVersion(), aWorker.getVersion());
-		}
-	}
-
-	// Taken from http://stackoverflow.com/questions/10774914/java-sorting-algorithm-version-as-string
-	private static class VersionComparator implements Comparator<String[]> {
-
-		public int compare(String[] version1, String[] version2) {
+		public int compare(int[] version1, int[] version2) {
 
 			int length = version1.length;
 
@@ -199,17 +90,8 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 
 			for (int i = 0; i < length; i++) {
 
-				String part1 = null;
-				if (i < version1.length) {
-					part1 = version1[i];
-				}
-				Integer number1 = (part1 == null) ? 0 : Integer.parseInt(part1);
-
-				String part2 = null;
-				if (i < version2.length) {
-					part2 = version2[i];
-				}
-				Integer number2 = (part2 == null) ? 0 : Integer.parseInt(part2);
+				Integer number1 = version1[i];
+				Integer number2 = version2[i];
 
 				if (number1.compareTo(number2) < 0) {
 					return -1;

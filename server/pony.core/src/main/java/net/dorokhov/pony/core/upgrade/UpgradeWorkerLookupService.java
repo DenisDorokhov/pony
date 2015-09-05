@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface UpgradeWorkerLookupService {
 
-	public List<UpgradeWorker> lookupUpgradeWorkers(String aPackage, String aVersion);
+	public List<UpgradeWorker> lookupUpgradeWorkers(String aFromVersion, String aToVersion);
 
 }

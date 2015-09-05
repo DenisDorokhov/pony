@@ -4,10 +4,14 @@ import net.dorokhov.pony.core.upgrade.UpgradeWorker;
 import org.springframework.stereotype.Service;
 
 @Service
-@UpgradeWorker.Version("0.0.3")
-public class WorkerMock_0_0_3 implements UpgradeWorker {
+public class WorkerMock_999_1_0 implements UpgradeWorker {
 
 	@Override
-	public void performUpgrade() {}
+	public String getVersion() {
+		return "999.1.0";
+	}
+
+	@Override
+	public void run() {}
 
 }

@@ -2,6 +2,7 @@ package net.dorokhov.pony.core.dao;
 
 import net.dorokhov.pony.core.common.SqlSplitter;
 import net.dorokhov.pony.core.domain.Installation;
+import net.dorokhov.pony.core.version.VersionProvider;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class InstallationDaoImpl implements InstallationDao {
 
 	private EntityManager entityManager;
 
+	private VersionProvider versionProvider;
+
 	@Autowired
 	public void setDataSource(DataSource aDataSource) {
 		dataSource = aDataSource;
@@ -35,6 +38,11 @@ public class InstallationDaoImpl implements InstallationDao {
 	@PersistenceContext
 	public void setEntityManager(EntityManager aEntityManager) {
 		entityManager = aEntityManager;
+	}
+
+	@Autowired
+	public void setVersionProvider(VersionProvider aVersionProvider) {
+		versionProvider = aVersionProvider;
 	}
 
 	@Override
@@ -70,7 +78,13 @@ public class InstallationDaoImpl implements InstallationDao {
 			throw new RuntimeException(e);
 		}
 
-		return doFindInstallation();
+		Installation installation = new Installation();
+
+		installation.setVersion(versionProvider.getVersion());
+
+		entityManager.persist(installation);
+
+		return installation;
 	}
 
 	@Override

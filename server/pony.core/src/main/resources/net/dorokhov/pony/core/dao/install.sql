@@ -310,5 +310,3 @@ CREATE TABLE song (
 );
 
 CREATE INDEX index_song_track_number_name ON song (disc_number, track_number, name);
-
-INSERT INTO installation (creation_date, version) VALUES (NOW(), '1.0');
