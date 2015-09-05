@@ -33,15 +33,18 @@ public class UpgradeServiceIT extends AbstractIntegrationCase {
 
 		Assert.assertEquals(4, workerList.size());
 
-		Assert.assertTrue(workerList.get(0) instanceof WorkerMock_999_0_5);
-		Assert.assertTrue(workerList.get(1) instanceof WorkerMock_999_0_20);
-		Assert.assertTrue(workerList.get(2) instanceof WorkerMock_999_1_0);
-		Assert.assertTrue(workerList.get(3) instanceof WorkerMock_999_1_3);
+		Assert.assertEquals("999.0.5", workerList.get(0).getVersion());
+		Assert.assertEquals("999.0.20", workerList.get(1).getVersion());
+		Assert.assertEquals("999.1.0", workerList.get(2).getVersion());
+		Assert.assertEquals("999.1.3", workerList.get(3).getVersion());
 	}
 
 	@Test
 	public void testUpgrade() throws Exception {
+
 		upgradeService.upgrade("1000.0.0-SNAPSHOT");
+
+		Assert.assertEquals("1000.0.0-SNAPSHOT", installationService.getInstallation().getVersion());
 	}
 
 }

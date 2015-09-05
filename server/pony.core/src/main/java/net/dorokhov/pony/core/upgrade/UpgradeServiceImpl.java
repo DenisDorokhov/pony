@@ -71,7 +71,7 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 				try {
 
-					log.info("Upgrading from version [{}] to [{}]", oldVersion, worker.getVersion());
+					log.info("Upgrading from version [{}] to [{}]...", oldVersion, worker.getVersion());
 
 					transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 						@Override
@@ -79,7 +79,7 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 							worker.run();
 
-							jdbcTemplate.update("UPDATE installation SET version = ?", worker.getVersion());
+							updateInstallationVersion(worker.getVersion());
 						}
 					});
 
@@ -88,8 +88,7 @@ public class UpgradeServiceImpl implements UpgradeService {
 				} catch (RuntimeException e) {
 
 					try {
-						insertLogMessage(LogMessage.Type.ERROR, "upgradeService.couldNotUpgrade", "Could not upgrade from version [" + oldVersion + "] to [" + installationVersion + "].",
-								ExceptionUtils.getStackTrace(e).trim(), Arrays.asList(oldVersion, installationVersion));
+						logFailedUpgrade(oldVersion, installationVersion, e);
 					} catch (RuntimeException logException) {
 						log.error("Could not insert log entry after failed upgrade.", logException);
 					}
@@ -97,10 +96,26 @@ public class UpgradeServiceImpl implements UpgradeService {
 					throw e;
 				}
 
-				insertLogMessage(LogMessage.Type.INFO, "upgradeService.upgraded", "Upgraded to from version [" + oldVersion + "] to [" + installationVersion + "].",
-						null, Arrays.asList(oldVersion, installationVersion));
+				logSuccessfulUpgrade(oldVersion, installationVersion);
+			}
+
+			if (!installationVersion.equals(aVersion)) {
+
+				updateInstallationVersion(aVersion);
+
+				logSuccessfulUpgrade(installationVersion, aVersion);
 			}
 		}
+	}
+
+	private void logSuccessfulUpgrade(String aFromVersion, String aToVersion) {
+		insertLogMessage(LogMessage.Type.INFO, "upgradeService.upgraded", "Upgraded from version [" + aFromVersion + "] to [" + aToVersion + "].",
+				null, Arrays.asList(aFromVersion, aToVersion));
+	}
+
+	private void logFailedUpgrade(String aFromVersion, String aToVersion, Throwable aThrowable) {
+		insertLogMessage(LogMessage.Type.ERROR, "upgradeService.couldNotUpgrade", "Could not upgrade from version [" + aFromVersion + "] to [" + aToVersion + "].",
+				ExceptionUtils.getStackTrace(aThrowable).trim(), Arrays.asList(aFromVersion, aToVersion));
 	}
 
 	private String fetchInstallationVersion() {
@@ -111,6 +126,10 @@ public class UpgradeServiceImpl implements UpgradeService {
 		}
 
 		return null;
+	}
+
+	private void updateInstallationVersion(String aVersion) {
+		jdbcTemplate.update("UPDATE installation SET version = ?", aVersion);
 	}
 
 	private void insertLogMessage(final LogMessage.Type aType, final String aCode, final String aText, final String aDetails, final List<String> aArguments) {

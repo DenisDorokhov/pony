@@ -2,6 +2,7 @@ package net.dorokhov.pony.core.test.integration.upgrade;
 
 import net.dorokhov.pony.core.upgrade.UpgradeWorker;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WorkerMock_999_1_3 implements UpgradeWorker {
@@ -12,6 +13,7 @@ public class WorkerMock_999_1_3 implements UpgradeWorker {
 	}
 
 	@Override
+	@Transactional
 	public void run() {}
 
 }
