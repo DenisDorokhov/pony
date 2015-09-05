@@ -6,12 +6,10 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:property-placeholder location="classpath:pony.properties"
-								  ignore-unresolvable="true" />
-	<context:property-placeholder location="file:${user.home}/${storage.path}/pony.properties"
-								  ignore-resource-not-found="true" />
+	<import resource="classpath:net/dorokhov/pony/core/context/context.xml" />
 
-	<import resource="classpath:net/dorokhov/pony/core/context.xml" />
+	<context:property-placeholder location="classpath:pony.properties"
+								  ignore-unresolvable="true" order="0" />
 
 	<context:component-scan base-package="net.dorokhov.pony.core.test.integration.upgrade" />
 

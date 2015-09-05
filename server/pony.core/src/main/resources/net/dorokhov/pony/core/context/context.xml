@@ -16,19 +16,7 @@
         http://www.springframework.org/schema/security
         http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <context:property-placeholder location="classpath:net/dorokhov/pony/version.properties"
-                                  ignore-unresolvable="true" order="0" />
-
-    <bean id="slf4JBridgeHandler" class="org.slf4j.bridge.SLF4JBridgeHandler" init-method="removeHandlersForRootLogger"/>
-
-    <bean class="org.slf4j.bridge.SLF4JBridgeHandler" init-method="install" depends-on="slf4JBridgeHandler"/>
-
-    <bean id="dataSource" class="org.h2.jdbcx.JdbcConnectionPool" factory-method="create">
-        <constructor-arg value="jdbc:h2:${user.home}/${storage.path}/db/pony" />
-        <constructor-arg value="sa" />
-        <constructor-arg value="" />
-        <property name="maxConnections" value="50" />
-    </bean>
+    <import resource="classpath:net/dorokhov/pony/core/context/common.xml" />
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />

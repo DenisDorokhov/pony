@@ -4,6 +4,10 @@
          metadata-complete="true" version="3.0">
 
     <listener>
+        <listener-class>net.dorokhov.pony.web.server.upgrade.UpgradeListener</listener-class>
+    </listener>
+
+    <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 

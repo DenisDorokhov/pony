@@ -13,11 +13,7 @@
         http://www.springframework.org/schema/security
         http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <context:property-placeholder location="file:${user.home}/.pony/pony.properties"
-                                  ignore-unresolvable="true" ignore-resource-not-found="true"/>
-    <context:property-placeholder location="/WEB-INF/pony.properties" />
-
-    <import resource="classpath:net/dorokhov/pony/core/context.xml"/>
+    <import resource="classpath:net/dorokhov/pony/core/context/context.xml" />
 
     <task:annotation-driven/>
 

@@ -16,7 +16,11 @@
       </configuration>
     </facet>
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="Upgrade Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/context/upgrade.xml</file>
+        </fileset>
+      </configuration>
     </facet>
     <facet type="gwt" name="GWT">
       <configuration>
