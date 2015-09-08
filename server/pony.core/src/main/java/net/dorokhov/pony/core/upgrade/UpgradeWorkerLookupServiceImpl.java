@@ -12,7 +12,7 @@ import java.util.*;
 public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupService, ApplicationContextAware {
 
 	private static final String VERSION_SEPARATOR_REGEX = "\\.";
-	private static final Comparator<int[]> VERSION_COMPARATOR = new VersionComparator();
+	private static final Comparator<int[]> VERSION_COMPARATOR = new SequenceComparator();
 
 	private ApplicationContext context;
 
@@ -24,35 +24,32 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 	@Override
 	public List<UpgradeWorker> lookupUpgradeWorkers(String aFromVersion, String aToVersion) {
 
-		int[] fromVersion = stringToVersion(aFromVersion);
-		int[] toVersion = stringToVersion(aToVersion);
+		int[] fromVersion = versionToSequence(aFromVersion);
+		int[] toVersion = versionToSequence(aToVersion);
 
-		List<UpgradeWorker> allWorkers = new ArrayList<>();
+		List<WorkerVersionSequence> allWorkers = new ArrayList<>();
 		for (Map.Entry<String, UpgradeWorker> entry : context.getBeansOfType(UpgradeWorker.class).entrySet()) {
-			allWorkers.add(entry.getValue());
+			allWorkers.add(new WorkerVersionSequence(entry.getValue()));
 		}
 
-		Collections.sort(allWorkers, new Comparator<UpgradeWorker>() {
+		Collections.sort(allWorkers, new Comparator<WorkerVersionSequence>() {
 			@Override
-			public int compare(UpgradeWorker o1, UpgradeWorker o2) {
-				return VERSION_COMPARATOR.compare(stringToVersion(o1.getVersion()), stringToVersion(o2.getVersion()));
+			public int compare(WorkerVersionSequence workerVersion1, WorkerVersionSequence workerVersion2) {
+				return VERSION_COMPARATOR.compare(workerVersion1.getVersionSequence(), workerVersion2.getVersionSequence());
 			}
 		});
 
 		List<UpgradeWorker> workersToPerform = new ArrayList<>();
-		for (UpgradeWorker worker : allWorkers) {
-
-			int[] workerVersion = stringToVersion(worker.getVersion());
-
-			if (VERSION_COMPARATOR.compare(workerVersion, toVersion) <= 0 && VERSION_COMPARATOR.compare(workerVersion, fromVersion) > 0) {
-				workersToPerform.add(worker);
+		for (WorkerVersionSequence workerVersion : allWorkers) {
+			if (VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), toVersion) <= 0 && VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), fromVersion) > 0) {
+				workersToPerform.add(workerVersion.getWorker());
 			}
 		}
 
 		return workersToPerform;
 	}
 
-	private int[] stringToVersion(String aVersion) throws IllegalArgumentException {
+	private int[] versionToSequence(String aVersion) throws IllegalArgumentException {
 
 		List<Integer> version = new ArrayList<>();
 
@@ -78,7 +75,7 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 		return ArrayUtils.toPrimitive(version.toArray(new Integer[version.size()]));
 	}
 
-	private static class VersionComparator implements Comparator<int[]> {
+	private static class SequenceComparator implements Comparator<int[]> {
 
 		public int compare(int[] version1, int[] version2) {
 
@@ -101,6 +98,28 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 			}
 
 			return 0;
+		}
+	}
+
+	private class WorkerVersionSequence {
+
+		private final UpgradeWorker worker;
+
+		private final int[] versionSequence;
+
+		public WorkerVersionSequence(UpgradeWorker aWorker) {
+
+			worker = aWorker;
+
+			versionSequence = versionToSequence(aWorker.getVersion());
+		}
+
+		public UpgradeWorker getWorker() {
+			return worker;
+		}
+
+		public int[] getVersionSequence() {
+			return versionSequence;
 		}
 	}
 

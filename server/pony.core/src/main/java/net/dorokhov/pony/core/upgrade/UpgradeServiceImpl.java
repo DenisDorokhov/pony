@@ -1,6 +1,7 @@
 package net.dorokhov.pony.core.upgrade;
 
 import net.dorokhov.pony.core.domain.LogMessage;
+import net.dorokhov.pony.core.upgrade.exception.UpgradeInvalidException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 	@Override
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public synchronized void upgrade(String aVersion) {
+	public synchronized void upgrade(String aVersion) throws UpgradeInvalidException{
 
 		String installationVersion = fetchInstallationVersion();
 
