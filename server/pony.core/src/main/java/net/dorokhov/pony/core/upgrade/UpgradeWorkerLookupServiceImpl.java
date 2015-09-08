@@ -1,5 +1,6 @@
 package net.dorokhov.pony.core.upgrade;
 
+import net.dorokhov.pony.core.upgrade.exception.UpgradeInvalidException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +23,7 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 	}
 
 	@Override
-	public List<UpgradeWorker> lookupUpgradeWorkers(String aFromVersion, String aToVersion) {
+	public List<UpgradeWorker> lookupUpgradeWorkers(String aFromVersion, String aToVersion) throws UpgradeInvalidException {
 
 		int[] fromVersion = versionToSequence(aFromVersion);
 		int[] toVersion = versionToSequence(aToVersion);
@@ -40,9 +41,18 @@ public class UpgradeWorkerLookupServiceImpl implements UpgradeWorkerLookupServic
 		});
 
 		List<UpgradeWorker> workersToPerform = new ArrayList<>();
-		for (WorkerVersionSequence workerVersion : allWorkers) {
-			if (VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), toVersion) <= 0 && VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), fromVersion) > 0) {
-				workersToPerform.add(workerVersion.getWorker());
+
+		if (VERSION_COMPARATOR.compare(fromVersion, toVersion) > 0) {
+			for (WorkerVersionSequence workerVersion : allWorkers) {
+				if (VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), toVersion) >= 0 && VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), fromVersion) <= 0) {
+					throw new UpgradeInvalidException(aFromVersion, aToVersion);
+				}
+			}
+		} else {
+			for (WorkerVersionSequence workerVersion : allWorkers) {
+				if (VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), toVersion) <= 0 && VERSION_COMPARATOR.compare(workerVersion.getVersionSequence(), fromVersion) >= 0) {
+					workersToPerform.add(workerVersion.getWorker());
+				}
 			}
 		}
 
