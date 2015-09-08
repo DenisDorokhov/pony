@@ -1,6 +1,7 @@
 package net.dorokhov.pony.web.server.upgrade;
 
 import net.dorokhov.pony.core.upgrade.UpgradeService;
+import net.dorokhov.pony.core.upgrade.exception.UpgradeInvalidException;
 import net.dorokhov.pony.core.version.VersionProvider;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -18,9 +19,9 @@ public class UpgradeListener implements ServletContextListener {
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public void contextInitialized(ServletContextEvent aServletContext) {
+	public void contextInitialized(ServletContextEvent aEvent) {
 
-		InputStream xmlStream = aServletContext.getServletContext().getResourceAsStream("/WEB-INF/context/upgrade.xml");
+		InputStream xmlStream = aEvent.getServletContext().getResourceAsStream("/WEB-INF/context/upgrade.xml");
 
 		ConfigurableApplicationContext context = null;
 
@@ -38,7 +39,14 @@ public class UpgradeListener implements ServletContextListener {
 				VersionProvider versionProvider = context.getBean(VersionProvider.class);
 				UpgradeService upgradeService = context.getBean(UpgradeService.class);
 
-				upgradeService.upgrade(versionProvider.getVersion());
+				try {
+					upgradeService.upgrade(versionProvider.getVersion());
+				} catch (UpgradeInvalidException e) {
+
+					log.error("Could not upgrade from version [" + e.getFromVersion() + "] to [" + e.getToVersion() + "].", e);
+
+					throw new RuntimeException(e);
+				}
 
 			} finally {
 				context.close();
@@ -47,6 +55,6 @@ public class UpgradeListener implements ServletContextListener {
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent aServletContext) {}
+	public void contextDestroyed(ServletContextEvent aEvent) {}
 
 }
