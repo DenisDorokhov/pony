@@ -21,6 +21,8 @@
         }
         .titleHeader {
             margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 4px;
         }
         .songList {
             margin-bottom: 50px;
