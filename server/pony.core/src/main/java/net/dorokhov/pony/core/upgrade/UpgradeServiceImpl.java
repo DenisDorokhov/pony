@@ -23,6 +23,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,8 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
+	private DataSource dataSource;
+
 	private JdbcTemplate jdbcTemplate;
 
 	private TransactionTemplate transactionTemplate;
@@ -41,6 +44,7 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 	@Autowired
 	public void setDataSource(DataSource aDataSource) {
+		dataSource = aDataSource;
 		jdbcTemplate = new JdbcTemplate(aDataSource);
 	}
 
@@ -121,9 +125,11 @@ public class UpgradeServiceImpl implements UpgradeService {
 
 	private String fetchInstallationVersion() {
 
-		List<Map<String, Object>> installationList = jdbcTemplate.queryForList("SELECT * FROM installation");
-		if (installationList.size() > 0) {
-			return (String)installationList.get(0).get("version");
+		if (hasTable("installation")) {
+			List<Map<String, Object>> installationList = jdbcTemplate.queryForList("SELECT * FROM installation");
+			if (installationList.size() > 0) {
+				return (String) installationList.get(0).get("version");
+			}
 		}
 
 		return null;
@@ -185,6 +191,34 @@ public class UpgradeServiceImpl implements UpgradeService {
 				}
 			}
 		});
+	}
+
+	private boolean hasTable(String aTable) {
+
+		Connection connection = null;
+
+		try {
+
+			connection = dataSource.getConnection();
+
+			ResultSet rs = connection.getMetaData().getTables(null, null, "%", null);
+			while (rs.next()) {
+				if (rs.getString(3).equalsIgnoreCase(aTable)) {
+					return true;
+				}
+			}
+
+			return false;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (Exception ignored) {}
+			}
+		}
 	}
 
 }

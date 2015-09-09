@@ -41,9 +41,9 @@ public class UpgradeListener implements ServletContextListener {
 
 				try {
 					upgradeService.upgrade(versionProvider.getVersion());
-				} catch (UpgradeInvalidException e) {
+				} catch (Exception e) {
 
-					log.error("Could not upgrade from version [" + e.getFromVersion() + "] to [" + e.getToVersion() + "].", e);
+					log.error("Unexpected error occurred running upgrade to version [" + versionProvider.getVersion() + "].", e);
 
 					throw new RuntimeException(e);
 				}
