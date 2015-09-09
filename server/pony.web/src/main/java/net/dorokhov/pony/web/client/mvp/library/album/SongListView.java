@@ -33,9 +33,6 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 
 	private static final List<SongView> viewCache = new ArrayList<>();
 
-	private static final int MIN_COLUMN_SONGS = 4;
-	private static final int MAX_COLUMN_WIDTH = 400;
-
 	static {
 		for (int i = 0; i < 20; i++) {
 			viewCache.add(new SongView());
@@ -248,8 +245,6 @@ public class SongListView extends Composite implements SelectionChangeEvent.Hand
 		for (Map.Entry<Long, SongView> entry : songToView.entrySet()) {
 			entry.getValue().setArtistShown(showArtist);
 		}
-
-		songList.getElement().getStyle().setProperty("maxWidth", (MAX_COLUMN_WIDTH * Math.ceil(getSongs().size() / (float) MIN_COLUMN_SONGS)) + "px");
 
 		updateSongViews();
 	}
