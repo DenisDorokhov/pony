@@ -38,7 +38,7 @@ public class AuthenticationListener extends AuthenticationManager.NoOpDelegate {
 	}
 
 	@Override
-	public void onLogout(UserDto aUser, boolean aExplicit) {
+	public void onLogout(UserDto aUser) {
 		placeManager.revealDefaultPlace();
 	}
 

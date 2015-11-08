@@ -98,7 +98,7 @@ public class LibraryScanner implements AuthenticationManager.Delegate {
 	public void onStatusUpdate(UserDto aUser) {}
 
 	@Override
-	public void onLogout(UserDto aUser, boolean aExplicit) {}
+	public void onLogout(UserDto aUser) {}
 
 	private void updateStatus() {
 		if (authenticationManager.getUser() != null) {

@@ -126,7 +126,7 @@ public class LoginPresenter extends Presenter<LoginPresenter.MyView, LoginPresen
 	public void onStatusUpdate(UserDto aUser) {}
 
 	@Override
-	public void onLogout(UserDto aUser, boolean aExplicit) {
+	public void onLogout(UserDto aUser) {
 		getView().setEnabled(true);
 	}
 

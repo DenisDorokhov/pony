@@ -28,7 +28,7 @@ public class AuthenticationManager {
 
 		public void onStatusUpdate(UserDto aUser);
 
-		public void onLogout(UserDto aUser, boolean aExplicit);
+		public void onLogout(UserDto aUser);
 
 	}
 
@@ -44,14 +44,15 @@ public class AuthenticationManager {
 		public void onStatusUpdate(UserDto aUser) {}
 
 		@Override
-		public void onLogout(UserDto aUser, boolean aExplicit) {}
+		public void onLogout(UserDto aUser) {}
 
 	}
 
 	private static final int CHECK_EXTERNAL_STATUS_CHANGE_INTERVAL = 5 * 1000;
 	private static final int CHECK_TOKEN_EXPIRATION_INTERVAL = 15 * 1000;
 	private static final int CHECK_STATUS_INTERVAL = 60 * 1000;
-	private static final int REFRESH_TOKEN_BEFORE_EXPIRATION = 60 * 60 * 1000;
+
+	private static final long REFRESH_TOKEN_BEFORE_EXPIRATION = 7 * 24 * 60 * 60 * 1000;
 
 	private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -376,9 +377,9 @@ public class AuthenticationManager {
 		}
 	}
 
-	private void propagateLogout(UserDto aUser, boolean aExplicit) {
+	private void propagateLogout(UserDto aUser) {
 		for (Delegate delegate : new ArrayList<>(delegates)) {
-			delegate.onLogout(aUser, aExplicit);
+			delegate.onLogout(aUser);
 		}
 	}
 
@@ -402,7 +403,7 @@ public class AuthenticationManager {
 		securityStorage.setRefreshToken(null);
 
 		if (aPropagateLogout) {
-			propagateLogout(oldUser, false);
+			propagateLogout(oldUser);
 		}
 	}
 

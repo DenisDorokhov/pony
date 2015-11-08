@@ -147,7 +147,7 @@ public class ToolbarPresenter extends PresenterWidget<ToolbarPresenter.MyView> i
 	}
 
 	@Override
-	public void onLogout(UserDto aUser, boolean aExplicit) {}
+	public void onLogout(UserDto aUser) {}
 
 	@Override
 	public void onRefreshRequested() {
