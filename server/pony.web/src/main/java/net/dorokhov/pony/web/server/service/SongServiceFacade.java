@@ -18,6 +18,8 @@ public interface SongServiceFacade {
 
 	public List<SongDto> getRandomArtistSongs(int aCount, String aArtistIdOrName) throws InvalidArgumentException;
 
+	public List<SongDto> getSongs(List<Long> aSongIds) throws InvalidArgumentException;
+
 	public List<SongDataDto> getSongData(List<Long> aSongIds) throws ObjectNotFoundException, InvalidArgumentException;
 
 }

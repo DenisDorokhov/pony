@@ -2,7 +2,11 @@ package net.dorokhov.pony.web.shared;
 
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 
+import java.util.Date;
+
 public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
+
+	private Date updateDate;
 
 	private String url;
 
@@ -19,6 +23,14 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 	private AlbumDto album;
 
 	private GenreDto genre;
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date aUpdateDate) {
+		updateDate = aUpdateDate;
+	}
 
 	public String getUrl() {
 		return url;

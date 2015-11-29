@@ -155,6 +155,11 @@ public class ApiController {
 		return responseBuilder.build(scanServiceFacade.getScanStatus());
 	}
 
+	@RequestMapping(value = "/getSongs", method = RequestMethod.POST)
+	public ResponseDto<List<SongDto>> getSongs(@RequestBody List<Long> aSongIds) throws InvalidArgumentException {
+		return responseBuilder.build(songServiceFacade.getSongs(aSongIds));
+	}
+
 	@RequestMapping(value = "/admin/users", method = RequestMethod.GET)
 	public ResponseDto<PagedListDto<UserDto>> getUsers(@RequestParam(value = "pageNumber", defaultValue = "0") int aPageNumber,
 													   @RequestParam(value = "pageSize", defaultValue = "25") int aPageSize) throws InvalidArgumentException {

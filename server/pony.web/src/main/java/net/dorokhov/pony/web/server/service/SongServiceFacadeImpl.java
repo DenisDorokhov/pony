@@ -28,6 +28,7 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 	private static final int SEARCH_RESULTS_COUNT = 10;
 
 	private static final int MAX_RANDOM_SONGS = 30;
+	private static final int MAX_SONGS = 100;
 	private static final int MAX_SONG_DATA = 500;
 
 	private ArtistDao artistDao;
@@ -205,6 +206,23 @@ public class SongServiceFacadeImpl implements SongServiceFacade {
 			for (Song song : songList) {
 				dto.add(dtoConverter.songToDto(song));
 			}
+		}
+
+		return dto;
+	}
+
+	@Override
+	public List<SongDto> getSongs(List<Long> aSongIds) throws InvalidArgumentException {
+
+		if (aSongIds.size() > MAX_SONGS) {
+			throw new InvalidArgumentException(ErrorCodes.SONGS_COUNT_INVALID, "Songs count [" + aSongIds.size() + "] must be less than or equal to [" + MAX_SONGS + "]",
+					String.valueOf(aSongIds.size()), String.valueOf(MAX_SONGS));
+		}
+
+		List<SongDto> dto = new ArrayList<>();
+
+		for (Song song : songDao.findAll(aSongIds)) {
+			dto.add(dtoConverter.songToDto(song));
 		}
 
 		return dto;
