@@ -308,6 +308,7 @@ public class DtoConverter {
 		dto.setId(aSong.getId());
 		dto.setUpdateDate(aSong.getUpdateDate());
 		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/audio/" + aSong.getId()).build().toUriString());
+		dto.setSize(aSong.getSize());
 		dto.setDuration(aSong.getDuration());
 		dto.setDiscNumber(aSong.getDiscNumber());
 		dto.setTrackNumber(aSong.getTrackNumber());

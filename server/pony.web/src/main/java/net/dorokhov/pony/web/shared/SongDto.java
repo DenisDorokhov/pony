@@ -10,6 +10,8 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	private String url;
 
+	private Long size;
+
 	private Integer duration;
 
 	private Integer discNumber;
@@ -38,6 +40,14 @@ public class SongDto extends AbstractDto<Long> implements Comparable<SongDto> {
 
 	public void setUrl(String aUrl) {
 		url = aUrl;
+	}
+
+	public Long getSize() {
+		return size;
+	}
+
+	public void setSize(Long aSize) {
+		size = aSize;
 	}
 
 	public Integer getDuration() {
