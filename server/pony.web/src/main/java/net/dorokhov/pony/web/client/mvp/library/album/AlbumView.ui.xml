@@ -3,6 +3,8 @@
              xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
              xmlns:p="urn:import:net.dorokhov.pony.web.client.control">
 
+    <ui:with field="mes" type="net.dorokhov.pony.web.client.resource.Messages" />
+
     <ui:style>
         .albumView {
             clear: both;
@@ -30,6 +32,10 @@
         .albumView:last-child .songList {
             margin-bottom: 0;
         }
+        .downloadButton {
+            margin-left: 5px;
+            float: right;
+        }
     </ui:style>
 
     <g:FlowPanel addStyleNames="{style.albumView}">
@@ -37,7 +43,10 @@
         <p:ImageLoader ui:field="imageLoader" addStyleNames="{style.artwork}" />
 
         <g:FlowPanel addStyleNames="{style.songContainer}">
-            <b:Heading ui:field="titleHeader" addStyleNames="{style.titleHeader}" size="H4" />
+            <b:Heading ui:field="titleHeader" addStyleNames="{style.titleHeader}" size="H4">
+                <b:Button ui:field="downloadButton" addStyleNames="{style.downloadButton}"
+                          text="{mes.albumDownload}" icon="DOWNLOAD" size="EXTRA_SMALL" />
+            </b:Heading>
             <g:FlowPanel ui:field="songList" addStyleNames="{style.songList}" />
         </g:FlowPanel>
 

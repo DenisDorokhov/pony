@@ -25,6 +25,7 @@ public class DtoConverter {
 		dto.setId(aAlbum.getId());
 		dto.setName(aAlbum.getName());
 		dto.setYear(aAlbum.getYear());
+		dto.setUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path("/export/albums/" + aAlbum.getId()).build().toUriString());
 
 		dto.setArtist(artistToDto(aAlbum.getArtist()));
 

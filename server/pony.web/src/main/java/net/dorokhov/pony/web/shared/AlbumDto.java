@@ -10,6 +10,8 @@ public class AlbumDto extends AbstractDto<Long> {
 
 	private String artworkUrl;
 
+	private String url;
+
 	private ArtistDto artist;
 
 	public String getName() {
@@ -44,6 +46,14 @@ public class AlbumDto extends AbstractDto<Long> {
 		artworkUrl = aArtworkUrl;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String aUrl) {
+		url = aUrl;
+	}
+
 	public ArtistDto getArtist() {
 		return artist;
 	}
@@ -51,5 +61,4 @@ public class AlbumDto extends AbstractDto<Long> {
 	public void setArtist(ArtistDto aArtist) {
 		artist = aArtist;
 	}
-
 }

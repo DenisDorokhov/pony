@@ -1,10 +1,13 @@
 package net.dorokhov.pony.web.client.mvp.library.album;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,6 +19,7 @@ import net.dorokhov.pony.web.client.resource.Messages;
 import net.dorokhov.pony.web.client.util.ObjectUtils;
 import net.dorokhov.pony.web.shared.AlbumSongsDto;
 import net.dorokhov.pony.web.shared.SongDto;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Heading;
 
 import java.util.*;
@@ -50,6 +54,9 @@ public class AlbumView extends Composite implements SongSelectionRequestEvent.Ha
 
 	@UiField
 	FlowPanel songList;
+
+	@UiField
+	Button downloadButton;
 
 	private AlbumSongsDto albumSongs;
 
@@ -136,6 +143,11 @@ public class AlbumView extends Composite implements SongSelectionRequestEvent.Ha
 	@Override
 	public void onSongStartRequest(SongStartRequestEvent aEvent) {
 		handlerManager.fireEvent(aEvent);
+	}
+
+	@UiHandler("downloadButton")
+	void onDownloadButtonClick(ClickEvent aEvent) {
+		Window.open(albumSongs.getAlbum().getUrl(), "_blank", "");
 	}
 
 	private void updateAlbum() {
