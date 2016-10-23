@@ -42,7 +42,7 @@ public class ApiController {
 
 	private ScanServiceFacade scanServiceFacade;
 
-	private UploadService uploadService;
+	private UploadServiceFacade uploadServiceFacade;
 
 	@Autowired
 	public void setResponseBuilder(ResponseBuilder aResponseBuilder) {
@@ -85,8 +85,8 @@ public class ApiController {
 	}
 
 	@Autowired
-	public void setUploadService(UploadService aUploadService) {
-		uploadService = aUploadService;
+	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
+		uploadServiceFacade = aUploadServiceFacade;
 	}
 
 	@RequestMapping(value = "/installation", method = RequestMethod.GET)
@@ -244,12 +244,12 @@ public class ApiController {
 
 	@RequestMapping(value = "/admin/artworkUpload/{aId}", method = RequestMethod.GET)
 	public ResponseDto<ArtworkUploadDto> getArtworkUpload(@PathVariable Long aId) throws ObjectNotFoundException {
-		return responseBuilder.build(uploadService.getArtworkUpload(aId));
+		return responseBuilder.build(uploadServiceFacade.getArtworkUpload(aId));
 	}
 
 	@RequestMapping(value = "/admin/artworkUpload", method = RequestMethod.POST)
 	public ResponseDto<ArtworkUploadDto> uploadArtwork(@RequestParam("file") MultipartFile aFile) throws ArtworkUploadFormatException {
-		return responseBuilder.build(uploadService.uploadArtwork(aFile));
+		return responseBuilder.build(uploadServiceFacade.uploadArtwork(aFile));
 	}
 
 	@RequestMapping(value = "/admin/getSongData", method = RequestMethod.POST)

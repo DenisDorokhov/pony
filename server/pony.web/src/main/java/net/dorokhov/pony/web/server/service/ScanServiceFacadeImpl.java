@@ -32,7 +32,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 
 	private ScanService scanService;
 
-	private UploadService uploadService;
+	private UploadServiceFacade uploadServiceFacade;
 
 	private DtoConverter dtoConverter;
 
@@ -47,8 +47,8 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 	}
 
 	@Autowired
-	public void setUploadService(UploadService aUploadService) {
-		uploadService = aUploadService;
+	public void setUploadServiceFacade(UploadServiceFacade aUploadServiceFacade) {
+		uploadServiceFacade = aUploadServiceFacade;
 	}
 
 	@Autowired
@@ -103,7 +103,7 @@ public class ScanServiceFacadeImpl implements ScanServiceFacade {
 				File artwork;
 
 				try {
-					artwork = uploadService.getArtworkUploadFile(task.getArtworkUploadId());
+					artwork = uploadServiceFacade.getArtworkUploadFile(task.getArtworkUploadId());
 				} catch (ObjectNotFoundException e) {
 					throw new ArtworkUploadNotFoundException(task.getArtworkUploadId());
 				}
